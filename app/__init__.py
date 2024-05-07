@@ -11,3 +11,4 @@ app.hashing = Hashing(app)
 
 
 from app import index
+from app import shop

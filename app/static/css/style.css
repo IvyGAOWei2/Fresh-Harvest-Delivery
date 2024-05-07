@@ -2,13 +2,26 @@
 :root {
     --bs-primary: #81C408;
 }
+#shop .breadcrumb a {
+    color: #81C408 !important;
+}
+#shop .breadcrumb li::before{
+    color: #797474f1 !important;
+}
+#shop .fruite-categorie a{
+    color: #81C408 !important;
+}
+#shop fa fa-star{
+    color: red !important;
+}
+
 .bg-primary {
     background-color: #81C408 !important;
 }
 .text-primary {
     color: #81C408 !important;
 }
-.text-white {
+.text-white, a {
     text-decoration: none;
 }
 .text-secondary {
@@ -24,7 +37,7 @@
     background-color: #FFB524 !important
 }
 
-.fa, .fas{
+.navbar .fa, .fas{
     color: #81c408;
 }
 
@@ -254,7 +267,7 @@
 
 .page-header {
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/cart-page-header-img.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../images/bg2.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
