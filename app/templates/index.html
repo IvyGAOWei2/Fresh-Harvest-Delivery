@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <!-- Head Start -->
+    {% with titleName='Fresh Harvest Delivery' %}
         {% include "components/PageHead.html" %}
-    <!-- Head End -->
+    {% endwith %}
 
     <body>
         <!-- Back to Top -->
             {% include "components/elements/BackToTop.html" %}
 
         <!-- Navbar -->
+        {% with is_home='1' %}
             {% include "components/layout/header/Nav1.html" %}
+        {% endwith %}
 
         <!-- Hero Start -->
         <div class="container-fluid py-5 mb-5 hero-header">

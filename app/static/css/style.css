@@ -2,18 +2,25 @@
 :root {
     --bs-primary: #81C408;
 }
-#shop .breadcrumb a {
+#shop .breadcrumb a , #shop_detail .breadcrumb a{
     color: #81C408 !important;
 }
-#shop .breadcrumb li::before{
+#shop .breadcrumb li::before, #shop_detail .breadcrumb li::before{
     color: #797474f1 !important;
 }
-#shop .fruite-categorie a{
+#shop .fruite-categorie a, #shop_detail .fruite-categorie a{
     color: #81C408 !important;
 }
-#shop fa fa-star{
-    color: red !important;
+
+#shop_detail #product .nav-link{
+    color: #797474f1 !important;
 }
+
+#shop_detail #product .nav-link.active {
+    color:#81C408 !important
+    /* background-color:var(--bs-nav-tabs-link-active-bg);
+    border-color:var(--bs-nav-tabs-link-active-border-color) */
+  }
 
 .bg-primary {
     background-color: #81C408 !important;
