@@ -1,15 +1,41 @@
 
 :root {
     --bs-primary: #81C408;
-    /* --bs-table-color-state: #747d88 !important; */
-    --bs-body-color: #747d88 !important;
-}
-#cart .table p, #cart .table th{
-    color: #747d88 !important;
+    --bs-body-color: #6a717a !important;
+    --bs-border-color: #c2c2c2 !important;
 }
 
-#cart .table .bg-light{
+#checkout .form-check-input:checked{
+    background-color: #81c408;
+    border-color: #81c408;
+}
+
+#checkout .table th, #checkout .table td{
+    color: #6a717a !important;
+}
+
+#checkout .table-group-divider {
+    border-top: .13rem solid;
+    border-color: #c2c2c2;
+}
+
+#checkout .table .bg-light{
     background: #E8E3E3EF !important;
+}
+
+#checkout .form-control {
+    transition: .6s !important
+}
+
+#checkout .form-control:focus {
+    border-color: #81C408;
+    box-shadow: 0 0 1.5rem #81C408;
+    color: #6a717a;
+    font-weight: 600
+}
+
+#cart .table p, #cart .table th{
+    color: #6a717a !important;
 }
 
 #breadcrumb .breadcrumb a{
