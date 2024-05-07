@@ -10,7 +10,7 @@
         <!-- Back to Top -->
             {% include "components/elements/BackToTop.html" %}
 
-        <!-- Navbar -->is_shop
+        <!-- Navbar -->
         {% with is_shop='1' %}
             {% include "components/layout/header/Nav1.html" %}
         {% endwith %}
@@ -358,17 +358,16 @@
         </div>
         <!-- Fruits Shop End-->
 
-
         <!-- Footer Start -->
             {% include "components/layout/footer/Footer1.html" %}
         <!-- Footer End -->
 
-    <!-- JavaScript Libraries -->
-    <script src="{{ url_for('static', filename='js/jquery-3.6.4.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+        <!-- JavaScript Libraries -->
+        <script src="{{ url_for('static', filename='js/jquery-3.6.4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
-    <!-- Template Javascript -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <!-- Template Javascript -->
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     </body>
 
 </html>

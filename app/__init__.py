@@ -10,5 +10,9 @@ app.salt = 'group_az'
 app.hashing = Hashing(app)
 
 
+# Consumer
 from app import index
 from app import shop
+from app import cart
+
+# Employees

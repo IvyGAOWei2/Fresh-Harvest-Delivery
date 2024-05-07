@@ -1,11 +1,25 @@
 
 :root {
     --bs-primary: #81C408;
+    /* --bs-table-color-state: #747d88 !important; */
+    --bs-body-color: #747d88 !important;
 }
-#shop .breadcrumb a , #shop_detail .breadcrumb a{
+#cart .table p, #cart .table th{
+    color: #747d88 !important;
+}
+
+#cart .table .bg-light{
+    background: #E8E3E3EF !important;
+}
+
+#breadcrumb .breadcrumb a{
     color: #81C408 !important;
 }
-#shop .breadcrumb li::before, #shop_detail .breadcrumb li::before{
+#breadcrumb a:hover{
+    color: #ffb524 !important;
+    transition: 0.6s;
+}
+#breadcrumb li::before{
     color: #797474f1 !important;
 }
 #shop .fruite-categorie a, #shop_detail .fruite-categorie a{
@@ -17,10 +31,8 @@
 }
 
 #shop_detail #product .nav-link.active {
-    color:#81C408 !important
-    /* background-color:var(--bs-nav-tabs-link-active-bg);
-    border-color:var(--bs-nav-tabs-link-active-border-color) */
-  }
+    color:#81C408 !important;
+}
 
 .bg-primary {
     background-color: #81C408 !important;
@@ -187,7 +199,12 @@
 .navbar .navbar-nav .nav-link.active,
 .fixed-top.bg-white .navbar .navbar-nav .nav-link:hover,
 .fixed-top.bg-white .navbar .navbar-nav .nav-link.active {
-    color: var(--bs-primary);
+    color: #81c408;
+}
+
+.navbar .navbar-nav .dropdown-item.active {
+    color: #fff;
+    background: #81c408;
 }
 
 .navbar .dropdown-toggle::after {
