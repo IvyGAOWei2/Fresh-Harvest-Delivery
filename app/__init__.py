@@ -2,11 +2,12 @@ from flask import Flask
 from flask_hashing import Hashing
 
 app = Flask(__name__)
-# app.config['UPLOAD_FOLDER'] = '/home/COMP639S1GroupAZ/COMP639S1_Group_AZ/app/static/images'
-app.config['UPLOAD_FOLDER'] = 'app/static/img'
+app.static_folder = 'static'
+# app.config['UPLOAD_FOLDER'] = '/home/COMP639S1GroupAZ/COMP639S1_Group_AZ/app/static/img'
+app.config['UPLOAD_FOLDER'] = 'static/images/upload'
 app.secret_key = 'f5c6b877e9e8461192677370eab53b2d'
 app.salt = 'group_az'
 app.hashing = Hashing(app)
 
 
-from app import home
+from app import index
