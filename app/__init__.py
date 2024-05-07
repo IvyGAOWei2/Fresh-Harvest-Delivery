@@ -14,5 +14,6 @@ app.hashing = Hashing(app)
 from app import index
 from app import shop
 from app import cart
+from app import contact
 
 # Employees
