@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %}</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- JQuery Libraries Stylesheet -->
+        <link href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" rel="stylesheet">
+
+        <!-- Icon Font Stylesheet -->
+        <link href="{{ url_for('static', filename='icon/fontawesome/css/all.css') }}" rel="stylesheet">
+
+        <!-- Bootstrap Stylesheet -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+        <!-- Customized Stylesheet -->
+        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- BackToTop Start -->
+            {% include "components/elements/BackToTop.html" %}
+        <!-- BackToTop End -->
+
+        <!-- Navbar Start -->
+            {% block navbar %}{% endblock %}
+        <!-- Navbar End -->
+
+        <!-- Breadcrumb Start -->
+            {% block breadcrumb %}{% endblock %}
+        <!-- Breadcrumb End -->
+        
+        <!-- Content Start -->
+            {% block content %}{% endblock %}
+        <!-- Content End -->
+
+        <!-- Footer Start -->
+            {% include "components/layout/footer/Footer1.html" %}
+        <!-- Footer End -->
+
+        <!-- JavaScript Libraries -->
+        <script src="{{ url_for('static', filename='js/jquery-3.6.4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+
+        <!-- Customized Javascript -->
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    </body>
+
+</html>
