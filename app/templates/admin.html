@@ -1,0 +1,70 @@
+{% extends "_consumer-base.html" %}
+
+{% block breadcrumb %}
+  {% with pageName='Page' %}
+    {% include "components/layout/Breadcrumb2.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+<!-- Main content -->
+<section class="main-content">
+  <h1>Welcome to Fresh Harvest Admin Panel</h1>
+
+  <!-- Employee Profile Section -->
+  <div id="employee-profile" class="card mb-4">
+    <div class="card-header">
+      <h2>Employee Profile</h2>
+    </div>
+    <div class="card-body">
+      <!-- Employee details form -->
+      <form>
+        <div class="mb-3">
+          <label for="fullName" class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Section (visible to managers and system administrators) -->
+  <div id="admin-actions" class="card">
+    <div class="card-header">
+      <h2>Admin Actions</h2>
+    </div>
+    <div class="card-body">
+      <!-- Admin actions form -->
+      <form>
+        <div class="mb-3">
+          <label for="categoryName" class="form-label">New Category Name</label>
+          <input type="text" class="form-control" id="categoryName" placeholder="Enter new category name">
+        </div>
+        <div class="mb-3">
+          <label for="unitType" class="form-label">Unit Type</label>
+          <select class="form-select" id="unitType">
+            <option selected>Select unit type</option>
+            <option value="weight">Weight</option>
+            <option value="bunch">Bunch</option>
+            <option value="punnet">Punnet</option>
+            <!-- Add more unit types as needed -->
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="shippingPrice" class="form-label">Shipping Price (NZD)</label>
+          <input type="number" class="form-control" id="shippingPrice" placeholder="Enter shipping price">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Category/Unit</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

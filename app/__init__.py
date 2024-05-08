@@ -17,3 +17,4 @@ from app import cart
 from app import contact
 
 # Employees
+from app import admin
