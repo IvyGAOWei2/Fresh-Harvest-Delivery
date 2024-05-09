@@ -25,6 +25,9 @@
 
     <!-- Bootstrap JS and dependencies -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- Customized Javascript -->
+    {% block script %}{% endblock %}
   </body>
 
 </html>
