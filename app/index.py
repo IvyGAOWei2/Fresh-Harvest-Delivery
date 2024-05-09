@@ -9,3 +9,7 @@ def index():
 @app.route("/404")
 def notFound():
     return render_template('404.html')
+
+@app.route("/exmaples")
+def exmaples():
+    return render_template('exmaples.html')
