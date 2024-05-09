@@ -1,0 +1,204 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}register_login{% endblock %}
+
+{% block navbar %}
+  {% with is_register_login='1' %}
+    {% include "components/layout/header/Nav1.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Login' %}
+    {% include "components/layout/Breadcrumb.html" %}
+  {% endwith %}
+{% endblock %}
+        
+<!-- Content Start -->
+{% block content %}
+<div class="container h-custom py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-md-9 col-lg-6 col-xl-6 my-lg-5 py-lg-5">
+        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="img-fluid" alt="Sample image">
+      </div>
+      <div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
+        <form>
+          <!-- Email input -->
+          <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
+            <label class="form-label" for="form3Example3" style="margin-left: 0px;">Email address</label>
+            <input type="email" id="form3Example3" class="form-control form-control-lg" placeholder="Enter a valid email address">
+          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 88.8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+          <!-- Password input -->
+          <div data-mdb-input-init="" class="form-outline mb-3" data-mdb-input-initialized="true">
+            <label class="form-label" for="form3Example4" style="margin-left: 0px;">Password</label>
+            <input type="password" id="form3Example4" class="form-control form-control-lg" placeholder="Enter password">
+          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <!-- Checkbox -->
+            <div class="form-check mb-0">
+              <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3">
+              <label class="form-check-label" for="form2Example3">
+                Remember me
+              </label>
+            </div>
+            <a href="" class="text-body">Forgot password?</a>
+          </div>
+
+          <div class="text-center text-lg-start mt-4 pt-2">
+            <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-primary btn-lg active" style="padding-left: 2.5rem; padding-right: 2.5rem;" data-mdb-button-initialized="true" aria-pressed="true">Login</button>
+            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a class="link-danger" data-bs-toggle="modal" data-bs-target="#exampleModal_register">Register</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal register -->
+  <div class="modal fade" id="exampleModal_register" tabindex="-1" aria-labelledby="exampleModal_registerTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModal_registerTitle">Register</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="#">
+            <div class="row">
+                <div class="col-md-12 ">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-6">
+                            <div class="form-item w-100">
+                                <label class="form-label my-3">First Name<sup>*</sup></label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-6">
+                            <div class="form-item w-100">
+                                <label class="form-label my-3">Last Name<sup>*</sup></label>
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                          <label class="form-label my-3">Phone<sup>*</sup></label>
+                          <input type="text" class="form-control">
+                      </div>
+                      </div>
+                      <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                          <label class="form-label my-3">Email Address<sup>*</sup></label>
+                          <input type="email" class="form-control">
+                      </div>
+                      </div>
+                    </div>  
+
+                    <div class="row">
+                      <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                          <label class="form-label my-3">City<sup>*</sup></label>
+                          <input type="text" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                          <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
+                          <input type="text" class="form-control">
+                        </div>
+                      </div>
+                    </div>  
+                    
+                    <div class="form-item">
+                      <label class="form-label my-3">Address <sup>*</sup></label>
+                      <input type="text" class="form-control" placeholder="House Number Street Name">
+                    </div>
+
+                    <div class="form-item">
+                      <label class="form-label my-3">Depot <sup>*</sup></label>
+                      <div class="col-md-3 d-flex align-items-center">
+                        <select class="form-select form-select-sm" name="cat" id="category">
+                          <option selected value="">--Please select a depot--</option>
+                          <option value="Christchurch">Christchurch</option>
+                          <option  value="Invercargill">Invercargill</option>
+                          <option  value="Wellington">Wellington</option>
+                          <option  value="Hamilton">Hamilton</option>
+                          <option  value="Auckland">Auckland</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-12 col-lg-6">
+                        <div class="form-item">
+                          <label class="form-label my-3">Password <sup>*</sup></label>
+                          <div class="input-group">
+                            <input type="password" minlength="8" maxlength="20" class="form-control password-input" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                            <div class="input-group-append">
+                              <button type="button" id="togglePasswordBtn" class="btn btn-outline-secondary"><i class="fas fa-eye-slash"></i></button>
+                            </div>
+                          </div>
+                            <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
+                        </div>
+                      </div>
+                    <!-- <div class="form-check my-3">
+                        <input type="checkbox" class="form-check-input" id="Account-1" name="Accounts" value="Accounts">
+                        <label class="form-check-label" for="Account-1">I agree to the <a data-bs-toggle="modal" data-bs-target="#exampleModal_terms">Terms of User</a></label>
+                    </div> -->
+                    <hr>
+                </div>
+            </div>
+        </form>
+       </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+</div>
+  </div>
+  </div>
+
+ <!-- Modal terms -->
+ <!-- <div class="modal fade" id="exampleModal_terms" tabindex="-1" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModal_termsTitle">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>This is some placeholder content to show the scrolling behavior for modals. We use repeated line breaks to demonstrate how content can exceed minimum inner height, thereby showing inner scrolling. When content becomes longer than the predefined max-height of modal, content will be cropped and scrollable within the modal.</p>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <p>This content should appear at the bottom after you scroll.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+ <script>
+  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+  const passwordInput = document.querySelector('.password-input');
+
+  togglePasswordBtn.addEventListener('click', function() {
+    if (passwordInput.getAttribute('type') === 'password') {
+      passwordInput.setAttribute('type', 'text');
+      togglePasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
+    } else {
+      passwordInput.setAttribute('type', 'password');
+      togglePasswordBtn.innerHTML  = '<i class="fas fa-eye-slash"></i>';
+    }
+  });
+</script>
+
+{% endblock %}
+
+
+
