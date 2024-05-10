@@ -15,6 +15,6 @@ from app import index
 from app import shop
 from app import cart
 from app import contact
-
+from app import c_profile
 # Employees
 from app import admin
