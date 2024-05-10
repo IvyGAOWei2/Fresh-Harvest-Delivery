@@ -1,0 +1,108 @@
+/* Navbar style */
+.navbar {
+    margin-left: 16rem;
+    padding-left: 2rem;
+    height: 4rem;
+    background-color: #212631 !important;
+    border-color: #323a49 !important;
+  }
+
+  .navbar-brand {
+    color: #fff;
+    font-size: 1.5rem;
+  }
+  .navbar-text {
+    color: #fff;
+    margin-right: 1rem;
+  }
+  .navbar .breadcrumb-item a{
+    color: #f8f8f8 !important;
+  }
+  .navbar .breadcrumb-item.active {
+    color: #acaaaa !important;
+  }
+
+  .navbar .breadcrumb-item + .breadcrumb-item::before {
+    content: '/';
+    color: #f8f8f8;
+    margin: 0 .3rem;
+  }
+
+  .navbar i {
+    color: #acaaaa !important;
+  }
+
+  .navbar i:hover {
+    color: #f8f8f8 !important;
+  }
+
+  .navbar .btn-outline-light {
+    border-color: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* Sidebar style */
+  .sidebar {
+    height: 100%;
+    width: 16rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #212631;
+    border-color: #323a49 !important;
+  }
+
+  /* Sidebar header */
+  .sidebar-header {
+    text-align: center;
+    height: 4rem;
+    border-color: #323a49 !important;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-header h1 {
+    padding-top: 1rem;
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  /* Sidebar links */
+  .sidebar a {
+    padding: .7rem 0;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: #acaaaa; /* Text color */
+    margin: 0 .5rem;
+    border-radius: .2rem;
+    transition: .3s;
+  }
+
+  .sidebar a i {
+    margin-right: 1rem;
+    color: inherit;
+    margin-left: 1.5rem; /* Left margin for icons */
+  }
+
+  .sidebar a:hover {
+    /* color: #81c408;; */
+    text-decoration: none;
+    background: #323a49;
+    color: #f8f8f8; /* Text color on hover */
+  }
+
+  .sidebar .badge {
+    padding: .2rem .3rem;
+    font-size: .6rem;
+    background: #3399ff !important;
+    margin-left: 2.6rem;
+    margin-top: .2rem;
+  }
+
+  /* Main content style */
+  .main-content {
+    margin-top: 4rem;
+    margin-left: 16rem;
+    padding: 2rem;
+  }

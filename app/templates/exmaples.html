@@ -1,0 +1,47 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block navbar %}
+  {% with is_examples='1' %}
+    {% include "components/layout/header/Nav1.html" %}
+  {% endwith %}
+{% endblock %}
+
+
+{% block content %}
+
+<section id="example" style="margin-top: 20vh;">
+    <div class="container-fluid py-5">
+        <div class="container py-5 text-center">
+          <h3 class="display-1">Examples</h3>
+            <div class="row justify-content-center">
+                <div class="col-3">
+                  {% with
+                    btn_hide = '0',
+                    btn_text = 'Update Success',
+                    bg = '#81C408',
+                    title = 'Update Success',
+                    msg = 'Your {item} has been successfully updated'
+                  %}
+                      {% include "components/elements/updateSuccess.html" %}
+                  {% endwith %}
+                </div>
+
+                <div class="col-3">
+                  {% with
+                    btn_hide = '0',
+                    btn_text = 'Del Confirm',
+                    bg = '#dc3545',
+                    bg2 = '#81C408',
+                    title = 'Delete Confirmation',
+                    msg = 'Are you sure to delete this {item}?'
+                  %}
+                    {% include "components/elements/delConfirm.html" %}
+                  {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

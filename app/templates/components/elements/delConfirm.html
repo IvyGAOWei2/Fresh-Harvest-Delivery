@@ -1,0 +1,100 @@
+{% set bg_color = bg %}
+{% set bg_color2 = bg2 %}
+
+<style>
+  #delConfirmModal .modal-content {
+    border: none;
+    box-shadow: {{bg_color}} (212, 24, 24, 0.2);
+  }
+
+  #delConfirmModal .modal-title {
+    background: {{bg_color}};
+    color: #fff;
+    font-weight: 600;
+  }
+
+  #delConfirmModal .modal .btn-close {
+    margin-left: 0;
+  }
+
+  #delConfirmModal .modal-body {
+    padding-top: 3rem;
+    font-size: 1.2rem;
+    text-align: center;
+    border: none;
+  }
+
+  #delConfirmModal .modal-header {
+    background: {{bg_color}};
+    border: none;
+  }
+
+  #delConfirmModal .modal-footer {
+    border: none;
+  }
+
+  #delConfirmModal .modal-footer .btn-secondary {
+    background-color: #fff;
+    color: {{bg_color}};
+    border-color: {{bg_color}};
+    transition: background-color 0.6s, border-color 0.6s;
+  }
+
+  #delConfirmModal .modal-footer .btn-secondary:hover {
+    color: #fff;
+    background-color: {{bg_color}};
+    border-color: {{bg_color}}
+  }
+
+  #delConfirmModal .modal-footer .btn-primary {
+    background-color: #fff !important;
+    color: {{bg_color2}} !important;
+    border-color: {{bg_color2}} !important;
+    transition: background-color 0.6s, border-color 0.6s;
+  }
+
+  #delConfirmModal .modal-footer .btn-primary:hover {
+    color: #fff !important;
+    background-color: {{bg_color2}} !important;
+    border-color: {{bg_color2}} !important;
+  }
+
+  #delConfirmModal .modal-content .del-close {
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.4s, transform 0.4s;
+  }
+
+  #delConfirmModal .modal-content .del-close:hover {
+    transform: scale(1.2);
+  }
+</style>
+
+<section>
+  {% if btn_hide %}
+    <button style="border: none;" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delConfirmModal">
+      {{btn_text}}
+    </button>
+  {% endif %}
+
+  <div class="modal fade" id="delConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title mx-auto" id="delConfirmLabel">
+            <i class="fas fa-trash" style="color: #fff;padding-right:.3rem;"></i>
+            {{title}}
+          </h5>
+          <i data-bs-dismiss="modal" class="del-close fas fa-times fa-lg"></i>
+        </div>
+        <div class="modal-body">
+          {{msg}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

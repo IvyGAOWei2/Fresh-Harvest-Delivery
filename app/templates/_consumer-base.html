@@ -22,25 +22,20 @@
     </head>
 
     <body>
-        <!-- BackToTop Start -->
-            {% include "components/elements/BackToTop.html" %}
-        <!-- BackToTop End -->
+        <!-- BackToTop -->
+        {% include "components/elements/BackToTop.html" %}
 
-        <!-- Navbar Start -->
-            {% block navbar %}{% endblock %}
-        <!-- Navbar End -->
+        <!-- Navbar -->
+        {% block navbar %}{% endblock %}
 
-        <!-- Breadcrumb Start -->
-            {% block breadcrumb %}{% endblock %}
-        <!-- Breadcrumb End -->
+        <!-- Breadcrumb -->
+        {% block breadcrumb %}{% endblock %}
         
-        <!-- Content Start -->
-            {% block content %}{% endblock %}
-        <!-- Content End -->
+        <!-- Content -->
+        {% block content %}{% endblock %}
 
-        <!-- Footer Start -->
-            {% include "components/layout/footer/Footer1.html" %}
-        <!-- Footer End -->
+        <!-- Footer -->
+        {% include "components/layout/footer/Footer1.html" %}
 
         <!-- JavaScript Libraries -->
         <script src="{{ url_for('static', filename='js/jquery-3.6.4.min.js') }}"></script>

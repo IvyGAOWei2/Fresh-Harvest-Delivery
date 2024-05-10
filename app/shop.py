@@ -9,4 +9,4 @@ def shop():
 
 @app.route("/shopdetail")
 def shopDetail():
-    return render_template('shop_detail.html')
+    return render_template('shop-detail.html')
