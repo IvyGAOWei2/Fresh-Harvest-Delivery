@@ -39,8 +39,17 @@
                             <input type="text" class="form-control" placeholder="House Number Street Name">
                         </div>
                         <div class="form-item">
-                            <label class="form-label my-3">Town/City<sup>*</sup></label>
-                            <input type="text" class="form-control">
+                            <label class="form-label my-3">City <sup>*</sup></label>
+                            <div class="col-md-12">
+                              <select class="form-select form-select-sm" name="city" id="city">
+                                <option selected value="">--Please select a City--</option>
+                                <option value="Christchurch">Christchurch</option>
+                                <option value="Invercargill">Invercargill</option>
+                                <option value="Wellington">Wellington</option>
+                                <option value="Hamilton">Hamilton</option>
+                                <option value="Auckland">Auckland</option>
+                              </select>
+                            </div>
                         </div>
                         <div class="form-item">
                             <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
@@ -50,7 +59,6 @@
                             <label class="form-label my-3">Mobile<sup>*</sup></label>
                             <input type="tel" class="form-control">
                         </div>
-
                         <div class="form-item">
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
@@ -61,13 +69,12 @@
                             <input type="text" class="form-control" value="300" readonly>
                         </div>
                         <div class="form-item">
-                            <label class="form-label my-3">Account Limit</label>
+                            <label class="form-label my-3 ">Account Limit</label>
                             <input type="text" class="form-control" value="500" readonly>
                         </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">My Box</label>
-                            <input type="text" class="form-control" value="#" readonly>
-                        </div>
+                        <div class="form-item" >
+                            <label class="form-label my-3">My Box Subscription</label>
+                            <input type="text" class="form-control" cols="30" rows="11" readonly>
                     </div>
                 </div>
             </form>
