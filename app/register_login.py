@@ -7,5 +7,8 @@ def register_login():
     return render_template('register_login.html')
 
 
+@app.route("/register")
+def register():
+    return render_template('register.html')
 
 
