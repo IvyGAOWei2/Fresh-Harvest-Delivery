@@ -10,7 +10,7 @@
 
 {% block breadcrumb %}
   {% with pageName='Register' %}
-    {% include "components/layout/Breadcrumb.html" %}
+    {% include "components/layout/Breadcrumb1.html" %}
   {% endwith %}
 {% endblock %}
         
@@ -50,13 +50,14 @@
                   <div class="d-flex flex-row align-items-center mb-4">
                   <i class="fas fa-city fa-lg me-3 fa-fw"></i>
                   <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                  <div class="row">
-                    <div class="col-md-12 col-lg-6">
+                  <div class="row g-3">
+
+                    <div class="col-md-12 col-lg-3">
                       <div class="form-item w-100">
-                        <label class="form-label my-3">Depot <sup>*</sup></label>
+                        <label class="form-label my-3">Address<sup>*</sup></label>
                         <div class="d-flex align-items-center">
                           <select class="form-select form-select-sm" name="cat" id="category">
-                            <option selected value="">-- Please select a depot --</option>
+                            <option selected value="">City</option>
                             <option value="Christchurch">Christchurch</option>
                             <option  value="Invercargill">Invercargill</option>
                             <option  value="Wellington">Wellington</option>
@@ -66,15 +67,24 @@
                         </div>
                      </div>
                     </div>
-                    <div class="col-md-12 col-lg-6">
+
+                    <div class="col-md-12 col-lg-2">
                       <div class="form-item w-100">
-                        <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
-                        <input type="text" class="form-control">
+                        <label class="form-label my-3"> </label>
+                        <input type="text" class="form-control" placeholder="Postcode">
                       </div>
                     </div>
-                  </div>  
+
+                    <div class="col-md-12 col-lg-7">
+                      <div class="form-item w-100">
+                        <label class="form-label my-3"> </label>
+                        <input type="email" class="form-control" placeholder="House Number Street Name">
+                    </div>
+                    </div>  
+
                   </div>
                   </div>  
+                  </div> 
 
                   <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
