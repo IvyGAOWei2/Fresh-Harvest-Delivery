@@ -1,6 +1,6 @@
 [client]
 user = root
-password = test
+password = lishuaibin
 host = localhost
 port = 3306
 database = freshHarvestDelivery
