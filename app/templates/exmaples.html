@@ -10,38 +10,50 @@
 
 
 {% block content %}
-
 <section id="example" style="margin-top: 20vh;">
-    <div class="container-fluid py-5">
-        <div class="container py-5 text-center">
+    <div class="container-fluid text-center">
           <h3 class="display-1">Examples</h3>
-            <div class="row justify-content-center">
-                <div class="col-3">
-                  {% with
-                    btn_hide = '0',
-                    btn_text = 'Update Success',
-                    bg = '#81C408',
-                    title = 'Update Success',
-                    msg = 'Your {item} has been successfully updated'
-                  %}
-                      {% include "components/elements/updateSuccess.html" %}
-                  {% endwith %}
-                </div>
 
-                <div class="col-3">
-                  {% with
-                    btn_hide = '0',
-                    btn_text = 'Del Confirm',
-                    bg = '#dc3545',
-                    bg2 = '#81C408',
-                    title = 'Delete Confirmation',
-                    msg = 'Are you sure to delete this {item}?'
-                  %}
-                    {% include "components/elements/delConfirm.html" %}
-                  {% endwith %}
-                </div>
-            </div>
-        </div>
+          <div class="p-3">
+            <!-- Update Success btn code start here -->
+            {% with
+              btn_hide = '0',
+              btn_text = 'Update Success',
+              bg_color = '#81C408',
+              title = 'Update Success',
+              msg = 'Your {item} has been successfully updated'
+            %}
+                {% include "components/elements/updateSuccess.html" %}
+            {% endwith %}
+            <!-- Update Success btn code end here -->
+          </div>
+          
+          <div class="p-3">
+            <!-- Delete Confirmation btn code start here -->
+            {% with
+              btn_hide = '0',
+              btn_text = 'Del Confirm',
+              bg_color = '#dc3545',
+              bg_color2 = '#81C408',
+              title = 'Delete Confirmation',
+              msg = 'Are you sure to delete this {item}?'
+            %}
+              {% include "components/elements/delConfirm.html" %}
+            {% endwith %}
+            <!-- Delete Confirmation btn code start here -->
+          </div>
+
+          <div class="col-sm-3 offset-sm-5 p-3">
+            <!-- SearchBtn code start here -->
+            {% with
+              placeholder = 'keywords',
+              border_color = '#81C408',
+              background_color = '#81C408'
+            %}
+              {% include "components/elements/SearchBtn.html" %}
+            {% endwith %}
+            <!-- SearchBtn code start here -->
+          </div>
     </div>
 </section>
 {% endblock %}
