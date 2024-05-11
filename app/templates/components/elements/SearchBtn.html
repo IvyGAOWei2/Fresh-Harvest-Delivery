@@ -1,0 +1,41 @@
+{% set p = placeholder %}
+{% set b_c = border_color %}
+{% set bg_c = background_color %}
+
+<style>
+  #searchBtn .input-group-text {
+    padding: 1rem 1.6rem 1rem 1.6rem !important;
+  }
+  #searchBtn input {
+    transition: .6s !important;
+    border-color: {{b_c}} !important
+  }
+  #searchBtn input:focus {
+    border-color: {{b_c}};
+    box-shadow: 0 0 1.6rem {{b_c}};
+  }
+  #searchBtn span{
+    background: {{bg_c}} !important
+  }
+  #searchBtn .fa{
+    color: #fff !important;
+  }
+  #searchBtn span, #searchBtn .fa{
+    transition: .3s !important
+  }
+  #searchBtn span:hover{
+    cursor: pointer !important;
+  }
+  #searchBtn span:hover > .fa {
+    transform: scale(1.35);
+  }
+</style>
+
+<section>
+  <div id="searchBtn">
+    <div class="input-group d-flex">
+      <input type="search" class="form-control" placeholder="{{p}}" aria-describedby="search-icon-1">
+      <span id="search-icon-1" class="input-group-text"><i class="fa fa-search"></i></span>
+    </div>
+  </div>
+</section>
