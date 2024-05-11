@@ -19,7 +19,7 @@
 <div class="container h-custom py-5">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-6 my-lg-5 py-lg-5">
-        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" class="img-fluid" alt="Sample image">
+        <img src="/static/images/slide1.png" class="img-fluid" alt="Sample image">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
         <form>
@@ -27,12 +27,14 @@
           <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
             <label class="form-label" for="form3Example3" style="margin-left: 0px;">Email address</label>
             <input type="email" id="form3Example3" class="form-control form-control-lg" placeholder="Enter a valid email address">
+            <div id="emailError" style="color: red; display: none;"></div>
           <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 88.8px;"></div><div class="form-notch-trailing"></div></div></div>
 
           <!-- Password input -->
           <div data-mdb-input-init="" class="form-outline mb-3" data-mdb-input-initialized="true">
             <label class="form-label" for="form3Example4" style="margin-left: 0px;">Password</label>
-            <input type="password" id="form3Example4" class="form-control form-control-lg" placeholder="Enter password">
+            <input type="password" id="form3Example4" class="form-control form-control-lg"  placeholder="Enter your password">
+            <div id="passwordError" style="color: red; display: none;"></div>
           <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
 
           <div class="d-flex justify-content-between align-items-center">
@@ -58,8 +60,8 @@
 {% endblock %}
 
 
-{% block script %}
-<script>
+ <script>
+  // Password toggle
   const togglePasswordBtn = document.getElementById('togglePasswordBtn');
   const passwordInput = document.querySelector('.password-input');
 
@@ -72,9 +74,49 @@
       togglePasswordBtn.innerHTML  = '<i class="fas fa-eye-slash"></i>';
     }
   });
+
+
+// Email validation
+const emailInput = document.getElementById('form3Example3');
+const emailError = document.getElementById('emailError');
+
+emailInput.addEventListener('blur', () => {
+  validateEmail(emailInput, emailError);
+});
+
+function validateEmail(inputField, errorElement) {
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+  const isValidEmail = emailRegex.test(inputField.value);
+
+  if (isValidEmail) {
+    errorElement.style.display = 'none';
+  } else {
+    errorElement.style.display = 'block';
+    errorElement.textContent = 'Please enter a valid email address.';
+  }
+}
+
+// Password validation
+const passwordInputLogin = document.getElementById('form3Example4');
+const passwordError = document.getElementById('passwordError');
+
+passwordInputLogin.addEventListener('blur', () => {
+  validatePassword(passwordInputLogin, passwordError);
+});
+
+function validatePassword(inputField, errorElement) {
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  const isValidPassword = passwordRegex.test(inputField.value);
+
+  if (isValidPassword) {
+    errorElement.style.display = 'none';
+  } else {
+    errorElement.style.display = 'block';
+    errorElement.textContent = 'Password must be at least 8 characters long, contain at least 1 letter and 1 number';
+  }
+}
+
 </script>
 
 {% endblock %}
-
-
 
