@@ -16,153 +16,127 @@
         
 <!-- Content Start -->
 {% block content %}
-<section class="vh-100" style="background-color: #eee;">
-  <div class="container-fluid h-100">
-    <div class="row d-flex justify-content-center align-items-left h-100">
-      <div class="col-lg-12 col-xl-11">
-        <div class="card text-black" style="border-radius: 25px;">
-          <div class="card-body p-md-5">
-            <div class="row justify-content-center">
-              <div class="col-md-10 col-lg-6 col-xl-7 order-2 order-lg-1">
-
-                <form class="mx-1 mx-md-4">
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <div class="row">
-                        <div class="col-md-12 col-lg-6">
-                            <div class="form-item w-100">
-                                <label class="form-label my-3">First Name<sup>*</sup></label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-lg-6">
-                            <div class="form-item w-100">
-                                <label class="form-label my-3">Last Name<sup>*</sup></label>
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                      </div>                 
-                    </div>
+<div class="container-fluid py-5">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-md-8 col-lg-6 col-xl-7 my-lg-5 py-lg-5">
+      <form>
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                  <div class="form-item w-100">
+                      <label class="form-label">First Name<sup>*</sup></label>
+                      <input type="text" class="form-control form-control-lg">
                   </div>
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                  <i class="fas fa-city fa-lg me-3 fa-fw"></i>
-                  <div data-mdb-input-init class="form-outline flex-fill mb-0">
-
-                  <div class="row">
-                    <div class="col-md-12 col-lg-3">
-                      <div class="form-item w-100">
-                        <label class="form-label my-3">Address<sup>*</sup></label>
-                        <div class="d-flex align-items-center">
-                          <select class="form-select form-select-sm" name="cat" id="category">
-                            <option selected value="">City</option>
-                            <option value="Christchurch">Christchurch</option>
-                            <option  value="Invercargill">Invercargill</option>
-                            <option  value="Wellington">Wellington</option>
-                            <option  value="Hamilton">Hamilton</option>
-                            <option  value="Auckland">Auckland</option>
-                          </select>
-                        </div>
-                     </div>
-                    </div>
-
-                    <div class="col-md-12 col-lg-2">
-                      <div class="form-item w-100">
-                        <label class="form-label my-3 ">Zip</label>
-                        <input type="text" class="form-control" placeholder="Postcode">
-                      </div>
-                    </div>
-
-                    <div class="col-md-12 col-lg-7">
-                      <div class="form-item w-100">
-                        <label class="form-label my-3 ">Street</label>
-                        <input type="email" class="form-control" placeholder="House Number Street Name">
-                    </div>
-                    </div>  
-
-                  </div>
-                  </div>  
-                  </div> 
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <div class="row">
-                        <div class="col-md-12 col-lg-6">
-                          <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-                          <input type="email" id="form3Example3c" class="form-control" />           
-                        </div>
-                      </div>           
-                    </div>
-                  </div>
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <div class="row">
-                        <div class="col-md-12 col-lg-6">
-                          <label class="form-label" for="form3Example3c">Phone <sup>*</sup></label>
-                          <input type="phone" id="form3Example3c" class="form-control" />           
-                        </div>
-                      </div>           
-                    </div>
-                  </div>
-
-                  <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <div class="row">
-                        <div class="col-md-12 col-lg-6">
-                          <div class="form-item">
-                            <label class="form-label my-3">Password <sup>*</sup></label>
-                            <div class="input-group">
-                              <input type="password" minlength="8" maxlength="20" class="form-control password-input" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
-                              <div class="input-group-append">
-                                <button type="button" id="togglePasswordBtn" class="btn btn-outline-secondary"><i class="fas fa-eye-slash"></i></button>
-                              </div>
-                            </div>
-                              <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
-                          </div>
-                      </div>
-                    </div>
-                    </div>
-                  </div>
-
-                  <!-- <div class="d-flex flex-row align-items-center mb-4">
-                    <i class="fas fa-key fa-lg me-3 fa-fw"></i>
-                    <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                      <label class="form-label" for="form3Example4cd">Repeat your password</label>
-                      <input type="password" id="form3Example4cd" class="form-control" />
-                    </div>
-                  </div> -->
-
-                  <div class="form-check d-flex justify-content-left mb-5">
-                    <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
-                    <label class="form-check-label" for="form2Example3">
-                      I agree all statements in <a class="link" data-bs-toggle="modal" data-bs-target="#exampleModal_terms">Terms of service</a>
-                    </label>
-                  </div>
-
-                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                    <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg">Register</button>
-                  </div>
-
-                </form>
-
               </div>
-              <div class="col-md-10 col-lg-6 col-xl-5 d-flex align-items-center order-1 order-lg-2">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                  class="img-fluid" alt="Sample image">
+              <div class="col-md-12 col-lg-6">
+                  <div class="form-item w-100">
+                      <label class="form-label">Last Name<sup>*</sup></label>
+                      <input type="text" class="form-control form-control-lg">
+                  </div>
+              </div>
+            </div>                 
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-city fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+          <div class="row">
+            <div class="col-md-12 col-lg-4">
+                <label class="form-label">Address<sup>*</sup></label>
+                <div class="d-flex align-items-center">
+                  <select class="form-cotrol form-control-lg" name="cat" id="category">
+                    <option selected value="">Please select your city</option>
+                    <option value="Christchurch">Christchurch</option>
+                    <option  value="Invercargill">Invercargill</option>
+                    <option  value="Wellington">Wellington</option>
+                    <option  value="Hamilton">Hamilton</option>
+                    <option  value="Auckland">Auckland</option>
+                  </select>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-2">
+                <label class="form-label">Postcode<sup>*</sup></label>
+                <input type="text" class="form-control form-control-lg" placeholder="Zip">
+            </div>
+
+            <div class="col-md-12 col-lg-6">
+                <label class="form-label">Street<sup>*</sup></label>
+                <input type="email" class="form-control form-control-lg" placeholder="House Number Street Name">
+            </div>  
+
+          </div>
+          </div>  
+        </div> 
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
+                <input type="email" id="form3Example3c" class="form-control form-control-lg" />           
+              </div>
+            </div>           
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                <label class="form-label" for="form3Example3c">Phone <sup>*</sup></label>
+                <input type="phone" id="form3Example3c" class="form-control form-control-lg" />           
+              </div>
+            </div>           
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                <label class="form-label">Password <sup>*</sup></label>
+                <div class="input-group">
+                  <input type="password" minlength="8" maxlength="20" class="form-control password-input form-control-lg" aria-describedby="togglePasswordBtn" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                    <span class="input-group-btn">
+                      <button class="btn btn-outline-secondary btn-lg" type="button" id="togglePasswordBtn"><i class="fas fa-eye-slash"></i></button>
+                    </span>  
+                </div>
+                <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+
+        <!-- <div class="input-group">
+          <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="togglePasswordBtn">
+          <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn"><i class="fas fa-eye-slash"></i></button>
+        </div> -->
+
+        <div class="form-check d-flex justify-content-left mb-5">
+          <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
+          <label class="form-check-label" for="form2Example3">
+            I agree all statements in <a class="link" data-bs-toggle="modal" data-bs-target="#exampleModal_terms">Terms of service</a>
+          </label>
+        </div>
+
+        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+          <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg">Register</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-10 col-lg-6 col-xl-4 align-items-center order-1 order-lg-2">
+      <img src="/static/images/register.jpg" class="img-fluid" alt="Sample image">
     </div>
   </div>
-</section>
+</div>
+
 
  <!-- Modal terms -->
  <div class="modal fade" id="exampleModal_terms" tabindex="-1" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true" style="display: none;">
