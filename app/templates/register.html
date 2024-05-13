@@ -19,7 +19,7 @@
 <div class="container-fluid py-5">
   <div class="row d-flex justify-content-center align-items-center h-100">
     <div class="col-md-8 col-lg-6 col-xl-7 my-lg-5 py-lg-5">
-      <form>
+      <form id="subscriptionForm" class="needs-validation" novalidate>
         <div class="d-flex flex-row align-items-center mb-4">
           <i class="fas fa-user fa-lg me-3 fa-fw"></i>
           <div data-mdb-input-init class="form-outline flex-fill mb-0">
@@ -27,13 +27,13 @@
               <div class="col-md-12 col-lg-6">
                   <div class="form-item w-100">
                       <label class="form-label">First Name<sup>*</sup></label>
-                      <input type="text" class="form-control form-control-lg">
+                      <input type="text" class="form-control form-control-lg" required>
                   </div>
               </div>
               <div class="col-md-12 col-lg-6">
                   <div class="form-item w-100">
                       <label class="form-label">Last Name<sup>*</sup></label>
-                      <input type="text" class="form-control form-control-lg">
+                      <input type="text" class="form-control form-control-lg" required>
                   </div>
               </div>
             </div>                 
@@ -60,12 +60,12 @@
 
             <div class="col-md-12 col-lg-2">
                 <label class="form-label">Postcode<sup>*</sup></label>
-                <input type="text" class="form-control form-control-lg" placeholder="Zip">
+                <input type="text" class="form-control form-control-lg" placeholder="Zip" required>
             </div>
 
             <div class="col-md-12 col-lg-6">
                 <label class="form-label">Street<sup>*</sup></label>
-                <input type="email" class="form-control form-control-lg" placeholder="House Number Street Name">
+                <input type="text" minlength="5" maxlength="50"  class="form-control form-control-lg" placeholder="House Number Street Name" required>
             </div>  
 
           </div>
@@ -78,7 +78,7 @@
             <div class="row">
               <div class="col-md-12 col-lg-6">
                 <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-                <input type="email" id="form3Example3c" class="form-control form-control-lg" />           
+                <input type="email" id="form3Example3c" class="form-control form-control-lg" required/>           
               </div>
             </div>           
           </div>
@@ -90,7 +90,8 @@
             <div class="row">
               <div class="col-md-12 col-lg-6">
                 <label class="form-label" for="form3Example3c">Phone <sup>*</sup></label>
-                <input type="phone" id="form3Example3c" class="form-control form-control-lg" />           
+                <input type="text" minlength="7" maxlength="13" pattern="^[0-9]+$" id="form3Example3c" class="form-control form-control-lg" required/>           
+                <div class="invalid-feedback">Phone number cannot be less than 7 digits or more than 13 digits</div>
               </div>
             </div>           
           </div>
@@ -120,7 +121,7 @@
         </div> -->
 
         <div class="form-check d-flex justify-content-left mb-5">
-          <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
+          <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" required/>
           <label class="form-check-label" for="form2Example3">
             I agree all statements in <a class="link" data-bs-toggle="modal" data-bs-target="#exampleModal_terms">Terms of service</a>
           </label>
@@ -129,10 +130,15 @@
         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
           <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg">Register</button>
         </div>
+
+        <div class="text-center text-lg-start">
+          <p class="small fw-bold  mb-0">Already have an account? <a class="link-danger" href="{{ url_for('register_login') }}">Login</a></p>
+        </div>
+
       </form>
     </div>
     <div class="col-md-10 col-lg-6 col-xl-4 align-items-center order-1 order-lg-2">
-      <img src="/static/images/register.jpg" class="img-fluid" alt="Sample image">
+      <img src="/static/images/register.jpeg" class="img-fluid" alt="Sample image">
     </div>
   </div>
 </div>
@@ -195,18 +201,41 @@
 
 {% block script %}
 <script>
-  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-  const passwordInput = document.querySelector('.password-input');
 
-  togglePasswordBtn.addEventListener('click', function() {
-    if (passwordInput.getAttribute('type') === 'password') {
-      passwordInput.setAttribute('type', 'text');
-      togglePasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
-    } else {
-      passwordInput.setAttribute('type', 'password');
-      togglePasswordBtn.innerHTML  = '<i class="fas fa-eye-slash"></i>';
-    }
-  });
+// Password toggle
+const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+const passwordInput = document.querySelector('.password-input');
+
+togglePasswordBtn.addEventListener('click', function() {
+  if (passwordInput.getAttribute('type') === 'password') {
+    passwordInput.setAttribute('type', 'text');
+    togglePasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
+  } else {
+    passwordInput.setAttribute('type', 'password');
+    togglePasswordBtn.innerHTML  = '<i class="fas fa-eye-slash"></i>';
+  }
+});
+
+// Email validation
+const emailInput = document.getElementById('form3Example3');
+const emailError = document.getElementById('emailError');
+
+emailInput.addEventListener('blur', () => {
+  validateEmail(emailInput, emailError);
+});
+
+function validateEmail(inputField, errorElement) {
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+  const isValidEmail = emailRegex.test(inputField.value);
+
+  if (isValidEmail) {
+    errorElement.style.display = 'none';
+  } else {
+    errorElement.style.display = 'block';
+    errorElement.textContent = 'Please enter a valid email address.';
+  }
+}
+
 </script>
 
 {% endblock %}
