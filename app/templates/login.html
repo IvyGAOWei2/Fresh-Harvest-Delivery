@@ -8,49 +8,91 @@
   {% endwith %}
 {% endblock %}
 
-{% block breadcrumb %}
-  {% with pageName='Login' %}
-    {% include "components/layout/Breadcrumb1.html" %}
-  {% endwith %}
-{% endblock %}
-
 <!-- Content Start -->
 {% block content %}
-  <div class="container h-custom py-5">
+  <style>
+    #login .form-control, #showPassword, #loginSave, #login a{
+      transition: .6s !important
+    }
+    #login .form-control:focus {
+      border-color: #81C408;
+      box-shadow: 0 0 1.5rem #81C408;
+    }
+    #showPassword {
+      border-top-right-radius: .3rem;
+      border-bottom-right-radius: .3rem;
+      border-color: #c2c2c2;
+      border-left:none
+    }
+    #login .form-check-input{
+      border-color: #c2c2c2 !important;
+    }
+    #login .form-check-input:hover{
+      cursor: pointer;
+      border-color: #81C408 !important;
+    }
+    #login .form-check-input:checked {
+      background-color:#81C408;
+      border-color: #81C408 !important;
+      box-shadow: 0 0 1.5rem #81C408 !important;
+    }
+    #login .btn-primary {
+      border-color:#81c408 !important;
+      background-color:#81c408 !important
+    }
+
+    #login .btn-primary:hover {
+      border-color:#FFB524 !important;
+      background-color:#FFB524 !important;
+    }
+    #login a{
+      color: #0b57d0 !important
+    }
+    #login a:hover {
+      color: #c2c2c2 !important;
+    }
+  </style>
+
+  <div id="login" class="container h-custom py-5">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-6 my-lg-5 py-lg-5">
         <img src="/static/images/slide1.png" class="img-fluid" alt="Sample image">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
-        <form>
-          <!-- Email input -->
-          <div data-mdb-input-init="" class="form-outline mb-4" data-mdb-input-initialized="true">
-            <label class="form-label" for="form3Example3" style="margin-left: 0px;">Email address</label>
-            <input type="email" id="form3Example3" class="form-control" placeholder="Enter a valid email address">
-            <div id="emailError" style="color: red; display: none;"></div>
-          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 88.8px;"></div><div class="form-notch-trailing"></div></div></div>
-
-          <!-- Password input -->
-          <div data-mdb-input-init="" class="form-outline mb-3" data-mdb-input-initialized="true">
-            <label class="form-label" for="form3Example4" style="margin-left: 0px;">Password</label>
-            <input type="password" id="form3Example4" class="form-control"  placeholder="Enter your password">
-            <div id="passwordError" style="color: red; display: none;"></div>
-          <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64px;"></div><div class="form-notch-trailing"></div></div></div>
-
-          <div class="d-flex justify-content-between align-items-center">
-            <!-- Checkbox -->
-            <div class="form-check mb-0">
-              <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3">
-              <label class="form-check-label" for="form2Example3">
+        <form class="row g-3 needs-validation" novalidate>
+          <!-- Email -->
+          <div class="form-outline">
+              <label for="loginEmail" class="form-label fw-bold mb-3 fs-4">Email address</label>
+              <input type="email" maxlength="50" class="form-control" id="loginEmail" name="email" placeholder="example@gmail.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
+              <div id="emailError" class="invalid-feedback">Please enter a valid email address</div>
+              <div class="valid-feedback">Looks good!</div>
+          </div>
+          <!-- Password -->
+          <div class="form-outline">
+              <label for="loginPassword" class="form-label fw-bold mb-3 fs-4">Password</label>
+              <div class="input-group">
+                  <input type="password" maxlength="50" class="form-control" id="loginPassword" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                  <button class="btn btn-outline-secondary" type="button" id="showPassword">
+                    <i class="fas fa-eye" style="width: 2rem;"></i>
+                  </button>
+                <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
+                <div class="valid-feedback">Looks good!</div>
+            </div>
+          </div>
+          <!-- Remember -->
+          <div class="form-outline d-flex justify-content-between">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="loginSave" name="is_saved">
+              <label class="form-check-label" for="loginSave">
                 Remember me
               </label>
             </div>
-            <a href="" class="text-body">Forgot password?</a>
+            <a href="{{ url_for('login') }}" class="fs-6">Forgot password?</a>
           </div>
-
+          <!-- Submit -->
           <div class="text-center text-lg-start mt-4 pt-2">
-            <button type="button" data-mdb-button-init="" data-mdb-ripple-init="" class="btn btn-primary active" style="padding-left: 2.5rem; padding-right: 2.5rem;" data-mdb-button-initialized="true" aria-pressed="true">Login</button>
-            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a class="link-danger" href="{{ url_for('register') }}">Register</a></p>
+            <button type="submit" class="btn btn-primary pe-4 ps-4">Login</button>
+            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account?<a class="link-danger" href="{{ url_for('register') }}"> Register</a></p>
           </div>
         </form>
       </div>
@@ -59,60 +101,29 @@
 {% endblock %}
 
 {% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
   <script>
-    // Password toggle
-    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-    const passwordInput = document.querySelector('.password-input');
-
-    togglePasswordBtn.addEventListener('click', function() {
-      if (passwordInput.getAttribute('type') === 'password') {
-        passwordInput.setAttribute('type', 'text');
-        togglePasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
+    document.getElementById('showPassword').addEventListener('click', function() {
+      var passwordInput = document.getElementById('loginPassword');
+      var eyeIcon = this.querySelector('i');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
       } else {
-        passwordInput.setAttribute('type', 'password');
-        togglePasswordBtn.innerHTML  = '<i class="fas fa-eye-slash"></i>';
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
       }
     });
 
-    // Email validation
-    const emailInput = document.getElementById('form3Example3');
-    const emailError = document.getElementById('emailError');
-
-    emailInput.addEventListener('blur', () => {
-      validateEmail(emailInput, emailError);
+    document.getElementById('loginEmail').addEventListener('input', function() {
+      InputValidate('loginEmail');
     });
 
-    function validateEmail(inputField, errorElement) {
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
-      const isValidEmail = emailRegex.test(inputField.value);
-
-      if (isValidEmail) {
-        errorElement.style.display = 'none';
-      } else {
-        errorElement.style.display = 'block';
-        errorElement.textContent = 'Please enter a valid email address.';
-      }
-    }
-
-    // Password validation
-    const passwordInputLogin = document.getElementById('form3Example4');
-    const passwordError = document.getElementById('passwordError');
-
-    passwordInputLogin.addEventListener('blur', () => {
-      validatePassword(passwordInputLogin, passwordError);
+    document.getElementById('loginPassword').addEventListener('input', function() {
+      InputValidate('loginPassword');
     });
-
-    function validatePassword(inputField, errorElement) {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      const isValidPassword = passwordRegex.test(inputField.value);
-
-      if (isValidPassword) {
-        errorElement.style.display = 'none';
-      } else {
-        errorElement.style.display = 'block';
-        errorElement.textContent = 'Password must be at least 8 characters long, contain at least 1 letter and 1 number';
-      }
-    }
   </script>
 {% endblock %}
-
