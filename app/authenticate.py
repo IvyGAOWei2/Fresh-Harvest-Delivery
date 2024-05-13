@@ -2,9 +2,9 @@ from app import app
 from flask import render_template
 
 
-@app.route("/register/login")
+@app.route("/login")
 def register_login():
-    return render_template('register_login.html')
+    return render_template('login.html')
 
 
 @app.route("/register")
