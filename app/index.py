@@ -1,10 +1,16 @@
 from app import app
-from flask import render_template
+from flask import render_template,session
+
+
 
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    print(session)
+    if 'loggedin' not in session or session.get('type') == 'Consumer':
+        return render_template('index.html')
+    else:
+        return render_template('admin.html')
 
 @app.route("/404")
 def notFound():

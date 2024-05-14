@@ -191,11 +191,11 @@ INSERT INTO Unit (unit_name) VALUES ('Bunch'), ('Weight'), ('Each'), ('Half-size
 
 -- Users table
 INSERT INTO Users (email, password_hash, type, depot_id) VALUES
-('john.doe@example.com', '9d529731444484d0e41992a8f3dc66ec8826c0ec27e525cf6eb28363f0b31392', 'Consumer', 1),
-('jane.smith@example.com', '9d529731444484d0e41992a8f3dc66ec8826c0ec27e525cf6eb28363f0b31392', 'Staff', 1),
-('alex.jones@example.com', '9d529731444484d0e41992a8f3dc66ec8826c0ec27e525cf6eb28363f0b31392', 'Local_Manager', 1),
-('sarah.wilson@example.com', '9d529731444484d0e41992a8f3dc66ec8826c0ec27e525cf6eb28363f0b31392', 'National_Manager', 6),
-('mark.white@example.com', '9d529731444484d0e41992a8f3dc66ec8826c0ec27e525cf6eb28363f0b31392', 'Consumer', 1);
+('john.doe@example.com', 'b7608333108f425e356a2b6e7d40f370faaa03f5fb791086906160aca6e7798c', 'Consumer', 1),
+('jane.smith@example.com', 'b7608333108f425e356a2b6e7d40f370faaa03f5fb791086906160aca6e7798c', 'Staff', 1),
+('alex.jones@example.com', 'b7608333108f425e356a2b6e7d40f370faaa03f5fb791086906160aca6e7798c', 'Local_Manager', 1),
+('sarah.wilson@example.com', 'b7608333108f425e356a2b6e7d40f370faaa03f5fb791086906160aca6e7798c', 'National_Manager', 6),
+('mark.white@example.com', 'b7608333108f425e356a2b6e7d40f370faaa03f5fb791086906160aca6e7798c', 'Consumer', 1);
 
 -- Subscription table
 INSERT INTO Subscription (user_id, start_date, end_date, type) VALUES

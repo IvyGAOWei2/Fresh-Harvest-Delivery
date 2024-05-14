@@ -53,17 +53,22 @@
     }
   </style>
 
-  <div id="login" class="container h-custom py-5">
+  <div id="login" class="container" style="margin-top: 5rem;">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-6 my-lg-5 py-lg-5">
         <img src="/static/images/slide1.png" class="img-fluid" alt="Sample image">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-5 offset-xl-1 my-lg-5 py-lg-5">
-        <form class="row g-3 needs-validation" novalidate>
+        <form id="loginForm" method="POST" class="row g-3 needs-validation" novalidate>
+
+        <div class="input-group">
+            <div id="loginError" class="d-none alert pt-2 pb-2 mb-0 col-12 text-center bg-danger-subtle" style="color: #6a717a !important;" role="alert"></div>
+        </div>
+
           <!-- Email -->
           <div class="form-outline">
               <label for="loginEmail" class="form-label fw-bold mb-3 fs-4">Email address</label>
-              <input type="email" maxlength="50" class="form-control" id="loginEmail" name="email" placeholder="example@gmail.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
+              <input type="email" maxlength="50" class="form-control" id="loginEmail" name="email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
               <div class="invalid-feedback">Please enter a valid email address</div>
               <div class="valid-feedback">Looks good!</div>
           </div>
@@ -71,7 +76,7 @@
           <div class="form-outline">
               <label for="loginPassword" class="form-label fw-bold mb-3 fs-4">Password</label>
               <div class="input-group">
-                  <input type="password" maxlength="50" class="form-control" id="loginPassword" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                  <input type="password" maxlength="50" class="form-control" id="loginPassword" name="password" value="groupaz@05" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
                   <button class="btn btn-outline-secondary" type="button" id="showPassword">
                     <i class="fas fa-eye" style="width: 2rem;"></i>
                   </button>
@@ -82,7 +87,7 @@
           <!-- Remember -->
           <div class="form-outline d-flex justify-content-between">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="loginSave" name="is_saved">
+              <input class="form-check-input" type="checkbox" value="1" id="loginSave" name="is_saved">
               <label class="form-check-label" for="loginSave">
                 Remember me
               </label>
@@ -124,6 +129,40 @@
 
     document.getElementById('loginPassword').addEventListener('input', function() {
       InputValidate('loginPassword');
+    });
+
+    // Get references to the login form and error message element
+    const loginForm = document.getElementById('loginForm');
+    const loginErrorElement = document.getElementById("loginError");
+
+    // Handle loginForm submission
+    loginForm.addEventListener('submit', function (event) {
+        if (!loginForm.checkValidity()) return // Stop further execution if form is invalid
+        event.preventDefault();
+        event.stopPropagation();
+
+        const formData = new FormData(this); // Prepare form data
+
+        // Send login request to flask server
+        fetch('/login', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == true) { // Redirect user if login is successful
+                // console.log(data.data)
+                window.location.href = data.message;
+            }
+            else {
+              console.log(data)
+              // Remove the "d-none" class
+              loginErrorElement.classList.remove("d-none");
+              // Display error message if login fails
+              loginErrorElement.textContent = data.message;
+            }
+        })
+        .catch(error => console.error('Error:', error));
     });
   </script>
 {% endblock %}
