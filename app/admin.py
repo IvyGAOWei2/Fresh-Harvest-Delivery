@@ -3,31 +3,31 @@ from flask import render_template, request, session
 
 # User-defined function
 from dbFile.config import updateSQL
-from common import getUserProfile, validateEmployeeProfile
+from common import roleRequired, getUserProfile, validateEmployeeProfile
 
 
 @app.route("/admin")
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def admin():
     return render_template('admin.html')
 
 @app.route("/profile/employee")
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def profileEmployee():
     profile = getUserProfile(session['id'], session['type'])
     return render_template('profile-employee.html', profile=profile)
 
 @app.route('/profile/update', methods=['POST'])
+@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
 def profileUpdate():
-    verified_data = validateEmployeeProfile(request.get_json())
-    user_id = verified_data['user_id']
-    verified_data.pop('user_id')
-
     if session.get('type') in ['Consumer']:
         table_name = "Consumer"
-        return {"status": False}, 500
-    elif session.get('type') in ['Staff', 'Local_Manager', 'National_Manager']:
-        table_name = "Employees"
     else:
-        return {"status": False}, 500
+        table_name = "Employees"
+        verified_data = validateEmployeeProfile(request.get_json())
+
+    user_id = verified_data['user_id']
+    verified_data.pop('user_id')
 
     if verified_data:
         updates,params = [], []
@@ -43,7 +43,7 @@ def profileUpdate():
     else:
         return {"status": False}, 500
 
-
 @app.route("/admin/action")
+@roleRequired(['Local_Manager', 'National_Manager'])
 def adminAction():
     return render_template('admin-action.html')
