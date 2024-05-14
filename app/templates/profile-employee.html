@@ -41,44 +41,44 @@
             <i class="bi bi-telephone"></i>{{profile.phone}} | 
             <i class="bi bi-envelope"></i>{{session.email}}
             </p>
-        </div>
+        </div>id
         </div>
         <div class="card-body">
         <!-- Employee details form -->
-        <form class="row g-3 needs-validation" novalidate>
+        <form id="updateProfileForm" class="row g-3 needs-validation" novalidate> 
             <div class="col-md-6">
             <label for="firstName" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="firstName" value="{{profile.given_name}}">
+            <input type="text" class="form-control" name="given_name" value="{{profile.given_name}}">
             <div class="invalid-feedback">Please enter your first name.</div>
             </div>
             <div class="col-md-6">
             <label for="lastName" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lastName" value="{{profile.family_name}}">
+            <input type="text" class="form-control" name="family_name" value="{{profile.family_name}}">
             <div class="invalid-feedback">Please enter your last name.</div>
             </div>
             <div class="col-12">
             <label for="address" class="form-label">Address</label>
-            <input type="text" class="form-control" id="address" value="{{profile.address}}">
+            <input type="text" class="form-control" name="address" value="{{profile.address}}">
             <div class="invalid-feedback">Please enter your address.</div>
             </div>
             <div class="col-md-6">
             <label for="phone" class="form-label">Phone Number</label>
-            <input type="tel" pattern="\d{10,15}" class="form-control" id="phone" value="{{profile.phone}}">
+            <input type="tel" pattern="\d{10,15}" class="form-control" name="phone" value="{{profile.phone}}">
             <div class="invalid-feedback">Please enter a valid phone number (10-15 digits).</div>
             </div>
             <div class="col-md-6">
             <label for="email" class="form-label">Email Address</label>
-            <input type="email" class="form-control" id="email"  value="{{session.email}}" disabled>
+            <input type="email" class="form-control" name="email"  value="{{session.email}}" disabled>
             <div class="invalid-feedback">Please enter a valid email address.</div>
             </div>
             <div class="col-md-6">
             <label for="hireDate" class="form-label">Hire Date</label>
-            <input type="date" class="form-control" id="hireDate" value="{{profile.hire_date}}">
+            <input type="date" class="form-control" name="hire_date" value="{{profile.hire_date}}">
             <div class="invalid-feedback">Please select your hire date.</div>
             </div>
             <div class="col-md-6">
             <label for="depotName" class="form-label">Depot Name</label>
-            <select id="depotName" class="form-select">
+            <select name="depot_id" class="form-select">
                 <option value="1" {% if profile.depot_id == 1 %}selected{% endif %}>Christchurch</option>
                 <option value="2" {% if profile.depot_id == 2 %}selected{% endif %}>Invercargill</option>
                 <option value="3" {% if profile.depot_id == 3 %}selected{% endif %}>Wellington</option>
@@ -89,21 +89,98 @@
             <div class="invalid-feedback">Please select a depot.</div>
             </div>
             <div class="col-12 text-center">
-            <button type="submit" class="btn custom-btn">Save changes</button>
+                <button type="submit" class="btn custom-btn disabled">Save changes</button>
             </div>
         </form>
 
         <!-- Update Success Message -->
-        <div id="update-success" class="container py-5 text-center" style="display: none;">
-            <div class="card" style="background-color: #81C408; color: white;">
-            <div class="card-body">
-                <h2 class="card-title">Update Success</h2>
-                <p class="card-text">Your profile has been successfully updated.</p>
-                <button class="btn btn-light" onclick="location.reload();">OK</button>
-            </div>
-            </div>
-        </div>
+        <div class="p-3">
+            {% with
+              btn_show = 0,
+              btn_text = 'Profile Update Success',
+              bg_color = '#81C408',
+              title = 'Profile Update Success',
+              msg = 'Your profile has been successfully updated'
+            %}
+                {% include "components/elements/updateSuccess.html" %}
+            {% endwith %}
         </div>
     </div>
+</div>
 </section>
+{% endblock %}
+
+{% block script %}
+  <script>
+    let user_id = "{{ profile.user_id }}"
+    let newUpdateProfileData = {};
+    let differentUpdateStaffData = {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        const updateProfileForm = document.getElementById('updateProfileForm');
+        const formData = new FormData(updateProfileForm);
+        const formDataObject = Object.fromEntries(formData.entries());
+        const btn = updateProfileForm.querySelector('button[type="submit"]');
+        const enableSubmit = () => btn.classList.remove('disabled');
+        const disableSubmit = () => btn.classList.add('disabled');
+
+        updateProfileForm.reset();
+        disableSubmit();
+
+        updateProfileForm.addEventListener('input', event => {
+            // console.log(event.target.name)
+            // console.log(event.target.value)
+            const keyName = event.target.name;
+            const keyValue = event.target.value;
+
+            newUpdateProfileData[keyName] = keyValue;
+
+            for (const keyName in formDataObject) {
+                if (newUpdateProfileData.hasOwnProperty(keyName)) {
+                    if (formDataObject[keyName] !== newUpdateProfileData[keyName]) {
+                        enableSubmit();
+                        return
+                    }
+                    disableSubmit();
+                }
+            }
+        });
+
+        updateProfileForm.addEventListener('submit', event => {
+            if (!updateProfileForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
+
+            for (let key in newUpdateProfileData) {
+                if (formDataObject.hasOwnProperty(key) && newUpdateProfileData[key] !== formDataObject[key]) {
+                    differentUpdateStaffData[key] = newUpdateProfileData[key];
+                }
+            }
+
+            differentUpdateStaffData['user_id'] = user_id;
+            console.log(differentUpdateStaffData)
+            fetch('/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(differentUpdateStaffData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 1) {
+                    // Show updateStaffSuccess modal if update is successful
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                }
+                else {
+                    alert("Invalid request");
+                    location.reload(); // Reload the page on failure
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    })
+  </script>
 {% endblock %}

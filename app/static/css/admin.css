@@ -160,7 +160,11 @@
     border-radius: 5px; /* Rounded corners */
     transition: background-color 0.3s, transform 0.3s; /* Transition for hover effect */
   }
-
+  .custom-btn.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
   .custom-btn:hover {
     background-color: #175ed8; /* Darker background on hover */
     transform: scale(1.05); /* Slightly enlarge on hover */
