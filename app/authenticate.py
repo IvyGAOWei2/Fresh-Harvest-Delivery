@@ -1,5 +1,6 @@
 from app import app
 from flask import render_template, redirect, url_for, request, session
+
 # User-defined function
 from common import validateLogin, validateUserAccount
 
@@ -26,7 +27,10 @@ def login():
             if app.hashing.check_value(password_hash, login.password, salt=app.salt):
                 # If the password is correct, set session variables and redirect to the dashboard
                 session['loggedin'], session['id'], session['email'], session['type'] = True, account['user_id'], account['email'], account['type']
-                return {"status": True, 'message': '/'}, 200
+                if account['type'] == 'Consumer':
+                    return {"status": True, 'message': '/'}, 200
+                else:
+                    return {"status": True, 'message': '/admin'}, 200
             else:
                 # If the password is incorrect, return an error message
                 return {"status": False, 'message': 'User password is Incorrect'}, 200
