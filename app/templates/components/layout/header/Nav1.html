@@ -31,6 +31,8 @@
                 <a href="{{ url_for('checkout') }}" class="dropdown-item {% if is_checkout %}active{% endif %}">Chackout</a>
                 <a href="{{ url_for('exmaples') }}" class="dropdown-item {% if is_examples %}active{% endif %}">Example Page</a>
                 <a href="{{ url_for('notFound') }}" class="dropdown-item {% if is_404 %}active{% endif %}">404 Page</a>
+                <a href="{{ url_for('get_profile') }}" class="dropdown-item {% if is_customer %}active{% endif %}">Profile</a>
+
               </div>
             </div>
             <a href="{{ url_for('contact') }}" class="nav-item nav-link {% if is_contact %}active{% endif %}">Contact</a>
