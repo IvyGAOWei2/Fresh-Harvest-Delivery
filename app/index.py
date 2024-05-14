@@ -1,9 +1,10 @@
 from app import app
-from flask import render_template
+from flask import render_template, session
 
 
 @app.route("/")
 def index():
+    print(session)
     return render_template('index.html')
 
 @app.route("/404")

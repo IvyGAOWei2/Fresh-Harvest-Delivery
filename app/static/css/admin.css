@@ -85,7 +85,7 @@
     margin-left: 1.5rem; /* Left margin for icons */
   }
 
-  .sidebar a:hover {
+  .sidebar a:hover, .sidebar .is_active{
     /* color: #81c408;; */
     text-decoration: none;
     background: #323a49;
@@ -105,4 +105,68 @@
     margin-top: 4rem;
     margin-left: 16rem;
     padding: 2rem;
+  }
+
+
+
+
+
+  body {
+    background-color: #eaeef5;
+    color: #1d57bc;
+  }
+  .profile-header {
+    background: linear-gradient(to right, #c6ade1, #2575fc);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .profile-img-container {
+    flex: 0 0 auto;
+    margin-right: 20px;
+  }
+  .profile-img {
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+  }
+  .profile-info {
+    flex: 1;
+  }
+  .profile-name {
+    margin: 0;
+    font-size: 40px;
+  }
+  .profile-country, .profile-contact {
+    margin: 0;
+    font-size: 20px;
+  }
+  .form-control, .form-select {
+    background-color: #b1cdfc;
+    border: none;
+    color: white;
+  }
+  .form-control::placeholder {
+    color: #757474;
+  }
+  .custom-btn {
+    background-color:  #6397f0; /* Custom background color */
+    border: none; /* Remove border */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Padding */
+    font-size: 16px; /* Font size */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.3s; /* Transition for hover effect */
+  }
+  .custom-btn.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+  .custom-btn:hover {
+    background-color: #175ed8; /* Darker background on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+    color: white;
   }
