@@ -23,3 +23,8 @@ def validateLogin(data):
 
 def validateUserAccount(email):
     return fetchOne('SELECT * FROM Users WHERE email = %s AND is_deleted = FALSE', (email,), True)
+
+def getUserProfile(id, type):
+    user_table = {'Consumer': 'Consumer'}.get(type, 'Employees')
+
+    return fetchOne('SELECT * FROM ' + user_table +' WHERE user_id = %s;', (id,), True)

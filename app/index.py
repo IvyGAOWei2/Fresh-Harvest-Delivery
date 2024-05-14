@@ -1,7 +1,5 @@
 from app import app
-from flask import render_template,session
-
-
+from flask import render_template, redirect, url_for, session
 
 
 @app.route("/")
@@ -10,7 +8,7 @@ def index():
     if 'loggedin' not in session or session.get('type') == 'Consumer':
         return render_template('index.html')
     else:
-        return render_template('admin.html')
+        return redirect(url_for('admin'))
 
 @app.route("/404")
 def notFound():

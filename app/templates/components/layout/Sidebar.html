@@ -6,15 +6,15 @@
     </div>
 
     <!-- Sidebar links -->
-    <a href="#admin-actions">
+    <a href="{{ url_for('admin') }}" class="{% if is_dashboard %}is_active{% endif %}">
       <i class="fas fa-tachometer-alt"></i>
       <span>Dashboard</span>
       <span class="badge badge-sm bg-info">NEW</span>
     </a>
-    <a href="#employee-profile">
+    <a href="{{ url_for('profileEmployee') }}" class="{% if is_profile %}is_active{% endif %}">
       <i class="fas fa-user"></i> <span>Profile</span>
     </a>
-    <a href="#admin-actions">
+    <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
     </a>
 </div>

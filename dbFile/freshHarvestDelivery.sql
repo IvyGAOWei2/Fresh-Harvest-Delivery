@@ -241,10 +241,10 @@ INSERT INTO Invoices (user_id, invoice_date, due_date, total, gst_rate, order_li
 (5, '2024-04-30', '2024-05-20', 106.94, 15, '[2,3]');
 
 -- Employees table
-INSERT INTO Employees (user_id, given_name, family_name, address, phone, hire_date, depot_id) VALUES
-(2, 'Jane', 'Smith', '654 Cedar St', '0298765432', '2023-06-15', 1),
-(3, 'Alex', 'Jones', '789 Oak St', '0223456789', '2022-12-01', 1),
-(4, 'Sarah', 'Wilson', '321 Pine St', '0208765432', '2024-02-20', 6);
+INSERT INTO Employees (user_id, given_name, family_name, address, phone, image, hire_date, depot_id) VALUES
+(2, 'Jane', 'Smith', '654 Cedar St', '0298765432', 'user_default_image.png', '2023-06-15', 1),
+(3, 'Alex', 'Jones', '789 Oak St', '0223456789', 'user_default_image.png', '2022-12-01', 1),
+(4, 'Sarah', 'Wilson', '321 Pine St', '0208765432', 'user_default_image.png', '2024-02-20', 6);
 
 INSERT INTO Boxes (box_id, box_type, start_date, end_date, depot_id) VALUES
 (1, 'Small', '2024-04-06', '2024-04-12', 1),
