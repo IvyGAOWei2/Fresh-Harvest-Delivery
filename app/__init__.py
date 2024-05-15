@@ -20,3 +20,4 @@ from app import c_profile
 
 # Employees
 from app import admin
+from app import staff_manage_customer
