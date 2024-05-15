@@ -6,79 +6,233 @@
     {% include "components/layout/header/Nav1.html" %}
 {% endblock %}
 
-{% block breadcrumb %}
-  {% with pageName='Profile' %}
-    {% include "components/layout/Breadcrumb1.html" %}
-  {% endwith %}
-{% endblock %}
-
 {% block content %}
 <section>
-    <div id="profile" class="container-fluid py-5">
-        <div class="container py-5">
-            <h1 class="mb-4">Profile details</h1>
-            <form action="#">
-                <div class="row g-5">
-                    <div class="col-md-12 col-lg-6 col-xl-5">
-                        <div class="row">
-                            <div class="col-md-12 col-lg-6">
-                                <div class="form-item w-100">
-                                    <label class="form-label my-3">First Name<sup>*</sup></label>
-                                    <input type="text" class="form-control">
+    <div id="profile" class="container-fluid py-5 mt-5">
+        <div class="container py-5 text-center">
+            <div class="account-header mb-4 d-inline-block">
+                <i class="fas fa-user-circle fa-3x"></i>
+                <h1 class="mt-2">My Account</h1>
+            </div>
+            <form action="#" class="mx-auto" style="max-width: 1000px;"> 
+                <div class="accordion" id="profileAccordion">
+                    <!-- Personal Details -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPersonalDetails">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
+                                <i class="fas fa-user-circle me-2"></i> My Details
+                            </button>
+                        </h2>
+                        <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#profileAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col text-center">
+                                        <label for="profilePicture" class="form-label text-start">Profile Picture</label>
+                                        <div>
+                                            <input type="file" class="form-control w-50 mx-auto" id="profilePicture" name="profilePicture">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-0">
+                                    <div class="col-md-6">
+                                        <div class="row mb-2">
+                                            <label for="firstName" class="col-sm-4 col-form-label text-start">First Name<sup>*</sup></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="firstName" name="firstName">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <label for="phone" class="col-sm-4 col-form-label text-start">Phone<sup>*</sup></label>
+                                            <div class="col-sm-8">
+                                                <input type="tel" class="form-control" id="phone" name="phone">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <label for="newPassword" class="col-sm-4 col-form-label text-start">New Password<sup>*</sup></label>
+                                            <div class="col-sm-8">
+                                                <input type="password" class="form-control" id="newPassword" name="newPassword">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="accountLimit" name="accountLimit" value="500" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-sm-4"></div>
+                                            <div class="col-sm-8 text-start">
+                                                <button type="button" class="btn btn-secondary mt-0">Review Limit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="row mb-2">
+                                            <label for="lastName" class="col-sm-4 col-form-label text-start">Last Name<sup>*</sup></label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="lastName" name="lastName">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <label for="myDepot" class="col-sm-4 col-form-label text-start">My Depot<sup>*</sup></label>
+                                            <div class="col-sm-8">
+                                                <select class="form-select form-select-sm" id="myDepot" name="myDepot">
+                                                    <option selected value="">--Please select a City--</option>
+                                                    <option value="Christchurch">Christchurch</option>
+                                                    <option value="Invercargill">Invercargill</option>
+                                                    <option value="Wellington">Wellington</option>
+                                                    <option value="Hamilton">Hamilton</option>
+                                                    <option value="Auckland">Auckland</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <label for="confirmNewPassword" class="col-sm-4 col-form-label text-start">Confirm Password<sup>*</sup></label>
+                                            <div class="col-sm-8">
+                                                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <label for="creditBalance" class="col-sm-4 col-form-label text-start">Credit Balance</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" id="creditBalance" name="creditBalance" value="300" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-3">Update</button>
                                 </div>
                             </div>
-                            <div class="col-md-12 col-lg-6">
-                                <div class="form-item w-100">
-                                    <label class="form-label my-3">Last Name<sup>*</sup></label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Delivery Address <sup>*</sup></label>
-                            <input type="text" class="form-control" placeholder="House Number Street Name">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">City <sup>*</sup></label>
-                            <div class="col-md-12">
-                              <select class="form-select form-select-sm" name="city" id="city">
-                                <option selected value="">--Please select a City--</option>
-                                <option value="Christchurch">Christchurch</option>
-                                <option value="Invercargill">Invercargill</option>
-                                <option value="Wellington">Wellington</option>
-                                <option value="Hamilton">Hamilton</option>
-                                <option value="Auckland">Auckland</option>
-                              </select>
-                            </div>
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Mobile<sup>*</sup></label>
-                            <input type="tel" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                     </div>
-                    <div class="col-md-12 col-lg-6 col-xl-5 offset-xl-1">
-                        <div class="form-item">
-                            <label class="form-label my-3">Credit Available</label>
-                            <input type="text" class="form-control" value="300" readonly>
+                    <!-- Shipping Address -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingShippingAddress">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingAddress" aria-expanded="false" aria-controls="collapseShippingAddress">
+                                <i class="fas fa-map-marker-alt me-2"></i> My Address
+                            </button>
+                        </h2>
+                        <div id="collapseShippingAddress" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress" data-bs-parent="#profileAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-2">
+                                    <label for="addressLine1" class="col-sm-4 col-form-label text-start">Address Line 1<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <label for="addressLine2" class="col-sm-4 col-form-label text-start">Address Line 2</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <label for="city" class="col-sm-4 col-form-label text-start">City<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="city" name="city">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <label for="postcode" class="col-sm-4 col-form-label text-start">Postcode/Zip<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="postcode" name="postcode">
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-3">Update</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-item">
-                            <label class="form-label my-3 ">Account Limit</label>
-                            <input type="text" class="form-control" value="500" readonly>
+                    </div>
+                    <!-- Payment Method -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPaymentMethod">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentMethod" aria-expanded="false" aria-controls="collapsePaymentMethod">
+                                <i class="fas fa-credit-card me-2"></i> My Payment Method
+                            </button>
+                        </h2>
+                        <div id="collapsePaymentMethod" class="accordion-collapse collapse" aria-labelledby="headingPaymentMethod" data-bs-parent="#profileAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-2">
+                                    <label for="creditCardNumber" class="col-sm-4 col-form-label text-start">Credit Card Number<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="creditCardNumber" name="creditCardNumber">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <label for="expiryDate" class="col-sm-4 col-form-label text-start">Expiry Date<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <label for="cvv" class="col-sm-4 col-form-label text-start">CVV<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="cvv" name="cvv">
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-3">Update</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-item" >
-                            <label class="form-label my-3">My Box Subscription</label>
-                            <input type="text" class="form-control" cols="30" rows="11" readonly>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </section>
+
+<style>
+    .account-header {
+        padding: 10px 20px;
+        border-radius: 10px;
+        background: linear-gradient(to right, #e7f1ff, #f8f9fa);
+        display: inline-block;
+    }
+    .account-header h1 {
+        display: inline-block;
+        margin: 0;
+        padding-left: 10px;
+        font-size: 2rem;
+    }
+    .form-label {
+        font-weight: bold;
+    }
+    .accordion-button {
+        background-color: #f8f9fa;
+        color: #000;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+    .accordion-button:not(.collapsed) {
+        color: #007bff;
+        background-color: #e7f1ff;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004494;
+    }
+    .form-control {
+        max-width: 400px;
+    }
+    .col-form-label {
+        margin-bottom: 0; /* Reduce the margin between label and input */
+    }
+    .row.mb-2 .col-sm-8 {
+        padding-left: 10px; /* Adjust padding to control space between label and input */
+    }
+    form .row .col-sm-4 {
+        padding-right: 5px; /* Adjust the right padding of label column */
+    }
+    form .row .col-sm-8 {
+        padding-left: 5px; /* Adjust the left padding of input column */
+    }
+</style>
 {% endblock %}
