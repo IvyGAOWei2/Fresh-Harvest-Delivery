@@ -283,26 +283,88 @@
   {% include "components/elements/InputValidate.html" %}
 
 <script>
-   document.getElementById('showPassword').addEventListener('click', function() {
-      var passwordInput = document.getElementById('loginPassword');
-      var eyeIcon = this.querySelector('i');
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
-      }
-    });
+   // Show/Hide Password
+   document.getElementById('showNewPassword').addEventListener('click', function() {
+            let newPasswordInput = document.getElementById('newPassword');
+            if (newPasswordInput.type === 'password') {
+                newPasswordInput.type = 'text';
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                newPasswordInput.type = 'password';
+                this.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        });
 
-    document.getElementById('loginEmail').addEventListener('input', function() {
-      InputValidate('loginEmail');
-    });
+        document.getElementById('showConfirmNewPassword').addEventListener('click', function() {
+            let confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+            if (confirmNewPasswordInput.type === 'password') {
+                confirmNewPasswordInput.type = 'text';
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                confirmNewPasswordInput.type = 'password';
+                this.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        });
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
 
-    document.getElementById('loginPassword').addEventListener('input', function() {
-      InputValidate('loginPassword');
-    });
+            // Real-time validation
+            function InputValidate(id) {
+                var input = document.getElementById(id);
+                if (input.checkValidity()) {
+                    input.classList.add('is-valid');
+                    input.classList.remove('is-invalid');
+                } else {
+                    input.classList.add('is-invalid');
+                    input.classList.remove('is-valid');
+                }
+            }
+
+            var inputs = [
+                'firstName',
+                'lastName',
+                'phone',
+                'newPassword',
+                'confirmNewPassword',
+                'myDepot',
+                'addressLine1',
+                'addressLine2',
+                'city',
+                'postalCode',
+                'cardNumber',
+                'expiryDate',
+                'cardHolderName',
+                'cvv'
+            ];
+
+            inputs.forEach(function (id) {
+                document.getElementById(id).addEventListener('input', function () {
+                    InputValidate(id);
+                });
+            });
+
+            // Ensure passwords match
+            var newPasswordInput = document.getElementById('newPassword');
+            var confirmNewPasswordInput = document.getElementById('confirmNewPassword');
+            confirmNewPasswordInput.addEventListener('input', function () {
+                if (confirmNewPasswordInput.value === newPasswordInput.value && confirmNewPasswordInput.checkValidity()) {
+                    confirmNewPasswordInput.classList.add('is-valid');
+                    confirmNewPasswordInput.classList.remove('is-invalid');
+                } else {
+                    confirmNewPasswordInput.classList.add('is-invalid');
+                    confirmNewPasswordInput.classList.remove('is-valid');
+                }
+            });
+        })();
 </script>
 {% endblock %}
