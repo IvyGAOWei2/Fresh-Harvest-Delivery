@@ -18,5 +18,7 @@ from app import contact
 from app import authenticate
 from app import c_profile
 
+
 # Employees
 from app import admin
+from app import manage_product

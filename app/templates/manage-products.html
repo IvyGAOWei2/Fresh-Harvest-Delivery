@@ -1,0 +1,242 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with is_manageProduct='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Products' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<section class="main-content">
+    <div class="col-auto mt-5">
+        <!-- search & add new button -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="col-sm-3 offset-sm-5 p-3">
+                <!-- SearchBtn code start here -->
+                {% with
+                placeholder = 'keywords',
+                border_color = '#81C408',
+                background_color = '#81C408'
+                %}
+                {% include "components/elements/SearchBtn.html" %}
+                {% endwith %}
+                <!-- SearchBtn code start here -->
+            </div>
+            <!-- Button trigger modal to add product-->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add New
+                Product</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    {% for product in productList %}
+                    <tr>
+                        <td class="align-middle fw-bold">{{ product[1] }}</td>
+                        <td class="align-middle">{{ product[5] }}</td>
+                        <td class="align-middle">{{ product[3] }}</td>
+                        <td class="align-middle">{{ product[4] }}</td>
+                        <td>
+                            <a class="btn btn-success product-update" role="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#updateproduct{{ product[0] }}"
+                                data-product-id="{{ product[0] }}">Update</a>
+                        </td>
+                    </tr>
+
+                    <!-- Update Product offcanvas -->
+                    <div class="offcanvas offcanvas-end" id="updateproduct{{ product[0] }}" tabindex="-1"
+                        aria-labelledby="updateProductModalLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="updateMemberLabel">Update {{product[1]}}</h5>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <form id="updateProductForm{{ product[0] }}" method="POST">
+                                <div class="mb-3">
+                                    <label for="updateProductName" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control" value="{{product[1]}}" id="updateProductName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="updateCategory" class="form-label">Category</label>
+                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory" required>
+                                </div>
+                                <div>
+                                    <label for="addDescription" class="form-label">Description</label>
+                                    <textarea type="text" class="form-control form-textarea" value="{{product[2]}}" id="addDescription"
+                                        required> </textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="updatePrice" class="form-label">Price</label>
+                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="updateStock" class="form-label">Stock</label>
+                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addProductForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="addProductName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="addProductName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addCategory" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="addCategory" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addDescription" class="form-label">Description</label>
+                            <textarea type="text" class="form-control form-textarea" id="addDescription"
+                                required> </textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addPrice" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="addPrice" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addStock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="addStock" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <!-- 按钮增加边距 -->
+                        <button type="button" class="btn btn-primary"> Add </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+
+<script>
+    // Add product
+    let addProductData = {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
+        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        const productTableBody = document.getElementById('productTableBody');
+        const updateProductForm = document.getElementById('updateProductForm');
+        const addProductForm = document.getElementById('addProductForm');
+
+        addProductForm.addEventListener('input', event => {
+            // console.log(event.target.name)
+            // console.log(event.target.value)
+            const keyName = event.target.name;
+            const keyValue = event.target.value;
+
+            addProductData[keyName] = keyValue;
+            // 新增商品的id是自动的吗?这样设置？
+            addProductData[product_id] = product_id;
+        });
+
+
+        // Handle add form submission
+        addProductForm.addEventListener('submit', function (event) {
+            if (!updateProfileForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Send login request to flask server
+            fetch('/employee/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(addProductData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == true) { // Redirect user if login is successful
+                        // Show updateStaffSuccess modal if update is successful
+                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                    }
+                    else {
+                        alert("Invalid request");
+                        location.reload(); // Reload the page on failure
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+
+
+
+
+        // Show update modal with product data
+        window.showUpdateModal = function (productId) {
+            const product = products.find(p => p.id === productId);
+            document.getElementById('updateProductName').value = product.name;
+            document.getElementById('updateCategory').value = product.category;
+            document.getElementById('updatePrice').value = product.price;
+            document.getElementById('updateStock').value = product.stock;
+            document.getElementById('updateProductModal').setAttribute('data-product-id', product.id);
+            const updateProductModal = new bootstrap.Modal(document.getElementById('updateProductModal'));
+            updateProductModal.show();
+        }
+
+        // Handle update form submission
+        updateProductForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
+            const updatedProduct = {
+                id: productId,
+                name: document.getElementById('updateProductName').value,
+                category: document.getElementById('updateCategory').value,
+                price: parseFloat(document.getElementById('updatePrice').value),
+                stock: parseInt(document.getElementById('updateStock').value),
+            };
+            products = products.map(p => p.id === productId ? updatedProduct : p);
+            renderProductRows();
+            bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
+        });
+
+
+
+</script>
+
+{% endblock %}
