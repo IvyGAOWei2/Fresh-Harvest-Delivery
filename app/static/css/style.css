@@ -433,6 +433,28 @@
     margin-top: .5rem;
 }
 
+.fruite .fruite-item h5 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* 通用方式 */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* 控制显示的行数 */
+    /* 兼容 Firefox */
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-line-clamp: 2;
+    /* 兼容 IE */
+    display: -ms-box;
+    -ms-box-orient: vertical;
+    -ms-line-clamp: 2;
+    /* 兼容标准方式 */
+    display: box;
+    box-orient: vertical;
+    line-clamp: 2;
+}
+
 .fruite .fruite-item p {
     display: -webkit-box;
     -webkit-box-orient: vertical;
