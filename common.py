@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, ValidationError
 from dbFile.config import fetchOne
 from functools import wraps
-from flask import session, redirect, url_for
+from flask import session, redirect, url_for, abort
 
 
 # Model for user login
@@ -24,6 +24,25 @@ class employeeProfile(BaseModel):
     hire_date: Optional[datetime] = Field(None)
     depot_id: Optional[int] = Field(None, ge=1, le=10)
 
+
+def roleRequired(roles):
+    """ 装饰器用于在允许访问特定路由之前检查用户角色。"""
+    def decorator(func):
+        """ 包装原始函数的装饰器函数。 """
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            """ 检查用户角色的装饰函数 """
+            if not session.get('loggedin'):
+                return redirect(url_for('login'))  # 如果用户未登录，则重定向到登录页面。
+            
+            user_type = session.get('type')
+            if not user_type or user_type not in roles:
+                abort(403)  # 如果用户未被授权，则中止请求并返回403 Forbidden状态码。
+            
+            return func(*args, **kwargs)  # 如果用户具有所需角色，则返回原始函数的结果。
+        
+        return decorated_function
+    return decorator
 
 def validateLogin(data):
     try:

@@ -6,6 +6,10 @@
 
 [Under construction](https://github.com/LUMasterOfAppliedComputing2024S1/COMP639S1_Group_AZ)
 
+## Project Milestone
+Sprint1 published on 15/05/2024
+
+
 ## Initialize project
 *(Only needs to be run once)*
 

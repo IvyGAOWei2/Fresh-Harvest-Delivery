@@ -38,7 +38,10 @@ def login():
             # If the user account does not exist, return an error message
             return {"status": False, 'message': login.email + ' not found'}, 404
 
-    return render_template('login.html')
+    if session.get('loggedin'):
+        return redirect(url_for('index'))
+    else:
+        return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -49,4 +52,7 @@ def logout():
 
 @app.route("/register")
 def register():
-    return render_template('register.html')
+    if session.get('loggedin'):
+        return redirect(url_for('index'))
+    else:
+        return render_template('register.html')
