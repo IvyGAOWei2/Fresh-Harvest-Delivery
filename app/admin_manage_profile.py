@@ -1,0 +1,20 @@
+from app import app
+from flask import render_template
+
+# User-defined function
+from dbFile.config import updateSQL,fetchAll
+from common import roleRequired, getUserProfile, validateEmployeeProfile
+
+
+@app.route("/admin/manage/profile/<profile_type>",methods = ["GET","POST"])
+# @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def admin_manage_profile(profile_type):
+    
+    if profile_type == 'Consumer':
+        result = fetchAll("SELECT * FROM Consumer;")
+        profile_type = 'Consumer'
+    elif profile_type == 'Staff':
+        result = fetchAll("SELECT Employees.* FROM Employees join Users on Employees.user_id=Users.user_id where Users.type='Staff';")
+        profile_type = 'Staff'
+
+    return render_template('admin_manage_profile.html', member_list=result,profile_type=profile_type)

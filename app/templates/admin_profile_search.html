@@ -1,0 +1,133 @@
+  <div class="row me-5 ms-5">
+    <table class="text-center table table-striped table-bordered mb-5">
+      <thead>
+        <!-- Table header -->
+        <tr class="table-primary">
+          <th class="text-secondary-emphasis" scope="col">No.</th>
+          <th class="text-secondary-emphasis" scope="col">First Name</th>
+          <th class="text-secondary-emphasis" scope="col">Last Name</th>
+          <th class="text-secondary-emphasis" scope="col">Phone</th>
+          <th class="text-secondary-emphasis" scope="col">Action</th>
+        </tr>
+      </thead>
+      {% for member in member_list %}
+      <tbody>
+        <tr>
+          <td class="align-middle fw-bold">{{ member[0] }}</td>
+          <td class="align-middle">{{ member[1] }}</td>
+          <td class="align-middle">{{ member[2] }}</td>
+          <td class="align-middle">{{ member[3] }}</td>
+          <td>
+            <a class="btn btn-primary member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[0] }}" data-user-id="{{ member[0] }}">Update</a>
+          </td>
+        </tr>
+      </tbody>
+
+      <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member[0] }}" aria-labelledby="updateMemberLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="updateMemberLabel">Update Profile</h5>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <form id="updateMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+            <div class="row">
+              <div class="col-md-12 mb-3 d-flex justify-content-center">
+                <div class="card shadow-sm" style="width: 8vw;">
+                  <label for="imgUpdate{{ profile_type }}{{ member[1] }}">
+                    {% if profile_type == 'Member' %}
+                      <img src="{{ url_for('static', filename='images/' + member[1]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                    {% else %}
+                      <img src="{{ url_for('static', filename='images/' + member[1]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                    {% endif %}
+                  </label>
+                  <input class="form-control" type="file" id="imgUpdate{{ profile_type }}{{ member[1] }}" style="display: none;" accept="image/*">
+                </div>
+              </div>
+    
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" value="{{ member[2] }}" id="title" name="title" minlength="2" maxlength="35" pattern="^[a-zA-Z]+\.?$">
+                <div class="invalid-feedback">Title must be letters from a to z</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Position</label>
+                <input type="text" class="form-control" value="{{ member[5] }}" id="position" name="position" minlength="2" maxlength="30" pattern="[a-zA-Z ]{2,30}">
+                <div class="invalid-feedback">Position must be letters from a to z</div>
+              </div>
+    
+              <div class="col-md-6 mb-3">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" value="{{ member[3] }}" id="first_name" name="first_name" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$">
+                <div class="invalid-feedback">First Name must be letters from a to z</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" value="{{ member[4] }}" id="last_name" name="last_name" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$">
+                <div class="invalid-feedback">Last Name must be letters from a to z</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Phone</label>
+                <input type="text" class="form-control" value="{{ member[7] }}" minlength="7" maxlength="13" id="phone" name="phone">
+                <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Address</label>
+                <input type="text" class="form-control" value="{{ member[6] }}" id="address" name="address" minlength="2" maxlength="35">
+              </div>
+              {% if profile_type == "Member" %}
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Date of Birth</label>
+                  <input type="date" class="form-control" value="{{ member[8] }}" id="date_of_birth" name="date_of_birth">
+                </div>
+                <div class="col-md-6 mb-3"></div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Profile Details</label>
+                  <textarea class="form-control form-textarea" id="profile_details" name="profile_details" rows="2">{{ member[9] }}</textarea>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Breeding Details</label>
+                  <textarea class="form-control form-textarea" id="breeding_details" name="breeding_details" rows="2">{{ member[10] }}</textarea>
+                </div>
+              {% else %}
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Profile Summary</label>
+                  <textarea class="form-control form-textarea" id="profile_summary" name="profile_summary" rows="2">{{ member[8] }}</textarea>
+                </div>
+    
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Profile Details</label>
+                  <textarea class="form-control form-textarea" id="profile_details" name="profile_details" rows="2">{{ member[9] }}</textarea>
+                </div>
+              {% endif %}
+    
+              <div class="col-md-6 mb-3">
+                <label for="basic-url" class="form-label">New Password</label>
+                <input type="text" minlength="3" maxlength="20" value="" class="form-control" id="password" name="password">
+                <div class="invalid-feedback">Password must be at least 3 characters long</div>
+              </div>
+            </div>
+    
+            <button type="submit" class="btn btn-secondary disabled">Submit</button>
+          </form>
+        </div>
+      </div>
+    
+      <div class="modal fade" id="updateMemberSuccess" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateMemberSuccessLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">Member profile has been successfully updated.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+      </div>
+      {% endfor %}
+    </table>
+  </div>
+
+  

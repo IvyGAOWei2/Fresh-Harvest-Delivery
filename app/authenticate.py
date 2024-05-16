@@ -50,7 +50,7 @@ def logout():
         [session.pop(key, None) for key in ['loggedin', 'id', 'email', 'type']]
     return redirect(url_for('index'))
 
-@app.route("/register")
+@app.route("/register", methods=['GET','POST'])
 def register():
     if session.get('loggedin'):
         return redirect(url_for('index'))
