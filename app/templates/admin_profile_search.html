@@ -8,7 +8,7 @@
           <th class="text-secondary-emphasis" scope="col">Last Name</th>
           <th class="text-secondary-emphasis" scope="col">Phone</th>
           <th class="text-secondary-emphasis" scope="col">Depot</th>
-          <th class="text-secondary-emphasis" scope="col">Action</th>
+          <th class="text-secondary-emphasis" scope="col">Edit</th>
         </tr>
       </thead>
       {% for member in member_list %}
@@ -20,18 +20,18 @@
           <td class="align-middle">{{ member[4] }}</td>
           {% if profile_type == 'Consumer' %}
             <td class="align-middle">{{ member[5] }}</td>
-          {% elif profile_type == 'Staff' %}
+          {% elif profile_type == 'Staff' or 'Local_Manager' %}
             <td class="align-middle">{{ member[8] }}</td>          
           {% endif %}
           <td>
-            <a class="btn btn-primary member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[0] }}" data-user-id="{{ member[0] }}">Update</a>
+            <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[0] }}" data-user-id="{{ member[0] }}"><i class="fas fa-edit fa-lg me-3 fa-fw"></i></a>
           </td>
         </tr>
       </tbody>
 
       <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member[0] }}" aria-labelledby="updateMemberLabel">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="updateMemberLabel">Update Profile</h5>
+          <h5 class="offcanvas-title" id="updateMemberLabel">Update {{profile_type}} Profile</h5>
           <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
@@ -42,7 +42,7 @@
                   <label for="imgUpdate{{ profile_type }}{{ member[0] }}">
                     {% if profile_type == 'Consumer' %}
                       <img src="{{ url_for('static', filename='images/' + member[7]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[0] }}">
-                    {% elif profile_type == 'Staff' %}
+                    {% elif profile_type == 'Staff' or 'Local_Manager' %}
                       <img src="{{ url_for('static', filename='images/' + member[5]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[0] }}">
                     {% endif %}
                   </label>
@@ -73,12 +73,11 @@
                 <label class="form-label">Depot</label>
                 <div class="d-flex align-items-center">
                   <select class="form-control"name="category" id="category">
-                    <option selected value="">Please select your city</option>
-                    <option value="Christchurch">Christchurch</option>
-                    <option value="Invercargill">Invercargill</option>
-                    <option value="Wellington">Wellington</option>
-                    <option value="Hamilton">Hamilton</option>
-                    <option value="Auckland">Auckland</option>
+                    <option value="Christchurch"  {% if member[5]=='Christchurch' %} selected {% endif %}>Christchurch</option>
+                    <option value="Invercargill" {% if member[5]=='Invercargill' %} selected {% endif %}>Invercargill</option>
+                    <option value="Wellington" {% if member[5]=='Wellington' %} selected {% endif %}>Wellington</option>
+                    <option value="Hamilton" {% if member[5]=='Hamilton' %} selected {% endif %}>Hamilton</option>
+                    <option value="Auckland" {% if member[5]=='Auckland' %} selected {% endif %}>Auckland</option>
                   </select>
                 </div>
               </div>
@@ -94,7 +93,7 @@
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Last login date</label>
-                <input type="date" class="form-control" value="{{ member[12] }}" id="last_login_date" name="last_login_date">
+                <input type="text" class="form-control" value="{{ member[12] }}" id="last_login_date" name="last_login_date">
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">User type</label>
