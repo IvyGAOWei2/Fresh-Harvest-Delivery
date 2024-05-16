@@ -21,7 +21,6 @@
     <div class="container-fluid fruite py-5">
         <div class="container py-5">
             <h1 class="mb-4">Fresh fruits shop</h1>
-            {{category}}
             <div class="row g-4">
                 <div class="col-lg-12">
                     <div class="row g-4">
@@ -45,24 +44,11 @@
                         </div>
                     </div>
                     <div class="row g-4">
-                        <!-- Categories list -->
                         <div class="col-lg-3">
                             <div class="row g-4">
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <h4>Categories</h4>
-                                        <ul class="list-unstyled fruite-categorie">
-                                            {% for category in categories %}
-                                            <li>
-                                                <div class="d-flex justify-content-between fruite-name">
-                                                    <a href="{{ url_for('shop', category=category.category_name) }}"><i class="fas fa-shopping-bag me-2"></i>{{category.category_name}}</a>
-                                                    <span style="margin-right: 4rem;">({{category.item_count}})</span>
-                                                </div>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
+                                <!-- Categories list; and pass categories=categories -->
+                                {% include "components/sections/Categories.html" %}
+
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <h4 class="mb-2">Price</h4>
@@ -172,12 +158,12 @@
                         <!-- Products list -->
                         <div class="col-lg-9">
                             <div class="row g-4 justify-content-center">
-                                {% with products=products, category=category %}
-                                    {% include "components/sections/Products.html" %}
-                                {% endwith %}
+                                <!-- Products list; and pass products=products -->
+                                {% include "components/sections/Products.html" %}
 
-                                {% with url_page='shop', current_page=current_page, total_pages=total_pages %}
-                                    {% include "components/sections/Pagination.html" %}
+                                <!-- Pagination; and pass current_page=current_page, total_pages=total_pages, category=category -->
+                                {% with url_page='shop' %}
+                                    {% include "components/sections/Pagination1.html" %}
                                 {% endwith %}
                             </div>
                         </div>
@@ -192,6 +178,29 @@
 {% endblock %}
 {%block script%}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有带有data-product-id属性的productCard元素
+    const productCards = document.querySelectorAll('[data-product-id]');
+    
+    // 遍历每个productCard元素并添加事件监听器
+    productCards.forEach(function(productCard) {
+        productCard.addEventListener('click', (event) => {
+            // 阻止默认的链接跳转行为
+            event.preventDefault();
+
+            // 获取当前productCard的data-product-id属性值
+            const productId = productCard.getAttribute('data-product-id');
+            
+            // 构造跳转URL，替换其中的占位符为实际值
+            const url = `/product/detail?product_id=${productId}`;
+            
+            // 跳转到指定页面
+            window.location.href = url;
+        });
+    });
+});
+</script>
+<script>
     document.addEventListener('DOMContentLoaded', (event) => {
         // 选择所有"Add to cart"按钮
         const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
@@ -203,6 +212,7 @@
             button.addEventListener('click', (event) => {
                 // 阻止默认行为，比如链接的跳转
                 event.preventDefault();
+                event.stopPropagation();
                 
                 // 获取当前的计数值
                 let currentCount = parseInt(cartCountElement.textContent);

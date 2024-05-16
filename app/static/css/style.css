@@ -382,6 +382,10 @@
 
 
 /*** Fruits Start ***/
+
+#shop .fruite:hover {
+    cursor: pointer;
+}
 .fruite .tab-class .nav-item a {
     text-decoration: none;
 }
@@ -477,7 +481,27 @@
     line-clamp: 3;
 }
 
-
+#product-shot-des {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* 通用方式 */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* 控制显示的行数 */
+    /* 兼容 Firefox */
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-line-clamp: 3;
+    /* 兼容 IE */
+    display: -ms-box;
+    -ms-box-orient: vertical;
+    -ms-line-clamp: 3;
+    /* 兼容标准方式 */
+    display: box;
+    box-orient: vertical;
+    line-clamp: 3;
+}
 
 /*** vesitable Start ***/
 .vesitable .border-primary{
