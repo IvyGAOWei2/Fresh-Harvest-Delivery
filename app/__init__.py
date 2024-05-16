@@ -17,6 +17,7 @@ from app import cart
 from app import contact
 from app import authenticate
 from app import c_profile
+from app import password_reset
 
 # Employees
 from app import admin

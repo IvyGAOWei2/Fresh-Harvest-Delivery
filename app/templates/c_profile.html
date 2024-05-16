@@ -14,7 +14,7 @@
                 <i class="fas fa-user-circle fa-3x"></i>
                 <h1 class="mt-2">My Account</h1>
             </div>
-            <form action="#" class="mx-auto" style="max-width: 1000px;"> 
+            <form action="#" class="mx-auto" style="max-width: 1000px;" novalidate>
                 <div class="accordion" id="profileAccordion">
                     <!-- Personal Details -->
                     <div class="accordion-item">
@@ -38,19 +38,30 @@
                                         <div class="row mb-2">
                                             <label for="firstName" class="col-sm-4 col-form-label text-start">First Name<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="firstName" name="firstName">
+                                                <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]{2,35}" required>
+                                                <div class="invalid-feedback">Please provide a valid first name (letters only, up to 35 characters).</div>
+                                                <div class="valid-feedback">Looks good!</div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <label for="phone" class="col-sm-4 col-form-label text-start">Phone<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="tel" class="form-control" id="phone" name="phone">
+                                                <input type="tel" class="form-control" id="phone" name="phone" pattern="\+?[0-9\s\-]{7,13}" required>
+                                                <div class="invalid-feedback">Please provide a valid phone number (7-13 digits, spaces and dashes allowed).</div>
+                                                <div class="valid-feedback">Looks good!</div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <label for="newPassword" class="col-sm-4 col-form-label text-start">New Password<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="password" class="form-control" id="newPassword" name="newPassword">
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                                                    <button class="btn btn-outline-secondary" type="button" id="showNewPassword">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character.</div>
+                                                    <div class="valid-feedback">Looks good!</div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
@@ -70,13 +81,15 @@
                                         <div class="row mb-2">
                                             <label for="lastName" class="col-sm-4 col-form-label text-start">Last Name<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="lastName" name="lastName">
+                                                <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]{2,53}" required>
+                                                <div class="invalid-feedback">Please provide a valid last name (letters only, up to 35 characters).</div>
+                                                <div class="valid-feedback">Looks good!</div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <label for="myDepot" class="col-sm-4 col-form-label text-start">My Depot<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <select class="form-select form-select-sm" id="myDepot" name="myDepot">
+                                                <select class="form-select form-select-sm" id="myDepot" name="myDepot" required>
                                                     <option selected value="">--Please select a City--</option>
                                                     <option value="Christchurch">Christchurch</option>
                                                     <option value="Invercargill">Invercargill</option>
@@ -84,12 +97,21 @@
                                                     <option value="Hamilton">Hamilton</option>
                                                     <option value="Auckland">Auckland</option>
                                                 </select>
+                                                <div class="invalid-feedback">Please select a city.</div>
+                                                <div class="valid-feedback">Looks good!</div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <label for="confirmNewPassword" class="col-sm-4 col-form-label text-start">Confirm Password<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword">
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                                                    <button class="btn btn-outline-secondary" type="button" id="showConfirmNewPassword">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <div class="invalid-feedback">Passwords must match and meet the requirements.</div>
+                                                    <div class="valid-feedback">Looks good!</div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
@@ -110,7 +132,7 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingShippingAddress">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingAddress" aria-expanded="false" aria-controls="collapseShippingAddress">
-                                <i class="fas fa-map-marker-alt me-2"></i> My Address
+                                <i class="fas fa-map-marker-alt me-2"></i> Shipping Address
                             </button>
                         </h2>
                         <div id="collapseShippingAddress" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress" data-bs-parent="#profileAccordion">
@@ -118,58 +140,78 @@
                                 <div class="row mb-2">
                                     <label for="addressLine1" class="col-sm-4 col-form-label text-start">Address Line 1<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1">
+                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1" pattern=".{1,80}" required>
+                                        <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
+                                        <div class="valid-feedback">Looks good!</div>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <label for="addressLine2" class="col-sm-4 col-form-label text-start">Address Line 2</label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2">
+                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2" pattern=".{0,80}">
+                                        <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
+                                        <div class="valid-feedback">Looks good!</div>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <label for="city" class="col-sm-4 col-form-label text-start">City<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="city" name="city">
+                                        <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z\s]{1,50}" required>         
                                     </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <label for="postcode" class="col-sm-4 col-form-label text-start">Postcode/Zip<sup>*</sup></label>
+                                    <label for="postalCode" class="col-sm-4 col-form-label text-start">Postal Code<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="postcode" name="postcode">
+                                        <input type="text" class="form-control" id="postalCode" name="postalCode" pattern="\d{5,10}" required>
+                                        <div class="invalid-feedback">Please provide a valid postal code (5-10 digits).</div>
+                                        <div class="valid-feedback">Looks good!</div>
                                     </div>
-                                </div>
+                                </div>                   
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-primary mt-3">Update</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Payment Method -->
+                    <!-- Payment Details -->
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingPaymentMethod">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentMethod" aria-expanded="false" aria-controls="collapsePaymentMethod">
-                                <i class="fas fa-credit-card me-2"></i> My Payment Method
+                        <h2 class="accordion-header" id="headingPaymentDetails">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
+                                <i class="fas fa-credit-card me-2"></i> Payment Method 
                             </button>
                         </h2>
-                        <div id="collapsePaymentMethod" class="accordion-collapse collapse" aria-labelledby="headingPaymentMethod" data-bs-parent="#profileAccordion">
+                        <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails" data-bs-parent="#profileAccordion">
                             <div class="accordion-body">
                                 <div class="row mb-2">
-                                    <label for="creditCardNumber" class="col-sm-4 col-form-label text-start">Credit Card Number<sup>*</sup></label>
+                                    <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Card Holder's Name<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="creditCardNumber" name="creditCardNumber">
+                                        <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" pattern="[A-Za-z\s]{1,50}" required>
+                                        <div class="invalid-feedback">Please provide a valid card holder's name (letters only, up to 50 characters).</div>
+                                        <div class="valid-feedback">Looks good!</div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <label for="cardNumber" class="col-sm-4 col-form-label text-start">Card Number<sup>*</sup></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="cardNumber" name="cardNumber" pattern="\d{13,19}" required>
+                                        <div class="invalid-feedback">Please provide a valid card number (13-19 digits).</div>
+                                        <div class="valid-feedback">Looks good!</div>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <label for="expiryDate" class="col-sm-4 col-form-label text-start">Expiry Date<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY">
+                                        <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" required>
+                                        <div class="invalid-feedback">Please provide a valid expiry date (MM/YY).</div>
+                                        <div class="valid-feedback">Looks good!</div>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <label for="cvv" class="col-sm-4 col-form-label text-start">CVV<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="cvv" name="cvv">
+                                        <input type="text" class="form-control" id="cvv" name="cvv" pattern="\d{3,4}" required>
+                                        <div class="invalid-feedback">Please provide a valid CVV (3-4 digits).</div>
+                                        <div class="valid-feedback">Looks good!</div>
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -223,16 +265,44 @@
         max-width: 400px;
     }
     .col-form-label {
-        margin-bottom: 0; /* Reduce the margin between label and input */
+        margin-bottom: 0;
     }
     .row.mb-2 .col-sm-8 {
-        padding-left: 10px; /* Adjust padding to control space between label and input */
+        padding-left: 10px;
     }
     form .row .col-sm-4 {
-        padding-right: 5px; /* Adjust the right padding of label column */
+        padding-right: 5px;
     }
     form .row .col-sm-8 {
-        padding-left: 5px; /* Adjust the left padding of input column */
+        padding-left: 5px;
     }
 </style>
+{% endblock %}
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
+<script>
+   document.getElementById('showPassword').addEventListener('click', function() {
+      var passwordInput = document.getElementById('loginPassword');
+      var eyeIcon = this.querySelector('i');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    });
+
+    document.getElementById('loginEmail').addEventListener('input', function() {
+      InputValidate('loginEmail');
+    });
+
+    document.getElementById('loginPassword').addEventListener('input', function() {
+      InputValidate('loginPassword');
+    });
+</script>
 {% endblock %}
