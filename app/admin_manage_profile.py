@@ -11,17 +11,17 @@ from common import roleRequired, getUserProfile, validateEmployeeProfile
 def admin_manage_profile(profile_type):
     
     if profile_type == 'Consumer':
-        result = fetchAll("SELECT * FROM Consumer;")
+        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
         profile_type = 'Consumer'
 
     elif profile_type == 'Staff':
-        result = fetchAll("""SELECT Employees.*, Depots.location FROM Employees 
+        result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
         profile_type = 'Staff'
 
     elif profile_type == 'Local_Manager':
-        result = fetchAll("""SELECT Employees.*, Depots.location FROM Employees 
+        result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Local_Manager';""")
         profile_type = 'Local manager'
