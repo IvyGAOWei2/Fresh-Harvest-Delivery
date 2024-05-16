@@ -29,5 +29,5 @@ def manageProduct():
             Depots d ON p.depot_id = d.depot_id;
 """
     product_list = fetchAll(sql_products)
-    print(product_list)
+    # print(product_list)
     return render_template('manage-products.html', productList = product_list)

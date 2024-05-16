@@ -13,23 +13,75 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    /* Pagination styling */
+    .pagination a {
+        color: #007bff;
+        padding: 10px 15px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+
+    .pagination a.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .pagination a:hover:not(.active) {
+        background-color: #ddd;
+        border-radius: 5px;
+    }
+
+    /* button style */
+    .btn-primary:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-secondary:hover {
+      transform: scale(1.2);
+      background-color: 177, 205, 252;
+      color: #fff;
+      border-color: #0c0c0c
+    }
+
+
+</style>
+
 <section class="main-content">
-    <div class="col-auto mt-5">
-        <!-- search & add new button -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="col-sm-3 offset-sm-5 p-3">
-                <!-- SearchBtn code start here -->
-                {% with
-                placeholder = 'keywords',
-                border_color = '#81C408',
-                background_color = '#81C408'
-                %}
-                {% include "components/elements/SearchBtn.html" %}
-                {% endwith %}
-                <!-- SearchBtn code start here -->
+    <h1 class="text-center">Product Management</h1>
+    <div class="container mt-5">
+        <!-- search & sorting & add new button -->
+        <div class="d-flex  align-items-center mb-3">
+            <!-- search -->
+            <div class="col-xl-3">
+                <div class="input-group">
+                    <input type="search" class="form-control p-2" placeholder="keywords"
+                        aria-describedby="search-icon-1">
+                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                </div>
             </div>
+
+            <!-- sorting -->
+            <div class="d-flex align-items-center ms-4">
+                <div class="me-3">
+                    <label for="" class="form-label mb-0 me-1 " style="color: black">Category: </label>
+                    <select id="" name="" class="border-0 form-select-sm bg-light border-0 me-3">
+                        <option value="Fruit">Fruit</option>
+                        <option value="Vegetable">Vegetable</option>
+                        <option value="Herb">Herb</option>
+                        <option value="Salad">Salad</option>
+                        <option value="Egg">Egg</option>
+                        <option value="Honey">Honey</option>
+                        <option value="GiftCard">GiftCard</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Button trigger modal to add product-->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add New
+            <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addProductModal">Add New
                 Product</button>
         </div>
 
@@ -52,9 +104,10 @@
                         <td class="align-middle">{{ product[3] }}</td>
                         <td class="align-middle">{{ product[4] }}</td>
                         <td>
-                            <a class="btn btn-success product-update" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateproduct{{ product[0] }}"
-                                data-product-id="{{ product[0] }}">Update</a>
+                            <a class="btn product-update" role="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#updateproduct{{ product[0] }}" data-product-id="{{ product[0] }}">
+                                <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                            </a>
                         </td>
                     </tr>
 
@@ -62,32 +115,47 @@
                     <div class="offcanvas offcanvas-end" id="updateproduct{{ product[0] }}" tabindex="-1"
                         aria-labelledby="updateProductModalLabel">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="updateMemberLabel">Update {{product[1]}}</h5>
+                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product[1]}}</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                                 aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
                             <form id="updateProductForm{{ product[0] }}" method="POST">
+                                <!-- 图片上传及展示部分需要修改 -->
+                                <div class="card shadow-sm" style="width: 8vw;">
+                                    <label for="imgUpdate{{ product[0] }}">                                  
+                                        <!-- 图片占位符 -->
+                                        <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect> </svg>
+
+                                        <img src="" class="card-img-top" id="imagePreview{{ product[0] }}">
+                                    </label>
+                                    <input class="form-control" type="file" id="imgUpdate{{ product[0] }}" style="display: none;" accept="image/*">
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" value="{{product[1]}}" id="updateProductName" required>
+                                    <input type="text" class="form-control" value="{{product[1]}}"
+                                        id="updateProductName" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateCategory" class="form-label">Category</label>
-                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory" required>
+                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory"
+                                        required>
                                 </div>
                                 <div>
                                     <label for="addDescription" class="form-label">Description</label>
-                                    <textarea type="text" class="form-control form-textarea" value="{{product[2]}}" id="addDescription"
-                                        required> </textarea>
+                                    <textarea type="text" class="form-control form-textarea" value="{{product[2]}}"
+                                        id="addDescription" required> </textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updatePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice" required>
+                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice"
+                                        required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateStock" class="form-label">Stock</label>
-                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock" required>
+                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock"
+                                        required>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </form>
@@ -99,6 +167,25 @@
         </div>
     </div>
 
+    <!-- pagination -->
+    <nav aria-label="manageProduct">
+        <ul class="pagination d-flex justify-content-center mt-5">
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
     <!-- Add Product Modal -->
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
@@ -132,6 +219,9 @@
                             <label for="addStock" class="form-label">Stock</label>
                             <input type="number" class="form-control" id="addStock" required>
                         </div>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-primary"> Upload Image </button>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -144,6 +234,9 @@
             </div>
         </div>
     </div>
+
+
+
 </section>
 {% endblock %}
 
@@ -170,7 +263,7 @@
             const keyValue = event.target.value;
 
             addProductData[keyName] = keyValue;
-            // 新增商品的id是自动的吗?这样设置？
+            // 新增商品的id是自动生成的吗?这样设置？
             addProductData[product_id] = product_id;
         });
 
@@ -207,17 +300,6 @@
 
 
 
-        // Show update modal with product data
-        window.showUpdateModal = function (productId) {
-            const product = products.find(p => p.id === productId);
-            document.getElementById('updateProductName').value = product.name;
-            document.getElementById('updateCategory').value = product.category;
-            document.getElementById('updatePrice').value = product.price;
-            document.getElementById('updateStock').value = product.stock;
-            document.getElementById('updateProductModal').setAttribute('data-product-id', product.id);
-            const updateProductModal = new bootstrap.Modal(document.getElementById('updateProductModal'));
-            updateProductModal.show();
-        }
 
         // Handle update form submission
         updateProductForm.addEventListener('submit', function (event) {
