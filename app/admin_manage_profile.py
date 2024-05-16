@@ -14,7 +14,9 @@ def admin_manage_profile(profile_type):
         result = fetchAll("SELECT * FROM Consumer;")
         profile_type = 'Consumer'
     elif profile_type == 'Staff':
-        result = fetchAll("SELECT Employees.* FROM Employees join Users on Employees.user_id=Users.user_id where Users.type='Staff';")
+        result = fetchAll("""SELECT Employees.*, Depots.location FROM Employees 
+                          join Users on Employees.user_id=Users.user_id 
+                          join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
         profile_type = 'Staff'
 
     return render_template('admin_manage_profile.html', member_list=result,profile_type=profile_type)

@@ -7,6 +7,7 @@
           <th class="text-secondary-emphasis" scope="col">First Name</th>
           <th class="text-secondary-emphasis" scope="col">Last Name</th>
           <th class="text-secondary-emphasis" scope="col">Phone</th>
+          <th class="text-secondary-emphasis" scope="col">Depot</th>
           <th class="text-secondary-emphasis" scope="col">Action</th>
         </tr>
       </thead>
@@ -16,7 +17,12 @@
           <td class="align-middle fw-bold">{{ member[0] }}</td>
           <td class="align-middle">{{ member[1] }}</td>
           <td class="align-middle">{{ member[2] }}</td>
-          <td class="align-middle">{{ member[3] }}</td>
+          <td class="align-middle">{{ member[4] }}</td>
+          {% if profile_type == 'Consumer' %}
+            <td class="align-middle">{{ member[5] }}</td>
+          {% elif profile_type == 'Staff' %}
+            <td class="align-middle">{{ member[8] }}</td>          
+          {% endif %}
           <td>
             <a class="btn btn-primary member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[0] }}" data-user-id="{{ member[0] }}">Update</a>
           </td>
@@ -29,81 +35,101 @@
           <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-          <form id="updateMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+          <form id="updateMemberForm{{ member[0] }}" method="POST" class="needs-validation" novalidate>
             <div class="row">
               <div class="col-md-12 mb-3 d-flex justify-content-center">
                 <div class="card shadow-sm" style="width: 8vw;">
-                  <label for="imgUpdate{{ profile_type }}{{ member[1] }}">
-                    {% if profile_type == 'Member' %}
-                      <img src="{{ url_for('static', filename='images/' + member[1]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
-                    {% else %}
-                      <img src="{{ url_for('static', filename='images/' + member[1]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                  <label for="imgUpdate{{ profile_type }}{{ member[0] }}">
+                    {% if profile_type == 'Consumer' %}
+                      <img src="{{ url_for('static', filename='images/' + member[7]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[0] }}">
+                    {% elif profile_type == 'Staff' %}
+                      <img src="{{ url_for('static', filename='images/' + member[5]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[0] }}">
                     {% endif %}
                   </label>
-                  <input class="form-control" type="file" id="imgUpdate{{ profile_type }}{{ member[1] }}" style="display: none;" accept="image/*">
+                  <input class="form-control" type="file" id="imgUpdate{{ profile_type }}{{ member[0] }}" style="display: none;" accept="image/*">
                 </div>
-              </div>
-    
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Title</label>
-                <input type="text" class="form-control" value="{{ member[2] }}" id="title" name="title" minlength="2" maxlength="35" pattern="^[a-zA-Z]+\.?$">
-                <div class="invalid-feedback">Title must be letters from a to z</div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label">Position</label>
-                <input type="text" class="form-control" value="{{ member[5] }}" id="position" name="position" minlength="2" maxlength="30" pattern="[a-zA-Z ]{2,30}">
-                <div class="invalid-feedback">Position must be letters from a to z</div>
               </div>
     
               <div class="col-md-6 mb-3">
                 <label class="form-label">First Name</label>
-                <input type="text" class="form-control" value="{{ member[3] }}" id="first_name" name="first_name" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$">
+                <input type="text" class="form-control" value="{{ member[1] }}" id="first_name" name="first_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
                 <div class="invalid-feedback">First Name must be letters from a to z</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Last Name</label>
-                <input type="text" class="form-control" value="{{ member[4] }}" id="last_name" name="last_name" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$">
+                <input type="text" class="form-control" value="{{ member[2] }}" id="last_name" name="last_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
                 <div class="invalid-feedback">Last Name must be letters from a to z</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Phone</label>
-                <input type="text" class="form-control" value="{{ member[7] }}" minlength="7" maxlength="13" id="phone" name="phone">
+                <input type="text" class="form-control" value="{{ member[4] }}" minlength="7" maxlength="13" id="phone" name="phone">
                 <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Address</label>
-                <input type="text" class="form-control" value="{{ member[6] }}" id="address" name="address" minlength="2" maxlength="35">
+                <input type="text" class="form-control" value="{{ member[3] }}" id="address" name="address" minlength="2" maxlength="35">
               </div>
-              {% if profile_type == "Member" %}
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Date of Birth</label>
-                  <input type="date" class="form-control" value="{{ member[8] }}" id="date_of_birth" name="date_of_birth">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Depot</label>
+                <div class="d-flex align-items-center">
+                  <select class="form-control"name="category" id="category">
+                    <option selected value="">Please select your city</option>
+                    <option value="Christchurch">Christchurch</option>
+                    <option value="Invercargill">Invercargill</option>
+                    <option value="Wellington">Wellington</option>
+                    <option value="Hamilton">Hamilton</option>
+                    <option value="Auckland">Auckland</option>
+                  </select>
                 </div>
-                <div class="col-md-6 mb-3"></div>
+              </div>
+
+              {% if profile_type == "Consumer" %}
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Postcode</label>
+                <input class="form-control form-textarea" value="{{ member[6] }}" id="consumer_post" name="consumer_post">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Regisration date</label>
+                <input type="date" class="form-control" value="{{ member[11] }}" id="register_date" name="register_date">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Last login date</label>
+                <input type="date" class="form-control" value="{{ member[12] }}" id="last_login_date" name="last_login_date">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">User type</label>
+                <input type="text" class="form-control" value="{{ member[13] }}" id="user_type" name="user_type">
+              </div>
+                {% if member[13] == "Business" %}
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Profile Details</label>
-                  <textarea class="form-control form-textarea" id="profile_details" name="profile_details" rows="2">{{ member[9] }}</textarea>
+                  <label class="form-label">Subscription id</label>
+                  <input class="form-control" value="{{ member[8] }}" id="subscription_id" name="subscription_id">
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Breeding Details</label>
-                  <textarea class="form-control form-textarea" id="breeding_details" name="breeding_details" rows="2">{{ member[10] }}</textarea>
+                  <label class="form-label">Credit available</label>
+                  <input class="form-control" value="{{ member[8] }}" id="credit_available" name="credit_available">
                 </div>
-              {% else %}
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Profile Summary</label>
-                  <textarea class="form-control form-textarea" id="profile_summary" name="profile_summary" rows="2">{{ member[8] }}</textarea>
+                  <label class="form-label">Account Limit</label>
+                  <input class="form-control" value="{{ member[9] }}" id="account_limit" name="account_limit">
                 </div>
-    
                 <div class="col-md-6 mb-3">
-                  <label class="form-label">Profile Details</label>
-                  <textarea class="form-control form-textarea" id="profile_details" name="profile_details" rows="2">{{ member[9] }}</textarea>
+                  <label class="form-label">Credit available</label>
+                  <input class="form-control" value="{{ member[10] }}" id="credit_available" name="credit_available">
                 </div>
+                {% endif %}
+
+              {% elif profile_type == "Staff"  %}
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Hire date</label>
+                <input type="date" class="form-control" value="{{ member[6] }}" id="hire_date" name="hire_date">
+              </div>
               {% endif %}
     
               <div class="col-md-6 mb-3">
                 <label for="basic-url" class="form-label">New Password</label>
-                <input type="text" minlength="3" maxlength="20" value="" class="form-control" id="password" name="password">
-                <div class="invalid-feedback">Password must be at least 3 characters long</div>
+                <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="password" name="password">
+                <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
               </div>
             </div>
     
