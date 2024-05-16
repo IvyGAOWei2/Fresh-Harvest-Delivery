@@ -24,7 +24,17 @@
             <td class="align-middle">{{ member[8] }}</td>          
           {% endif %}
           <td>
-            <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[0] }}" data-user-id="{{ member[0] }}"><i class="fas fa-edit fa-lg me-3 fa-fw"></i></a>
+            <div class="btn-group" role="group" aria-label="Member Actions">
+              <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[0] }}" data-user-id="{{ member[0] }}">
+                <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn member-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addMember{{ member[0] }}" data-user-id="{{ member[0] }}">
+                <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn member-delete" role="button" data-bs-toggle="offcanvas" data-bs-target="#deleteMember{{ member[0] }}" data-user-id="{{ member[0] }}">
+                <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
+              </a>
+            </div>
           </td>
         </tr>
       </tbody>
