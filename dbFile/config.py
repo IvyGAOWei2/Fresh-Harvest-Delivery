@@ -31,10 +31,15 @@ def deleteSQL(sql, val):
     return connection.rowcount
 
 # def fetchAll(sql command, values in list):
-def fetchAll(sql, val=None):
+def fetchAll(sql, val=None, withDescription=False):
     connection = getCursor()
     connection.execute(sql,val)
-    return connection.fetchall()
+    result = connection.fetchall()
+
+    if withDescription:
+        keys = [i[0] for i in connection.description]
+        return [dict(zip(keys, item)) for item in result]
+    return result
 
 # def fetchOne(sql command, values in list, return with description):
 def fetchOne(sql, val, withDescription=False):

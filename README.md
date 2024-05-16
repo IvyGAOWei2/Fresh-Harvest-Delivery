@@ -46,6 +46,9 @@ The db file for the database is located at `dbFile/freshHarvestDelivery.sql`
 ### Configuration File
 The configuration file for the database connection is located at `dbFile/config_example`, please configure this file and rename it to `dbFile/config.cnf`
 
+### Database Load
+run freshHarvestDelivery.sql then dataImport.sql
+
 
 ### Configuration Example
 ```ini

@@ -1,0 +1,26 @@
+{% for product in products %}
+<div class="col-md-6 col-lg-6 col-xl-4">
+    <div class="position-relative fruite-item">
+        <div class="fruite-img border border-bottom-0">
+            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid w-100 rounded-top" alt="">
+        </div>
+        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{product.category_name}}</div>
+        <div class="p-4 border border-top-0">
+            <h5>{{product.name}}</h5>
+            <p>{{product.description}}</p>
+            <div class="d-flex justify-content-center flex-lg-wrap">
+                <p class="text-dark fs-5 fw-bold">
+                    $
+                    {{product.price}}
+                    / 
+                    {% if product.unit_name == 'Weight' %}kg{% endif %}
+                    {% if product.unit_name == 'kg' %}kg{% endif %}
+                    {% if product.unit_name == 'g' %}g{% endif %}
+                    {% if product.unit_name == 'Each' %}ea{% endif %}
+                </p>
+                <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
