@@ -1,6 +1,0 @@
-[client]
-user = root
-password = Cxn0723.
-host = localhost
-port = 3306
-database = freshHarvestDelivery
