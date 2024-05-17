@@ -53,6 +53,13 @@
           <i class="fas fa-city fa-lg me-3 fa-fw"></i>
           <div data-mdb-input-init class="form-outline flex-fill mb-0">
           <div class="row">
+
+            <div class="col-md-12 col-lg-6">
+              <label class="form-label">Street<sup>*</sup></label>
+              <input type="text" minlength="5" maxlength="50"  class="form-control" id="registerStreet" name="street" placeholder="House Number Street Name" required>
+              <div class="invalid-feedback">The address cannot exceed 50 characters</div>
+              <div class="valid-feedback">Looks good!</div>      
+            </div>  
             
             <div class="col-md-12 col-lg-2">
                 <label class="form-label">Postcode<sup>*</sup></label>
@@ -60,13 +67,6 @@
                 <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
                 <div class="valid-feedback">Looks good!</div>      
             </div>
-
-            <div class="col-md-12 col-lg-6">
-                <label class="form-label">Street<sup>*</sup></label>
-                <input type="text" minlength="5" maxlength="50"  class="form-control" id="registerStreet" name="street" placeholder="House Number Street Name" required>
-                <div class="invalid-feedback">The address cannot exceed 50 characters</div>
-                <div class="valid-feedback">Looks good!</div>      
-            </div>  
 
             <div class="col-md-12 col-lg-4">
               <label class="form-label">City<sup>*</sup></label>
