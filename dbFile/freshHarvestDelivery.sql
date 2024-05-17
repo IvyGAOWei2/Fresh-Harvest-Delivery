@@ -183,3 +183,15 @@ CREATE TABLE Messages (
     FOREIGN KEY (sender_id) REFERENCES Users(user_id),
     FOREIGN KEY (receiver_id) REFERENCES Users(user_id)
 );
+
+CREATE TABLE Reviews (
+    review_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT NOT NULL,
+    depot_id TINYINT NOT NULL,
+    product_id SMALLINT NOT NULL,
+    review_date DATE NOT NULL,
+    review_text TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+)
