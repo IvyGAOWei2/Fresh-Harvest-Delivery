@@ -273,24 +273,16 @@
     </div>
 
     <!-- delete staff/local manager modal-->
-    <div class="modal fade" id="deleteMemberModal{{ member[1] }}" tabindex="-1" aria-labelledby="deleteMemberLabel" aria-hidden="true">
-      <div class="modal-dialog">
-       
-        <div class="modal-content">
-          <div class="modal-header" style="background-color: #dc3545;">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>Do you want to delete the member?</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Confirm</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    {% with
+      btn_show = 0,
+      btn_text = 'Del Confirm',
+      modal_id = 'deleteMemberModal' + member[1]|string,
+      title = 'Delete Confirmation',
+      msg = 'Are you sure to delete this {item}?'
+    %}
+      {% include "components/elements/delConfirm2.html" %}
+    {% endwith %}
+
     {% endfor %}
   </table>
 </div>
