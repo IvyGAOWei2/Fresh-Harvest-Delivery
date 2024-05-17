@@ -16,7 +16,7 @@ from app import shop
 from app import cart
 from app import contact
 from app import authenticate
-from app import c_profile
+from app import profile_consumer
 
 
 # Employees
