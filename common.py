@@ -13,6 +13,17 @@ class Login(BaseModel):
     password: str = Field(min_length=1, max_length=50)
     is_saved: Optional[str] = Field(None, min_length=1, max_length=1)
 
+# Model for consumer profile
+class consumerProfile(BaseModel):
+    user_id: int = Field(ge=1, le=999)
+    given_name: Optional[str] = Field(None, min_length=1, max_length=35)
+    family_name: Optional[str] = Field(None, min_length=1, max_length=35)
+    address: Optional[str] = Field(None, min_length=1, max_length=80)
+    postcode: Optional[str] = Field(None, min_length=1, max_length=4)
+    email: Optional[EmailStr] = Field(None)
+    phone: Optional[str] = Field(None, min_length=1, max_length=13)
+    depot_id: Optional[int] = Field(None, ge=1, le=10)
+
 # Model for employee profile
 class employeeProfile(BaseModel):
     user_id: int = Field(ge=1, le=999)
@@ -57,6 +68,14 @@ def validateUserAccount(email):
 def validateEmployeeProfile(data):
     try:
         profile = employeeProfile(**data)
+        return profile.model_dump(exclude_none=True)
+    except ValidationError as e:
+        # print(e.errors())
+        return False
+
+def validateConsumerProfile(data):
+    try:
+        profile = consumerProfile(**data)
         return profile.model_dump(exclude_none=True)
     except ValidationError as e:
         # print(e.errors())
