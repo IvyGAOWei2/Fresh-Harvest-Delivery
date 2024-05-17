@@ -49,7 +49,7 @@
               <a class="btn member-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Add member">
                 <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
               </a>
-              <a class="btn member-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteMemberModal{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Delete member">
+              <a class="btn member-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Delete member">
                 <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
               </a>
             </div>
@@ -273,25 +273,7 @@
     </div>
 
     <!-- delete staff/local manager modal-->
-    <div class="modal fade" id="deleteMemberModal{{ member[1] }}" tabindex="-1" aria-labelledby="deleteMemberLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        {% include "components/elements/delConfirm.html" %}
-        <div class="modal-content" style="background-color: {{ bg_color }};">
-          <div class="modal-header" style="background-color: {{ bg_color2 }};">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ title }}</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>{{ msg }}</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ btn_text }}</button>
-            <button type="button" class="btn btn-primary">{{ btn_text }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="modal fade" id="deleteMember{{ member[0] }}" tabindex="-1" aria-labelledby="deleteMemberLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteMember{{ member[1] }}" tabindex="-1" aria-labelledby="deleteMemberLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -308,7 +290,7 @@
         </div>
       </div>
     </div>
-    </div> -->
+    </div>
 
        <!-- Delete Confirmation btn code start here -->
        <!-- {% with
