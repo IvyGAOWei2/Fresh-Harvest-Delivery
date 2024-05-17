@@ -40,7 +40,7 @@
               <div class="col-md-12 col-lg-6">
                   <div class="form-item w-100">
                       <label class="form-label">Last Name<sup>*</sup></label>
-                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registeLastname" name="registeLastname" pattern="^[a-zA-Z]+$" required>
+                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerLastname" name="registerLastname" pattern="^[a-zA-Z]+$" required>
                       <div class="invalid-feedback">The name cannot be more than 35 letters</div>
                       <div class="valid-feedback">Looks good!</div>      
                   </div>
@@ -53,22 +53,7 @@
           <i class="fas fa-city fa-lg me-3 fa-fw"></i>
           <div data-mdb-input-init class="form-outline flex-fill mb-0">
           <div class="row">
-            <div class="col-md-12 col-lg-4">
-                <label class="form-label">Address<sup>*</sup></label>
-                <div class="d-flex align-items-center">
-                  <select class="form-control"name="category" id="category" required>
-                    <option selected value="">Please select your city</option>
-                    <option value="Christchurch">Christchurch</option>
-                    <option  value="Invercargill">Invercargill</option>
-                    <option  value="Wellington">Wellington</option>
-                    <option  value="Hamilton">Hamilton</option>
-                    <option  value="Auckland">Auckland</option>
-                  </select>
-                  <div class="invalid-feedback">Please select a city from the list.</div>
-                  <div class="valid-feedback">Looks good!</div>      
-                </div>
-            </div>
-
+            
             <div class="col-md-12 col-lg-2">
                 <label class="form-label">Postcode<sup>*</sup></label>
                 <input type="text" class="form-control" minlength="4" maxlength="4" id="registerZip" name="zip" placeholder="Zip" pattern="^[0-9]+$" required>
@@ -82,6 +67,22 @@
                 <div class="invalid-feedback">The address cannot exceed 50 characters</div>
                 <div class="valid-feedback">Looks good!</div>      
             </div>  
+
+            <div class="col-md-12 col-lg-4">
+              <label class="form-label">City<sup>*</sup></label>
+              <div class="d-flex align-items-center">
+                <select class="form-control"name="category" id="category" required>
+                  <option selected value="">Please select your city</option>
+                  <option value="Christchurch">Christchurch</option>
+                  <option  value="Invercargill">Invercargill</option>
+                  <option  value="Wellington">Wellington</option>
+                  <option  value="Hamilton">Hamilton</option>
+                  <option  value="Auckland">Auckland</option>
+                </select>
+                <div class="invalid-feedback">Please select a city from the list.</div>
+                <div class="valid-feedback">Looks good!</div>      
+              </div>
+          </div>
 
           </div>
           </div>  
