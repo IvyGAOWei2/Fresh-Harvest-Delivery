@@ -56,3 +56,11 @@ def register():
         return redirect(url_for('index'))
     else:
         return render_template('register.html')
+
+@app.route('/password/reset', methods=['GET','POST'])
+def passwordReset():
+    if request.method == 'POST':
+        email = request.form['email']
+        print(email)
+        return redirect(url_for('notFound'))
+    return render_template('password-reset.html')
