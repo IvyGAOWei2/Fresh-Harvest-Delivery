@@ -1,0 +1,329 @@
+<div class="row me-5 ms-5">
+  <table class="text-center table table-striped table-bordered mb-5">
+    <thead>
+      <!-- Table header -->
+      <tr class="table-primary">
+        <th class="text-secondary-emphasis" scope="col">No.</th>
+        {% if profile_type == 'Consumer' %}
+        <th class="text-secondary-emphasis" scope="col">User Type</th>
+        {% endif %}
+        <th class="text-secondary-emphasis" scope="col">First Name</th>
+        <th class="text-secondary-emphasis" scope="col">Last Name</th>
+        <th class="text-secondary-emphasis" scope="col">Phone</th>
+        <th class="text-secondary-emphasis" scope="col">Depot</th>
+        <th class="text-secondary-emphasis" scope="col">Action</th>
+        {% if profile_type == 'Consumer' %}
+        <th class="text-secondary-emphasis" scope="col">Payment history</th>
+        {% endif %}
+      </tr>
+    </thead>
+    {% for member in member_list %}
+    <tbody>
+      <tr>
+        <td class="align-middle fw-bold">{{ member[1] }}</td>
+        {% if profile_type == 'Consumer' %}
+        <td class="align-middle">{{ member[14] }}</td>
+        {% endif %}
+        <td class="align-middle">{{ member[2] }}</td>
+        <td class="align-middle">{{ member[3] }}</td>
+        <td class="align-middle">{{ member[5] }}</td>
+        {% if profile_type == 'Consumer' %}
+          <td class="align-middle">{{ member[6] }}</td>
+          <td>
+            <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Update profile">
+              <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+            </a>
+          </td>          
+          <td>
+            <a class="btn consumer_payment" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumer_payment{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="View payment history">
+            <i class="fas fa-list fa-lg me-3 fa-fw"></i>
+            </a>
+          </td>
+        {% elif profile_type == 'Staff' or 'Local_Manager' %}
+          <td class="align-middle">{{ member[9] }}</td>     
+          <td>
+            <div class="btn-group" role="group" aria-label="Member Actions">
+              <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Update profile">
+                <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn member-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Add member">
+                <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn member-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteMemberModal{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Delete member">
+                <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
+              </a>
+            </div>
+          </td>     
+        {% endif %}         
+      </tr>
+    </tbody>
+
+    <!-- update profole modal-->
+    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member[1] }}" aria-labelledby="updateMemberLabel">
+      <div class="offcanvas-header">
+        <div class="col text-center">
+          <h5 class="offcanvas-title" id="updateMemberLabel">Update {{profile_type}} Profile</h5>
+        </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form id="updateMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+          <div class="row">
+            <div class="col-md-12 mb-3 d-flex justify-content-center">
+              <div class="card shadow-sm" style="width: 8vw;">
+                <label for="imgUpdate{{ profile_type }}{{ member[0] }}">
+                  {% if profile_type == 'Consumer' %}
+                    <img src="{{ url_for('static', filename='images/' + member[8]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                  {% elif profile_type == 'Staff' or 'Local_Manager' %}
+                    <img src="{{ url_for('static', filename='images/' + member[6]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                  {% endif %}
+                </label>
+                <input class="form-control" type="file" id="imgUpdate{{ profile_type }}{{ member[1] }}" style="display: none;" accept="image/*">
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
+              <input type="email" maxlength="50" class="form-control" id="email" name="email" value="{{ member[0] }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <div class="invalid-feedback">Please enter a valid email address</div> 
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" value="{{ member[2] }}" id="first_name" name="first_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <div class="invalid-feedback">First Name must be letters from a to z</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" value="{{ member[3] }}" id="last_name" name="last_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <div class="invalid-feedback">Last Name must be letters from a to z</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-control" value="{{ member[5] }}" minlength="7" maxlength="13" id="phone" name="phone">
+              <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Address</label>
+              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member[4] }}" id="address" name="address">
+              <div class="invalid-feedback">The address cannot exceed 50 characters</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Depot</label>
+              <div class="d-flex align-items-center">
+                <select class="form-control"name="category" id="category">
+                  <option value="Christchurch"  {% if member[6]=='Christchurch' %} selected {% endif %}>Christchurch</option>
+                  <option value="Invercargill" {% if member[6]=='Invercargill' %} selected {% endif %}>Invercargill</option>
+                  <option value="Wellington" {% if member[6]=='Wellington' %} selected {% endif %}>Wellington</option>
+                  <option value="Hamilton" {% if member[6]=='Hamilton' %} selected {% endif %}>Hamilton</option>
+                  <option value="Auckland" {% if member[6]=='Auckland' %} selected {% endif %}>Auckland</option>
+                </select>
+              </div>
+            </div>
+
+            {% if profile_type == "Consumer" %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Postcode</label>
+              <input class="form-control form-textarea" value="{{ member[7] }}" minlength="4" maxlength="4" id="consumer_post" name="consumer_post" pattern="^[0-9]+$" >
+              <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Regisration date</label>
+              <input type="date" class="form-control" value="{{ member[12] }}" id="register_date" name="register_date">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Last login date</label>
+              <input type="text" class="form-control" value="{{ member[13] }}" id="last_login_date" name="last_login_date">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">User type</label>
+              <div class="d-flex align-items-center">
+                <select class="form-control"name="user_type" id="user_type">
+                  <option value="Residential"  {% if member[14]=='Residential' %} selected {% endif %}>Residential</option>
+                  <option value="Business" {% if member[14]=='Business' %} selected {% endif %}>Business</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Credit available</label>
+              <input class="form-control" value="{{ member[9] }}" id="credit_available" name="credit_available">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Subscription id</label>
+              <input class="form-control" value="{{ member[16] }}" id="subscription_id" name="subscription_id">
+            </div>
+                {% if member[13] == "Business" %}
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Account Limit</label>
+                  <input class="form-control" value="{{ member[10] }}" id="account_limit" name="account_limit">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Account available</label>
+                  <input class="form-control" value="{{ member[11] }}" id="account_available" name="account_available">
+                </div>
+                {% endif %}
+
+            {% elif profile_type == "Staff"  %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Hire date</label>
+              <input type="date" class="form-control" value="{{ member[7] }}" id="hire_date" name="hire_date">
+            </div>
+            {% endif %}
+  
+            <div class="col-md-6 mb-3">
+              <label for="basic-url" class="form-label">New Password</label>
+              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="password" name="password">
+              <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
+            </div>
+          </div>
+          <div class="col text-center">
+          <button type="submit" class="btn btn-secondary disabled">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <div class="modal fade" id="updateMemberSuccess" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="updateMemberSuccessLabel">Success</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">Member profile has been successfully updated.</div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- add staff/local manager modal-->
+    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="addMember{{ member[1] }}" aria-labelledby="addMemberLabel">
+      <div class="offcanvas-header">
+        <div class="col text-center">
+          <h5 class="offcanvas-title" id="addMemberLabel">Add {{profile_type}}</h5>
+        </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form id="addMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+          <div class="row">
+            <div class="col-md-12 mb-3 d-flex justify-content-center">
+              <div class="card shadow-sm" style="width: 8vw;">
+                <label for="imgUpdate{{ profile_type }}{{ member[1] }}">
+                  <img src="{{ url_for('static', filename='images/' + member[6]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                </label>
+                <input class="form-control" type="file" id="imgUpdate{{ profile_type }}{{ member[1] }}" style="display: none;" accept="image/*">
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
+              <input type="email" maxlength="50" class="form-control" id="add_email" name="add_email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <div class="invalid-feedback">Please enter a valid email address</div>
+              <div class="valid-feedback">Looks good!</div>      
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" id="add_first_name" name="add_first_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <div class="invalid-feedback">First Name must be letters from a to z</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="add_last_name" name="add_last_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <div class="invalid-feedback">Last Name must be letters from a to z</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone" name="add_phone">
+              <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Address</label>
+              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address" name="add_address">
+              <div class="invalid-feedback">The address cannot exceed 50 characters</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Depot<sup>*</sup></label>
+                <div class="d-flex align-items-center">
+                  <select class="form-control"name="add_category" id="add_category">
+                    <option selected value="">Please select a depot</option>
+                    <option value="Christchurch">Christchurch</option>
+                    <option  value="Invercargill">Invercargill</option>
+                    <option  value="Wellington">Wellington</option>
+                    <option  value="Hamilton">Hamilton</option>
+                    <option  value="Auckland">Auckland</option>
+                  </select>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Hire date</label>
+              <input type="date" class="form-control" id="add_hire_date" name="add_hire_date">
+            </div>  
+            <div class="col-md-6 mb-3">
+              <label for="basic-url" class="form-label">Password</label>
+              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="add_password" name="add_password">
+              <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
+            </div>
+          </div>
+          <div class="col text-center">
+          <button type="submit" class="btn btn-secondary disabled">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- delete staff/local manager modal-->
+    <div class="modal fade" id="deleteMemberModal{{ member[1] }}" tabindex="-1" aria-labelledby="deleteMemberLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        {% include "components/elements/delConfirm.html" %}
+        <div class="modal-content" style="background-color: {{ bg_color }};">
+          <div class="modal-header" style="background-color: {{ bg_color2 }};">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ title }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>{{ msg }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ btn_text }}</button>
+            <button type="button" class="btn btn-primary">{{ btn_text }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="modal fade" id="deleteMember{{ member[0] }}" tabindex="-1" aria-labelledby="deleteMemberLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div> -->
+
+       <!-- Delete Confirmation btn code start here -->
+       <!-- {% with
+        btn_show = 1,
+        btn_text = 'Del Confirm',
+        bg_color = '#dc3545',
+        bg_color2 = '#81C408',
+        title = 'Delete Confirmation',
+        msg = 'Are you sure to delete this {item}?'
+      %}
+        {% include "components/elements/delConfirm.html" %}
+      {% endwith %} -->
+      <!-- Delete Confirmation btn code start here -->
+    {% endfor %}
+  </table>
+</div>
+
+  
