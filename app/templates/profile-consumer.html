@@ -3,16 +3,18 @@
 {% block title %}Profile{% endblock %}
 
 {% block navbar %}
-    {% include "components/layout/header/Nav1.html" %}
+    {% with is_profile_consumer='1' %}
+        {% include "components/layout/header/Nav1.html" %}
+    {% endwith %}
 {% endblock %}
 
 {% block content %}
 <section>
     <div id="profile" class="container-fluid py-5 mt-5">
         <div class="container py-5 text-center">
-            <div class="account-header mb-4 d-inline-block">
-                <i class="fas fa-user-circle fa-3x"></i>
-                <h1 class="mt-2">My Account</h1>
+            <div class="account-header d-flex justify-content-center align-items-center py-4" style="background: none;">
+                <i class="fas fa-user-circle fa-3x me-3"></i>
+                <h1 class="mb-0">My Account</h1>
             </div>
             <form action="#" class="mx-auto" style="max-width: 1000px;" novalidate>
                 <div class="accordion" id="profileAccordion">
@@ -23,7 +25,7 @@
                                 <i class="fas fa-user-circle me-2"></i> My Details
                             </button>
                         </h2>
-                        <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#profileAccordion">
+                        <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails">
                             <div class="accordion-body">
                                 <div class="row mb-3">
                                     <div class="col text-center">
@@ -33,12 +35,13 @@
                                         </div>
                                     </div>
                                 </div>
+                                {{profile}}
                                 <div class="row g-0">
                                     <div class="col-md-6">
                                         <div class="row mb-2">
                                             <label for="firstName" class="col-sm-4 col-form-label text-start">First Name<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="firstName" name="firstName" pattern="[A-Za-z]{2,35}" required>
+                                                <input type="text" class="form-control" id="firstName" name="given_name" value="{{profile.given_name}}" pattern="[A-Za-z]{2,35}" required>
                                                 <div class="invalid-feedback">Please provide a valid first name (letters only, up to 35 characters).</div>
                                                 
                                             </div>
@@ -46,7 +49,7 @@
                                         <div class="row mb-2">
                                             <label for="phone" class="col-sm-4 col-form-label text-start">Phone<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="tel" class="form-control" id="phone" name="phone" pattern="\+?[0-9\s\-]{7,13}" required>
+                                                <input type="tel" class="form-control" id="phone" name="phone" value="{{profile.phone}}" pattern="\+?[0-9\s\-]{7,13}" required>
                                                 <div class="invalid-feedback">Please provide a valid phone number (7-13 digits, spaces and dashes allowed).</div>
                                                
                                             </div>
@@ -66,7 +69,7 @@
                                         <div class="row mb-2">
                                             <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="accountLimit" name="accountLimit" value="500" readonly>
+                                                <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="500" disabled>
                                             </div>
                                         </div>
                                         <div class="row mb-2">
@@ -80,7 +83,7 @@
                                         <div class="row mb-2">
                                             <label for="lastName" class="col-sm-4 col-form-label text-start">Last Name<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="lastName" name="lastName" pattern="[A-Za-z]{2,53}" required>
+                                                <input type="text" class="form-control" id="lastName" name="lastName" value="{{profile.family_name}}" pattern="[A-Za-z]{2,53}" required>
                                                 <div class="invalid-feedback">Please provide a valid last name (letters only, up to 35 characters).</div>
                                                 
                                             </div>
@@ -88,13 +91,13 @@
                                         <div class="row mb-2">
                                             <label for="myDepot" class="col-sm-4 col-form-label text-start">My Depot<sup>*</sup></label>
                                             <div class="col-sm-8">
-                                                <select class="form-select form-select-sm" id="myDepot" name="myDepot" required>
-                                                    <option selected value="">--Please select a City--</option>
-                                                    <option value="Christchurch">Christchurch</option>
-                                                    <option value="Invercargill">Invercargill</option>
-                                                    <option value="Wellington">Wellington</option>
-                                                    <option value="Hamilton">Hamilton</option>
-                                                    <option value="Auckland">Auckland</option>
+                                                <select id="myDepot" name="depot_id" class="form-select" required>
+                                                    <option value="1" {% if profile.depot_id == 1 %}selected{% endif %}>Christchurch</option>
+                                                    <option value="2" {% if profile.depot_id == 2 %}selected{% endif %}>Invercargill</option>
+                                                    <option value="3" {% if profile.depot_id == 3 %}selected{% endif %}>Wellington</option>
+                                                    <option value="4" {% if profile.depot_id == 4 %}selected{% endif %}>Hamilton</option>
+                                                    <option value="5" {% if profile.depot_id == 5 %}selected{% endif %}>Auckland</option>
+                                                    <option value="6" {% if profile.depot_id == 6 %}selected{% endif %}>NZ</option>
                                                 </select>
                                                 <div class="invalid-feedback">Please select a city.</div>
                                             </div>
@@ -114,7 +117,7 @@
                                         <div class="row mb-2">
                                             <label for="creditBalance" class="col-sm-4 col-form-label text-start">Credit Balance</label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="creditBalance" name="creditBalance" value="300" readonly>
+                                                <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="300" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -132,12 +135,12 @@
                                 <i class="fas fa-map-marker-alt me-2"></i> Shipping Address
                             </button>
                         </h2>
-                        <div id="collapseShippingAddress" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress" data-bs-parent="#profileAccordion">
+                        <div id="collapseShippingAddress" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress">
                             <div class="accordion-body">
                                 <div class="row mb-2">
                                     <label for="addressLine1" class="col-sm-4 col-form-label text-start">Address Line 1<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="addressLine1" name="addressLine1" pattern=".{1,80}" required>
+                                        <input type="text" class="form-control" id="addressLine1" name="address" value="{{profile.address}}" pattern=".{1,80}" required>
                                         <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
                                     </div>
                                 </div>
@@ -157,7 +160,7 @@
                                 <div class="row mb-2">
                                     <label for="postalCode" class="col-sm-4 col-form-label text-start">Postal Code<sup>*</sup></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="postalCode" name="postalCode" pattern="\d{4}" required>
+                                        <input type="text" class="form-control" id="postalCode" name="postcode" value="{{profile.postcode}}" pattern="\d{4}" required>
                                         <div class="invalid-feedback">Please provide a valid postal code (4 digits).</div>
                                     </div>
                                 </div>                   
@@ -174,7 +177,7 @@
                                 <i class="fas fa-credit-card me-2"></i> Payment Method 
                             </button>
                         </h2>
-                        <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails" data-bs-parent="#profileAccordion">
+                        <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails">
                             <div class="accordion-body">
                                 <div class="row mb-2">
                                     <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Card Holder's Name<sup>*</sup></label>
@@ -325,29 +328,6 @@
 <script>
     (function () {
         'use strict';
-        var forms = document.querySelectorAll('.needs-validation');
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-
-        // Real-time validation
-        function InputValidate(id) {
-            var input = document.getElementById(id);
-            if (input.checkValidity()) {
-                input.classList.add('is-valid');
-                input.classList.remove('is-invalid');
-            } else {
-                input.classList.add('is-invalid');
-                input.classList.remove('is-valid');
-            }
-        }
-
         var inputs = [
             'firstName',
             'lastName',
@@ -358,8 +338,6 @@
             'city',
             'postalCode',
             'cardHolderName',
-            'cardNumber',
-            'expiryDate',
             'cvv'
         ];
 
