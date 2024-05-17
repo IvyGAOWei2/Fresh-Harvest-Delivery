@@ -3,7 +3,7 @@ from flask import render_template, request, session
 
 # User-defined function
 from dbFile.config import updateSQL
-from common import roleRequired, getUserProfile, validateEmployeeProfile
+from common import roleRequired, getUserProfile, validateEmployeeProfile, validateConsumerProfile
 
 
 @app.route("/admin")
@@ -22,6 +22,7 @@ def profileEmployee():
 def profileUpdate():
     if session.get('type') in ['Consumer']:
         table_name = "Consumer"
+        verified_data = validateConsumerProfile(request.get_json())
     else:
         table_name = "Employees"
         verified_data = validateEmployeeProfile(request.get_json())
