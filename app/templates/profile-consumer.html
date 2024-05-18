@@ -16,7 +16,7 @@
                 <i class="fas fa-user-circle fa-3x me-3"></i>
                 <h1 class="mb-0">My Account</h1>
             </div>
-            <form action="#" class="mx-auto" style="max-width: 1000px;" novalidate>
+            <form id="updateConsumerProfileForm" class="mx-auto needs-validation" style="max-width: 1000px;" novalidate>
                 <div class="accordion" id="profileAccordion">
                     <!-- Personal Details -->
                     <div class="accordion-item">
@@ -27,7 +27,10 @@
                         </h2>
                         <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails">
                             <div class="accordion-body">
-                                <div class="row mb-3">
+                                <div>
+                                    <img style="height: 12rem !important;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture">
+                                </div>
+                                <div class="row mb-4">
                                     <div class="col text-center">
                                         <label for="profilePicture" class="form-label text-start">Profile Picture</label>
                                         <div>
@@ -35,30 +38,29 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{profile}}
                                 <div class="row g-0">
                                     <div class="col-md-6">
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="firstName" class="col-sm-4 col-form-label text-start">First Name<sup>*</sup></label>
-                                            <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="firstName" name="given_name" value="{{profile.given_name}}" pattern="[A-Za-z]{2,35}" required>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" id="firstName" name="given_name" value="{{profile.given_name}}" pattern="[A-Za-z]{2,35}">
                                                 <div class="invalid-feedback">Please provide a valid first name (letters only, up to 35 characters).</div>
                                                 
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="phone" class="col-sm-4 col-form-label text-start">Phone<sup>*</sup></label>
-                                            <div class="col-sm-8">
-                                                <input type="tel" class="form-control" id="phone" name="phone" value="{{profile.phone}}" pattern="\+?[0-9\s\-]{7,13}" required>
+                                            <div class="col-sm-7">
+                                                <input type="tel" class="form-control" id="phone" name="phone" value="{{profile.phone}}" pattern="\+?[0-9\s\-]{7,13}">
                                                 <div class="invalid-feedback">Please provide a valid phone number (7-13 digits, spaces and dashes allowed).</div>
                                                
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="oldPassword" class="col-sm-4 col-form-label text-start">Old Password</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" required>
+                                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword">
                                                     <button class="btn btn-outline-secondary" type="button" id="showOldPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
@@ -66,32 +68,32 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-7">
                                                 <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="500" disabled>
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <div class="col-sm-4"></div>
-                                            <div class="col-sm-8 text-start">
+                                            <div class="col-sm-7 text-start">
                                                 <button type="button" class="btn btn-secondary mt-0">Review Limit</button>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="lastName" class="col-sm-4 col-form-label text-start">Last Name<sup>*</sup></label>
-                                            <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="lastName" name="lastName" value="{{profile.family_name}}" pattern="[A-Za-z]{2,53}" required>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" id="lastName" name="lastName" value="{{profile.family_name}}" pattern="[A-Za-z]{2,53}" >
                                                 <div class="invalid-feedback">Please provide a valid last name (letters only, up to 35 characters).</div>
                                                 
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="myDepot" class="col-sm-4 col-form-label text-start">My Depot<sup>*</sup></label>
-                                            <div class="col-sm-8">
-                                                <select id="myDepot" name="depot_id" class="form-select" required>
+                                            <div class="col-sm-7">
+                                                <select id="myDepot" name="depot_id" class="form-select">
                                                     <option value="1" {% if profile.depot_id == 1 %}selected{% endif %}>Christchurch</option>
                                                     <option value="2" {% if profile.depot_id == 2 %}selected{% endif %}>Invercargill</option>
                                                     <option value="3" {% if profile.depot_id == 3 %}selected{% endif %}>Wellington</option>
@@ -102,11 +104,11 @@
                                                 <div class="invalid-feedback">Please select a city.</div>
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="newPassword" class="col-sm-4 col-form-label text-start">New Password</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
                                                     <button class="btn btn-outline-secondary" type="button" id="showNewPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
@@ -114,9 +116,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
+                                        <div class="row mb-4">
                                             <label for="creditBalance" class="col-sm-4 col-form-label text-start">Credit Balance</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-7">
                                                 <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="300" disabled>
                                             </div>
                                         </div>
@@ -137,30 +139,32 @@
                         </h2>
                         <div id="collapseShippingAddress" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress">
                             <div class="accordion-body">
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="addressLine1" class="col-sm-4 col-form-label text-start">Address Line 1<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="addressLine1" name="address" value="{{profile.address}}" pattern=".{1,80}" required>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="addressLine1" name="address" value="{{profile.address}}" pattern=".{1,80}">
                                         <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="addressLine2" class="col-sm-4 col-form-label text-start">Address Line 2</label>
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-7">
                                         <input type="text" class="form-control" id="addressLine2" name="addressLine2" pattern=".{0,80}">
                                         <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="city" class="col-sm-4 col-form-label text-start">City<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z\s]{1,50}" required>         
+                                    <div class="col-sm-7">
+                                        <input 
+                                            type="text" class="form-control"
+                                            value="{% if profile.depot_id == 1 %}Christchurch{% elif profile.depot_id == 2 %}Invercargill{% elif profile.depot_id == 3 %}Wellington{% elif profile.depot_id == 4 %}Hamilton{% elif profile.depot_id == 5 %}Auckland{% elif profile.depot_id == 6 %}NZ{% endif %}"                                            disabled>         
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="postalCode" class="col-sm-4 col-form-label text-start">Postal Code<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="postalCode" name="postcode" value="{{profile.postcode}}" pattern="\d{4}" required>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="postalCode" name="postcode" value="{{profile.postcode}}" pattern="\d{4}" >
                                         <div class="invalid-feedback">Please provide a valid postal code (4 digits).</div>
                                     </div>
                                 </div>                   
@@ -179,31 +183,31 @@
                         </h2>
                         <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails">
                             <div class="accordion-body">
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Card Holder's Name<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" pattern="[A-Za-z\s]{1,50}" required>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" pattern="[A-Za-z\s]{1,50}" >
                                         <div class="invalid-feedback">Please provide a valid card holder's name (letters only, up to 70 characters).</div>
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="cardNumber" class="col-sm-4 col-form-label text-start">Card Number<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="cardNumber" name="cardNumber" pattern="\d{13,19}" required>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="cardNumber" name="cardNumber" pattern="\d{13,19}" >
                                         <div class="invalid-feedback">Please provide a valid card number (13-19 digits).</div>
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="expiryDate" class="col-sm-4 col-form-label text-start">Expiry Date<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" required>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" >
                                         <div class="invalid-feedback">Please provide a valid expiry date (MM/YY).</div>
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-4">
                                     <label for="cvv" class="col-sm-4 col-form-label text-start">CVV<sup>*</sup></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="cvv" name="cvv" pattern="\d{3,4}" required>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="cvv" name="cvv" pattern="\d{3,4}" >
                                         <div class="invalid-feedback">Please provide a valid CVV (3-4 digits).</div>
                                     </div>
                                 </div>
@@ -216,6 +220,18 @@
                 </div>
             </form>
         </div>
+    </div>
+    <!-- Update Success Message -->
+    <div class="p-3">
+        {% with
+            btn_show = 0,
+            btn_text = 'Profile Update Success',
+            bg_color = '#81C408',
+            title = 'Profile Update Success',
+            msg = 'Your profile has been successfully updated'
+        %}
+            {% include "components/elements/updateSuccess.html" %}
+        {% endwith %}
     </div>
 </section>
 
@@ -246,27 +262,27 @@
         color: #007bff;
         background-color: #e7f1ff;
     }
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
+    #updateConsumerProfileForm .btn-primary {
+        background-color: #81C408 !important;
+        border-color: #81C408 !important;
     }
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #004494;
+    #updateConsumerProfileForm .btn-primary:hover {
+        background-color: #ffb524 !important;
+        border-color: #ffb524 !important;
     }
     .form-control {
         max-width: 400px;
     }
     .col-form-label {
-        margin-bottom: 0;
+        padding-left: 2rem !important;
     }
-    .row.mb-2 .col-sm-8 {
+    .row.mb-2 .col-sm-7 {
         padding-left: 10px;
     }
     form .row .col-sm-4 {
         padding-right: 5px;
     }
-    form .row .col-sm-8 {
+    form .row .col-sm-7 {
         padding-left: 5px;
     }
 </style>
@@ -335,7 +351,6 @@
             'myDepot',
             'addressLine1',
             'addressLine2',
-            'city',
             'postalCode',
             'cardHolderName',
             'cvv'
@@ -404,17 +419,73 @@
     })();
 </script>
 <script>
-    // Function to auto-fill the City input based on the selected My Depot
-    document.getElementById('myDepot').addEventListener('change', function () {
-        var selectedDepot = this.value;
-        var cityInput = document.getElementById('city');
+    let user_id = "{{ profile.user_id }}"
+    let newUpdateProfileData = {};
+    let differentUpdateStaffData = {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        const updateConsumerProfileForm = document.getElementById('updateConsumerProfileForm');
+        const formData = new FormData(updateConsumerProfileForm);
+        const formDataObject = Object.fromEntries(formData.entries());
+        const btn = updateConsumerProfileForm.querySelector('button[type="submit"]');
+        const enableSubmit = () => btn.classList.remove('disabled');
+        const disableSubmit = () => btn.classList.add('disabled');
+
+        updateConsumerProfileForm.reset();
+        disableSubmit();
+
+        updateConsumerProfileForm.addEventListener('input', event => {
+            const keyName = event.target.name;
+            const keyValue = event.target.value;
+
+            newUpdateProfileData[keyName] = keyValue;
+
+            for (const keyName in formDataObject) {
+                if (newUpdateProfileData.hasOwnProperty(keyName)) {
+                    if (formDataObject[keyName] !== newUpdateProfileData[keyName]) {
+                        enableSubmit();
+                        return
+                    }
+                    disableSubmit();
+                }
+            }
+        });
         
-        // Set the value of the City input to the selected depot
-        cityInput.value = selectedDepot;
-    });
+        updateConsumerProfileForm.addEventListener('submit', event => {
+            if (!updateConsumerProfileForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
 
-    // Disable the City input field
-    document.getElementById('city').disabled = true;
-</script>
+            for (let key in newUpdateProfileData) {
+                if (formDataObject.hasOwnProperty(key) && newUpdateProfileData[key] !== formDataObject[key]) {
+                    differentUpdateStaffData[key] = newUpdateProfileData[key];
+                }
+            }
 
+            differentUpdateStaffData['user_id'] = user_id;
+            fetch('/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(differentUpdateStaffData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 1) {
+                    // console.log(data)
+                    // Show updateStaffSuccess modal if update is successful
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                }
+                else {
+                    alert("Invalid request");
+                    // location.reload(); // Reload the page on failure
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    })
+  </script>
 {% endblock %}
