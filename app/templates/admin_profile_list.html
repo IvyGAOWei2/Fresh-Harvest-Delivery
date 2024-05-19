@@ -23,12 +23,14 @@
   <div class="row justify-content-end">
     <div class="col-auto">
         <form id="searchForm" class="d-flex me-5 mb-4" role="search">
+          {% if profile_type == "Consumer" %}
             <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">User type:</label>
             <select class="form-select me-2" name="filterBy" aria-label="Filter by">
                 <option value="all">All</option>
                 <option value="Residential">Residential</option>
                 <option value="Business">Business</option>
             </select>
+          {% endif %}
             <input class="form-control me-2" name="searchBy" type="search" placeholder="Search for name" style="width: 200px;" aria-label="Search" required>
             <button class="btn" type="submit"><i class="fas fa-search fa-lg me-3 fa-fw"></i></button>
         </form>
@@ -41,7 +43,7 @@
 </section>
 {% endblock %}
 
-<!-- {% block script %}
+{% block script %}
 {% include "components/elements/InputValidate.html" %}
 <script>
   // 定义全局变量
@@ -175,4 +177,4 @@
     });
   });
 </script>
-{% endblock %} -->
+{% endblock %}
