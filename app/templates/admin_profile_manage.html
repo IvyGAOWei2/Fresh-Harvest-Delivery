@@ -175,7 +175,7 @@
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" id="updateMemberForm{{ member[1] }}" class="btn btn-secondary disabled">Submit</button>
+          <button type="submit" id="updateMemberForm{{ member[1] }}" class="btn btn-secondary" name="update_member" value="update_member">Submit</button>
           </div>
         </form>
       </div>
@@ -221,7 +221,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <form id="addMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+        <form id="addMemberForm{{ member[1] }}" method="POST" action="/admin/profile/add" class="needs-validation" novalidate>
           <div class="row">
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
@@ -281,7 +281,7 @@
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" class="btn btn-secondary disabled">Submit</button>
+          <button type="submit" id="addMemberForm{{ member[1] }}" class="btn btn-secondary" name="add_member" value="add_member">Submit</button>
           </div>
         </form>
       </div>
