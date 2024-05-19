@@ -22,4 +22,4 @@ from app import profile_consumer
 # Employees
 from app import admin
 from app import manage_product
-from app import admin_manage_profile
+from app import admin_profile_manage
