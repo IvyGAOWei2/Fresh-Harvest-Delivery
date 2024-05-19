@@ -32,7 +32,7 @@
               <div class="col-md-12 col-lg-6">
                   <div class="form-item w-100">
                       <label class="form-label">First Name<sup>*</sup></label>
-                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerFirstname" name="registerFirstname" pattern="^[a-zA-Z]+$" required>
+                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerFirstname" name="given_name" pattern="^[a-zA-Z]+$" required>
                       <div class="invalid-feedback">The name cannot be more than 35 letters</div>
                       <div class="valid-feedback">Looks good!</div>      
                   </div>
@@ -40,7 +40,7 @@
               <div class="col-md-12 col-lg-6">
                   <div class="form-item w-100">
                       <label class="form-label">Last Name<sup>*</sup></label>
-                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerLastname" name="registerLastname" pattern="^[a-zA-Z]+$" required>
+                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerLastname" name="family_name" pattern="^[a-zA-Z]+$" required>
                       <div class="invalid-feedback">The name cannot be more than 35 letters</div>
                       <div class="valid-feedback">Looks good!</div>      
                   </div>
@@ -55,15 +55,15 @@
           <div class="row">
 
             <div class="col-md-12 col-lg-6">
-              <label class="form-label">Street<sup>*</sup></label>
-              <input type="text" minlength="5" maxlength="50"  class="form-control" id="registerStreet" name="street" placeholder="House Number Street Name" required>
+              <label class="form-label">Address<sup>*</sup></label>
+              <input type="text" minlength="5" maxlength="50"  class="form-control" id="registerStreet" name="address" placeholder="House Number Street Name" required>
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
               <div class="valid-feedback">Looks good!</div>      
             </div>  
             
             <div class="col-md-12 col-lg-2">
                 <label class="form-label">Postcode<sup>*</sup></label>
-                <input type="text" class="form-control" minlength="4" maxlength="4" id="registerZip" name="zip" placeholder="Zip" pattern="^[0-9]+$" required>
+                <input type="text" class="form-control" minlength="4" maxlength="4" id="registerZip" name="postcode" pattern="^[0-9]+$" required>
                 <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
                 <div class="valid-feedback">Looks good!</div>      
             </div>
@@ -71,13 +71,13 @@
             <div class="col-md-12 col-lg-4">
               <label class="form-label">City<sup>*</sup></label>
               <div class="d-flex align-items-center">
-                <select class="form-control"name="category" id="category" required>
+                <select class="form-control"name="depot_id" id="depot_id" required>
                   <option selected value="">Please select your city</option>
-                  <option value="Christchurch">Christchurch</option>
-                  <option  value="Invercargill">Invercargill</option>
-                  <option  value="Wellington">Wellington</option>
-                  <option  value="Hamilton">Hamilton</option>
-                  <option  value="Auckland">Auckland</option>
+                  <option value="1">Christchurch</option>
+                  <option value="2">Invercargill</option>
+                  <option value="3">Wellington</option>
+                  <option value="4">Hamilton</option>
+                  <option value="5">Auckland</option>
                 </select>
                 <div class="invalid-feedback">Please select a city from the list.</div>
                 <div class="valid-feedback">Looks good!</div>      
@@ -141,7 +141,7 @@
         </div> -->
 
         <div class="form-check d-flex justify-content-left mb-5">
-          <input class="form-check-input me-2" type="checkbox" value="" id="registerTerm" name="registerTerm" required/>
+          <input class="form-check-input me-2" type="checkbox" value="" id="registerTerm" required/>
           <label class="form-check-label" for="form2Example3">
             I agree all statements in <a class="link" data-bs-toggle="modal" data-bs-target="#exampleModal_terms">Terms of service</a>
           </label>
@@ -220,9 +220,9 @@
 
 
 {% block script %}
-{% include "components/elements/InputValidate.html" %}
-  <script>
+  {% include "components/elements/InputValidate.html" %}
 
+  <script>
   // Password toggle
   const togglePasswordBtn = document.getElementById('togglePasswordBtn');
   const passwordInput = document.querySelector('.password-input');
