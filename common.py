@@ -13,6 +13,17 @@ class Login(BaseModel):
     password: str = Field(min_length=1, max_length=50)
     is_saved: Optional[str] = Field(None, min_length=1, max_length=1)
 
+# Model for consumer register
+class Register(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=50)
+    given_name: str = Field(min_length=1, max_length=35)
+    family_name: str = Field(min_length=1, max_length=35)
+    phone: int = Field(ge=1, le=9999999999999)
+    address: str = Field(min_length=1, max_length=80)
+    postcode:str = Field(min_length=1, max_length=4)
+    depot_id: int = Field(ge=1, le=10)
+
 # Model for consumer profile
 class consumerProfile(BaseModel):
     user_id: int = Field(ge=1, le=999)
@@ -61,6 +72,16 @@ def validateLogin(data):
     except ValidationError as e:
         # print(e.errors())
         return False
+
+def validateRegister(data):
+    try:
+        return Register(**data)
+    except ValidationError as e:
+        # print(e.errors())
+        return False
+
+def validateEmail(email):
+    return fetchOne('SELECT user_id FROM Users WHERE email = %s AND is_deleted = FALSE', (email,))
 
 def validateUserAccount(email):
     return fetchOne('SELECT * FROM Users WHERE email = %s AND is_deleted = FALSE', (email,), True)
