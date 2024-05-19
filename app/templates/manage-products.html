@@ -108,7 +108,11 @@
                                 data-bs-target="#updateproduct{{ product[0] }}" data-product-id="{{ product[0] }}">
                                 <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
                             </a>
-                        </td>
+
+                            <a href="/product/delist/{{product[0]}}" class="btn delist-update" role="button" id ="delistproduct{{ product[0] }}" >
+                                <i class="fas fa-store-slash fa-lg me-3" title="Delist the Product"></i> 
+                            </a>
+                        </td> 
                     </tr>
 
                     <!-- Update Product offcanvas -->
@@ -120,7 +124,7 @@
                                 aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <form id="updateProductForm{{ product[0] }}" method="POST">
+                            <form id="updateProductForm{{ product[0] }}"  action ="/product/update" method="POST">
                                 <!-- 图片上传及展示部分需要修改 -->
                                 <div class="card shadow-sm" style="width: 8vw;">
                                     <label for="imgUpdate{{ product[0] }}">                                  
@@ -134,28 +138,31 @@
 
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" value="{{product[1]}}"
-                                        id="updateProductName" required>
+                                    <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product[1]}}" required>
+                                    <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateCategory" class="form-label">Category</label>
-                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory"
-                                        required>
+                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory" name = "category_name" minlength="1" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                                    <div class="invalid-feedback">Please enter a valid category name, only letters and spaces.</div>
                                 </div>
                                 <div>
-                                    <label for="addDescription" class="form-label">Description</label>
+                                    <label for="updateDescription" class="form-label">Description</label>
                                     <textarea type="text" class="form-control form-textarea" value="{{product[2]}}"
-                                        id="addDescription" required> </textarea>
+                                        id="updateDescription"name = "description" minlength="1"  pattern="^[a-zA-Z0-9,.!?;:\s']+$" required> </textarea>
+                                    <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updatePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice"
+                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice" name = "price" min="0" step="0.01" 
                                         required>
+                                    <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div> 
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateStock" class="form-label">Stock</label>
-                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock"
-                                        required>
+                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock" name="stock" min="0" required>
+                                    <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
+
                                 </div>
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </form>
@@ -196,28 +203,32 @@
                     <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="addProductForm">
+                <form id="addProductForm" action ="/product/add" method="post">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="addProductName" class="form-label">Product Name</label>
-                            <input type="text" class="form-control" id="addProductName" required>
+                            <input type="text" class="form-control" id="addProductName" name = "name" minlength="1" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                            <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addCategory" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="addCategory" required>
+                            <input type="text" class="form-control" id="addCategory" name = "category_name" minlength="1" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                            <div class="invalid-feedback">Please enter a valid category name, only letters and spaces.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addDescription" class="form-label">Description</label>
-                            <textarea type="text" class="form-control form-textarea" id="addDescription"
-                                required> </textarea>
+                            <textarea type="text" class="form-control form-textarea" id="addDescription" name = "description" minlength="1"  pattern="^[a-zA-Z0-9,.!?;:\s']+$" required> </textarea>
+                            <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addPrice" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="addPrice" required>
+                            <input type="number" class="form-control" id="addPrice" name = "price" min="0" step="0.01" required>
+                            <div class="invalid-feedback">Please enter a valid price, numbers only.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addStock" class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="addStock" required>
+                            <input type="number" class="form-control" id="addStock" name="stock" min="0" required>
+                            <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
                         </div>
                         <div class="mb-3">
                             <button type="button" class="btn btn-primary"> Upload Image </button>
@@ -226,9 +237,8 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <!-- 按钮增加边距 -->
-                        <button type="button" class="btn btn-primary"> Add </button>
+                        <button type="submit" class="btn btn-primary"> Add </button>
                     </div>
-
                 </form>
 
             </div>
@@ -243,82 +253,123 @@
 
 
 {% block script %}
+    {% include "components/elements/InputValidate.html" %}
 
-<script>
-    // Add product
-    let addProductData = {};
+    <script>
+    // validation
+        //  update product validation
+    document.getElementById('updateProductName').addEventListener('input', function() {
+            InputValidate('updateProductName');
+        });
+    document.getElementById('updateCategory').addEventListener('input', function() {
+            InputValidate('updateCategory');
+        });
+    document.getElementById('updateDescription').addEventListener('input', function() {
+            InputValidate('updateDescription');
+        });
+    document.getElementById('updatePrice').addEventListener('input', function() {
+            InputValidate('updatePrice');
+        });
+    document.getElementById('updateStock').addEventListener('input', function() {
+            InputValidate('updateStock');
+        });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
-        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
-        const productTableBody = document.getElementById('productTableBody');
-        const updateProductForm = document.getElementById('updateProductForm');
-        const addProductForm = document.getElementById('addProductForm');
-
-        addProductForm.addEventListener('input', event => {
-            // console.log(event.target.name)
-            // console.log(event.target.value)
-            const keyName = event.target.name;
-            const keyValue = event.target.value;
-
-            addProductData[keyName] = keyValue;
-            // 新增商品的id是自动生成的吗?这样设置？
-            addProductData[product_id] = product_id;
+        //  New product validation
+    document.getElementById('addProductName').addEventListener('input', function() {
+        InputValidate('addProductName');
+    });
+    document.getElementById('addCategory').addEventListener('input', function() {
+            InputValidate('addCategory');
+        });
+    document.getElementById('addDescription').addEventListener('input', function() {
+            InputValidate('addDescription');
+        });
+    document.getElementById('addPrice').addEventListener('input', function() {
+            InputValidate('addPrice');
+        });
+    document.getElementById('addStock').addEventListener('input', function() {
+            InputValidate('addStock');
         });
 
 
-        // Handle add form submission
-        addProductForm.addEventListener('submit', function (event) {
-            if (!updateProfileForm.checkValidity()) return // Stop further execution if form is invalid
-            event.preventDefault();
-            event.stopPropagation();
 
-            // Send login request to flask server
-            fetch('/employee/products', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(addProductData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status == true) { // Redirect user if login is successful
-                        // Show updateStaffSuccess modal if update is successful
-                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
-                    }
-                    else {
-                        alert("Invalid request");
-                        location.reload(); // Reload the page on failure
-                    }
+
+
+
+        // // Add product
+        // let addProductData = {};
+
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
+        //     document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        //     const productTableBody = document.getElementById('productTableBody');
+        //     const updateProductForm = document.getElementById('updateProductForm');
+        //     const addProductForm = document.getElementById('addProductForm');
+
+        //     addProductForm.addEventListener('input', event => {
+        //         // console.log(event.target.name)
+        //         // console.log(event.target.value)
+        //         const keyName = event.target.name;
+        //         const keyValue = event.target.value;
+
+        //         addProductData[keyName] = keyValue;
+        //         // 新增商品的id是自动生成的吗?这样设置？
+        //         addProductData[product_id] = product_id;
+        //     });
+
+
+            // Handle add form submission
+            addProductForm.addEventListener('submit', function (event) {
+                if (!updateProfileForm.checkValidity()) return // Stop further execution if form is invalid
+                event.preventDefault();
+                event.stopPropagation();
+
+                // Send login request to flask server
+                fetch('/employee/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addProductData)
                 })
-                .catch(error => console.error('Error:', error));
-        });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status == true) { // Redirect user if login is successful
+                            // Show updateStaffSuccess modal if update is successful
+                            new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                        }
+                        else {
+                            alert("Invalid request");
+                            location.reload(); // Reload the page on failure
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
 
 
 
 
 
 
-        // Handle update form submission
-        updateProductForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
-            const updatedProduct = {
-                id: productId,
-                name: document.getElementById('updateProductName').value,
-                category: document.getElementById('updateCategory').value,
-                price: parseFloat(document.getElementById('updatePrice').value),
-                stock: parseInt(document.getElementById('updateStock').value),
-            };
-            products = products.map(p => p.id === productId ? updatedProduct : p);
-            renderProductRows();
-            bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
-        });
+            // Handle update form submission
+            updateProductForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
+                const updatedProduct = {
+                    id: productId,
+                    name: document.getElementById('updateProductName').value,
+                    category: document.getElementById('updateCategory').value,
+                    price: parseFloat(document.getElementById('updatePrice').value),
+                    stock: parseInt(document.getElementById('updateStock').value),
+                };
+                products = products.map(p => p.id === productId ? updatedProduct : p);
+                renderProductRows();
+                bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
+            });
 
 
 
-</script>
+    </script>
 
 {% endblock %}
