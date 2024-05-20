@@ -1,3 +1,22 @@
+<style>
+  .sidebar {
+      width: 250px;
+  }
+  .sidebar .nav-item .nav-link {
+      padding-left: 20px; /* Adjust as needed */
+  }
+  .sidebar .nav-item .nav-link.nav-sub {
+      padding-left: 40px; /* Indent sub-menu items */
+  }
+  .sidebar .nav-link {
+      display: flex;
+      align-items: center;
+  }
+  .sidebar .nav-link i {
+      margin-right: 10px; /* Space between icon and text */
+  }
+</style>
+
 <!-- Sidebar -->
 <div class="sidebar border-end">
     <!-- Sidebar header with logo -->
@@ -26,30 +45,25 @@
 
 
     {% if type == 'Local_Manager' or type == 'National_Manager' %}
-    <li class="nav-item">
-      <a class="nav-link {% if is_profilelist %}text-white{% else %}text-white-50{% endif %}" data-bs-toggle="collapse" href="#contentManagement" role="button" aria-expanded="{% if is_profilelist %}true{% else %}false{% endif %}" aria-controls="contentManagement">
-        <div class="d-flex align-items-center">
-          <i class="me-3 bi bi-house-gear-fill"></i>
-          Manage Employee
-        </div>
-      </a>
-      <div class="collapse {% if is_profilelist %}show{% endif %}" id="contentManagement">
-        <ul class="nav flex-column ms-4">
-          <li class="nav-item">
-            <a href="{{ url_for('adminProfiles',profile_type='Staff') }}" class="nav-link nav-sub" aria-current="page">
-              Staff
-            </a>
-          </li>
-          {% if type == 'National_Manager' %}
-          <li class="nav-item">
-            <a href="{{ url_for('adminProfiles',profile_type='Local_Manager') }}" class="nav-link nav-sub">
-              Local Manager
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </li>
+    <a class="nav-link {% if is_profilelist %}text-white{% else %}text-white-50{% endif %}" data-bs-toggle="collapse" href="#contentManagement" role="button" aria-expanded="{% if is_profilelist %}true{% else %}false{% endif %}" aria-controls="contentManagement">
+      <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
+    </a>
+    <div class="collapse {% if is_profilelist %}show{% endif %}" id="contentManagement">
+      <ul class="nav flex-column ms-4">
+        <li class="nav-item">
+          <a href="{{ url_for('adminProfiles', profile_type='Staff') }}" class="nav-link nav-sub" aria-current="page">
+            Staff
+          </a>
+        </li>
+        {% if type == 'National_Manager' %}
+        <li class="nav-item">
+          <a href="{{ url_for('adminProfiles', profile_type='Local_Manager') }}" class="nav-link nav-sub">
+            Local Manager
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
     {% endif %}
     
 </div>
