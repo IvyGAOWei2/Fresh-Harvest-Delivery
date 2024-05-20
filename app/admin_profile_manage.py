@@ -41,12 +41,12 @@ def profileSearch():
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
 
 
-@app.route("/admin/profile/update",methods = ["GET","POST"])
+@app.route("/admin/profile/list/update",methods = ["GET","POST"])
 # @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def admin_profile_update():
     if request.method == 'POST':   
-        if request.values.get("update_member") == "update_member":
-            print(request.form.get("member_new_password",9999999999999999999999999999))
+    #     if request.values.get("update_member") == "update_member":
+        print(request.form.get("member_new_password",9999999999999999999999999999))
     return render_template('admin_profile_list.html')
     
 
