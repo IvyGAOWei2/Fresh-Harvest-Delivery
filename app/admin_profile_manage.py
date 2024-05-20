@@ -6,25 +6,35 @@ from dbFile.config import updateSQL,fetchAll
 from common import roleRequired, getUserProfile, validateEmployeeProfile
 
 
-@app.route("/admin/profiles")
+@app.route("/admin/profiles/<profile_type>")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def adminProfiles():
+def adminProfiles(profile_type):
     print(session.get('type'))
 
-    if session.get('type') in ['Consumer']:
+    if session.get('type') in ['Staff']:
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
 
-    elif session.get('type') in ['Staff']:
-        result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
-                          join Users on Employees.user_id=Users.user_id 
-                          join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
-
     elif session.get('type') in ['Local_Manager']:
-        result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
+        if profile_type == "Consumer":
+            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
+        elif profile_type == "Staff":
+            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
+                            join Users on Employees.user_id=Users.user_id 
+                            join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
+            
+    elif session.get('type') in ['National_Manager']:
+        if profile_type == "Consumer":
+            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
+        elif profile_type == "Staff":
+            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
+                            join Users on Employees.user_id=Users.user_id 
+                            join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
+        elif profile_type == "Local_Manager":    
+            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Local_Manager';""")
 
-    return render_template('admin_profile_list.html', member_list=result,profile_type=session.get('type'))
+    return render_template('admin_profile_list.html', member_list=result,profile_type=profile_type)
 
 
 # @app.route('/admin/profile/search',methods = ["GET","POST"])
