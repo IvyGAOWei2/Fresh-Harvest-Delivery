@@ -20,7 +20,7 @@
     <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
     </a>
-    <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}">
+    <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Manage Consumer</span>
     </a>
 
@@ -36,19 +36,15 @@
       <div class="collapse {% if is_profilelist %}show{% endif %}" id="contentManagement">
         <ul class="nav flex-column ms-4">
           <li class="nav-item">
-            <a 
-              href="{{ url_for('adminProfiles',profile_type='Staff') }}"
-              class="nav-link nav-sub"
-              aria-current="page"
-            >
-            Staff</a>
+            <a href="{{ url_for('adminProfiles',profile_type='Staff') }}" class="nav-link nav-sub" aria-current="page">
+              Staff
+            </a>
           </li>
           {% if type == 'National_Manager' %}
           <li class="nav-item">
-            <a
-              href="{{ url_for('adminProfiles',profile_type='Local_Manager') }}"
-              class="nav-link nav-sub"
-            >Local Manager</a>
+            <a href="{{ url_for('adminProfiles',profile_type='Local_Manager') }}" class="nav-link nav-sub">
+              Local Manager
+            </a>
           </li>
           {% endif %}
         </ul>
