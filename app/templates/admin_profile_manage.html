@@ -35,7 +35,7 @@
             </a>
           </td>          
           <td>
-            <a class="btn consumer_payment" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumer_payment{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="View payment history">
+            <a class="btn consumer_payment" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumerPayment{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="View payment history">
             <i class="fas fa-list fa-lg me-3 fa-fw"></i>
             </a>
           </td>
@@ -46,10 +46,10 @@
               <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Update profile">
                 <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
               </a>
-              <a class="btn member-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Add member">
+              <a class="btn employee-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addEmployee{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Add member">
                 <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
               </a>
-              <a class="btn member-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteMemberModal{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Delete member">
+              <a class="btn employee-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteEmployee{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Delete member">
                 <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
               </a>
             </div>
@@ -58,7 +58,7 @@
       </tr>
     </tbody>
 
-    <!-- update profole modal-->
+    <!-- update member profile modal-->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member[1] }}" aria-labelledby="updateMemberLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
@@ -67,7 +67,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <form id="updateMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+        <form id="updateMemberForm{{ member[1] }}" method="POST" action="/admin/profile/update" class="needs-validation" novalidate>
           <div class="row">
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
@@ -83,33 +83,33 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="email" name="email" value="{{ member[0] }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <input type="email" maxlength="50" class="form-control" id="member_email" name="member_email" value="{{ member[0] }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" value="{{ member[2] }}" id="first_name" name="first_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member[2] }}" id="member_given_name" name="member_given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" value="{{ member[3] }}" id="last_name" name="last_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member[3] }}" id="member_family_name" name="member_family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" value="{{ member[5] }}" minlength="7" maxlength="13" id="phone" name="phone">
+              <input type="text" class="form-control" value="{{ member[5] }}" minlength="7" maxlength="13" id="member_phone" name="member_phone">
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member[4] }}" id="address" name="address">
+              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member[4] }}" id="member_address" name="member_address">
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Depot</label>
               <div class="d-flex align-items-center">
-                <select class="form-control"name="category" id="category">
+                <select class="form-control"name="member_city" id="member_city">
                   <option value="Christchurch"  {% if member[6]=='Christchurch' %} selected {% endif %}>Christchurch</option>
                   <option value="Invercargill" {% if member[6]=='Invercargill' %} selected {% endif %}>Invercargill</option>
                   <option value="Wellington" {% if member[6]=='Wellington' %} selected {% endif %}>Wellington</option>
@@ -127,16 +127,16 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Regisration date</label>
-              <input type="date" class="form-control" value="{{ member[12] }}" id="register_date" name="register_date">
+              <input type="date" class="form-control" value="{{ member[12] }}" id="consumer_registration_date" name="consumer_registration_date">
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last login date</label>
-              <input type="text" class="form-control" value="{{ member[13] }}" id="last_login_date" name="last_login_date">
+              <input type="text" class="form-control" value="{{ member[13] }}" id="consumer_last_login_date" name="consumer_last_login_date">
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">User type</label>
               <div class="d-flex align-items-center">
-                <select class="form-control"name="user_type" id="user_type">
+                <select class="form-control" name="consumer_user_type" id="consumer_user_type">
                   <option value="Residential"  {% if member[14]=='Residential' %} selected {% endif %}>Residential</option>
                   <option value="Business" {% if member[14]=='Business' %} selected {% endif %}>Business</option>
                 </select>
@@ -144,38 +144,38 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Credit available</label>
-              <input class="form-control" value="{{ member[9] }}" id="credit_available" name="credit_available">
+              <input class="form-control" value="{{ member[9] }}" id="consumer_credit_available" name="consumer_credit_available">
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Subscription id</label>
-              <input class="form-control" value="{{ member[16] }}" id="subscription_id" name="subscription_id">
+              <input class="form-control" value="{{ member[16] }}" id="consumer_subscription_id" name="consumer_subscription_id">
             </div>
-                {% if member[13] == "Business" %}
+                {% if member[14] == "Business" %}
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Account Limit</label>
-                  <input class="form-control" value="{{ member[10] }}" id="account_limit" name="account_limit">
+                  <input class="form-control" value="{{ member[10] }}" id="consumer_account_limit" name="consumer_account_limit">
                 </div>
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Account available</label>
-                  <input class="form-control" value="{{ member[11] }}" id="account_available" name="account_available">
+                  <input class="form-control" value="{{ member[11] }}" id="consumer_account_available" name="consumer_account_available">
                 </div>
                 {% endif %}
 
-            {% elif profile_type == "Staff"  %}
+            {% elif profile_type == "Staff" or 'Local_Manager'  %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Hire date</label>
-              <input type="date" class="form-control" value="{{ member[7] }}" id="hire_date" name="hire_date">
+              <input type="date" class="form-control" value="{{ member[7] }}" id="employees_hire_date" name="employees_hire_date">
             </div>
             {% endif %}
   
             <div class="col-md-6 mb-3">
               <label for="basic-url" class="form-label">New Password</label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="password" name="password">
+              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="member_new_password" name="member_new_password">
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" class="btn btn-secondary disabled">Submit</button>
+          <button type="submit" form="updateMemberForm{{ member[1] }}" class="btn btn-secondary">Submit</button>
           </div>
         </form>
       </div>
@@ -196,40 +196,55 @@
       </div>
     </div>
 
-    <!-- add staff/local manager modal-->
-    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="addMember{{ member[1] }}" aria-labelledby="addMemberLabel">
+
+    <!-- consumer payment history-->
+    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerPayment{{ member[1] }}" aria-labelledby="consumerPaymentLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="addMemberLabel">Add {{profile_type}}</h5>
+          <h5 class="offcanvas-title" id="consumerPaymentLabel">Consumer Payment History</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <form id="addMemberForm{{ member[1] }}" method="POST" class="needs-validation" novalidate>
+        <form id="consumerPaymentForm{{ member[1] }}" method="POST" action="/admin/payment" class="needs-validation" novalidate>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- add employee modal-->
+    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="addEmployee{{ member[1] }}" aria-labelledby="addEmployeeLabel">
+      <div class="offcanvas-header">
+        <div class="col text-center">
+          <h5 class="offcanvas-title" id="addEmployeeLabel">Add {{profile_type}}</h5>
+        </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form id="addMemberForm{{ member[1] }}" method="POST" action="/admin/profile/add" class="needs-validation" novalidate>
           <div class="row">
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
                 <label for="imgUpdate{{ profile_type }}{{ member[1] }}">
-                  <img src="{{ url_for('static', filename='images/' + member[6]) }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member[1] }}">
                 </label>
-                <input class="form-control" type="file" id="imgUpdate{{ profile_type }}{{ member[1] }}" style="display: none;" accept="image/*">
+                <input class="form-control" type="file" id="img_add{{ profile_type }}{{ member[1] }}" style="display: none;" accept="image/*">
               </div>
             </div>
             
             <div class="col-md-6 mb-3">
               <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
               <input type="email" maxlength="50" class="form-control" id="add_email" name="add_email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
-              <div class="invalid-feedback">Please enter a valid email address</div>
-              <div class="valid-feedback">Looks good!</div>      
+              <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" id="add_first_name" name="add_first_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" id="add_given_name" name="add_given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="add_last_name" name="add_last_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" id="add_family_name" name="add_family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
@@ -245,7 +260,7 @@
             <div class="col-md-6 mb-3">
               <label class="form-label">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control"name="add_category" id="add_category">
+                  <select class="form-control"name="add_depot" id="add_depot">
                     <option selected value="">Please select a depot</option>
                     <option value="Christchurch">Christchurch</option>
                     <option  value="Invercargill">Invercargill</option>
@@ -266,23 +281,25 @@
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" class="btn btn-secondary disabled">Submit</button>
+          <button type="submit" id="addMemberForm{{ member[1] }}" class="btn btn-secondary" name="add_member" value="add_member">Submit</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- delete staff/local manager modal-->
+    <!-- delete employee modal-->
     {% with
       btn_show = 0,
       btn_text = 'Del Confirm',
-      modal_id = 'deleteMemberModal' + member[1]|string,
+      modal_id = 'deleteEmployee' + member[1]|string,
       title = 'Delete Confirmation',
-      msg = 'Are you sure to delete this {item}?'
+      msg = 'Are you sure to delete '+ member[2]|string + ' '+ member[3]|string + '?'
     %}
       {% include "components/elements/delConfirm2.html" %}
     {% endwith %}
 
+
     {% endfor %}
   </table>
 </div>
+

@@ -1,0 +1,180 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+  {% with is_dashboard='1' %}
+    {% include "components/layout/Sidebar.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Page' %}
+    {% include "components/layout/Breadcrumb2.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Main content -->
+<section class="main-content">
+  <div class="col text-center">
+  <h1>{{profile_type}} List</h1>
+  </div>
+
+  <div class="row justify-content-end">
+    <div class="col-auto">
+        <form id="searchForm" class="d-flex me-5 mb-4" role="search">
+          {% if profile_type == "Consumer" %}
+            <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">User type:</label>
+            <select class="form-select me-2" name="filterBy" aria-label="Filter by">
+                <option value="all">All</option>
+                <option value="Residential">Residential</option>
+                <option value="Business">Business</option>
+            </select>
+          {% endif %}
+            <input class="form-control me-2" name="searchBy" type="search" placeholder="Search for name" style="width: 200px;" aria-label="Search" required>
+            <button class="btn" type="submit"><i class="fas fa-search fa-lg me-3 fa-fw"></i></button>
+        </form>
+    </div>
+</div>
+
+  <div id="profileSearchResults">
+    {% include "admin_profile_manage.html" %}
+  </div>
+</section>
+{% endblock %}
+
+<!-- {% block script %}
+{% include "components/elements/InputValidate.html" %}
+<script>
+  // 定义全局变量
+  let profile_type = "{{ profile_type }}"
+  let newUpdateMemberData = {};
+  let differentUpdateStaffData = {};
+  
+  // 等待整个文档加载完成后执行
+  document.addEventListener('DOMContentLoaded', function () {
+    // 监听 updateMemberSuccess 模态框关闭事件，关闭时刷新页面
+    document.getElementById('updateMemberSuccess').addEventListener('hidden.bs.modal', () => location.reload());
+    
+    const searchForm = document.getElementById('searchForm');  // 获取搜索表单
+    const searchResultsContainer = document.getElementById('profileSearchResults');
+    
+    // 监听搜索表单提交事件
+    searchForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      try {
+        const formDataObject = {
+          'searchBy': new FormData(searchForm).get('searchBy'),
+          'profile_type': profile_type
+        };
+
+        const response = await fetch('admin/profile/search', {
+          method: 'POST',
+          body: JSON.stringify(formDataObject),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+
+        const html = await response.text();
+        searchResultsContainer.innerHTML = html;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+
+     // 监听每个更新按钮的点击事件
+    document.querySelectorAll('.member-update').forEach(function (update) {
+      const user_id = update.getAttribute('data-user-id');
+      const memberUpdateForm = document.getElementById('updateMemberForm' + user_id);
+      const formData = new FormData(memberUpdateForm);
+      const formDataObject = Object.fromEntries(formData.entries());
+
+      update.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        const btn = memberUpdateForm.querySelector('button[type="submit"]');
+
+        function enableSubmit() {
+          btn.classList.remove('disabled');
+          btn.classList.replace('btn-secondary', 'btn-primary');
+        }
+
+        function disableSubmit() {
+          btn.classList.add('disabled');
+          btn.classList.replace('btn-primary', 'btn-secondary');
+        }
+
+        memberUpdateForm.reset();
+        disableSubmit();
+
+        // 监听表单输入事件
+        memberUpdateForm.addEventListener('input', event => {
+          const imgUpdate = document.getElementById('imgUpdate' + profile_type + user_id);
+          if (event.target === imgUpdate && imgUpdate.files.length > 0) {
+            const file = imgUpdate.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const imagePreview = document.getElementById('imagePreview' + profile_type + user_id);
+              imagePreview.src = e.target.result;
+              differentUpdateStaffData['profile_image'] = e.target.result;
+              enableSubmit();
+            }
+            reader.readAsDataURL(file);
+          } else {
+            const keyName = event.target.name;
+            const keyValue = event.target.value;
+
+            newUpdateMemberData[keyName] = keyValue;
+
+            for (const keyName in formDataObject) {
+              if (newUpdateMemberData.hasOwnProperty(keyName)) {
+                if (formDataObject[keyName] !== newUpdateMemberData[keyName]) {
+                  enableSubmit();
+                  return;
+                }
+                disableSubmit();
+              }
+            }
+          }
+        });
+      });
+
+      // 监听表单提交事件
+      memberUpdateForm.addEventListener('submit', event => {
+        if (!memberUpdateForm.checkValidity()) return; // Stop further execution if form is invalid
+        event.preventDefault();
+        event.stopPropagation();
+
+        for (let key in newUpdateMemberData) {
+          if (formDataObject.hasOwnProperty(key) && newUpdateMemberData[key] !== formDataObject[key]) {
+            differentUpdateStaffData[key] = newUpdateMemberData[key];
+          }
+        }
+
+        differentUpdateStaffData['user_id'] = user_id;
+
+        fetch('admin/profile/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(differentUpdateStaffData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status == 1) {
+            new bootstrap.Modal(document.getElementById('updateMemberSuccess')).show();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+  });
+</script>
+{% endblock %} -->
