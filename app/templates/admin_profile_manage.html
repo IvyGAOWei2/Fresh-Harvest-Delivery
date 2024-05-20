@@ -1,5 +1,4 @@
 <div class="row me-5 ms-5">
-
   <table class="text-center table table-striped table-bordered mb-5">
     <thead>
       <!-- Table header -->
@@ -42,8 +41,7 @@
           </td>
         {% elif profile_type == 'Staff' or 'Local_Manager' %}
           <td class="align-middle">{{ member[9] }}</td>     
-          <td>
-            <div class="btn-group" role="group" aria-label="Member Actions">
+          <td>           
               <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Update profile">
                 <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
               </a>
@@ -52,14 +50,11 @@
               </a>
               <a class="btn employee-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteEmployee{{ member[1] }}" data-user-id="{{ member[1] }}" data-bs-toggle="tooltip" title="Delete member">
                 <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
-              </a>
-            </div>
+              </a>           
           </td>     
         {% endif %}         
       </tr>
     </tbody>
-
-
 
     <!-- update member profile modal-->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member[1] }}" aria-labelledby="updateMemberLabel">
@@ -70,7 +65,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <form id="ddd" method="POST" action="https://chatgpt.com/c/6838e351-a001-4446-90b5-3410d1446863" class="needs-validation" novalidate>
+        <form id="updateMemberForm{{ member[1] }}"  method="POST" action="/admin/profile/update" class="needs-validation" novalidate>
           <div class="row">
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
@@ -180,9 +175,8 @@
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
-        
           <div class="col text-center">
-            <button type="submit" form="ddd" class="btn btn-primary">Submit</button>
+            <button type="submit" form="updateMemberForm{{ member[1] }}" class="btn btn-primary">Submit</button>
           </div>
         </form>
       </div>
@@ -203,8 +197,6 @@
       </div>
     </div>
 
-   
-
 
     <!-- consumer payment history-->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerPayment{{ member[1] }}" aria-labelledby="consumerPaymentLabel">
@@ -220,6 +212,7 @@
         </form>
       </div>
     </div>
+
 
     <!-- add employee modal-->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="addEmployee{{ member[1] }}" aria-labelledby="addEmployeeLabel">
@@ -290,12 +283,13 @@
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" class="btn btn-secondary">Submit</button>
+          <button type="submit" form="addMemberForm{{ member[1] }}" class="btn btn-secondary">Submit</button>
           </div>
         </form>
       </div>
     </div>
 
+    
     <!-- delete employee modal-->
     {% with
       btn_show = 0,
@@ -306,8 +300,7 @@
     %}
       {% include "components/elements/delConfirm2.html" %}
     {% endwith %}
-
-
+    
     {% endfor %}
   </table>
 </div>

@@ -34,7 +34,7 @@ def adminProfiles(profile_type):
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Local_Manager';""")
 
-    return render_template('admin_profile_list.html', member_list=result,profile_type=profile_type)
+    return render_template('admin_profile_list.html', member_list=result,profile_type=profile_type,type=session.get('type'))
 
 
 # @app.route('/admin/profile/search',methods = ["GET","POST"])
@@ -60,13 +60,13 @@ def admin_profile_update():
     return {"status": False}, 500
     
 
-# @app.route("/admin/profile/add",methods = ["GET","POST"])
-# # @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-# def admin_profile_add():
-#     if request.values.get("add_member") == "add_member":
-#         print(request.form.get("add_password",888888888888888888888) )
+@app.route("/admin/profile/add",methods = ["GET","POST"])
+# @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def admin_profile_add():
+    if request.method == 'POST':  
+        print(request.form.get("password",888888888888888888888) )
 
-#     return render_template('admin_profile_list.html')
+    return {"status": False}, 500
 
 
 # @app.route("/admin/profile/delete",methods = ["GET","POST"])

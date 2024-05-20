@@ -23,44 +23,37 @@
     <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}">
       <i class="fas fa-tools"></i> <span>Manage Consumer</span>
     </a>
-    
+
+
+    {% if type == 'Local_Manager' or type == 'National_Manager' %}
     <li class="nav-item">
-      <a class="nav-link text-white-50" data-bs-toggle="collapse" href="#contentManagement" role="button" aria-expanded="false" aria-controls="contentManagement">
+      <a class="nav-link {% if is_profilelist %}text-white{% else %}text-white-50{% endif %}" data-bs-toggle="collapse" href="#contentManagement" role="button" aria-expanded="{% if is_profilelist %}true{% else %}false{% endif %}" aria-controls="contentManagement">
         <div class="d-flex align-items-center">
           <i class="me-3 bi bi-house-gear-fill"></i>
           Manage Employee
-          <i 
-            class="bi bi-chevron-down ms-auto"
-            {% if manage_tutor_schedules or manage_workshops or manage_lesson_types or manage_schedule or manager_workshop_lesson or manage_locations or manage_price %}
-              style="transform: rotate(180deg)"
-            {% endif %}
-          ></i>
         </div>
       </a>
-      <div
-        class="collapse 
-          {% if manage_tutor_schedules or manage_workshops or manage_lesson_types or manage_schedule or manager_workshop_lesson or manage_price or manage_locations %}
-            show
-          {% endif %}"
-        id="contentManagement"
-      >
+      <div class="collapse {% if is_profilelist %}show{% endif %}" id="contentManagement">
         <ul class="nav flex-column ms-4">
           <li class="nav-item">
             <a 
               href="{{ url_for('adminProfiles',profile_type='Staff') }}"
-              class="nav-link nav-sub {% if manager_workshop_lesson %}text-white{% else %}text-white-50{% endif %}"
+              class="nav-link nav-sub"
               aria-current="page"
             >
             Staff</a>
           </li>
+          {% if type == 'National_Manager' %}
           <li class="nav-item">
             <a
               href="{{ url_for('adminProfiles',profile_type='Local_Manager') }}"
-              class="nav-link nav-sub {% if manage_lesson_types %}text-white{% else %}text-white-50{% endif %}"
+              class="nav-link nav-sub"
             >Local Manager</a>
           </li>
+          {% endif %}
         </ul>
       </div>
     </li>
+    {% endif %}
     
 </div>
