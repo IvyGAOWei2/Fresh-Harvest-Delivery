@@ -83,33 +83,33 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="member_email" name="member_email" value="{{ member[0] }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <input type="email" maxlength="50" class="form-control" id="member_email" name="email" value="{{ member[0] }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" value="{{ member[2] }}" id="member_given_name" name="member_given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member[2] }}" id="member_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" value="{{ member[3] }}" id="member_family_name" name="member_family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member[3] }}" id="member_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" value="{{ member[5] }}" minlength="7" maxlength="13" id="member_phone" name="member_phone">
+              <input type="text" class="form-control" value="{{ member[5] }}" minlength="7" maxlength="13" id="phone" name="member_phone" pattern="^[0-9]+$" >
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member[4] }}" id="member_address" name="member_address">
+              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member[4] }}" id="address" name="member_address">
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Depot</label>
               <div class="d-flex align-items-center">
-                <select class="form-control"name="member_city" id="member_city">
+                <select class="form-control"name="city" id="city">
                   <option value="Christchurch"  {% if member[6]=='Christchurch' %} selected {% endif %}>Christchurch</option>
                   <option value="Invercargill" {% if member[6]=='Invercargill' %} selected {% endif %}>Invercargill</option>
                   <option value="Wellington" {% if member[6]=='Wellington' %} selected {% endif %}>Wellington</option>
@@ -122,21 +122,21 @@
             {% if profile_type == "Consumer" %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Postcode</label>
-              <input class="form-control form-textarea" value="{{ member[7] }}" minlength="4" maxlength="4" id="consumer_post" name="consumer_post" pattern="^[0-9]+$" >
+              <input class="form-control form-textarea" value="{{ member[7] }}" minlength="4" maxlength="4" id="consumer_postcode" name="postcode" pattern="^[0-9]+$" >
               <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Regisration date</label>
-              <input type="date" class="form-control" value="{{ member[12] }}" id="consumer_registration_date" name="consumer_registration_date">
+              <input type="date" class="form-control" value="{{ member[12] }}" id="consumer_registration_date" name="registration_date">
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last login date</label>
-              <input type="text" class="form-control" value="{{ member[13] }}" id="consumer_last_login_date" name="consumer_last_login_date">
+              <input type="text" class="form-control" value="{{ member[13] }}" id="consumer_last_login_date" name="last_login_date">
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">User type</label>
               <div class="d-flex align-items-center">
-                <select class="form-control" name="consumer_user_type" id="consumer_user_type">
+                <select class="form-control" id="consumer_user_type" name="user_type" >
                   <option value="Residential"  {% if member[14]=='Residential' %} selected {% endif %}>Residential</option>
                   <option value="Business" {% if member[14]=='Business' %} selected {% endif %}>Business</option>
                 </select>
@@ -144,38 +144,42 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Credit available</label>
-              <input class="form-control" value="{{ member[9] }}" id="consumer_credit_available" name="consumer_credit_available">
+              <input class="form-control" value="{{ member[9] }}" id="consumer_credit_available" name="credit_available" pattern="^\d{1,8}(\.\d{1,2})?$">
+              <div class="invalid-feedback">No more than 99999999.99</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Subscription id</label>
-              <input class="form-control" value="{{ member[16] }}" id="consumer_subscription_id" name="consumer_subscription_id">
+              <input class="form-control" value="{{ member[16] }}" id="consumer_subscription_id" name="subscription_id">
             </div>
                 {% if member[14] == "Business" %}
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Account Limit</label>
-                  <input class="form-control" value="{{ member[10] }}" id="consumer_account_limit" name="consumer_account_limit">
+                  <input class="form-control" value="{{ member[10] }}" id="consumer_account_limit" name="account_limit" pattern="^\d{1,8}(\.\d{1,2})?$" >
+                  <div class="invalid-feedback">No more than 99999999.99</div>
                 </div>
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Account available</label>
-                  <input class="form-control" value="{{ member[11] }}" id="consumer_account_available" name="consumer_account_available">
+                  <input class="form-control" value="{{ member[11] }}" id="consumer_account_available" name="account_available" pattern="^\d{1,8}(\.\d{1,2})?$" >
+                  <div class="invalid-feedback">No more than 99999999.99</div>
                 </div>
                 {% endif %}
 
             {% elif profile_type == "Staff" or 'Local_Manager'  %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Hire date</label>
-              <input type="date" class="form-control" value="{{ member[7] }}" id="employees_hire_date" name="employees_hire_date">
+              <input type="date" class="form-control" value="{{ member[7] }}" id="employees_hire_date" name="hire_date">
             </div>
             {% endif %}
   
             <div class="col-md-6 mb-3">
               <label for="basic-url" class="form-label">New Password</label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="member_new_password" name="member_new_password">
+              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="member_new_password" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
+        
           <div class="col text-center">
-          <button type="submit" form="updateMemberForm{{ member[1] }}" class="btn btn-secondary">Submit</button>
+            <button type="submit" form="updateMemberForm{{ member[1] }}" class="btn btn-primary">Submit</button>
           </div>
         </form>
       </div>
@@ -234,54 +238,54 @@
             
             <div class="col-md-6 mb-3">
               <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="add_email" name="add_email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <input type="email" maxlength="50" class="form-control" id="add_email" name="email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" id="add_given_name" name="add_given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" id="add_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" id="add_family_name" name="add_family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" id="add_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone" name="add_phone">
+              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone" name="phone">
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address" name="add_address">
+              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address" name="address">
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control"name="add_depot" id="add_depot">
+                  <select class="form-control" id="add_depot" name="depot_id" >
                     <option selected value="">Please select a depot</option>
-                    <option value="Christchurch">Christchurch</option>
-                    <option  value="Invercargill">Invercargill</option>
-                    <option  value="Wellington">Wellington</option>
-                    <option  value="Hamilton">Hamilton</option>
-                    <option  value="Auckland">Auckland</option>
+                    <option value="1">Christchurch</option>
+                    <option  value="2">Invercargill</option>
+                    <option  value="3">Wellington</option>
+                    <option  value="4">Hamilton</option>
+                    <option  value="5">Auckland</option>
                   </select>
                 </div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Hire date</label>
-              <input type="date" class="form-control" id="add_hire_date" name="add_hire_date">
+              <input type="date" class="form-control" id="add_hire_date" name="hire_date">
             </div>  
             <div class="col-md-6 mb-3">
               <label for="basic-url" class="form-label">Password</label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="add_password" name="add_password">
+              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="add_password" name="password">
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" id="addMemberForm{{ member[1] }}" class="btn btn-secondary" name="add_member" value="add_member">Submit</button>
+          <button type="submit" class="btn btn-secondary">Submit</button>
           </div>
         </form>
       </div>

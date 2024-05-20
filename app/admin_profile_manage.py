@@ -6,9 +6,12 @@ from dbFile.config import updateSQL,fetchAll
 from common import roleRequired, getUserProfile, validateEmployeeProfile
 
 
-@app.route("/admin/profile/list/<profile_type>",methods = ["GET","POST"])
+@app.route("/admin/profile/list",methods = ["GET","POST"])
 # @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def admin_profile_list(profile_type):
+def admin_profile_list():
+    type = session.get('type') 
+
+    profile_type = 'Consumer'
     
     if profile_type == 'Consumer':
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
@@ -25,6 +28,8 @@ def admin_profile_list(profile_type):
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Local_Manager';""")
         profile_type = 'Local manager'
+    
+    print(type,333333)
 
     return render_template('admin_profile_list.html', member_list=result,profile_type=profile_type)
 
@@ -41,14 +46,15 @@ def admin_profile_list(profile_type):
 #     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
 
 
-@app.route("/admin/profile/update",methods = ["GET","POST"])
+@app.route("/admin/profile/update", methods = ["GET","POST"])
 # @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def admin_profile_update():
+    print(9999999000000000)
     if request.method == 'POST':   
-    #     if request.values.get("update_member") == "update_member":
-        test = request.form.get("member_new_password")
-        print(request.form.get(test ,9999999999999999999999999999))
-    return render_template('admin_profile_list.html')
+        test = request.form.get("password")
+        print(test ,9999999999999999999999999999)
+
+    return {"status": False}, 500
     
 
 # @app.route("/admin/profile/add",methods = ["GET","POST"])
