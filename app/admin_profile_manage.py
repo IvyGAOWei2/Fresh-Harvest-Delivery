@@ -6,32 +6,25 @@ from dbFile.config import updateSQL,fetchAll
 from common import roleRequired, getUserProfile, validateEmployeeProfile
 
 
-@app.route("/admin/profile/list",methods = ["GET","POST"])
-# @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def admin_profile_list():
-    type = session.get('type') 
+@app.route("/admin/profiles")
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def adminProfiles():
+    print(session.get('type'))
 
-    profile_type = 'Consumer'
-    
-    if profile_type == 'Consumer':
+    if session.get('type') in ['Consumer']:
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
-        profile_type = 'Consumer'
 
-    elif profile_type == 'Staff':
+    elif session.get('type') in ['Staff']:
         result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
-        profile_type = 'Staff'
 
-    elif profile_type == 'Local_Manager':
+    elif session.get('type') in ['Local_Manager']:
         result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
                           join Users on Employees.user_id=Users.user_id 
                           join Depots on Employees.depot_id=Depots.depot_id where Users.type='Local_Manager';""")
-        profile_type = 'Local manager'
-    
-    print(type,333333)
 
-    return render_template('admin_profile_list.html', member_list=result,profile_type=profile_type)
+    return render_template('admin_profile_list.html', member_list=result,profile_type=session.get('type'))
 
 
 # @app.route('/admin/profile/search',methods = ["GET","POST"])
