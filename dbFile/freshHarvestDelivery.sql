@@ -90,7 +90,6 @@ CREATE TABLE DiscountedProducts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     discount_id INT,
     product_id SMALLINT,
-    discount_price DECIMAL(10, 2),
     FOREIGN KEY (discount_id) REFERENCES Discounts(discount_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );

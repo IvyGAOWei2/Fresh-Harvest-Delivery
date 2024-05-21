@@ -6,7 +6,6 @@ from datetime import datetime
 from decimal import Decimal
 
 
-
 @app.route("/employee/products")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manageProduct():
@@ -62,8 +61,23 @@ def manageDiscount():
                 start_date DESC
         """
         discount_list = fetchAll(sql_discounts)
-        return render_template('discounts.html', discountList=discount_list, now=now)
-    except mysql.connector.Error as err:
+        
+        # Format dates in dd/mm/yyyy format and convert Decimal to string
+        formatted_discount_list = [
+            {
+                'discount_id': discount[0],
+                'title': discount[1],
+                'description': discount[2],
+                'start_date': discount[3].strftime('%d/%m/%Y'),
+                'end_date': discount[4].strftime('%d/%m/%Y'),
+                'discount_rate': str(discount[5]),  # Convert Decimal to string
+                'status': 'Active' if discount[6] else 'Expired'
+            }
+            for discount in discount_list
+        ]
+
+        return render_template('discounts.html', discountList=formatted_discount_list, now=now.strftime('%d/%m/%Y'))
+    except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
@@ -77,24 +91,27 @@ def add_discount():
         start_date = data.get('start_date')
         end_date = data.get('end_date')
         discount_rate = data.get('discount_rate')
-        
+
         if not all([title, description, start_date, end_date, discount_rate]):
             return jsonify({'status': False, 'message': 'All fields are required'}), 400
-        
+
+        # Log the data being inserted
+        print(f"Inserting discount: Title={title}, Description={description}, Start Date={start_date}, End Date={end_date}, Discount Rate={discount_rate}")
+
         sql_insert_discount = """
             INSERT INTO Discounts (title, description, start_date, end_date, discount_rate)
             VALUES (%s, %s, %s, %s, %s)
         """
         discount_id = insertSQL(sql_insert_discount, (title, description, start_date, end_date, discount_rate))
-        
+
         if discount_id:
             return jsonify({'status': True})
         else:
             return jsonify({'status': False, 'message': 'Failed to add discount'}), 500
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"Error: {err}")
-        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-
+        return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
+    
 @app.route('/employee/update-discount/<int:discount_id>', methods=['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def update_discount(discount_id):
@@ -102,10 +119,10 @@ def update_discount(discount_id):
         data = request.json
         title = data.get('title')
         description = data.get('description')
-        discount_rate = data.get('discountRate')
-        end_date = data.get('endDate')
+        discount_rate = data.get('discount_rate')
+        end_date = data.get('end_date')
 
-        if not title or not description or not discount_rate or not end_date:
+        if not all([title, description, discount_rate, end_date]):
             return jsonify({'status': False, 'message': 'All fields are required'}), 400
 
         sql_update_discount = """
@@ -116,7 +133,7 @@ def update_discount(discount_id):
         updateSQL(sql_update_discount, (title, description, discount_rate, end_date, discount_id))
 
         return jsonify({'status': True})
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
@@ -124,13 +141,16 @@ def update_discount(discount_id):
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manageDiscountProducts(discount_id):
     try:
+        sql_discount_rate = "SELECT discount_rate FROM Discounts WHERE discount_id = %s"
+        discount_rate = fetchOne(sql_discount_rate, (discount_id,))
+        print(f"Fetched discount_rate: {discount_rate}")
+
         sql_discounted_products = """
             SELECT 
                 dp.id,
                 p.name,
                 p.description,
                 p.price,
-                dp.discount_price,
                 c.category_name,
                 d.discount_rate
             FROM 
@@ -145,12 +165,31 @@ def manageDiscountProducts(discount_id):
                 dp.discount_id = %s
         """
         discounted_product_list = fetchAll(sql_discounted_products, (discount_id,))
-        discount_rate = fetchOne("SELECT discount_rate FROM Discounts WHERE discount_id = %s", (discount_id,), withDescription=True)['discount_rate']
-        return render_template('manage-discount-products.html', discountedProductList=discounted_product_list, discount_id=discount_id, discountRate=discount_rate)
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+        print(f"Fetched discounted products: {discounted_product_list}")
 
+        formatted_product_list = [
+            {
+                'id': product[0],
+                'name': product[1],
+                'description': product[2],
+                'price': str(product[3]),
+                'category_name': product[4],
+                'discount_rate': str(product[5])
+            }
+            for product in discounted_product_list
+        ]
+        print(f"Formatted product list: {formatted_product_list}")
+
+        return render_template('manage-discount-products.html', discountedProductList=formatted_product_list, discountRate=str(discount_rate[0]))
+
+    except TemplateNotFound as tnfe:
+        print(f"Template not found: {tnfe}")
+        return jsonify({'status': False, 'message': 'Template not found'}), 500
+    except Exception as e:
+        print(f"Error: {e}")
+        return render_template('manage-discount-products.html', discountedProductList=[], discountRate=str(discount_rate[0]))
+
+    
 @app.route('/employee/add-discount-product', methods=['POST'])
 def add_discount_product():
     try:
@@ -161,36 +200,19 @@ def add_discount_product():
         if not discount_id or not product_id:
             return jsonify({'status': False, 'message': 'Discount ID and Product ID are required'}), 400
 
-        # Fetch discount rate
-        sql_discount_rate = "SELECT discount_rate FROM Discounts WHERE discount_id = %s"
-        discount_rate = fetchOne(sql_discount_rate, (discount_id,))
-        print(f"Fetched discount_rate: {discount_rate}")
-
-        # Fetch product price
-        sql_product_price = "SELECT price FROM Products WHERE product_id = %s"
-        product_price = fetchOne(sql_product_price, (product_id,))
-        print(f"Fetched product_price: {product_price}")
-
-        if not discount_rate or not product_price:
-            return jsonify({'status': False, 'message': 'Invalid discount or product ID'}), 400
-
-        # Calculate discount price
-        discount_price = product_price['price'] * (1 - discount_rate[0] / Decimal('100'))
-        print(f"Calculated discount_price: {discount_price}")
-
-        # Insert discounted product
+        # Insert discounted product without discount_price
         sql_insert_discounted_product = """
-            INSERT INTO DiscountedProducts (discount_id, product_id, discount_price)
-            VALUES (%s, %s, %s)
+            INSERT INTO DiscountedProducts (discount_id, product_id)
+            VALUES (%s, %s)
         """
-        row_count = insertSQL(sql_insert_discounted_product, (discount_id, product_id, discount_price))
+        row_count = insertSQL(sql_insert_discounted_product, (discount_id, product_id))
         print(f"Insert row_count: {row_count}")
 
         if row_count > 0:
             return jsonify({'status': True, 'message': 'Discounted product added successfully'})
         else:
             return jsonify({'status': False, 'message': 'Failed to add discounted product'}), 500
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
@@ -199,10 +221,12 @@ def get_categories():
     try:
         sql = "SELECT category_id as id, category_name as name FROM Category"
         categories = fetchAll(sql, withDescription=True)
+        print(f"Fetched categories: {categories}")  # Add logging
         return jsonify({'categories': categories})
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+
 
 @app.route('/api/products', methods=['GET'])
 def get_products():
@@ -215,9 +239,10 @@ def get_products():
         else:
             products = fetchAll(sql, withDescription=True)
         return jsonify({'products': products})
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+
 
 @app.route('/api/discounts', methods=['GET'])
 def get_discounts():
@@ -225,23 +250,9 @@ def get_discounts():
         sql_discounts = "SELECT discount_id as id, title, discount_rate FROM Discounts"
         discounts = fetchAll(sql_discounts, withDescription=True)
         return jsonify({'discounts': discounts})
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
-@app.route('/test-insert', methods=['GET'])
-def test_insert():
-    try:
-        sql_insert_test = "INSERT INTO DiscountedProducts (discount_id, product_id, discount_price) VALUES (%s, %s, %s)"
-        test_discount_id = 1
-        test_product_id = 2
-        test_discount_price = 3.99
-        row_count = insertSQL(sql_insert_test, (test_discount_id, test_product_id, test_discount_price))
-        print(f"Test Insert row_count: {row_count}")
-        if row_count > 0:
-            return "Test insert successful", 200
-        else:
-            return "Test insert failed", 500
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return "Database error occurred", 500
+
+

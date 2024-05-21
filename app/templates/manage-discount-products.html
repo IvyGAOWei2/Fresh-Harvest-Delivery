@@ -65,61 +65,61 @@
                         <th>Product Name</th>
                         <th>Category</th>
                         <th>Price</th>
-                        <th>Discount Price</th>
                         <th>Discount Rate</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="discountProductTableBody">
-                    {% for product in discountedProductList %}
-                    <tr>
-                        <td class="align-middle fw-bold">{{ product[1] }}</td>
-                        <td class="align-middle">{{ product[5] }}</td>
-                        <td class="align-middle">{{ product[3] }}</td>
-                        <td class="align-middle">{{ product[4] }}</td>
-                        <td class="align-middle">{{ discountRate }}%</td>
-                        <td>
-                            <a class="btn product-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product[0] }}" data-product-id="{{ product[0] }}">
-                                <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <div class="offcanvas offcanvas-end" id="updateDiscountProduct{{ product[0] }}" tabindex="-1" aria-labelledby="updateDiscountProductModalLabel">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title text-center" id="updateDiscountProductLabel">Update {{product[1]}}</h5>
-                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    {% if discountedProductList %}
+                        {% for product in discountedProductList %}
+                        <tr>
+                            <td class="align-middle fw-bold">{{ product.name }}</td>
+                            <td class="align-middle">{{ product.category_name }}</td>
+                            <td class="align-middle">{{ product.price }}</td>
+                            <td class="align-middle">{{ product.discount_rate }}%</td>
+                            <td>
+                                <a class="btn product-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product.id }}" data-product-id="{{ product.id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <div class="offcanvas offcanvas-end" id="updateDiscountProduct{{ product.id }}" tabindex="-1" aria-labelledby="updateDiscountProductModalLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title text-center" id="updateDiscountProductLabel">Update {{product.name}}</h5>
+                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form id="updateDiscountProductForm{{ product.id }}" method="POST">
+                                    <div class="mb-3">
+                                        <label for="updateDiscountProductName" class="form-label">Product Name</label>
+                                        <input type="text" class="form-control" value="{{product.name}}" id="updateDiscountProductName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="updateDiscountCategory" class="form-label">Category</label>
+                                        <input type="text" class="form-control" value="{{product.category_name}}" id="updateDiscountCategory" required>
+                                    </div>
+                                    <div>
+                                        <label for="updateDiscountDescription" class="form-label">Description</label>
+                                        <textarea type="text" class="form-control form-textarea" id="updateDiscountDescription" required>{{product.description}}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="updateDiscountPrice" class="form-label">Price</label>
+                                        <input type="number" class="form-control" value="{{product.price}}" id="updateDiscountPrice" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="updateDiscountRate" class="form-label">Discount Rate</label>
+                                        <input type="number" class="form-control" value="{{discountRate}}" id="updateDiscountRate" disabled>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="offcanvas-body">
-                            <form id="updateDiscountProductForm{{ product[0] }}" method="POST">
-                                <div class="mb-3">
-                                    <label for="updateDiscountProductName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" value="{{product[1]}}" id="updateDiscountProductName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="updateDiscountCategory" class="form-label">Category</label>
-                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateDiscountCategory" required>
-                                </div>
-                                <div>
-                                    <label for="updateDiscountDescription" class="form-label">Description</label>
-                                    <textarea type="text" class="form-control form-textarea" id="updateDiscountDescription" required>{{product[2]}}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="updateDiscountPrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product[3]}}" id="updateDiscountPrice" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="updateDiscountDiscountPrice" class="form-label">Discount Price</label>
-                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateDiscountDiscountPrice" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="updateDiscountRate" class="form-label">Discount Rate</label>
-                                    <input type="number" class="form-control" value="{{discountRate}}" id="updateDiscountRate" disabled>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Update</button>
-                            </form>
-                        </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">No discounted products found.</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

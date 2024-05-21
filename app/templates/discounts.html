@@ -36,45 +36,45 @@
                 <tbody id="discountTableBody">
                     {% for discount in discountList %}
                     <tr>
-                        <td class="align-middle">{{ discount[1] }}</td>
-                        <td class="align-middle">{{ discount[2] }}</td>
-                        <td class="align-middle">{{ discount[5] }}%</td>
-                        <td class="align-middle">{{ discount[3] }}</td>
-                        <td class="align-middle">{{ discount[4] }}</td>
-                        <td class="align-middle">{{ 'Active' if discount[6] else 'Expired' }}</td>
+                        <td class="align-middle">{{ discount.title }}</td>
+                        <td class="align-middle">{{ discount.description }}</td>
+                        <td class="align-middle">{{ discount.discount_rate }}%</td>
+                        <td class="align-middle">{{ discount.start_date }}</td>
+                        <td class="align-middle">{{ discount.end_date }}</td>
+                        <td class="align-middle">{{ discount.status }}</td>
                         <td>
-                            <a href="{{ url_for('manageDiscountProducts', discount_id=discount[0]) }}" class="btn btn-info">View Products</a>
-                            <button class="btn btn-primary ms-2" data-bs-toggle="offcanvas" data-bs-target="#updateDiscount{{ discount[0] }}" aria-controls="updateDiscount{{ discount[0] }}">Edit</button>
+                            <a href="{{ url_for('manageDiscountProducts', discount_id=discount.discount_id) }}" class="btn btn-info">View Products</a>
+                            <button class="btn btn-primary ms-2" data-bs-toggle="offcanvas" data-bs-target="#updateDiscount{{ discount.discount_id }}" aria-controls="updateDiscount{{ discount.discount_id }}">Edit</button>
                         </td>
                     </tr>
 
                     <!-- Update Discount Modal -->
-                    <div class="offcanvas offcanvas-end" id="updateDiscount{{ discount[0] }}" tabindex="-1" aria-labelledby="updateDiscountLabel{{ discount[0] }}">
+                    <div class="offcanvas offcanvas-end" id="updateDiscount{{ discount.discount_id }}" tabindex="-1" aria-labelledby="updateDiscountLabel{{ discount.discount_id }}">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="updateDiscountLabel{{ discount[0] }}">Update Discount</h5>
+                            <h5 class="offcanvas-title" id="updateDiscountLabel{{ discount.discount_id }}">Update Discount</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <form class="update-discount-form" data-discount-id="{{ discount[0] }}">
+                            <form class="update-discount-form" data-discount-id="{{ discount.discount_id }}">
                                 <div class="mb-3">
-                                    <label for="updateDiscountTitle{{ discount[0] }}" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="updateDiscountTitle{{ discount[0] }}" value="{{ discount[1] }}" data-discount-title required>
+                                    <label for="updateDiscountTitle{{ discount.discount_id }}" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="updateDiscountTitle{{ discount.discount_id }}" value="{{ discount.title }}" data-discount-title required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updateDiscountDescription{{ discount[0] }}" class="form-label">Promotion Info</label>
-                                    <textarea class="form-control" id="updateDiscountDescription{{ discount[0] }}" data-discount-description required>{{ discount[2] }}</textarea>
+                                    <label for="updateDiscountDescription{{ discount.discount_id }}" class="form-label">Promotion Info</label>
+                                    <textarea class="form-control" id="updateDiscountDescription{{ discount.discount_id }}" data-discount-description required>{{ discount.description }}</textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updateDiscountRate{{ discount[0] }}" class="form-label">Discount Rate</label>
-                                    <select class="form-select" id="updateDiscountRate{{ discount[0] }}" data-discount-rate required>
-                                        <option value="15" {% if discount[5] == 15 %}selected{% endif %}>15%</option>
-                                        <option value="20" {% if discount[5] == 20 %}selected{% endif %}>20%</option>
-                                        <option value="25" {% if discount[5] == 25 %}selected{% endif %}>25%</option>
+                                    <label for="updateDiscountRate{{ discount.discount_id }}" class="form-label">Discount Rate</label>
+                                    <select class="form-select" id="updateDiscountRate{{ discount.discount_id }}" data-discount-rate required>
+                                        <option value="15" {% if discount.discount_rate == '15.00' %}selected{% endif %}>15%</option>
+                                        <option value="20" {% if discount.discount_rate == '20.00' %}selected{% endif %}>20%</option>
+                                        <option value="25" {% if discount.discount_rate == '25.00' %}selected{% endif %}>25%</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updateDiscountEndDate{{ discount[0] }}" class="form-label">End Date</label>
-                                    <input type="date" class="form-control" id="updateDiscountEndDate{{ discount[0] }}" value="{{ discount[4] }}" data-discount-end-date required>
+                                    <label for="updateDiscountEndDate{{ discount.discount_id }}" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="updateDiscountEndDate{{ discount.discount_id }}" value="{{ discount.end_date }}" data-discount-end-date required>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </form>
@@ -132,72 +132,44 @@
 </section>
 {% endblock %}
 
+
 {% block script %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const searchKeyword = document.getElementById('searchKeyword');
+        console.log('DOM fully loaded and parsed'); // Log to ensure DOMContentLoaded is fired
+
         const addDiscountForm = document.getElementById('addDiscountForm');
         const updateDiscountForms = document.querySelectorAll('.update-discount-form');
 
-        // Function to update discount
-        const updateDiscount = (event) => {
-            event.preventDefault();
-            const form = event.target;
-            const discountId = form.getAttribute('data-discount-id');
-            const titleInput = form.querySelector(`[data-discount-title]`);
-            const descriptionInput = form.querySelector(`[data-discount-description]`);
-            const rateInput = form.querySelector(`[data-discount-rate]`);
-            const endDateInput = form.querySelector(`[data-discount-end-date]`);
+        console.log('addDiscountForm:', addDiscountForm); // Log to ensure form element is found
+        console.log('updateDiscountForms:', updateDiscountForms); // Log to ensure update forms are found
 
-            console.log('titleInput:', titleInput);
-            console.log('descriptionInput:', descriptionInput);
-            console.log('rateInput:', rateInput);
-            console.log('endDateInput:', endDateInput);
+        // Utility function to format date from yyyy-MM-dd to dd/MM/yyyy
+        function formatDateNZ(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
 
-            if (!titleInput || !descriptionInput || !rateInput || !endDateInput) {
-                console.error('One or more elements not found');
-                return;
-            }
-
-            const discountData = {
-                title: titleInput.value,
-                description: descriptionInput.value,
-                discountRate: rateInput.value,
-                endDate: endDateInput.value
-            };
-
-            fetch(`/employee/update-discount/${discountId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(discountData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === true) {
-                    alert('Discount updated successfully.');
-                    location.reload();
-                } else {
-                    alert("Invalid request");
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        };
-
-        // Attach submit event to update discount forms
-        updateDiscountForms.forEach(form => form.addEventListener('submit', updateDiscount));
+        // Utility function to format date from dd/MM/yyyy to yyyy-MM-dd
+        function formatDateForInput(dateString) {
+            const [day, month, year] = dateString.split('/');
+            return `${year}-${month}-${day}`;
+        }
 
         // Add new discount
         addDiscountForm.addEventListener('submit', function (event) {
             event.preventDefault();
+            console.log('Add Discount Form submitted'); // Log to ensure event listener is attached
+
             const discountData = {
                 title: document.getElementById('discountTitle').value,
                 description: document.getElementById('discountDescription').value,
-                discountRate: document.getElementById('selectDiscountRate').value,
-                startDate: document.getElementById('discountStartDate').value,
-                endDate: document.getElementById('discountEndDate').value
+                discount_rate: document.getElementById('selectDiscountRate').value,
+                start_date: document.getElementById('discountStartDate').value,
+                end_date: document.getElementById('discountEndDate').value
             };
+
+            console.log('Sending discount data:', discountData); // Log data being sent
 
             fetch('/employee/add-discount', {
                 method: 'POST',
@@ -206,8 +178,15 @@
                 },
                 body: JSON.stringify(discountData)
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response:', response); // Log response
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Data:', data); // Log data received
                 if (data.status === true) {
                     alert('Discount added successfully.');
                     location.reload();
@@ -215,8 +194,86 @@
                     alert("Invalid request");
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error)); // Log any errors
+        });
+
+        // Function to update discount
+        const updateDiscount = (event) => {
+            event.preventDefault();
+            console.log('Update Discount Form submitted'); // Log to ensure event listener is attached
+
+            const form = event.target;
+            const discountId = form.getAttribute('data-discount-id');
+            const titleInput = form.querySelector('input[data-discount-title]');
+            const descriptionInput = form.querySelector('textarea[data-discount-description]');
+            const rateInput = form.querySelector('select[data-discount-rate]');
+            const endDateInput = form.querySelector('input[data-discount-end-date]');
+
+            console.log('titleInput:', titleInput); // Log elements found
+            console.log('descriptionInput:', descriptionInput); // Log elements found
+            console.log('rateInput:', rateInput); // Log elements found
+            console.log('endDateInput:', endDateInput); // Log elements found
+
+            if (!titleInput || !descriptionInput || !rateInput || !endDateInput) {
+                console.error('One or more elements not found');
+                console.log('Form:', form); // Log the form for debugging
+                return;
+            }
+
+            const discountData = {
+                title: titleInput.value,
+                description: descriptionInput.value,
+                discount_rate: rateInput.value,
+                end_date: formatDateForInput(endDateInput.value)
+            };
+
+            console.log('Sending update discount data:', discountData); // Log data being sent
+
+            fetch(`/employee/update-discount/${discountId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(discountData)
+            })
+            .then(response => {
+                console.log('Response:', response); // Log response
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data:', data); // Log data received
+                if (data.status === true) {
+                    alert('Discount updated successfully.');
+                    location.reload();
+                } else {
+                    alert("Invalid request");
+                }
+            })
+            .catch(error => console.error('Error:', error)); // Log any errors
+        };
+
+        // Attach submit event to update discount forms
+        updateDiscountForms.forEach(form => {
+            console.log('Attaching submit event to form:', form); // Log form being attached
+
+            const endDateInput = form.querySelector('input[data-discount-end-date]');
+            if (endDateInput) {
+                const currentEndDate = endDateInput.value;
+
+                // Format date for display as dd/MM/yyyy
+                if (currentEndDate.includes('-')) {
+                    endDateInput.value = formatDateNZ(currentEndDate);  // Format end date on load
+                }
+            } else {
+                console.error('endDateInput not found for form:', form);
+            }
+
+            form.addEventListener('submit', updateDiscount);
         });
     });
 </script>
 {% endblock %}
+
