@@ -50,7 +50,7 @@ def adminProfiles(profile_type):
 
 
 @app.route("/admin/profile/update", methods = ["GET","POST"])
-# @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def admin_profile_update():
     print(9999999000000000)
     if request.method == 'POST':   
@@ -61,7 +61,7 @@ def admin_profile_update():
     
 
 @app.route("/admin/profile/add",methods = ["GET","POST"])
-# @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def admin_profile_add():
     if request.method == 'POST':  
         print(request.form.get("password",888888888888888888888) )
