@@ -37,17 +37,15 @@
 
     /* button style */
     .btn-primary:hover {
-      transform: scale(1.1);
+        transform: scale(1.1);
     }
 
     .btn-secondary:hover {
-      transform: scale(1.2);
-      background-color: 177, 205, 252;
-      color: #fff;
-      border-color: #0c0c0c
+        transform: scale(1.2);
+        background-color: 177, 205, 252;
+        color: #fff;
+        border-color: #0c0c0c
     }
-
-
 </style>
 
 <section class="main-content">
@@ -109,9 +107,9 @@
                                 <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
                             </a>
                             <a class="btn product-del" role="button" data-product-id="{{product[0]}}">
-                                <i class="fas fa-store-slash fa-lg me-3" title="Delist the Product"></i> 
+                                <i class="fas fa-store-slash fa-lg me-3" title="Delist the Product"></i>
                             </a>
-                        </td> 
+                        </td>
                     </tr>
 
                     <!-- Update Product offcanvas -->
@@ -123,14 +121,17 @@
                                 aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <form id="updateProductForm{{ product[0] }}"  action ="/product/update" method="POST">
+                            <form id="updateProductForm{{ product[0] }}" class="update-product-form"
+                                action="/product/update" method="POST">
                                 <!-- 图片上传及展示部分需要修改 -->
                                 <div class="card shadow-sm" style="width: 8vw;">
-                                    <label for="imgUpdate{{ product[0] }}">                                  
+                                    <label for="imgUpdate{{ product[0] }}">
                                         <!-- 图片占位符 -->
-                                        <img src="{{ url_for('static', filename='images/product/' + product[8]) }}" class="card-img-top" id="imagePreview{{ product[0] }}">
+                                        <img src="{{ url_for('static', filename='images/product/' + product[8]) }}"
+                                            class="card-img-top" id="imagePreview{{ product[0] }}">
                                     </label>
-                                    <input class="form-control" type="file" id="imgUpdate{{ product[0] }}" style="display: none;" accept="image/*">
+                                    <input class="form-control" type="file" id="imgUpdate{{ product[0] }}"
+                                        style="display: none;" accept="image/*">
                                 </div>
 
                                 <div class="mb-3">
@@ -140,28 +141,64 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateCategory" class="form-label">Category</label>
-                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory" name = "category_name" minlength="1" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
-                                    <div class="invalid-feedback">Please enter a valid category name, only letters and spaces.</div>
+                                    <select class="form-control" id="updateCategory" name="category_name" required>
+                                        <option selected > {{product[5]}} </option>
+                                        <option value="1">Fruit</option>
+                                        <option value="2">Vegetable</option>
+                                        <option value="3">Herb</option>
+                                        <option value="4">Egg</option>
+                                        <option value="5">Honey</option>
+                                        <option value="6">GiftCard</option>
+                                        <option value="7">Salad</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select one category from the list.</div>
                                 </div>
-                                <div>
-                                    <label for="updateDescription" class="form-label">Description</label>
-                                    <textarea rows="5"  type="text" class="form-control form-textarea"
-                                        id="updateDescription" name = "description" minlength="1"  pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product[2]}}</textarea>
-                                    <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
+                                <!-- unit -->
+                                <div class="mb-3">
+                                    <label for="updateUnit" class="form-label">Unit</label>
+                                    <select class="form-control" id="updateUnit" name="unit_name" required>
+                                        <option selected> {{product[6]}} </option>
+                                        <option value="1">Bunch</option>
+                                        <option value="2">Weight</option>
+                                        <option value="3">Each</option>
+                                        <option value="4">Half-size</option>
+                                        <option value="5">Punnet</option>
+                                        <option value="6">Tray</option>
+                                        <option value="7">kg</option>
+                                        <option value="8">g</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select one unit from the list.</div>
+                                </div>
+                                <!-- depot -->
+                                <div class="mb-3">
+                                    <label for="updateDepot" class="form-label">Depot</label>
+                                    <select class="form-control" name="depot_id" id="updateDepot" required>
+                                        <option selected>{{product[7]}} </option>
+                                        <option value="1">Christchurch</option>
+                                        <option value="2">Invercargill</option>
+                                        <option value="3">Wellington</option>
+                                        <option value="4">Hamilton</option>
+                                        <option value="5">Auckland</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select one depot from the list.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updatePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice" name = "price" min="0" step="0.01" 
-                                        required>
-                                    <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div> 
+                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice" name="price" min="0" step="0.01" required>
+                                    <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateStock" class="form-label">Stock</label>
                                     <input type="number" class="form-control" value="{{product[4]}}" id="updateStock" name="stock" min="0" required>
                                     <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
-
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <div>
+                                    <label for="updateDescription" class="form-label">Description</label>
+                                    <textarea rows="5" type="text" class="form-control form-textarea" id="updateDescription" name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product[2]}}</textarea>
+                                    <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary update-button"
+                                    id="updateButton{{ product[0] }}">Update</button>
                             </form>
                         </div>
                     </div>
@@ -204,28 +241,75 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="addProductName" class="form-label">Product Name</label>
-                            <input type="text" class="form-control" id="addProductName" name = "name" minlength="1" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
-                            <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.</div>
+                            <input type="text" class="form-control" id="addProductName" name="name" minlength="1"
+                                maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                            <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.
+                            </div>
                         </div>
+                        <!-- category -->
                         <div class="mb-3">
                             <label for="addCategory" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="addCategory" name = "category_name" minlength="1" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
-                            <div class="invalid-feedback">Please enter a valid category name, only letters and spaces.</div>
+                            <select class="form-control" id="addCategory" name="category_name" required>
+                                <option selected value="">Please select the category</option>
+                                <option value="1">Fruit</option>
+                                <option value="2">Vegetable</option>
+                                <option value="3">Herb</option>
+                                <option value="4">Egg</option>
+                                <option value="5">Honey</option>
+                                <option value="6">GiftCard</option>
+                                <option value="7">Salad</option>
+                            </select>
+                            <div class="invalid-feedback">Please select one category from the list.
+                            </div>
                         </div>
+
+                        <!-- unit -->
                         <div class="mb-3">
-                            <label for="addDescription" class="form-label">Description</label>
-                            <textarea type="text" class="form-control form-textarea" id="addDescription" name = "description" minlength="1"  pattern="^[a-zA-Z0-9,.!?;:\s']+$" required> </textarea>
-                            <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
+                            <label for="addUnit" class="form-label">Unit</label>
+                            <select class="form-control" id="addUnit" name="unit_name" required>
+                                <option selected value="">Please select the unit</option>
+                                <option value="1">Bunch</option>
+                                <option value="2">Weight</option>
+                                <option value="3">Each</option>
+                                <option value="4">Half-size</option>
+                                <option value="5">Punnet</option>
+                                <option value="6">Tray</option>
+                                <option value="7">kg</option>
+                                <option value="8">g</option>
+                            </select>
+                            <div class="invalid-feedback">Please select one unit from the list.</div>
+                        </div>
+                        <!-- depot -->
+                        <div class="mb-3">
+                            <label for="addDepot" class="form-label">Depot</label>
+                            <select class="form-control" name="depot_id" id="addDepot" required>
+                                <option selected value="">Please select the depot</option>
+                                <option value="1">Christchurch</option>
+                                <option value="2">Invercargill</option>
+                                <option value="3">Wellington</option>
+                                <option value="4">Hamilton</option>
+                                <option value="5">Auckland</option>
+                            </select>
+                            <div class="invalid-feedback">Please select one depot from the list.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addPrice" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="addPrice" name = "price" min="0" step="0.01" required>
+                            <input type="number" class="form-control" id="addPrice" name="price" min="0" step="0.01"
+                                required>
                             <div class="invalid-feedback">Please enter a valid price, numbers only.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addStock" class="form-label">Stock</label>
                             <input type="number" class="form-control" id="addStock" name="stock" min="0" required>
                             <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
+                        </div>
+                        <!-- description -->
+                        <div class="mb-3">
+                            <label for="addDescription" class="form-label">Description</label>
+                            <textarea type="text" class="form-control form-textarea" id="addDescription"
+                                name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required> </textarea>
+                            <div class="invalid-feedback">Please enter a valid description with at least 1 characters.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <button type="button" class="btn btn-primary"> Upload Image </button>
@@ -241,26 +325,26 @@
             </div>
         </div>
     </div>
-        <!-- Update Success btn code start here -->
-        {% with
-          btn_show = 1,
-          btn_text = 'Update Success',
-          bg_color = '#81C408',
-          title = 'Update Success',
-          msg = 'Your {item} has been successfully added'
-        %}
-            {% include "components/elements/addSuccess.html" %}
-        {% endwith %}
-        <!-- Update Success btn code end here -->
+    <!-- Update Success btn code start here -->
+    {% with
+    btn_show = 1,
+    btn_text = 'Update Success',
+    bg_color = '#81C408',
+    title = 'Update Success',
+    msg = 'Your {item} has been successfully added'
+    %}
+    {% include "components/elements/addSuccess.html" %}
+    {% endwith %}
+    <!-- Update Success btn code end here -->
 
-        {% with
-            btn_show = 0,
-            modal_id = 'deleteMemberModal',
-            title = 'Delete Confirmation',
-            msg = 'Are you sure to delete this product?'
-          %}
-            {% include "components/elements/delConfirm2.html" %}
-          {% endwith %}
+    {% with
+    btn_show = 0,
+    modal_id = 'deleteMemberModal',
+    title = 'Delete Confirmation',
+    msg = 'Are you sure to delete this product?'
+    %}
+    {% include "components/elements/delConfirm2.html" %}
+    {% endwith %}
 
 </section>
 {% endblock %}
@@ -268,163 +352,294 @@
 
 
 {% block script %}
-    {% include "components/elements/InputValidate.html" %}
+{% include "components/elements/InputValidate.html" %}
 
-    <script>
+<script>
     // validation
-        //  update product validation
-    document.getElementById('updateProductName').addEventListener('input', function() {
-            InputValidate('updateProductName');
-        });
-    document.getElementById('updateCategory').addEventListener('input', function() {
-            InputValidate('updateCategory');
-        });
-    document.getElementById('updateDescription').addEventListener('input', function() {
-            InputValidate('updateDescription');
-        });
-    document.getElementById('updatePrice').addEventListener('input', function() {
-            InputValidate('updatePrice');
-        });
-    document.getElementById('updateStock').addEventListener('input', function() {
-            InputValidate('updateStock');
-        });
+    //  update product validation
+    document.getElementById('updateProductName').addEventListener('input', function () {
+        InputValidate('updateProductName');
+    });
+    document.getElementById('updateCategory').addEventListener('input', function () {
+        InputValidate('updateCategory');
+    });
+    document.getElementById('updateDescription').addEventListener('input', function () {
+        InputValidate('updateDescription');
+    });
+    document.getElementById('updateDepot').addEventListener('input', function () {
+        InputValidate('updateDepot');
+    });
+    document.getElementById('updateUnit').addEventListener('input', function () {
+        InputValidate('updateUnit');
+    });
+    document.getElementById('updatePrice').addEventListener('input', function () {
+        InputValidate('updatePrice');
+    });
+    document.getElementById('updateStock').addEventListener('input', function () {
+        InputValidate('updateStock');
+    });
 
-        //  New product validation
-    document.getElementById('addProductName').addEventListener('input', function() {
+    //  New product validation
+    document.getElementById('addProductName').addEventListener('input', function () {
         InputValidate('addProductName');
     });
-    document.getElementById('addCategory').addEventListener('input', function() {
-            InputValidate('addCategory');
+    document.getElementById('addCategory').addEventListener('input', function () {
+        InputValidate('addCategory');
+    });
+    document.getElementById('addDescription').addEventListener('input', function () {
+        InputValidate('addDescription');
+    });
+    document.getElementById('addDepot').addEventListener('input', function () {
+        InputValidate('addDepot');
+    });
+    document.getElementById('addUnit').addEventListener('input', function () {
+        InputValidate('addUnit');
+    });
+    document.getElementById('addPrice').addEventListener('input', function () {
+        InputValidate('addPrice');
+    });
+    document.getElementById('addStock').addEventListener('input', function () {
+        InputValidate('addStock');
+    });
+
+
+    // update button setting
+    //     let newUpdateProductData = {};
+    //     let differentUpdateProductData = {};
+
+    //     document.addEventListener('DOMContentLoaded', function () {
+    //         document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+    //         const updateProductForm = document.getElementById('updateProductForm');
+    //         const formData = new FormData(updateProductForm);
+    //         const formDataObject = Object.fromEntries(formData.entries());
+    //         const btn = updateProductForm.querySelector('button[type="submit"]');
+    //         const enableSubmit = () => btn.classList.remove('disabled');
+    //         const disableSubmit = () => btn.classList.add('disabled');
+
+    //         updateProductForm.reset();
+    //         disableSubmit();
+
+    //         updateProductForm.addEventListener('input', event => {
+    //             // console.log(event.target.name)
+    //             // console.log(event.target.value)
+    //             const keyName = event.target.name;
+    //             const keyValue = event.target.value;
+
+    //             newUpdateProductData[keyName] = keyValue;
+
+    //             for (const keyName in formDataObject) {
+    //                 if (newUpdateProductData.hasOwnProperty(keyName)) {
+    //                     if (formDataObject[keyName] !== newUpdateProductData[keyName]) {
+    //                         enableSubmit();
+    //                         return
+    //                     }
+    //                     disableSubmit();
+    //                 }
+    //             }
+    //         });
+
+
+    //     document.addEventListener('DOMContentLoaded', function () {
+    //     const updateProductForm = document.getElementById('updateProductForm');
+    //     const btn = updateProductForm.querySelector('button[type="submit"]');
+    //     const formData = new FormData(updateProductForm);
+    //     const originalData = Object.fromEntries(formData.entries());
+
+    //     const enableSubmit = () => btn.disabled = false;
+    //     const disableSubmit = () => btn.disabled = true;
+
+    //     disableSubmit();  // 默认禁用提交按钮
+
+    //     updateProductForm.addEventListener('input', event => {
+    //         let isDifferent = false;
+    //         const newData = new FormData(updateProductForm);
+    //         const newDataObject = Object.fromEntries(newData.entries());
+
+    //         for (const key in originalData) {
+    //             if (originalData[key] !== newDataObject[key]) {
+    //                 isDifferent = true;
+    //                 break;
+    //             }
+    //         }
+
+    //         if (isDifferent) {
+    //             enableSubmit();
+    //         } else {
+    //             disableSubmit();
+    //         }
+    //     });
+    // });
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     // Iterate over each form with the class 'update-product-form'
+    //     document.querySelectorAll('.update-product-form').forEach(form => {
+    //         const formId = form.getAttribute('id'); // Get form ID to identify specific button
+    //         const btn = document.getElementById(`updateButton${formId.replace('updateProductForm', '')}`);
+
+    //         // Capture the original data from the form for comparison
+    //         const originalData = new FormData(form);
+    //         const originalDataObject = Object.fromEntries(originalData.entries());
+
+    //         btn.disabled = true; // Initially disable the submit button
+
+    //         // Add an event listener for any input changes in the form
+    //         form.addEventListener('input', () => {
+    //             const newData = new FormData(form);
+    //             const newDataObject = Object.fromEntries(newData.entries());
+    //             let isDifferent = false;
+
+    //             // Check if there are any differences between the original and new data
+    //             for (const key in originalDataObject) {
+    //                 if (originalDataObject[key] !== newDataObject[key]) {
+    //                     isDifferent = true;
+    //                     break;
+    //                 }
+    //             }
+
+    //             // Enable or disable the button based on the presence of differences
+    //             btn.disabled = !isDifferent;
+    //         });
+    //     });
+    // });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.update-product-form').forEach(form => {
+            const formId = form.getAttribute('id');
+            const productId = formId.match(/\d+/)[0]; // Assuming the ID format includes digits that uniquely identify the product
+            const btn = document.getElementById(`updateButton${productId}`);
+
+            // Log initial status
+            console.log(`Form ID: ${formId}, Button ID: ${btn.id}, Button initially disabled: ${btn.disabled}`);
+
+            const originalData = new FormData(form);
+            const originalDataObject = Object.fromEntries(originalData.entries());
+
+            // Log original form data
+            console.log(`Original data for ${formId}:`, originalDataObject);
+
+            btn.disabled = true; // Initially disable the submit button
+
+            form.addEventListener('input', () => {
+                const newData = new FormData(form);
+                const newDataObject = Object.fromEntries(newData.entries());
+                let isDifferent = false;
+
+                for (const key in originalDataObject) {
+                    if (originalDataObject[key] !== newDataObject[key]) {
+                        isDifferent = true;
+                        break;
+                    }
+                }
+
+                // Log comparison result
+                console.log(`Data changed for ${formId}: ${isDifferent}`);
+                btn.disabled = !isDifferent;
+            });
         });
-    document.getElementById('addDescription').addEventListener('input', function() {
-            InputValidate('addDescription');
-        });
-    document.getElementById('addPrice').addEventListener('input', function() {
-            InputValidate('addPrice');
-        });
-    document.getElementById('addStock').addEventListener('input', function() {
-            InputValidate('addStock');
-        });
+    });
 
 
 
+    // // Add product
 
-
-
-        // // Add product
-        // let addProductData = {};
-
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
         document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-        //     const productTableBody = document.getElementById('productTableBody');
-        //     const updateProductForm = document.getElementById('updateProductForm');
-        //     const addProductForm = document.getElementById('addProductForm');
+        const addProductForm = document.getElementById('addProductForm');
 
-        //     addProductForm.addEventListener('input', event => {
-        //         // console.log(event.target.name)
-        //         // console.log(event.target.value)
-        //         const keyName = event.target.name;
-        //         const keyValue = event.target.value;
+        // Handle add form submission
+        addProductForm.addEventListener('submit', function (event) {
+            if (!addProductForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
 
-        //         addProductData[keyName] = keyValue;
-        //         // 新增商品的id是自动生成的吗?这样设置？
-        //         addProductData[product_id] = product_id;
+            const formData = new FormData(this); // Prepare form data
 
-            const addProductForm = document.getElementById('addProductForm');
-
-            // Handle add form submission
-            addProductForm.addEventListener('submit', function (event) {
-                if (!addProductForm.checkValidity()) return // Stop further execution if form is invalid
-                event.preventDefault();
-                event.stopPropagation();
-
-                const formData = new FormData(this); // Prepare form data
-
-                // Send login request to flask server
-                fetch('/product/add', {
-                    method: 'POST',
-                    body: formData
+            // Send login request to flask server
+            fetch('/product/add', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == true) { // Redirect user if login is successful
+                        console.log(data)
+                        // Show updateStaffSuccess modal if update is successful
+                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                    }
+                    else {
+                        alert("Invalid request");
+                        location.reload(); // Reload the page on failure
+                    }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status == true) { // Redirect user if login is successful
-                            console.log(data)
-                            // Show updateStaffSuccess modal if update is successful
-                            new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
-                        }
-                        else {
-                            alert("Invalid request");
-                            location.reload(); // Reload the page on failure
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
+                .catch(error => console.error('Error:', error));
+        });
 
 
 
 
 
 
-            // Handle update form submission
-            // updateProductForm.addEventListener('submit', function (event) {
-            //     event.preventDefault();
-            //     const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
-            //     const updatedProduct = {
-            //         id: productId,
-            //         name: document.getElementById('updateProductName').value,
-            //         category: document.getElementById('updateCategory').value,
-            //         price: parseFloat(document.getElementById('updatePrice').value),
-            //         stock: parseInt(document.getElementById('updateStock').value),
-            //     };
-            //     products = products.map(p => p.id === productId ? updatedProduct : p);
-            //     renderProductRows();
-            //     bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
-            // });
+        // Handle update form submission
+        // updateProductForm.addEventListener('submit', function (event) {
+        //     event.preventDefault();
+        //     const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
+        //     const updatedProduct = {
+        //         id: productId,
+        //         name: document.getElementById('updateProductName').value,
+        //         category: document.getElementById('updateCategory').value,
+        //         price: parseFloat(document.getElementById('updatePrice').value),
+        //         stock: parseInt(document.getElementById('updateStock').value),
+        //     };
+        //     products = products.map(p => p.id === productId ? updatedProduct : p);
+        //     renderProductRows();
+        //     bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
+        // });
 
 
-            // del product
-            const productDel = document.querySelectorAll('.product-del');
+        // del product
+        const productDel = document.querySelectorAll('.product-del');
 
-            // Iterate over all delete buttons
-            productDel.forEach(function (del) {
-                // Add click event listener to each delete button
-                del.addEventListener('click', function (event) {
-                    event.preventDefault();
+        // Iterate over all delete buttons
+        productDel.forEach(function (del) {
+            // Add click event listener to each delete button
+            del.addEventListener('click', function (event) {
+                event.preventDefault();
 
-                    // Show delConfirm modal when delete button is clicked
-                    new bootstrap.Modal(document.getElementById('deleteMemberModal')).show();
-                    var confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
+                // Show delConfirm modal when delete button is clicked
+                new bootstrap.Modal(document.getElementById('deleteMemberModal')).show();
+                var confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
 
-                    // Add click event listener to the confirmButton
-                    confirmButton.addEventListener('click', function () {
-                        // Send request to server
-                        fetch('/product/delist', {
+                // Add click event listener to the confirmButton
+                confirmButton.addEventListener('click', function () {
+                    // Send request to server
+                    fetch('/product/delist', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({'product_id': del.getAttribute('data-product-id')})
-                        })
+                        body: JSON.stringify({ 'product_id': del.getAttribute('data-product-id') })
+                    })
                         .then(response => response.json())
                         .then(data => {
-                        if (data.status) {
-                            // Reload page if deletion is successful
-                            location.reload()
-                        }
-                        else {
-                            alert("Invalid request");
-                        }
+                            if (data.status) {
+                                // Reload page if deletion is successful
+                                location.reload()
+                            }
+                            else {
+                                alert("Invalid request");
+                            }
                         })
                         .catch(error => console.error('Error:', error));
-                    });
                 });
             });
-
         });
 
+    });
 
-    </script>
+
+</script>
 
 {% endblock %}
