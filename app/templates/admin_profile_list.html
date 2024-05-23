@@ -1,13 +1,21 @@
 {% extends "_employee-base.html" %}
 
+
 {% block sidebar %}
-  {% with is_profilelist='1' %}
-    {% include "components/layout/Sidebar.html" %}
-  {% endwith %}
+  {% if profile_type == 'Consumer' %}
+    {% with is_consumerList='1' %}
+      {% include "components/layout/Sidebar.html" %}
+    {% endwith %}
+  {% else %}
+    {% with is_employeeList='1' %}
+      {% include "components/layout/Sidebar.html" %}
+    {% endwith %}
+  {% endif %}
 {% endblock %}
 
+
 {% block breadcrumb %}
-  {% with pageName='Profile list' %}
+  {% with pageName=profile_type + ' List' %}
     {% include "components/layout/Breadcrumb2.html" %}
   {% endwith %}
 {% endblock %}
@@ -17,13 +25,13 @@
 <!-- Main content -->
 <section class="main-content">
   <div class="col text-center">
-  <h1>{{profile_type}} List</h1>
+  <h1>{% if profile_type == "Staff" %}Consumer{% else %}Employee{% endif %} List</h1>
   </div>
 
   <div class="row justify-content-end">
     <div class="col-auto">
         <form id="searchForm" class="d-flex me-5 mb-4" role="search">
-          {% if profile_type == "Consumer" %}
+          {% if profile_type == "Staff" %}
             <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">User type:</label>
             <select class="form-select me-2" name="filterBy" aria-label="Filter by">
                 <option value="all">All</option>

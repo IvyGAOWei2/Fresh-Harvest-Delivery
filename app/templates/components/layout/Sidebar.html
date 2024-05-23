@@ -36,34 +36,17 @@
     <a href="{{ url_for('manageProduct') }}" class="{% if is_manageProduct %}is_active{% endif %}">
       <i class="fas fa-user"></i> <span>Products</span>
     </a>
+    {% if session.type != 'Staff' %}
     <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
     </a>
-    <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_profilelist %}is_active{% endif %}">
+    {% endif %}
+    <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_consumerList %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Manage Consumer</span>
     </a>
-
-
-    {% if type == 'Local_Manager' or type == 'National_Manager' %}
-    <a class="nav-link {% if is_profilelist %}text-white{% else %}text-white-50{% endif %}" data-bs-toggle="collapse" href="#contentManagement" role="button" aria-expanded="{% if is_profilelist %}true{% else %}false{% endif %}" aria-controls="contentManagement">
+    {% if session.type != 'Staff' %}
+    <a href="{{ url_for('adminProfiles',profile_type='Employee') }}" class="{% if is_employeeList %}is_active{% endif %}">
       <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
     </a>
-    <div class="collapse {% if is_profilelist %}show{% endif %}" id="contentManagement">
-      <ul class="nav flex-column ms-4">
-        <li class="nav-item">
-          <a href="{{ url_for('adminProfiles', profile_type='Staff') }}" class="nav-link nav-sub" aria-current="page">
-            Staff
-          </a>
-        </li>
-        {% if type == 'National_Manager' %}
-        <li class="nav-item">
-          <a href="{{ url_for('adminProfiles', profile_type='Local_Manager') }}" class="nav-link nav-sub">
-            Local Manager
-          </a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-    {% endif %}
-    
+    {% endif %}    
 </div>

@@ -6,35 +6,25 @@ from dbFile.config import updateSQL,fetchAll
 from common import roleRequired, getUserProfile, validateEmployeeProfile
 
 
-@app.route("/admin/profiles/<profile_type>")
+@app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def adminProfiles(profile_type):
-    print(session.get('type'))
+def adminProfiles():
+    profile_type = request.args.get('profile_type')
+    if profile_type == "Consumer":
+        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+            join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';",None ,True)
+    else:
+        if session.get('type') in ['Local_Manager']:
+            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
+                join Users on Employees.user_id=Users.user_id 
+                join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""",None ,True)
+        else:
+            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
+                JOIN Users ON Employees.user_id = Users.user_id \
+                JOIN Depots ON Employees.depot_id = Depots.depot_id \
+                WHERE Users.type = 'Staff' OR Users.type = 'Local_Manager';""",None ,True)
 
-    if session.get('type') in ['Staff']:
-        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
-
-    elif session.get('type') in ['Local_Manager']:
-        if profile_type == "Consumer":
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
-        elif profile_type == "Staff":
-            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
-                            join Users on Employees.user_id=Users.user_id 
-                            join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
-            
-    elif session.get('type') in ['National_Manager']:
-        if profile_type == "Consumer":
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';")
-        elif profile_type == "Staff":
-            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
-                            join Users on Employees.user_id=Users.user_id 
-                            join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""")
-        elif profile_type == "Local_Manager":    
-            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees 
-                          join Users on Employees.user_id=Users.user_id 
-                          join Depots on Employees.depot_id=Depots.depot_id where Users.type='Local_Manager';""")
-
-    return render_template('admin_profile_list.html', member_list=result,profile_type=profile_type,type=session.get('type'))
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
 
 
 # @app.route('/admin/profile/search',methods = ["GET","POST"])
