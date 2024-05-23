@@ -147,6 +147,7 @@ function validateForm(formSelector) {
 function loadCartDetails() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const cartBody = document.querySelector('.table-group-divider');
+    const orderForm = document.querySelector('#payment-form');
     cartBody.innerHTML = '';
 
     let subtotal = 0;
@@ -156,8 +157,8 @@ function loadCartDetails() {
         const price = parseFloat(item.price);
         const quantity = parseFloat(item.quantity);
         const total = price * quantity;
+        const productid= item.id;
         subtotal += total;
-
         const row = document.createElement('tr');
         row.innerHTML = `
             <th scope="row">
@@ -169,8 +170,12 @@ function loadCartDetails() {
             <td class="py-5">$${price.toFixed(2)}</td>
             <td class="py-5">${quantity} ${item.unit}</td>
             <td class="py-5">$${total.toFixed(2)}</td>
+            <input type="hidden" id=“orderproductid” name="product_id" value="${productid}">
+            <input type="hidden" id=“orderproductquantity”name="quantity" value="${quantity}">
         `;
         cartBody.appendChild(row);
+                // Append hidden inputs for product ID and quantity
+ 
     });
 
     if (subtotal >= 80) {
@@ -185,30 +190,32 @@ function loadCartDetails() {
 function saveDeliveryDetails() {
     const deliveryForm = document.querySelector('.delivery-form form');
     const deliveryData = {
-        recipientFirstName: deliveryForm.querySelector('[name="recipientFirstName"]').value,
-        recipientLastName: deliveryForm.querySelector('[name="recipientLastName"]').value,
-        deliveryAddress: deliveryForm.querySelector('[name="deliveryAddress"]').value,
-        city: deliveryForm.querySelector('[name="city"]').value,
-        postcode: deliveryForm.querySelector('[name="postalCode"]').value,
-        phone: deliveryForm.querySelector('[name="phone"]').value,
-        email: deliveryForm.querySelector('[name="email"]').value
+        firstName: deliveryForm.querySelector('#deliveryfirstname').value,
+        lastName: deliveryForm.querySelector('#deliverylastname').value,
+        address: deliveryForm.querySelector('#deliveryaddress').value,
+        city: deliveryForm.querySelector('#deliverycity').value,
+        postcode: deliveryForm.querySelector('#deliverypostcode').value,
+        phone: deliveryForm.querySelector('#deliveryphone').value,
+        email: deliveryForm.querySelector('#deliveryemail').value
     };
     
     localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 }
+
 function autoFillBillingDetails() {
     const deliveryData = JSON.parse(localStorage.getItem('deliveryData'));
     if (deliveryData) {
         const billingForm = document.querySelector('.billing-form form');
-        billingForm.querySelector('[name="firstName"]').value = deliveryData.recipientFirstName;
-        billingForm.querySelector('[name="lastName"]').value = deliveryData.recipientLastName;
-        billingForm.querySelector('[name="address"]').value = deliveryData.deliveryAddress;
-        billingForm.querySelector('[name="city"]').value = deliveryData.city;
-        billingForm.querySelector('[name="postcode"]').value = deliveryData.postcode;
-        billingForm.querySelector('[name="phone"]').value = deliveryData.phone;
-        billingForm.querySelector('[name="email"]').value = deliveryData.email;
+        billingForm.querySelector('#billingfirstname').value = deliveryData.firstName;
+        billingForm.querySelector('#billinglastname').value = deliveryData.lastName;
+        billingForm.querySelector('#billingaddress').value = deliveryData.address;
+        billingForm.querySelector('#billingcity').value = deliveryData.city;
+        billingForm.querySelector('#billingpostcode').value = deliveryData.postcode;
+        billingForm.querySelector('#billingphone').value = deliveryData.phone;
+        billingForm.querySelector('#billingemail').value = deliveryData.email;
     }
 }
+
 document.addEventListener('DOMContentLoaded', () => {
     const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
     const cardDetails = document.getElementById('cardDetails');

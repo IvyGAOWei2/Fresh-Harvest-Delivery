@@ -172,18 +172,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const price = parseFloat(button.dataset.price);
         const imgSrc = button.dataset.img;
         const unit = button.dataset.unit;
-
+        const id = button.dataset.id
         let increment = 1;
         if (unit === 'kg') increment = 0.25;
         else if (unit === 'g') increment = 10;
 
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let found = cart.find(item => item.name === name && item.unit === unit);
+        let found = cart.find(item => item.id === id && item.unit === unit);
 
         if (found) {
             found.quantity += increment;
         } else {
-            cart.push({ name, price, imgSrc, quantity: increment, unit });
+            cart.push({ id, name, price, imgSrc, quantity: increment, unit});
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));

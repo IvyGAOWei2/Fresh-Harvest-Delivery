@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="mb-0 mt-4" style="font-size: 1.25rem;">$${price.toFixed(2)}</p>
             </td>
             <td>
-                <div class="input-group quantity mt-4" style="width: 120px;">
+                <div class="input-group quantity mt-4" style="width: 140px;">
                     <button class="btn btn-sm btn-minus rounded-circle bg-light border" data-index="${index}" data-increment="${increment}">
                         <i class="fa fa-minus"></i>
                     </button>
@@ -140,9 +140,27 @@ document.addEventListener('DOMContentLoaded', function() {
     setupQuantityChangeListeners();
     setupRemoveButtonListeners();
     updateShippingAndTotal(sumTotal);
+    setupQuantityInputListeners();
 
 }
 
+function setupQuantityInputListeners() {
+    document.querySelectorAll('.quantity input').forEach(input => {
+        input.addEventListener('input', function() {
+            const index = parseInt(this.parentNode.querySelector('.btn-minus').dataset.index); // 使用减号按钮的索引
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            const newQuantity = parseFloat(this.value); // 获取用户输入的新数量
+            if (newQuantity > 0) {
+                cart[index].quantity = newQuantity; // 更新数量
+            } else {
+                cart.splice(index, 1); // 如果数量小于等于0，则移除该商品
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart(); // 刷新购物车显示
+            updateCartCount(); // 更新购物车计数显示
+        });
+    });
+}
 
 
 function setupQuantityChangeListeners() {
