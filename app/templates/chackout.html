@@ -14,210 +14,355 @@
   {% endwith %}
 {% endblock %}
 
-
 {% block content %}
 <section>
-    <!-- Checkout Page Start -->
     <div id="checkout" class="container-fluid py-5">
         <div class="container py-5">
-            <h1 class="mb-4">Billing details</h1>
-            <form action="#">
-                <div class="row g-5">
-                    <div class="col-md-12 col-lg-6 col-xl-7">
-                        <div class="row">
-                            <div class="col-md-12 col-lg-6">
-                                <div class="form-item w-100">
-                                    <label class="form-label my-3">First Name<sup>*</sup></label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-lg-6">
-                                <div class="form-item w-100">
-                                    <label class="form-label my-3">Last Name<sup>*</sup></label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Company Name<sup>*</sup></label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Address <sup>*</sup></label>
-                            <input type="text" class="form-control" placeholder="House Number Street Name">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Town/City<sup>*</sup></label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Country<sup>*</sup></label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Postcode/Zip<sup>*</sup></label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Mobile<sup>*</sup></label>
-                            <input type="tel" class="form-control">
-                        </div>
-                        <div class="form-item">
-                            <label class="form-label my-3">Email Address<sup>*</sup></label>
-                            <input type="email" class="form-control">
-                        </div>
-                        <div class="form-check my-3">
-                            <input type="checkbox" class="form-check-input" id="Account-1" name="Accounts" value="Accounts">
-                            <label class="form-check-label" for="Account-1">Create an account?</label>
-                        </div>
-                        <hr>
-                        <div class="form-check my-3">
-                            <input class="form-check-input" type="checkbox" id="Address-1" name="Address" value="Address">
-                            <label class="form-check-label" for="Address-1">Ship to a different address?</label>
-                        </div>
-                        <div class="form-item">
-                            <textarea name="text" class="form-control" spellcheck="false" cols="30" rows="11" placeholder="Oreder Notes (Optional)"></textarea>
-                        </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-6 col-xl-7">
+                    <!-- Billing step -->
+                    <div id="billing-step" class="checkout-step">
+                        {% include "components/checkout/DeliveryForm.html" %}
                     </div>
-                    <div class="col-md-12 col-lg-6 col-xl-5">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Products</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="table-group-divider">
-                                    <tr>
-                                        <th scope="row">
-                                            <div class="d-flex align-items-center mt-2">
-                                                <img src="{{ url_for('static', filename='images/vegetable2.jpg') }}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                            </div>
-                                        </th>
-                                        <td class="py-5">Awesome Brocoli</td>
-                                        <td class="py-5">$69.00</td>
-                                        <td class="py-5">2</td>
-                                        <td class="py-5">$138.00</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <div class="d-flex align-items-center mt-2">
-                                                <img src="{{ url_for('static', filename='images/vegetable5.jpg') }}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                            </div>
-                                        </th>
-                                        <td class="py-5">Potatoes</td>
-                                        <td class="py-5">$69.00</td>
-                                        <td class="py-5">2</td>
-                                        <td class="py-5">$138.00</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            <div class="d-flex align-items-center mt-2">
-                                                <img src="{{ url_for('static', filename='images/vegetable3.png') }}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                            </div>
-                                        </th>
-                                        <td class="py-5">Big Banana</td>
-                                        <td class="py-5">$69.00</td>
-                                        <td class="py-5">2</td>
-                                        <td class="py-5">$138.00</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                        </th>
-                                        <td class="py-5"></td>
-                                        <td class="py-5"></td>
-                                        <td class="py-5">
-                                            <p class="mb-0 text-dark py-3">Subtotal</p>
-                                        </td>
-                                        <td class="py-5">
-                                            <div class="py-3 border-bottom border-top">
-                                                <p class="mb-0 text-dark">$414.00</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                        </th>
-                                        <td class="py-5">
-                                            <p class="mb-0 text-dark py-4">Shipping</p>
-                                        </td>
-                                        <td colspan="3" class="py-5">
-                                            <div class="form-check text-start">
-                                                <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-1" name="Shipping-1" value="Shipping">
-                                                <label class="form-check-label" for="Shipping-1">Free Shipping</label>
-                                            </div>
-                                            <div class="form-check text-start">
-                                                <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-2" name="Shipping-1" value="Shipping">
-                                                <label class="form-check-label" for="Shipping-2">Flat rate: $15.00</label>
-                                            </div>
-                                            <div class="form-check text-start">
-                                                <input type="checkbox" class="form-check-input bg-primary border-0" id="Shipping-3" name="Shipping-1" value="Shipping">
-                                                <label class="form-check-label" for="Shipping-3">Local Pickup: $8.00</label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                        </th>
-                                        <td class="py-5">
-                                            <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
-                                        </td>
-                                        <td class="py-5"></td>
-                                        <td class="py-5"></td>
-                                        <td class="py-5">
-                                            <div class="py-3 border-bottom border-top">
-                                                <p class="mb-0 text-dark">$135.00</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                            <div class="col-12">
-                                <div class="form-check text-start my-3">
-                                    <input type="checkbox" class="form-check-input bg-primary border-0" id="Transfer-1" name="Transfer" value="Transfer">
-                                    <label class="form-check-label" for="Transfer-1">Direct Bank Transfer</label>
-                                </div>
-                                <p class="text-start text-dark">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</p>
-                            </div>
-                        </div>
-                        <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                            <div class="col-12">
-                                <div class="form-check text-start my-3">
-                                    <input type="checkbox" class="form-check-input bg-primary border-0" id="Payments-1" name="Payments" value="Payments">
-                                    <label class="form-check-label" for="Payments-1">Check Payments</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                            <div class="col-12">
-                                <div class="form-check text-start my-3">
-                                    <input type="checkbox" class="form-check-input bg-primary border-0" id="Delivery-1" name="Delivery" value="Delivery">
-                                    <label class="form-check-label" for="Delivery-1">Cash On Delivery</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                            <div class="col-12">
-                                <div class="form-check text-start my-3">
-                                    <input type="checkbox" class="form-check-input bg-primary border-0" id="Paypal-1" name="Paypal" value="Paypal">
-                                    <label class="form-check-label" for="Paypal-1">Paypal</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                            <button type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
-                        </div>
+                    <!-- Delivery step -->
+                    <div id="delivery-step" class="checkout-step" style="display: none;">
+                        {% include "components/checkout/BillingForm.html" %}
+                    </div>
+                    <!-- Review order step -->
+                    <div id="review-step" class="checkout-step" style="display: none;">
+                        {% include "components/checkout/ReviewOrder.html" %}
                     </div>
                 </div>
-            </form>
+                <div class="col-md-12 col-lg-6 col-xl-5">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Products</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <!-- Dynamically filled by JavaScript -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" style="text-align:right;">Shipping</td>
+                                    <td class="shipping">$10.00</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="text-align:right;"><strong>Total</strong></td>
+                                    <td class="total">$10.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- Checkout Page End -->
 </section>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    setupSteps();
+    loadCartDetails();
+    saveDeliveryDetails();
+    autoFillBillingDetails();
+    
+});
+
+function setupSteps() {
+    const steps = [document.getElementById('billing-step'), document.getElementById('delivery-step'), document.getElementById('review-step')];
+    let currentStep = 0;
+
+    document.querySelectorAll('.next-step').forEach(button => {
+        button.addEventListener('click', function() {
+            if (currentStep < steps.length - 1 && validateCurrentStep(currentStep)) {
+                currentStep++;
+                transitionStep(currentStep, steps);
+            }
+        });
+    });
+
+    document.querySelectorAll('.go-back').forEach(button => {
+        button.addEventListener('click', function() {
+            if (currentStep > 0) {
+                currentStep--;
+                transitionStep(currentStep, steps, true);
+            }
+        });
+    });
+}
+
+function transitionStep(currentStep, steps, backward = false) {
+    const index = backward ? currentStep + 1 : currentStep - 1;
+    gsap.to(steps[index], {
+        opacity: 0, x: backward ? 100 : -100, duration: 0.5, onComplete: () => {
+            steps[index].style.display = 'none';
+            steps[currentStep].style.display = 'block';
+            gsap.fromTo(steps[currentStep], { opacity: 0, x: backward ? -100 : 100 }, { opacity: 1, x: 0, duration: 0.5 });
+        }
+    });
+}
+
+function validateCurrentStep(currentStep) {
+    // Update to add validation for other steps if necessary
+    if (currentStep === 0) { // Delivery Form
+        return validateDeliveryForm();
+    } else if (currentStep === 1) { // Billing Form
+        return validateBillingForm();
+    }
+    return true;
+}
+
+function validateDeliveryForm() {
+    return validateForm('.delivery-form form');
+}
+
+function validateBillingForm() {
+    return validateForm('.billing-form form');
+}
+
+function validateForm(formSelector) {
+    const form = document.querySelector(formSelector);
+    let isValid = true;
+    form.querySelectorAll('input[required]').forEach(input => {
+        if (!input.value.trim() || (input.pattern && !new RegExp(input.pattern).test(input.value))) {
+            input.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            input.classList.remove('is-invalid');
+        }
+    });
+    return isValid;
+}
+
+function loadCartDetails() {
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartBody = document.querySelector('.table-group-divider');
+    cartBody.innerHTML = '';
+
+    let subtotal = 0;
+    let shippingCost = 10;
+
+    cartItems.forEach(item => {
+        const price = parseFloat(item.price);
+        const quantity = parseFloat(item.quantity);
+        const total = price * quantity;
+        subtotal += total;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <th scope="row">
+                <div class="d-flex align-items-center">
+                    <img src="${item.imgSrc}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="${item.name}">
+                </div>
+            </th>
+            <td class="py-5">${item.name}</td>
+            <td class="py-5">$${price.toFixed(2)}</td>
+            <td class="py-5">${quantity} ${item.unit}</td>
+            <td class="py-5">$${total.toFixed(2)}</td>
+        `;
+        cartBody.appendChild(row);
+    });
+
+    if (subtotal >= 80) {
+        shippingCost = 0;
+    }
+
+    let finalTotal = subtotal + shippingCost;
+    document.querySelector('.total').textContent = `$${finalTotal.toFixed(2)}`;
+    document.querySelector('.shipping').textContent = shippingCost ? `$${shippingCost}` : 'Free';
+}
+
+function saveDeliveryDetails() {
+    const deliveryForm = document.querySelector('.delivery-form form');
+    const deliveryData = {
+        recipientFirstName: deliveryForm.querySelector('[name="recipientFirstName"]').value,
+        recipientLastName: deliveryForm.querySelector('[name="recipientLastName"]').value,
+        deliveryAddress: deliveryForm.querySelector('[name="deliveryAddress"]').value,
+        city: deliveryForm.querySelector('[name="city"]').value,
+        postcode: deliveryForm.querySelector('[name="postalCode"]').value,
+        phone: deliveryForm.querySelector('[name="phone"]').value,
+        email: deliveryForm.querySelector('[name="email"]').value
+    };
+    
+    localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
+}
+function autoFillBillingDetails() {
+    const deliveryData = JSON.parse(localStorage.getItem('deliveryData'));
+    if (deliveryData) {
+        const billingForm = document.querySelector('.billing-form form');
+        billingForm.querySelector('[name="firstName"]').value = deliveryData.recipientFirstName;
+        billingForm.querySelector('[name="lastName"]').value = deliveryData.recipientLastName;
+        billingForm.querySelector('[name="address"]').value = deliveryData.deliveryAddress;
+        billingForm.querySelector('[name="city"]').value = deliveryData.city;
+        billingForm.querySelector('[name="postcode"]').value = deliveryData.postcode;
+        billingForm.querySelector('[name="phone"]').value = deliveryData.phone;
+        billingForm.querySelector('[name="email"]').value = deliveryData.email;
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
+    const cardDetails = document.getElementById('cardDetails');
+
+    paymentOptions.forEach(option => {
+        option.addEventListener('change', function() {
+            if (this.value === 'Credit Card' || this.value === 'Debit Card') {
+                cardDetails.style.display = 'block';
+            } else {
+                cardDetails.style.display = 'none';
+            }
+        });
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (validateForm()) {
+            console.log('Form is valid, process payment.');
+            // 这里可以添加进一步处理付款的代码
+        } else {
+            console.log('Form is invalid, show errors.');
+            // 显示错误信息
+        }
+    });
+
+    function validateForm() {
+        let isValid = true;
+        const name = document.getElementById('cc-name');
+        const number = document.getElementById('cc-number');
+        const expiration = document.getElementById('cc-expiration');
+        const cvv = document.getElementById('cc-cvv');
+
+        // 验证姓名
+        if (!name.value.trim()) {
+            console.error('Name on card is required');
+            name.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            name.classList.remove('is-invalid');
+        }
+
+        // 验证信用卡号 (格式 xxxx-xxxx-xxxx-xxxx)
+        const cardNumberRegex = /^(\d{4}-){3}\d{4}$/;
+        if (!cardNumberRegex.test(number.value)) {
+            console.error('Invalid card number, must be in the format xxxx-xxxx-xxxx-xxxx');
+            number.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            number.classList.remove('is-invalid');
+        }
+
+        // 验证到期日期 (格式MM/YY)
+        if (!validateExpirationDate(expiration)) {
+            isValid = false;
+        }
+
+        // 验证CVV (3或4位数字)
+        const cvvRegex = /^\d{3,4}$/;
+        if (!cvvRegex.test(cvv.value)) {
+            console.error('Invalid CVV, must be 3 or 4 digits');
+            cvv.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            cvv.classList.remove('is-invalid');
+        }
+
+        return isValid;
+    }
+
+    function validateExpirationDate(expiration) {
+        const expirationValue = expiration.value;
+        const expirationRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+        if (!expirationRegex.test(expirationValue)) {
+            console.error('Invalid expiration date, format must be MM/YY');
+            expiration.classList.add('is-invalid');
+            return false;
+        } else {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth() + 1;
+            const currentYear = currentDate.getFullYear();
+
+            const [expMonth, expYear] = expirationValue.split('/').map(Number);
+            const expDate = new Date(2000 + expYear, expMonth - 1);
+
+            if (expDate < currentDate || expDate > new Date(currentYear + 10, currentMonth - 1)) {
+                console.error('Expiration date must be within a reasonable future range');
+                expiration.classList.add('is-invalid');
+                return false;
+            }
+
+            expiration.classList.remove('is-invalid');
+            return true;
+        }
+    }
+});
+
+document.getElementById('deliveryfirstname').addEventListener('input', function() {
+        InputValidate('deliveryfirstname');
+    });    
+    document.getElementById('deliverylastname').addEventListener('input', function() {
+        InputValidate('deliverylastname');
+    });    
+    document.getElementById('deliveryaddress').addEventListener('input', function() {
+        InputValidate('deliveryaddress');
+    });    
+    document.getElementById('deliverycity').addEventListener('input', function() {
+        InputValidate('deliverycity');
+    });    
+    document.getElementById('deliverypostcode').addEventListener('input', function() {
+        InputValidate('deliverypostcode');
+    });    
+    document.getElementById('deliveryphone').addEventListener('input', function() {
+        InputValidate('deliveryphone');
+    });    
+    document.getElementById('deliveryemail').addEventListener('input', function() {
+        InputValidate('deliveryemail');
+    });    
+    document.getElementById('billingfirstname').addEventListener('input', function() {
+        InputValidate('billingfirstname');
+    });    
+    document.getElementById('billinglastname').addEventListener('input', function() {
+        InputValidate('billinglastname');
+    });   
+    document.getElementById('billingaddress').addEventListener('input', function() {
+        InputValidate('billingaddress');
+    });     
+    document.getElementById('billingcity').addEventListener('input', function() {
+        InputValidate('billingcity');
+    });    
+    document.getElementById('billingpostcode').addEventListener('input', function() {
+        InputValidate('billingpostcode');
+    });    
+    document.getElementById('billingphone').addEventListener('input', function() {
+        InputValidate('billingphone');
+    });    
+    document.getElementById('billingemail').addEventListener('input', function() {
+        InputValidate('billingemail');
+    });    
+    document.getElementById('cc-name').addEventListener('input', function() {
+        InputValidate('cc-name');
+    });    
+    document.getElementById('cc-number').addEventListener('input', function() {
+        InputValidate('cc-number');
+    });    
+    document.getElementById('cc-expiration').addEventListener('input', function() {
+        InputValidate('cc-expiration');
+    });    
+    document.getElementById('cc-cvv').addEventListener('input', function() {
+        InputValidate('cc-cvv');
+    });    
+
+</script>
 {% endblock %}
