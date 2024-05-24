@@ -28,7 +28,7 @@
         <td class="align-middle">{{ member.given_name }}</td>
         <td class="align-middle">{{ member.family_name }}</td>
         <td class="align-middle">{{ member.phone }}</td>
-        <td class="align-middle">{{ member.location }}</td>
+        <td class="align-middle">{{ member.depot_id }}</td>
         {% if profile_type == "Consumer" %}
           <td>
             <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
