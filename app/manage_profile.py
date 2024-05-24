@@ -11,16 +11,14 @@ def adminProfiles():
     profile_type = request.args.get('profile_type')
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-            join Users on Consumer.user_id=Users.user_id where Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
+            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
     else:
         if session.get('type') in ['Local_Manager']:
-            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
-                join Users on Employees.user_id=Users.user_id 
-                join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
+            result = fetchAll("""SELECT Users.email, Employees.* FROM Employees \
+                JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
         else:
-            result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
+            result = fetchAll("""SELECT Users.email, Employees.* FROM Employees \
                 JOIN Users ON Employees.user_id = Users.user_id \
-                JOIN Depots ON Employees.depot_id = Depots.depot_id \
                 WHERE Users.type = 'Staff' OR Users.type = 'Local_Manager' AND Users.is_deleted = FALSE;""",None ,True)
 
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list)
