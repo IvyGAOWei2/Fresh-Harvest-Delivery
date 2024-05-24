@@ -1,0 +1,58 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Reset Password Confirmation{% endblock %}
+
+{% block navbar %}
+  {% include "components/layout/header/Nav1.html" %}
+{% endblock %}
+
+{% block content %}
+  <style>
+    #reset-password-confirmation .form-control, #reset-password-confirmation a {
+      transition: .6s !important;
+    }
+    #reset-password-confirmation .form-control:focus {
+      border-color: #81C408;
+      box-shadow: 0 0 1.5rem #81C408;
+    }
+    #reset-password-confirmation .btn-primary {
+      border-color: #81c408 !important;
+      background-color: #81c408 !important;
+      transition: all 0.3s ease-in-out;
+      border-radius: 0.3rem;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    #reset-password-confirmation .btn-primary:hover {
+      border-color: #FFB524 !important;
+      background-color: #FFB524 !important;
+    }
+    #reset-password-confirmation a {
+      color: #0b57d0 !important;
+    }
+    #reset-password-confirmation a:hover {
+      color: #c2c2c2 !important;
+    }
+    #reset-password-confirmation .highlight-email {
+      background-color: #FFFF00; /* Yellow highlight */
+      padding: 0.2rem;
+      border-radius: 0.2rem;
+    }
+  </style>
+
+  <div id="reset-password-confirmation" class="container d-flex flex-column justify-content-center align-items-center" style="margin-top: 9rem;">
+    <div class="row w-100">
+      <div class="col-12 text-center">
+        <img src="/static/images/confirmation_image.png" class="img-fluid mb-4" alt="Confirmation Image" style="width: 150px;">
+        <h2 class="display-4">
+          <i class="fas fa-envelope-open-text me-2"></i>
+          Help is on the way!
+        </h2>
+        <p class="lead">We've sent an email to <b class="sign-in__byline-email highlight-email">{{ email }}</b> with a link to reset your password.</p>
+        <p class="lead">Remember to check your spam folder too.</p>
+        <a class="btn btn-primary mt-3" href="{{ url_for('login') }}">Back to Login</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
