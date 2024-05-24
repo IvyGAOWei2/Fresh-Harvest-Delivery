@@ -13,41 +13,6 @@
 {% endblock %}
 
 {% block content %}
-<style>
-    /* Pagination styling */
-    .pagination a {
-        color: #007bff;
-        padding: 10px 15px;
-        text-decoration: none;
-        transition: background-color 0.3s;
-        border-radius: 5px;
-        margin: 0 5px;
-    }
-
-    .pagination a.active {
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-    }
-
-    .pagination a:hover:not(.active) {
-        background-color: #ddd;
-        border-radius: 5px;
-    }
-
-    /* button style */
-    .btn-primary:hover {
-        transform: scale(1.1);
-    }
-
-    .btn-secondary:hover {
-        transform: scale(1.2);
-        background-color: 177, 205, 252;
-        color: #fff;
-        border-color: #0c0c0c
-    }
-</style>
-
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
     <div class="container mt-5">
@@ -97,75 +62,71 @@
                 <tbody id="productTableBody">
                     {% for product in productList %}
                     <tr>
-                        <td class="align-middle fw-bold">{{ product[1] }}</td>
-                        <td class="align-middle">{{ product[5] }}</td>
-                        <td class="align-middle">{{ product[3] }}</td>
-                        <td class="align-middle">{{ product[4] }}</td>
+                        
+                        <td class="align-middle fw-bold">{{ product.name }}</td>
+                        <td class="align-middle">{{categoryList[product.category_id -1].category_name}}</td>
+                        <td class="align-middle">{{ product.price}}</td>
+                        <td class="align-middle">{{ product.stock }}</td>
                         <td>
-                            <a class="btn product-update" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateproduct{{ product[0] }}" data-product-id="{{ product[0] }}">
+                            <a class="btn" role="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#updateproduct{{ product.product_id }}">
                                 <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
                             </a>
-                            <a class="btn product-del" role="button" data-product-id="{{product[0]}}">
+                            <a class="btn product-del" role="button" data-product-id="{{product.product_id}}">
                                 <i class="fas fa-store-slash fa-lg me-3" title="Delist the Product"></i>
                             </a>
                         </td>
                     </tr>
 
                     <!-- Update Product offcanvas -->
-                    <div class="offcanvas offcanvas-end w-50" id="updateproduct{{ product[0] }}" tabindex="-1"
+                    <div class="offcanvas offcanvas-end w-50" id="updateproduct{{ product.product_id }}" tabindex="-1"
                         aria-labelledby="updateProductModalLabel">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product[1]}}</h5>
+                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product.name}}</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                                 aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <form id="updateProductForm{{ product[0] }}" class="update-product-form"
+                            <form id="updateProductForm{{ product.product_id }}" class="update-product-form"
                                 action="/product/update" method="POST">
+                                <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
+
                                 <!-- 图片上传及展示部分需要修改 -->
                                 <div class="card shadow-sm" style="width: 8vw;">
-                                    <label for="imgUpdate{{ product[0] }}">
+                                    <label for="imgUpdate{{ product.product_id }}">
                                         <!-- 图片占位符 -->
-                                        <img src="{{ url_for('static', filename='images/product/' + product[8]) }}"
-                                            class="card-img-top" id="imagePreview{{ product[0] }}">
+                                        <img src="{{ url_for('static', filename='images/product/' + product.image) }}"
+                                            class="card-img-top" id="imagePreview{{ product.product_id }}">
                                     </label>
-                                    <input class="form-control" type="file" id="imgUpdate{{ product[0] }}"
+                                    <input class="form-control" type="file" id="imgUpdate{{ product.product_id }}"
                                         style="display: none;" accept="image/*">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
-                                    <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product[1]}}" required>
+                                    <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product.name}}" required>
                                     <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateCategory" class="form-label">Category</label>
-                                    <select class="form-control" id="updateCategory" name="category_name" required>
-                                        <option selected > {{product[5]}} </option>
-                                        <option value="1">Fruit</option>
-                                        <option value="2">Vegetable</option>
-                                        <option value="3">Herb</option>
-                                        <option value="4">Egg</option>
-                                        <option value="5">Honey</option>
-                                        <option value="6">GiftCard</option>
-                                        <option value="7">Salad</option>
+                                    <select class="form-control" id="updateCategory" name="category_id" required>
+                                        {% for category in categoryList %}
+                                        <option value="{{category.category_id}}" {% if product.category_id == category.category_id %}selected{% endif %}>
+                                            {{category.category_name}}
+                                        </option>
+                                        {% endfor %}
                                     </select>
                                     <div class="invalid-feedback">Please select one category from the list.</div>
                                 </div>
                                 <!-- unit -->
                                 <div class="mb-3">
                                     <label for="updateUnit" class="form-label">Unit</label>
-                                    <select class="form-control" id="updateUnit" name="unit_name" required>
-                                        <option selected> {{product[6]}} </option>
-                                        <option value="1">Bunch</option>
-                                        <option value="2">Weight</option>
-                                        <option value="3">Each</option>
-                                        <option value="4">Half-size</option>
-                                        <option value="5">Punnet</option>
-                                        <option value="6">Tray</option>
-                                        <option value="7">kg</option>
-                                        <option value="8">g</option>
+                                    <select class="form-control" id="updateUnit" name="unit_id" required>
+                                        {% for unit in unitList %}
+                                        <option value="{{unit.unit_id}}" {% if product.unit_id == unit.unit_id %}selected{% endif %}>
+                                            {{unit.unit_name}}
+                                        </option>
+                                        {% endfor %}
                                     </select>
                                     <div class="invalid-feedback">Please select one unit from the list.</div>
                                 </div>
@@ -173,32 +134,30 @@
                                 <div class="mb-3">
                                     <label for="updateDepot" class="form-label">Depot</label>
                                     <select class="form-control" name="depot_id" id="updateDepot" required>
-                                        <option selected>{{product[7]}} </option>
-                                        <option value="1">Christchurch</option>
-                                        <option value="2">Invercargill</option>
-                                        <option value="3">Wellington</option>
-                                        <option value="4">Hamilton</option>
-                                        <option value="5">Auckland</option>
+                                        {% for depot in depotList %}
+                                        <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
+                                            {{depot.location}}
+                                        </option>
+                                        {% endfor %}
                                     </select>
                                     <div class="invalid-feedback">Please select one depot from the list.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updatePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice" name="price" min="0" step="0.01" required>
+                                    <input type="number" class="form-control" value="{{product.price}}" id="updatePrice" name="price" min="0" step="0.01" required>
                                     <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateStock" class="form-label">Stock</label>
-                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock" name="stock" min="0" required>
+                                    <input type="number" class="form-control" value="{{product.stock}}" id="updateStock" name="stock" min="0" required>
                                     <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
                                 </div>
                                 <div>
                                     <label for="updateDescription" class="form-label">Description</label>
-                                    <textarea rows="5" type="text" class="form-control form-textarea" id="updateDescription" name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product[2]}}</textarea>
+                                    <textarea rows="5" type="text" class="form-control form-textarea" id="updateDescription" name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product.description}}</textarea>
                                     <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
                                 </div>
-                                <button type="submit" class="btn btn-primary update-button"
-                                    id="updateButton{{ product[0] }}">Update</button>
+                                <button type="submit" class="btn btn-secondary product-update" data-product-id="{{product.product_id}}">Update</button>
                             </form>
                         </div>
                     </div>
@@ -327,25 +286,49 @@
     </div>
     <!-- Update Success btn code start here -->
     {% with
-    btn_show = 1,
-    btn_text = 'Update Success',
+    btn_show = 0,
     bg_color = '#81C408',
     title = 'Update Success',
     msg = 'Your {item} has been successfully added'
     %}
     {% include "components/elements/addSuccess.html" %}
     {% endwith %}
-    <!-- Update Success btn code end here -->
 
+    <!-- deleteMemberModal -->
     {% with
-    btn_show = 0,
-    modal_id = 'deleteMemberModal',
-    title = 'Delete Confirmation',
-    msg = 'Are you sure to delete this product?'
-    %}
-    {% include "components/elements/delConfirm2.html" %}
+        btn_show = 0,
+        bg_color = '#dc3545',
+        bg_color2 = '#3399ff',
+        modal_id = 'deleteMemberModal',
+        title = 'Delete Confirmation',
+        msg = 'Are you sure to delete this product?'
+      %}
+        {% include "components/elements/delConfirm.html" %}
     {% endwith %}
 
+    <!-- delProfileSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'delProfileSuccessModal',
+        bg_color = '#3399ff',
+        title = 'Deleted Successfully',
+        msg = 'Product has been successfully deleted'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+
+    <!-- updateProductSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'updateProductSuccessModal',
+        bg_color = '#3399ff',
+        title = 'Update Successfully',
+        msg = 'Product has been successfully updated'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+
+    {% include "components/elements/loadingModal.html" %}
 </section>
 {% endblock %}
 
@@ -402,147 +385,40 @@
         InputValidate('addStock');
     });
 
-
-    // update button setting
-    //     let newUpdateProductData = {};
-    //     let differentUpdateProductData = {};
-
-    //     document.addEventListener('DOMContentLoaded', function () {
-    //         document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
-    //         const updateProductForm = document.getElementById('updateProductForm');
-    //         const formData = new FormData(updateProductForm);
-    //         const formDataObject = Object.fromEntries(formData.entries());
-    //         const btn = updateProductForm.querySelector('button[type="submit"]');
-    //         const enableSubmit = () => btn.classList.remove('disabled');
-    //         const disableSubmit = () => btn.classList.add('disabled');
-
-    //         updateProductForm.reset();
-    //         disableSubmit();
-
-    //         updateProductForm.addEventListener('input', event => {
-    //             // console.log(event.target.name)
-    //             // console.log(event.target.value)
-    //             const keyName = event.target.name;
-    //             const keyValue = event.target.value;
-
-    //             newUpdateProductData[keyName] = keyValue;
-
-    //             for (const keyName in formDataObject) {
-    //                 if (newUpdateProductData.hasOwnProperty(keyName)) {
-    //                     if (formDataObject[keyName] !== newUpdateProductData[keyName]) {
-    //                         enableSubmit();
-    //                         return
-    //                     }
-    //                     disableSubmit();
-    //                 }
-    //             }
-    //         });
-
-
-    //     document.addEventListener('DOMContentLoaded', function () {
-    //     const updateProductForm = document.getElementById('updateProductForm');
-    //     const btn = updateProductForm.querySelector('button[type="submit"]');
-    //     const formData = new FormData(updateProductForm);
-    //     const originalData = Object.fromEntries(formData.entries());
-
-    //     const enableSubmit = () => btn.disabled = false;
-    //     const disableSubmit = () => btn.disabled = true;
-
-    //     disableSubmit();  // 默认禁用提交按钮
-
-    //     updateProductForm.addEventListener('input', event => {
-    //         let isDifferent = false;
-    //         const newData = new FormData(updateProductForm);
-    //         const newDataObject = Object.fromEntries(newData.entries());
-
-    //         for (const key in originalData) {
-    //             if (originalData[key] !== newDataObject[key]) {
-    //                 isDifferent = true;
-    //                 break;
-    //             }
-    //         }
-
-    //         if (isDifferent) {
-    //             enableSubmit();
-    //         } else {
-    //             disableSubmit();
-    //         }
-    //     });
-    // });
-
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     // Iterate over each form with the class 'update-product-form'
-    //     document.querySelectorAll('.update-product-form').forEach(form => {
-    //         const formId = form.getAttribute('id'); // Get form ID to identify specific button
-    //         const btn = document.getElementById(`updateButton${formId.replace('updateProductForm', '')}`);
-
-    //         // Capture the original data from the form for comparison
-    //         const originalData = new FormData(form);
-    //         const originalDataObject = Object.fromEntries(originalData.entries());
-
-    //         btn.disabled = true; // Initially disable the submit button
-
-    //         // Add an event listener for any input changes in the form
-    //         form.addEventListener('input', () => {
-    //             const newData = new FormData(form);
-    //             const newDataObject = Object.fromEntries(newData.entries());
-    //             let isDifferent = false;
-
-    //             // Check if there are any differences between the original and new data
-    //             for (const key in originalDataObject) {
-    //                 if (originalDataObject[key] !== newDataObject[key]) {
-    //                     isDifferent = true;
-    //                     break;
-    //                 }
-    //             }
-
-    //             // Enable or disable the button based on the presence of differences
-    //             btn.disabled = !isDifferent;
-    //         });
-    //     });
-    // });
-
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.update-product-form').forEach(form => {
-            const formId = form.getAttribute('id');
-            const productId = formId.match(/\d+/)[0]; // Assuming the ID format includes digits that uniquely identify the product
-            const btn = document.getElementById(`updateButton${productId}`);
+        document.getElementById('updateProductSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-            // Log initial status
-            console.log(`Form ID: ${formId}, Button ID: ${btn.id}, Button initially disabled: ${btn.disabled}`);
+        document.querySelectorAll('.product-update').forEach(function (update) {
+        const product_id = update.getAttribute('data-product-id')
+        const updateProductForm = document.getElementById('updateProductForm' + product_id);
 
-            const originalData = new FormData(form);
-            const originalDataObject = Object.fromEntries(originalData.entries());
+        updateProductForm.addEventListener('submit', event => {
+          if (!updateProductForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          const formData = new FormData(updateProductForm);
 
-            // Log original form data
-            console.log(`Original data for ${formId}:`, originalDataObject);
-
-            btn.disabled = true; // Initially disable the submit button
-
-            form.addEventListener('input', () => {
-                const newData = new FormData(form);
-                const newDataObject = Object.fromEntries(newData.entries());
-                let isDifferent = false;
-
-                for (const key in originalDataObject) {
-                    if (originalDataObject[key] !== newDataObject[key]) {
-                        isDifferent = true;
-                        break;
-                    }
-                }
-
-                // Log comparison result
-                console.log(`Data changed for ${formId}: ${isDifferent}`);
-                btn.disabled = !isDifferent;
-            });
+          fetch('/product/update', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  new bootstrap.Modal(document.getElementById('updateProductSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
         });
+      })
     });
 
-
-
-    // // Add product
-
+    // Add product
     document.addEventListener('DOMContentLoaded', function () {
         //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
         document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
@@ -565,41 +441,19 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status == true) { // Redirect user if login is successful
-                        console.log(data)
+                        // console.log(data)
                         // Show updateStaffSuccess modal if update is successful
                         new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
                     }
                     else {
                         alert("Invalid request");
-                        location.reload(); // Reload the page on failure
                     }
                 })
                 .catch(error => console.error('Error:', error));
         });
 
-
-
-
-
-
-        // Handle update form submission
-        // updateProductForm.addEventListener('submit', function (event) {
-        //     event.preventDefault();
-        //     const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
-        //     const updatedProduct = {
-        //         id: productId,
-        //         name: document.getElementById('updateProductName').value,
-        //         category: document.getElementById('updateCategory').value,
-        //         price: parseFloat(document.getElementById('updatePrice').value),
-        //         stock: parseInt(document.getElementById('updateStock').value),
-        //     };
-        //     products = products.map(p => p.id === productId ? updatedProduct : p);
-        //     renderProductRows();
-        //     bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
-        // });
-
-
         // del product
+        document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
         const productDel = document.querySelectorAll('.product-del');
 
         // Iterate over all delete buttons
@@ -607,10 +461,13 @@
             // Add click event listener to each delete button
             del.addEventListener('click', function (event) {
                 event.preventDefault();
+                const product_id = del.getAttribute('data-product-id');
 
                 // Show delConfirm modal when delete button is clicked
-                new bootstrap.Modal(document.getElementById('deleteMemberModal')).show();
-                var confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
+                const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                const deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
+                const confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
+                deleteMemberModal.show();
 
                 // Add click event listener to the confirmButton
                 confirmButton.addEventListener('click', function () {
@@ -620,13 +477,18 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ 'product_id': del.getAttribute('data-product-id') })
+                        body: JSON.stringify({ 'product_id': product_id })
                     })
                         .then(response => response.json())
                         .then(data => {
                             if (data.status) {
                                 // Reload page if deletion is successful
-                                location.reload()
+                                deleteMemberModal.hide();
+                                loadingModal.show();
+                                setTimeout(() => {
+                                    loadingModal.hide();
+                                    new bootstrap.Modal(document.getElementById('delProfileSuccessModal')).show();
+                                }, 1000);
                             }
                             else {
                                 alert("Invalid request");
@@ -638,8 +500,6 @@
         });
 
     });
-
-
 </script>
 
 {% endblock %}
