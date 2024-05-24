@@ -1,0 +1,138 @@
+<div class="payment-method-form">
+  <h1 class="mb-4">Choose Your Payment Method</h1>
+  <div class="payment-options">
+      <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="Credit Card" checked>
+          <span class="payment-icon credit-card"></span>
+          <span>Credit Card</span>
+      </label>
+      <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="Debit Card">
+          <span class="payment-icon debit-card"></span>
+          <span>Debit Card</span>
+      </label>
+      <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="Point">
+          <span class="payment-icon point"></span>
+          <span>Point</span>
+      </label>
+  </div>
+
+  <form action="#" id="payment-form" class="card-details" method ="post">
+      <div class="form-group">
+          <label for="cc-name">Name on card</label>
+          <input type="text" id="cc-name" class="form-control" placeholder="Full name as displayed on card" required>
+          <div class="invalid-feedback">Name is required.</div>
+      </div>
+      <div class="form-group">
+        <label for="cc-number">Card number</label>
+        <input type="text" id="cc-number" class="form-control" placeholder="xxxx-xxxx-xxxx-xxxx" required>
+        <div class="invalid-feedback">Invalid card number. Format must be xxxx-xxxx-xxxx-xxxx.</div>
+    </div>
+    
+      <div class="form-group half-width">
+          <label for="cc-expiration">Expiration</label>
+          <input type="text" id="cc-expiration" class="form-control" placeholder="MM/YY" required>
+          <div class="invalid-feedback">Invalid expiration date.</div>
+      </div>
+      <div class="form-group half-width">
+          <label for="cc-cvv">CVV</label>
+          <input type="text" id="cc-cvv" class="form-control" placeholder="CVV" required>
+          <div class="invalid-feedback">Invalid CVV. Must be 3 or 4 digits.</div>
+      </div>
+      <button type="button" class="btn btn-secondary go-back">Go Back</button>
+      <button type="submit" class="btn btn-primary">Place Order</button>
+  </form>
+  <div class="p-3">
+    <!-- Update Success btn code start here -->
+    {% with
+      btn_show = 1,
+      btn_text = 'Order Success',
+      bg_color = '#81C408',
+      title = 'Make a order Success',
+      msg = 'Your order has been successfully placed'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+    <!-- Update Success btn code end here -->
+  </div>
+</div>
+
+
+<style>.payment-method-form {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.payment-options {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.payment-icon {
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px;
+}
+
+.credit-card {
+  background-image: url('path/to/credit-card-icon.png');
+}
+
+.debit-card {
+  background-image: url('path/to/debit-card-icon.png');
+}
+
+.gift-card {
+  background-image: url('path/to/gift-card-icon.png');
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group.half-width {
+  display: inline-block;
+  width: 48%;
+  margin-right: 4%;
+}
+
+.form-group.half-width:last-child {
+  margin-right: 0;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+</style>
