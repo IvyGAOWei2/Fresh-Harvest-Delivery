@@ -8,7 +8,7 @@
 
 ## Project Milestone
 Sprint1 published on 15/05/2024
-
+Sprint2 published on 25/05/2024
 
 ## Initialize project
 *(Only needs to be run once)*
