@@ -2,9 +2,8 @@ from app import app
 from flask import render_template, request, session
 
 # User-defined function
-from dbFile.config import updateSQL,fetchAll
-from common import roleRequired, getUserProfile, validateEmployeeProfile
-
+from dbFile.config import insertSQL, updateSQL, fetchAll
+from common import roleRequired, validateEmail, validateRegisterEmployee, validateEmployeeProfile, validateConsumerProfile
 
 @app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -12,17 +11,17 @@ def adminProfiles():
     profile_type = request.args.get('profile_type')
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-            join Users on Consumer.user_id=Users.user_id where Users.type='Consumer';",None ,True)
+            join Users on Consumer.user_id=Users.user_id where Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
     else:
         if session.get('type') in ['Local_Manager']:
             result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
                 join Users on Employees.user_id=Users.user_id 
-                join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff';""",None ,True)
+                join Depots on Employees.depot_id=Depots.depot_id where Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
         else:
             result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
                 JOIN Users ON Employees.user_id = Users.user_id \
                 JOIN Depots ON Employees.depot_id = Depots.depot_id \
-                WHERE Users.type = 'Staff' OR Users.type = 'Local_Manager';""",None ,True)
+                WHERE Users.type = 'Staff' OR Users.type = 'Local_Manager' AND Users.is_deleted = FALSE;""",None ,True)
 
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
 
@@ -39,28 +38,64 @@ def adminProfiles():
 #     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
 
 
-@app.route("/admin/profile/update", methods = ["GET","POST"])
+@app.route("/admin/profile/update", methods = ["POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def admin_profile_update():
-    print(9999999000000000)
-    if request.method == 'POST':   
-        test = request.form.get("password")
-        print(test ,9999999999999999999999999999)
+def adminProfileUpdate():
+    # need password futcion
+    if request.form.get('profile_type') == 'Consumer':
+        table_name = "Consumer"
+        verified_data = validateConsumerProfile({key: value for key, value in dict(request.form).items() if value})
+    else:
+        table_name = "Employees"
+        verified_data = validateEmployeeProfile({key: value for key, value in dict(request.form).items() if value})
 
-    return {"status": False}, 500
-    
+    user_id = verified_data['user_id']
+    verified_data.pop('user_id')
 
-@app.route("/admin/profile/add",methods = ["GET","POST"])
-@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def admin_profile_add():
-    if request.method == 'POST':  
-        print(request.form.get("password",888888888888888888888) )
+    if verified_data:
+        updates,params = [], []
+        for key, value in verified_data.items():
+            updates.append(f"{key} = %s")
+            params.append(value)
+        params.append(user_id)
 
-    return {"status": False}, 500
+    update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
+
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
+
+@app.route("/admin/profile/delete", methods = ["POST"])
+@roleRequired(['Local_Manager', 'National_Manager'])
+def adminProfileDel():
+    data = request.get_json()
+    update_successful = updateSQL("UPDATE Users SET is_deleted = TRUE WHERE user_id = %s;", (data['user_id'],))
+
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 
-# @app.route("/admin/profile/delete",methods = ["GET","POST"])
-# # @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-# def admin_profile_delete():
-#     pass
-#     return render_template('admin_profile_list.html')
+@app.route("/admin/profile/add",methods = ["POST"])
+@roleRequired(['Local_Manager', 'National_Manager'])
+def adminProfileAdd():
+    new_account = validateRegisterEmployee(request.form.to_dict())
+
+    if not new_account:
+        return {"status": False, 'message': 'Invalid register request !!!'}, 500
+
+    if validateEmail(new_account.email):
+        return {"status": False, 'message': 'Email ' + new_account.email + ' has already been used by another user'}, 200
+    else:
+        try:
+            hashed = app.hashing.hash_value(new_account.password, salt=app.salt)
+            user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id, type) VALUES(%s,%s,%s,%s);", (new_account.email, hashed, new_account.depot_id, 'Staff'))
+
+            insertSQL("INSERT INTO Employees (user_id, given_name, family_name, address, phone, hire_date, depot_id, image) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);", \
+            (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.hire_date, new_account.depot_id, 'user_default_image.png'))
+        except:
+            return {"status": False}, 500
+        else:
+            return {"status": True}, 200

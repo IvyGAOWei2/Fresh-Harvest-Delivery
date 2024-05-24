@@ -25,13 +25,13 @@
 <!-- Main content -->
 <section class="main-content">
   <div class="col text-center">
-  <h1>{% if profile_type == "Staff" %}Consumer{% else %}Employee{% endif %} List</h1>
+  <h1>{% if profile_type == "Consumer" %}Consumer{% else %}Employee{% endif %} List</h1>
   </div>
 
   <div class="row justify-content-end">
     <div class="col-auto">
         <form id="searchForm" class="d-flex me-5 mb-4" role="search">
-          {% if profile_type == "Staff" %}
+          {% if profile_type == "Consumer" %}
             <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">User type:</label>
             <select class="form-select me-2" name="filterBy" aria-label="Filter by">
                 <option value="all">All</option>
@@ -49,4 +49,132 @@
 {% include "admin_profile_manage.html" %}
 
 </section>
+{% endblock %}
+
+
+{% block script %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('updateProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+      document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+      document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+      
+      
+      document.querySelectorAll('.employee-delete').forEach(function (del) {
+        const user_id = del.getAttribute('data-user-id');
+        const deleteEmployee = document.getElementById('deleteEmployee' + user_id);
+        const deleteEmployeeBtn = deleteEmployee.querySelector('button[type="submit"]');
+        const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+
+        deleteEmployeeBtn.addEventListener('click', event => {
+          event.preventDefault();
+          // event.stopPropagation();
+
+          fetch('/admin/profile/delete', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ 'user_id': user_id })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  // Show delProfileSuccessModal modal if update is successful
+                  deleteEmployee.style.display = 'none';
+                  loadingModal.show();
+                  setTimeout(() => {
+                    loadingModal.hide();
+                    new bootstrap.Modal(document.getElementById('delProfileSuccessModal')).show();
+                }, 1000);
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+
+      document.querySelectorAll('.profile-update').forEach(function (update) {
+        const user_id = update.getAttribute('data-profile-id')
+        const updateMemberForm = document.getElementById('updateMemberForm' + user_id);
+
+        updateMemberForm.addEventListener('submit', event => {
+          if (!updateMemberForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          // event.stopPropagation();
+          const formData = new FormData(updateMemberForm);
+          // console.log(formData)
+          fetch('/admin/profile/update', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  // console.log(data)
+                  new bootstrap.Modal(document.getElementById('updateProfileSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+
+      document.querySelectorAll('.profile-add').forEach(function (add) {
+        const user_id = add.getAttribute('data-profile-id')
+        const addMemberForm = document.getElementById('addMemberForm' + user_id);
+
+        addMemberForm.addEventListener('submit', event => {
+          if (!addMemberForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          // event.stopPropagation();
+          const formData = new FormData(addMemberForm);
+          console.log(formData)
+          fetch('/admin/profile/add', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  // console.log(data)
+                  new bootstrap.Modal(document.getElementById('addProfileSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="offcanvas"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
 {% endblock %}

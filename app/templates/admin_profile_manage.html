@@ -4,7 +4,7 @@
       <!-- Table header -->
       <tr class="table-primary">
         <th class="text-secondary-emphasis" scope="col">No.</th>
-        {% if session.type == 'Staff' %}
+        {% if profile_type == "Consumer" %}
         <th class="text-secondary-emphasis" scope="col">User Type</th>
         {% endif %}
         <th class="text-secondary-emphasis" scope="col">First Name</th>
@@ -12,7 +12,7 @@
         <th class="text-secondary-emphasis" scope="col">Phone</th>
         <th class="text-secondary-emphasis" scope="col">Depot</th>
         <th class="text-secondary-emphasis" scope="col">Action</th>
-        {% if session.type == 'Staff' %}
+        {% if profile_type == "Consumer" %}
         <th class="text-secondary-emphasis" scope="col">Payment history</th>
         {% endif %}
       </tr>
@@ -22,14 +22,14 @@
     <tbody>
       <tr>
         <td class="align-middle fw-bold">{{ member.user_id }}</td>
-        {% if session.type == 'Staff' %}
+        {% if profile_type == "Consumer" %}
         <td class="align-middle">{{ member.user_type }}</td>
         {% endif %}
         <td class="align-middle">{{ member.given_name }}</td>
         <td class="align-middle">{{ member.family_name }}</td>
         <td class="align-middle">{{ member.phone }}</td>
-        {% if session.type == 'Staff' %}
-          <td class="align-middle">{{ member.depot_id }}</td>
+        <td class="align-middle">{{ member.depot_id }}</td>
+        {% if profile_type == "Consumer" %}
           <td>
             <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
               <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
@@ -40,16 +40,15 @@
             <i class="fas fa-list fa-lg me-3 fa-fw"></i>
             </a>
           </td>
-        {% elif session.type != 'Staff' %}
-          <td class="align-middle">{{ member[9] }}</td>     
+        {% elif profile_type != 'Consumer' %}   
           <td>           
-              <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
+              <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Edit employee">
                 <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
               </a>
-              <a class="btn employee-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Add member">
+              <a class="btn employee-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Add employee">
                 <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
               </a>
-              <a class="btn employee-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Delete member">
+              <a class="btn employee-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Delete employee">
                 <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
               </a>           
           </td>     
@@ -68,6 +67,9 @@
       <div class="offcanvas-body">
         <form id="updateMemberForm{{ member.user_id }}"  method="POST" action="/admin/profile/update" class="needs-validation" novalidate>
           <div class="row">
+            <input type="text" class="form-control d-none" name="user_id" value="{{ member.user_id }}"/>     
+            <input type="text" class="form-control d-none" name="profile_type" value="{{ profile_type }}"/>
+
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
                 <label for="imgUpdate{{ member.user_id }}">
@@ -78,7 +80,7 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="member_email" name="email" value="{{ member.email }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <input type="email" maxlength="50" class="form-control" id="member_email" name="email" value="{{ member.email }}" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" disabled/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
@@ -93,12 +95,12 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" value="{{ member.phone }}" minlength="7" maxlength="13" id="phone" name="member_phone" pattern="^[0-9]+$" >
+              <input type="text" class="form-control" value="{{ member.phone }}" minlength="7" maxlength="13" id="phone" name="phone" pattern="^[0-9]+$" >
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member.address }}" id="address" name="member_address">
+              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member.address }}" id="address" name="address">
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
@@ -114,7 +116,7 @@
               </div>
             </div>
 
-            {% if session.type == "Staff" %}
+            {% if profile_type == "Consumer" %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Postcode</label>
               <input class="form-control form-textarea" value="{{ member.postcode }}" minlength="4" maxlength="4" id="consumer_postcode" name="postcode" pattern="^[0-9]+$" >
@@ -122,16 +124,16 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Regisration date</label>
-              <input type="date" class="form-control" value="{{ member.registration_date }}" id="consumer_registration_date" name="registration_date">
+              <input type="date" class="form-control" value="{{ member.registration_date }}" id="consumer_registration_date" name="registration_date" disabled>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last login date</label>
-              <input type="text" class="form-control" value="{{ member.last_login_date }}" id="consumer_last_login_date" name="last_login_date">
+              <input type="text" class="form-control" value="{{ member.last_login_date }}" id="consumer_last_login_date" name="last_login_date" disabled>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">User type</label>
               <div class="d-flex align-items-center">
-                <select class="form-control" id="consumer_user_type" name="user_type" >
+                <select class="form-control" id="consumer_user_type" name="user_type" {% if session.type == 'Staff' %}disabled{% endif %}>
                   <option value="Residential"  {% if member.user_type =='Residential' %} selected {% endif %}>Residential</option>
                   <option value="Business" {% if member.user_type =='Business' %} selected {% endif %}>Business</option>
                 </select>
@@ -139,26 +141,26 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Credit available</label>
-              <input class="form-control" value="{{ member.credit_available }}" id="consumer_credit_available" name="credit_available" pattern="^\d{1,8}(\.\d{1,2})?$">
+              <input class="form-control" value="{{ member.credit_available }}" id="consumer_credit_available" vaule="credit_available" disabled>
               <div class="invalid-feedback">No more than 99999999.99</div>
             </div>
                 {% if member.user_type == "Business" %}
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Account Limit</label>
-                  <input class="form-control" value="{{ member.account_limit }}" id="consumer_account_limit" name="account_limit" pattern="^\d{1,8}(\.\d{1,2})?$" >
+                  <input class="form-control" value="{{ member.account_limit }}" id="consumer_account_limit" name="account_limit" disabled>
                   <div class="invalid-feedback">No more than 99999999.99</div>
                 </div>
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Account available</label>
-                  <input class="form-control" value="{{ member.account_available }}" id="consumer_account_available" name="account_available" pattern="^\d{1,8}(\.\d{1,2})?$" >
+                  <input class="form-control" value="{{ member.account_available }}" id="consumer_account_available" name="account_available"  disabled>
                   <div class="invalid-feedback">No more than 99999999.99</div>
                 </div>
                 {% endif %}
 
-            {% elif session.type != "Staff" %}
+            {% elif profile_type != "Consumer" %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Hire date</label>
-              <input type="date" class="form-control" value="{{ member.hire_date }}" id="employees_hire_date" name="hire_date">
+              <input type="date" class="form-control" value="{{ member.hire_date }}" id="employees_hire_date" disabled>
             </div>
             {% endif %}
   
@@ -169,7 +171,7 @@
             </div>
           </div>
           <div class="col text-center">
-            <button type="submit" class="btn btn-secondary">Submit</button>
+            <button type="submit" class="btn btn-secondary profile-update" data-profile-id="{{member.user_id}}">Submit</button>
           </div>
         </form>
       </div>
@@ -218,6 +220,7 @@
       <div class="offcanvas-body">
         <form id="addMemberForm{{ member.user_id }}" method="POST" action="/admin/profile/add" class="needs-validation" novalidate>
           <div class="row">
+
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
                 <label for="imgUpdate{{ profile_type }}{{ member.user_id }}">
@@ -276,26 +279,61 @@
             </div>
           </div>
           <div class="col text-center">
-          <button type="submit" class="btn btn-secondary">Submit</button>
+            <button type="submit" class="btn btn-secondary profile-add" data-profile-id="{{member.user_id}}">Submit</button>
           </div>
         </form>
       </div>
     </div>
-
     
-    <!-- delete employee modal-->
+    <!-- deleteEmployeeModal-->
     {% with
       btn_show = 0,
-      btn_text = 'Del Confirm',
+      bg_color = '#dc3545',
+      bg_color2 = '#3399ff',
       modal_id = 'deleteEmployee' + member.user_id|string,
       title = 'Delete Confirmation',
       msg = 'Are you sure to delete '+ member.given_name|string + ' '+ member.family_name|string + '?'
     %}
-      {% include "components/elements/delConfirm2.html" %}
+      {% include "components/elements/delConfirm.html" %}
     {% endwith %}
-    
- 
+
   {% endfor %}
+
+  <!-- updateProfileSuccessModal -->
+  {% with
+    btn_show = 0,
+    modal_id = 'updateProfileSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Updated Successfully',
+    msg = 'User profile has been successfully updated'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
+
+  <!-- addProfileSuccessModal -->
+  {% with
+    btn_show = 0,
+    modal_id = 'addProfileSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Added Successfully',
+    msg = 'User profile has been successfully added'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
+
+  <!-- delProfileSuccessModal -->
+  {% with
+    btn_show = 0,
+    modal_id = 'delProfileSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Deleted Successfully',
+    msg = 'User profile has been successfully deleted'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
   </table>
+ 
+  {% include "components/elements/loadingModal.html" %}
+
 </div>
 

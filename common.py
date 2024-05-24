@@ -24,6 +24,17 @@ class Register(BaseModel):
     postcode:str = Field(min_length=1, max_length=4)
     depot_id: int = Field(ge=1, le=10)
 
+# Model for employee register
+class RegisterEmployee(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=50)
+    given_name: str = Field(min_length=1, max_length=35)
+    family_name: str = Field(min_length=1, max_length=35)
+    phone: int = Field(ge=1, le=9999999999999)
+    address: str = Field(min_length=1, max_length=80)
+    depot_id: int = Field(ge=1, le=10)
+    hire_date: datetime = Field(None)
+
 # Model for consumer profile
 class consumerProfile(BaseModel):
     user_id: int = Field(ge=1, le=999)
@@ -76,6 +87,13 @@ def validateLogin(data):
 def validateRegister(data):
     try:
         return Register(**data)
+    except ValidationError as e:
+        # print(e.errors())
+        return False
+
+def validateRegisterEmployee(data):
+    try:
+        return RegisterEmployee(**data)
     except ValidationError as e:
         # print(e.errors())
         return False
