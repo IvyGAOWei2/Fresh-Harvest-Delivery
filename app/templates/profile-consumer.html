@@ -67,6 +67,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {% if profile.user_type == 'Business' %}
                                         <div class="row mb-4">
                                             <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
                                             <div class="col-sm-7">
@@ -76,7 +77,16 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+                                        {% endif %}
+                                        {% if profile.user_type == 'Residential' and not application_status %}
+                                        <div class="text-center mt-5">
+                                            <a href="{{ url_for('apply_business_account') }}" class="btn btn-primary">Apply for Business Account</a>
+                                        </div>
+                                        {% elif application_status %}
+                                        <div class="text-center mt-5">
+                                            <p>Account application status: <strong>{{ application_status }}</strong></p>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     <div class="col-md-6">
                                         <div class="row mb-4">
@@ -113,12 +123,14 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {% if profile.user_type == 'Business' %}
                                         <div class="row mb-4">
                                             <label for="creditBalance" class="col-sm-4 col-form-label text-start">Credit Balance</label>
                                             <div class="col-sm-7">
                                                 <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="300" disabled>
                                             </div>
                                         </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="text-center">
