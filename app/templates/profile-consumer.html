@@ -32,7 +32,7 @@
                                     <div class="col text-center">
                                         
                                         <div>
-                                            <img id="profileImage" style="height: 12rem !important; cursor: pointer;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture" title="Click to update picture">
+                                            <img id="profileImage" style="height: 12rem !important; cursor: pointer;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture" data-bs-toggle="updateImg" title="Click to update picture">
                                             <input type="file" class="form-control w-50 mx-auto" id="profilePicture" name="profilePicture" style="display: none;">
                                         </div>
                                     </div>
@@ -483,4 +483,12 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="updateImg"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
 {% endblock %}
