@@ -31,7 +31,7 @@ def manageProduct():
     category_list = fetchAll("""SELECT * FROM Category;""", None, True)
     unit_list = fetchAll("""SELECT * FROM Unit;""", None, True)
     depot_list = fetchAll("""SELECT * FROM Depots;""", None, True)
-
+    print(product_list)
     return render_template('manage-products.html', productList = product_list, categoryList=category_list, unitList=unit_list, depotList=depot_list)
 
 
@@ -40,9 +40,10 @@ def manageProduct():
 def addProduct():
     data = dict(request.form)
 
-    product_id = insertSQL("INSERT INTO Products (name, description, price, stock) VALUES (%s, %s, %s, %s);", \
-        (data['name'], data['description'],data['price'], data['stock']))
+    product_id = insertSQL("INSERT INTO Products (name, category_id, unit_id, depot_id, price, stock, description) VALUES (%s, %s, %s, %s, %s, %s, %s);", \
+        (data['name'], data['category_id'], data['unit_id'], data['depot_id'], data['price'],data['stock'], data['description']))
 
+    img_id = insertSQL("INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES (%s, %s, %s, %s);", (product_id, 'image_coming_soon.jpg', True, False))
     if product_id:
         return {"status": True}, 200
     else:
