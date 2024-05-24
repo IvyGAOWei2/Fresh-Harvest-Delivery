@@ -14,6 +14,7 @@ def adminProfiles():
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
             join Users on Consumer.user_id=Users.user_id where Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
     else:
+        depot_list = fetchAll("""SELECT * FROM Depots;""", None, True)
         if session.get('type') in ['Local_Manager']:
             result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \
                 join Users on Employees.user_id=Users.user_id 
