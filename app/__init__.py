@@ -23,3 +23,4 @@ from app import profile_consumer
 from app import admin
 from app import manage_product
 from app import admin_profile_manage
+from app import admin_manage_discount
