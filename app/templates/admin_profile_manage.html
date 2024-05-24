@@ -28,7 +28,7 @@
         <td class="align-middle">{{ member.given_name }}</td>
         <td class="align-middle">{{ member.family_name }}</td>
         <td class="align-middle">{{ member.phone }}</td>
-        <td class="align-middle">{{ member.depot_id }}</td>
+        <td class="align-middle">{{depotList[member.depot_id -1].location}}</td>
         {% if profile_type == "Consumer" %}
           <td>
             <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
@@ -107,11 +107,11 @@
               <label class="form-label">Depot</label>
               <div class="d-flex align-items-center">
                 <select name="depot_id" class="form-select">
-                  <option value="1" {% if member.depot_id == 1 %}selected{% endif %}>Christchurch</option>
-                  <option value="2" {% if member.depot_id == 2 %}selected{% endif %}>Invercargill</option>
-                  <option value="3" {% if member.depot_id == 3 %}selected{% endif %}>Wellington</option>
-                  <option value="4" {% if member.depot_id == 4 %}selected{% endif %}>Hamilton</option>
-                  <option value="5" {% if member.depot_id == 5 %}selected{% endif %}>Auckland</option>
+                  {% for depot in depotList %}
+                  <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
+                      {{depot.location}}
+                  </option>
+                  {% endfor %}
               </select>
               </div>
             </div>
