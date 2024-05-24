@@ -85,5 +85,5 @@ def passwordReset():
         email = request.form['email']
         print(email)
         #send_reset_email(email)
-        return render_template('reset_confirmation.html', email=email)
-    return render_template('password-reset.html')
+        return render_template('reset-confirmation.html', email=email)
+    return render_template('reset-password.html.html')

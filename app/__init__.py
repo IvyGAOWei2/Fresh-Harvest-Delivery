@@ -10,17 +10,17 @@ app.salt = 'group_az'
 app.hashing = Hashing(app)
 
 
+# Consumer and Employees
+from app import authenticate
+from app import profile
+
 # Consumer
 from app import index
 from app import shop
 from app import cart
-from app import contact
-from app import authenticate
-from app import profile_consumer
-
 
 # Employees
 from app import admin
 from app import manage_product
-from app import admin_profile_manage
-from app import admin_manage_discount
+from app import manage_profile
+from app import manage_discount
