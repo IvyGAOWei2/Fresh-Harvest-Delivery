@@ -9,4 +9,210 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .custom-text {
+        color: #81c408;
+        font-weight: bold;
+    }
+
+
+    .search-bar {
+            border-radius: 25px;
+            margin-bottom: 20px;
+        }
+    .btn-rounded {
+        border-radius: 25px;
+    }
+
+</style>
+
+<section class="main-content">
+    <div class="container-fluid py-5 mt-5">
+        <div class="container py-5 text-center">
+            <div class="account-header d-flex justify-content-center align-items-center py-4 mb-4" style="background: none;">
+                <i class="fas fa-history fa-3x me-3"></i> 
+                <h1 class="mb-2">Order History</h1>
+            </div>
+            <form method="POST" action="/consumer/order/history">
+                <div class="row mb-3 d-flex align-items-center">
+                    <div class="col-md-4 d-flex align-items-center">
+                        <label for="searchOrder" class="form-label me-3 pb-2">SEARCH</label>
+                        <input type="number" class="form-control search-bar" id="searchOrder" placeholder="ORDER REFERENCE NUMBER">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                        <label for="startDate" class="form-label me-3 pb-2">From</label>
+                        <input type="date" class="form-control search-bar" id="fromDate">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center">
+                        <label for="endDate" class="form-label me-3 pb-2">To</label>
+                        <input type="date" class="form-control search-bar" id="toDate">
+                    </div>
+                    <div class="col-md-2 p-2">
+                        <button class="btn btn-primary border-0 btn-rounded justify-content-end " style="top: 2; right: 0;" id="searchButton">Search</button>
+                    </div>
+                </div>
+            </form>
+        
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>Delivery Date</th>
+                            <th>Total Cost</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <!-- Example Order Row -->
+                        <tr>
+                            <td>#1</td>
+                            <td>2024-05-20</td>
+                            <td>2024-05-22</td>
+                            <td>$99.99</td>
+                            <td>Pending</td>
+                            <td>
+                                <!-- <button class="btn btn-info btn-rounded" onclick="viewOrderDetails(12345)">View</button>
+                                <button class="btn btn-danger btn-rounded" data-toggle="modal" data-target="#cancelModal" onclick="setCancelOrderId(12345)">Cancel</button> -->
+                                <a class="btn order-view" role="button" >
+                                    <i class="far fa-eye fa-lg me-1"></i>
+                                </a>
+                                <a class="btn reorder" role="button" >
+                                    <i class="fas fa-cart-plus fa-lg me-1"></i>
+                                </a>
+                                <a class="btn order-del" role="button" >
+                                    <i class="fas fa-trash-alt fa-lg me-1"></i>
+                                </a>
+
+
+                            </td>
+                        </tr>
+                        <!-- Delivered Order Row -->
+                        <tr>
+                            <td>#2</td>
+                            <td>2024-04-15</td>
+                            <td>2024-04-17</td>
+                            <td>$49.99</td>
+                            <td>Delivered</td>
+                            <td>
+                                <a class="btn order-view" role="button" >
+                                    <i class="far fa-eye fa-lg me-3"></i>
+                                </a>
+                                <a class="btn reorder" role="button" >
+                                    <i class="fas fa-cart-plus fa-lg me-1"></i>
+                                </a>                            
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Update Success Message -->
+    <div class="p-3">
+        {% with
+            btn_show = 0,
+            btn_text = 'Profile Update Success',
+            bg_color = '#81C408',
+            title = 'Profile Update Success',
+            msg = 'Your profile has been successfully updated'
+        %}
+            {% include "components/elements/updateSuccess.html" %}
+        {% endwith %}
+    </div>
+</section>
+
+<style>
+    .account-header {
+        padding: 10px 20px;
+        border-radius: 10px;
+        background: linear-gradient(to right, #e7f1ff, #f8f9fa);
+        display: inline-block;
+    }
+    .account-header h1 {
+        display: inline-block;
+        margin: 0;
+        padding-left: 10px;
+        font-size: 2rem;
+    }
+    .form-label {
+        font-weight: bold;
+    }
+    .accordion-button {
+        background-color: #f8f9fa;
+        color: #000;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+    .accordion-button:not(.collapsed) {
+        color: #007bff;
+        background-color: #e7f1ff;
+    }
+    #updateConsumerProfileForm .btn-primary {
+        background-color: #81C408 !important;
+        border-color: #81C408 !important;
+    }
+    #updateConsumerProfileForm .btn-primary:hover {
+        background-color: #ffb524 !important;
+        border-color: #ffb524 !important;
+    }
+    .form-control {
+        max-width: 400px;
+    }
+    .col-form-label {
+        padding-left: 2rem !important;
+    }
+    .row.mb-2 .col-sm-7 {
+        padding-left: 10px;
+    }
+    form .row .col-sm-4 {
+        padding-right: 5px;
+    }
+    form .row .col-sm-7 {
+        padding-left: 5px;
+    }
+</style>
 {% endblock %}
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
+
+ 
+  <script>
+    let cancelOrderId = null;
+    function setCancelOrderId(orderId) {
+        cancelOrderId = orderId;
+    }
+
+    function confirmCancelOrder() {
+        if (cancelOrderId) {
+            // Perform the cancellation logic here
+            alert('Order ' + cancelOrderId + ' has been canceled.');
+            $('#cancelModal').modal('hide');
+        }
+    }
+
+    function viewOrderDetails(orderId) {
+        // Redirect to order details page or display order details
+        alert('Viewing details for order ' + orderId);
+    }
+</script>
+
+{% endblock %}
+
+

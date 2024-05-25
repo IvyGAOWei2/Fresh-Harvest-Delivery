@@ -13,6 +13,22 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .hidden-file-input {
+        display: none;
+    }
+    .modal-header {
+            background-color: #f8f9fa;
+        }
+    .modal-title {
+        width: 100%;
+        text-align: center;
+    }
+    .form-label {
+        text-align: left !important;
+    }
+</style>
+
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
     <div class="container mt-5">
@@ -92,16 +108,14 @@
                                 <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
 
                                 <!-- 图片上传及展示部分需要修改 -->
-                                <div class="card shadow-sm" style="width: 8vw;">
+                                 <div class="card shadow-sm" style="width: 8vw;">
                                     <label for="imgUpdate{{ product.product_id }}">
-                                        <!-- 图片占位符 -->
                                         <img src="{{ url_for('static', filename='images/product/' + product.image) }}"
                                             class="card-img-top" id="imagePreview{{ product.product_id }}">
                                     </label>
                                     <input class="form-control" type="file" id="imgUpdate{{ product.product_id }}"
                                         style="display: none;" accept="image/*">
-                                </div>
-
+                                </div> 
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
                                     <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product.name}}" required>
@@ -193,8 +207,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title text-center" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" ></button>
                 </div>
                 <form id="addProductForm" method="post">
                     <div class="modal-body">
@@ -270,9 +284,10 @@
                             <div class="invalid-feedback">Please enter a valid description with at least 1 characters.
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-primary"> Upload Image </button>
+                        <div class="mb-3 d-flex align-items-center">
+                            <button type="button" class="btn btn-primary text-center" id="uploadImageButton">Click to Upload Image</button>
                         </div>
+                        <input type="file" id="fileInput" class="hidden-file-input">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -384,6 +399,20 @@
     document.getElementById('addStock').addEventListener('input', function () {
         InputValidate('addStock');
     });
+
+    document.getElementById('uploadImageButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        // Handle file selection here
+        var file = this.files[0];
+        console.log('Selected file:', file.name);
+    });
+
+
+
+
 
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('updateProductSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
