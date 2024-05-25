@@ -1,3 +1,22 @@
+<style>
+  .sidebar {
+      width: 250px;
+  }
+  .sidebar .nav-item .nav-link {
+      padding-left: 20px; /* Adjust as needed */
+  }
+  .sidebar .nav-item .nav-link.nav-sub {
+      padding-left: 40px; /* Indent sub-menu items */
+  }
+  .sidebar .nav-link {
+      display: flex;
+      align-items: center;
+  }
+  .sidebar .nav-link i {
+      margin-right: 10px; /* Space between icon and text */
+  }
+</style>
+
 <!-- Sidebar -->
 <div class="sidebar border-end">
     <!-- Sidebar header with logo -->
@@ -17,10 +36,17 @@
     <a href="{{ url_for('manageProduct') }}" class="{% if is_manageProduct %}is_active{% endif %}">
       <i class="fas fa-user"></i> <span>Products</span>
     </a>
+    {% if session.type != 'Staff' %}
     <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
     </a>
-    <a href="#admin-actions">
-      <i class="fas fa-tools"></i> <span>Manage Customer</span>
+    {% endif %}
+    <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_consumerList %}is_active{% endif %}">
+      <i class="fas fa-tools"></i> <span>Manage Consumer</span>
     </a>
+    {% if session.type != 'Staff' %}
+    <a href="{{ url_for('adminProfiles',profile_type='Employee') }}" class="{% if is_employeeList %}is_active{% endif %}">
+      <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
+    </a>
+    {% endif %}    
 </div>

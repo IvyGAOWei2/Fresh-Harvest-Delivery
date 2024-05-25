@@ -94,28 +94,33 @@
                     <div class="invalid-feedback">Please select a depot.</div>
                     <div class="valid-feedback">Looks good!</div>
                     </select>
-                </div>
-            <!-- Old Password -->
-            <div class="col-md-6">
-                <label for="oldPassword" class="form-label">Old Password</label>
-                <input type="password" class="form-control" id="moldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
-                <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
-                <div class="valid-feedback">Looks good!</div>
-            </div>
-
-            <!-- New Password -->
-            <div class="col-md-6">
-                <label for="newPassword" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="mnewPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
-                <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
-                <div class="valid-feedback">Looks good!</div>
-            </div>                
-                <div class="col-12 text-center">
-                    <button type="submit" class="btn custom-btn disabled">Save changes</button>
+                </div>          
+                <div class="col-12 text-center mt-5">
+                    <button type="submit" class="btn custom-btn disabled">Save Profile</button>
                 </div>
             </form>
 
+            <form id="updatePasswordForm" class="row g-3 needs-validation mt-4" novalidate>
+                <h2 class="text-center">Change My Password</h2>
+                <!-- Old Password -->
+                <div class="col-md-6">
+                    <label for="oldPassword" class="form-label">Old Password</label>
+                    <input type="password" class="form-control" id="moldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                    <div class="valid-feedback">Looks good!</div>
+                </div>
 
+                <!-- New Password -->
+                <div class="col-md-6">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="mnewPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                    <div class="valid-feedback">Looks good!</div>
+                </div>                
+                <div class="col-12 text-center mt-5">
+                    <button type="submit" class="btn custom-btn disabled">Save Password</button>
+                </div>
+            </form>
         <!-- Update Success Message -->
         <div class="p-3">
             {% with
@@ -163,6 +168,8 @@
     let differentUpdateStaffData = {};
 
     document.addEventListener('DOMContentLoaded', function () {
+        const updatePasswordForm = document.getElementById('updatePasswordForm');
+
         document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
         const updateProfileForm = document.getElementById('updateProfileForm');

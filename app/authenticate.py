@@ -2,7 +2,8 @@ from app import app
 from flask import render_template, redirect, url_for, request, session
 
 # User-defined function
-from common import validateLogin, validateUserAccount
+from dbFile.config import insertSQL
+from common import validateLogin, validateUserAccount, validateRegister, validateEmail
 
 
 @app.route("/login", methods=['GET','POST'])
@@ -55,7 +56,28 @@ def register():
     if session.get('loggedin'):
         return redirect(url_for('index'))
     else:
+        if request.method == 'POST':
+            new_account = validateRegister(request.form.to_dict())
+
+            if not new_account:
+                return {"status": False, 'message': 'Invalid register request !!!'}, 500
+
+            if validateEmail(new_account.email):
+                return {"status": False, 'message': 'Email ' + new_account.email + ' has already been used by another user'}, 200
+            else:
+                hashed = app.hashing.hash_value(new_account.password, salt=app.salt)
+                user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id) VALUES(%s,%s,%s);", (new_account.email, hashed, new_account.depot_id))
+
+                insertSQL("INSERT INTO Consumer (user_id, given_name, family_name, address, phone, postcode, depot_id, image) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);", \
+                (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.postcode, new_account.depot_id, 'user_default_image.png'))
+
+                return {"status": True, 'message': '/registered'}, 200
+
         return render_template('register.html')
+
+@app.route('/registered')
+def registered():
+    return render_template("registered.html")
 
 @app.route('/password/reset', methods=['GET','POST'])
 def passwordReset():

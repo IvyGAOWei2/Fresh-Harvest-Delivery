@@ -1,5 +1,11 @@
 {% set bg_c = bg_color %}
 
+{% if modal_id %}
+  {% set modal_id = modal_id %}
+{% else %}
+  {% set modal_id = 'updateSuccessModal' %}
+{% endif %}
+
 <style>
     .modal-content {
       border: none;
@@ -58,12 +64,12 @@
 
 <section>
   {% if btn_show %}
-    <button style="border: none;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateSuccessModal">
+    <button style="border: none;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#{{modal_id}}">
       {{btn_text}}
     </button>
   {% endif %}
 
-  <div class="modal fade" id="updateSuccessModal" tabindex="-1" aria-labelledby="updateSuccessModalLabel" aria-hidden="true">
+  <div class="modal fade" id={{modal_id}} tabindex="-1" aria-labelledby="updateSuccessModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -76,7 +82,7 @@
         <div class="modal-body text-body-secondary">
           {{msg}}
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer justify-content-center">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>

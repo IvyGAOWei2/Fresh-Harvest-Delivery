@@ -13,6 +13,28 @@ class Login(BaseModel):
     password: str = Field(min_length=1, max_length=50)
     is_saved: Optional[str] = Field(None, min_length=1, max_length=1)
 
+# Model for consumer register
+class Register(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=50)
+    given_name: str = Field(min_length=1, max_length=35)
+    family_name: str = Field(min_length=1, max_length=35)
+    phone: int = Field(ge=1, le=9999999999999)
+    address: str = Field(min_length=1, max_length=80)
+    postcode:str = Field(min_length=1, max_length=4)
+    depot_id: int = Field(ge=1, le=10)
+
+# Model for employee register
+class RegisterEmployee(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=1, max_length=50)
+    given_name: str = Field(min_length=1, max_length=35)
+    family_name: str = Field(min_length=1, max_length=35)
+    phone: int = Field(ge=1, le=9999999999999)
+    address: str = Field(min_length=1, max_length=80)
+    depot_id: int = Field(ge=1, le=10)
+    hire_date: datetime = Field(None)
+
 # Model for consumer profile
 class consumerProfile(BaseModel):
     user_id: int = Field(ge=1, le=999)
@@ -35,6 +57,16 @@ class employeeProfile(BaseModel):
     hire_date: Optional[datetime] = Field(None)
     depot_id: Optional[int] = Field(None, ge=1, le=10)
 
+# Model for product profile
+class productProfile(BaseModel):
+    product_id: int = Field(ge=1, le=999)
+    name: str = Field(min_length=1, max_length=50)
+    description: str = Field(min_length=1, max_length=1000)
+    price: str = Field(min_length=1, max_length=50)
+    stock: int = Field(ge=1, le=999)
+    category_id: int = Field(ge=1, le=999)
+    unit_id: int = Field(ge=1, le=999)
+    depot_id: int = Field(ge=1, le=999)
 
 def roleRequired(roles):
     """ 装饰器用于在允许访问特定路由之前检查用户角色。"""
@@ -62,6 +94,23 @@ def validateLogin(data):
         # print(e.errors())
         return False
 
+def validateRegister(data):
+    try:
+        return Register(**data)
+    except ValidationError as e:
+        # print(e.errors())
+        return False
+
+def validateRegisterEmployee(data):
+    try:
+        return RegisterEmployee(**data)
+    except ValidationError as e:
+        # print(e.errors())
+        return False
+
+def validateEmail(email):
+    return fetchOne('SELECT user_id FROM Users WHERE email = %s AND is_deleted = FALSE', (email,))
+
 def validateUserAccount(email):
     return fetchOne('SELECT * FROM Users WHERE email = %s AND is_deleted = FALSE', (email,), True)
 
@@ -77,6 +126,14 @@ def validateConsumerProfile(data):
     try:
         profile = consumerProfile(**data)
         return profile.model_dump(exclude_none=True)
+    except ValidationError as e:
+        # print(e.errors())
+        return False
+
+def validateProductProfile(data):
+    try:
+        product = productProfile(**data)
+        return product.model_dump(exclude_none=True)
     except ValidationError as e:
         # print(e.errors())
         return False
