@@ -259,12 +259,11 @@
               <label class="form-label">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
                   <select class="form-control" id="add_depot" name="depot_id" required>
-                    <option selected value="">Please select a depot</option>
-                    <option value="1">Christchurch</option>
-                    <option  value="2">Invercargill</option>
-                    <option  value="3">Wellington</option>
-                    <option  value="4">Hamilton</option>
-                    <option  value="5">Auckland</option>
+                    {% for depot in depotList %}
+                    <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
+                        {{depot.location}}
+                    </option>
+                    {% endfor %}
                   </select>
                 </div>
             </div>
