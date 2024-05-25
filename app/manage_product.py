@@ -32,10 +32,7 @@ def manageProduct():
             ProductImages PI ON p.product_id = PI.product_id;
     """
     product_list = fetchAll(sql_products, None, True)
-    category_list = fetchAll("""SELECT * FROM Category;""", None, True)
-    unit_list = fetchAll("""SELECT * FROM Unit;""", None, True)
-    depot_list = fetchAll("""SELECT * FROM Depots;""", None, True)
-    return render_template('manage-products.html', productList = product_list, categoryList=category_list, unitList=unit_list, depotList=depot_list)
+    return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list)
 
 
 @app.route("/product/add",methods = ["POST"])
