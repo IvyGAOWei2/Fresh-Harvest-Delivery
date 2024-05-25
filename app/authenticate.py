@@ -27,7 +27,7 @@ def login():
             # Check if the password provided matches the hashed password in the database
             if app.hashing.check_value(password_hash, login.password, salt=app.salt):
                 # If the password is correct, set session variables and redirect to the dashboard
-                session['loggedin'], session['id'], session['email'], session['type'] = True, account['user_id'], account['email'], account['type']
+                session['loggedin'], session['id'], session['email'], session['type'], session['depot_id'] = True, account['user_id'], account['email'], account['type'], account['depot_id']
                 if account['type'] == 'Consumer':
                     return {"status": True, 'message': '/'}, 200
                 else:
