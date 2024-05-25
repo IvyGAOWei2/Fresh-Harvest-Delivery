@@ -10,9 +10,8 @@ from common import roleRequired, validateEmail, validateRegisterEmployee, valida
 def adminProfiles():
     profile_type = request.args.get('profile_type')
     if profile_type == "Consumer":
-        result = fetchAll("""SELECT Users.email, Consumer.* , Depots.location FROM Consumer \
-            join Users on Consumer.user_id=Users.user_id 
-            join Depots on Consumer.depot_id=Depots.depot_id where Users.type='Consumer' AND Users.is_deleted = FALSE;""",None ,True)
+        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+            join Users on Consumer.user_id=Users.user_id where Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
     else:
         if session.get('type') in ['Local_Manager']:
             result = fetchAll("""SELECT Users.email, Employees.*, Depots.location FROM Employees \

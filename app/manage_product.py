@@ -1,10 +1,10 @@
 from app import app
-from flask import render_template, request, session
-from dbFile.config import fetchAll, fetchOne,updateSQL
+from flask import render_template, request
+from dbFile.config import fetchAll, updateSQL
 
 # User-defined function
 from dbFile.config import updateSQL, insertSQL
-from common import roleRequired, getUserProfile, validateEmployeeProfile, validateProductProfile
+from common import roleRequired, validateProductProfile
 
 @app.route("/product/list", methods = ["GET"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -23,15 +23,18 @@ def manageProduct():
         FROM 
             Products p
         INNER JOIN 
-            ProductImages PI ON p.product_id = PI.product_id
-        WHERE 
-            is_active = TRUE;
-"""
+            Category c ON p.category_id = c.category_id
+        INNER JOIN 
+            Unit u ON p.unit_id = u.unit_id
+        INNER JOIN 
+            Depots d ON p.depot_id = d.depot_id
+        INNER JOIN 
+            ProductImages PI ON p.product_id = PI.product_id;
+    """
     product_list = fetchAll(sql_products, None, True)
     category_list = fetchAll("""SELECT * FROM Category;""", None, True)
     unit_list = fetchAll("""SELECT * FROM Unit;""", None, True)
     depot_list = fetchAll("""SELECT * FROM Depots;""", None, True)
-    print(product_list)
     return render_template('manage-products.html', productList = product_list, categoryList=category_list, unitList=unit_list, depotList=depot_list)
 
 

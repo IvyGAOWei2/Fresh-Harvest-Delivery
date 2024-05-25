@@ -45,6 +45,8 @@ class consumerProfile(BaseModel):
     email: Optional[EmailStr] = Field(None)
     phone: Optional[str] = Field(None, min_length=1, max_length=13)
     depot_id: Optional[int] = Field(None, ge=1, le=10)
+    new_password: Optional[str] = Field(None, min_length=1, max_length=50)
+    old_password: Optional[str] = Field(None, min_length=1, max_length=50)
 
 # Model for employee profile
 class employeeProfile(BaseModel):
@@ -56,6 +58,8 @@ class employeeProfile(BaseModel):
     phone: Optional[str] = Field(None, min_length=1, max_length=13)
     hire_date: Optional[datetime] = Field(None)
     depot_id: Optional[int] = Field(None, ge=1, le=10)
+    new_password: Optional[str] = Field(None, min_length=1, max_length=50)
+    old_password: Optional[str] = Field(None, min_length=1, max_length=50)
 
 # Model for product profile
 class productProfile(BaseModel):

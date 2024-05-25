@@ -176,12 +176,15 @@
 </section>
 
 {% endblock %}
-{%block script%}
+{% block script %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // 获取所有带有data-product-id属性的productCard元素
     const productCards = document.querySelectorAll('[data-product-id]');
     
+    // 获取所有的“加入购物车”按钮
+    const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+
     // 遍历每个productCard元素并添加事件监听器
     productCards.forEach(function(productCard) {
         productCard.addEventListener('click', (event) => {
@@ -198,32 +201,15 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = url;
         });
     });
-});
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        // 选择所有"Add to cart"按钮
-        const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
-        // 选择购物车计数的元素
-        const cartCountElement = document.getElementById('cart-count');
-    
-        // 为每个按钮添加点击事件监听器
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                // 阻止默认行为，比如链接的跳转
-                event.preventDefault();
-                event.stopPropagation();
-                
-                // 获取当前的计数值
-                let currentCount = parseInt(cartCountElement.textContent);
-    
-                // 增加计数值
-                currentCount += 1;
-    
-                // 更新购物车计数显示
-                cartCountElement.textContent = currentCount;
-            });
+
+    // 为每个“加入购物车”按钮添加事件监听器
+    addToCartButtons.forEach(function(button) {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); // 停止事件冒泡
+            event.preventDefault();  // 阻止链接的默认行为
+
         });
     });
-    </script>
+});
+</script>
 {% endblock %}

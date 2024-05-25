@@ -84,5 +84,6 @@ def passwordReset():
     if request.method == 'POST':
         email = request.form['email']
         print(email)
-        return redirect(url_for('notFound'))
-    return render_template('password-reset.html')
+        #send_reset_email(email)
+        return render_template('reset-confirmation.html', email=email)
+    return render_template('reset-password.html.html')
