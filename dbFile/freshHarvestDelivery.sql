@@ -194,7 +194,7 @@ CREATE TABLE Reviews (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
-)
+);
 
 CREATE TABLE Discounts (
     discount_id INT PRIMARY KEY AUTO_INCREMENT,

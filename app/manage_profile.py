@@ -10,6 +10,7 @@ from common import roleRequired, validateEmail, validateRegisterEmployee, valida
 def adminProfiles():
     profile_type = request.args.get('profile_type')
     if profile_type == "Consumer":
+        depot_list = fetchAll("""SELECT * FROM Depots;""", None, True)
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
             join Users on Consumer.user_id=Users.user_id where Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
     else:
@@ -23,7 +24,7 @@ def adminProfiles():
                 JOIN Depots ON Employees.depot_id = Depots.depot_id \
                 WHERE Users.type = 'Staff' OR Users.type = 'Local_Manager' AND Users.is_deleted = FALSE;""",None ,True)
 
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=depot_list)
 
 
 @app.route('/admin/profile/search',methods = ["GET","POST"])
