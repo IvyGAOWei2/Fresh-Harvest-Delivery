@@ -24,16 +24,16 @@ def adminProfiles():
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list)
 
 
-# @app.route('/admin/profile/search',methods = ["GET","POST"])
-# # @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-# def profileSearch():
+@app.route('/admin/profile/search',methods = ["GET","POST"])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def profileSearch():
 
-#     searchBy = request.get_json()['searchBy']
-#     profile_type = request.get_json()['profile_type']
+    searchBy = request.get_json()['searchBy']
+    profile_type = request.get_json()['profile_type']
 
-#     result = fetchAll("SELECT * FROM " + profile_type + " WHERE first_name LIKE %s \
-#         OR last_name LIKE %s ORDER BY user_id ASC", ('%' + searchBy + '%','%' + searchBy + '%'))
-#     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
+    result = fetchAll("SELECT * FROM " + profile_type + " WHERE first_name LIKE %s \
+        OR last_name LIKE %s ORDER BY user_id ASC", ('%' + searchBy + '%','%' + searchBy + '%'))
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type)
 
 
 @app.route("/admin/profile/update", methods = ["POST"])
