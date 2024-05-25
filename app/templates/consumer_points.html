@@ -31,7 +31,7 @@
             <div class="accordion" id="consumerPoints">
                 <!-- Rewards points history -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingShippingAddress">
+                    <h2 class="accordion-header" id="headingShippingAddress0">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingAddress" aria-expanded="false" aria-controls="collapseShippingAddress">
                             <i class="fas fa-list me-2"></i>Points History
                         </button>
@@ -41,10 +41,11 @@
                             <table class="table">
                                 <thead>
                                   <tr>
-                                    <th scope="col">Order ID</th>
-                                    <th scope="col">Points rewards</th>
+                                    <th scope="col">Order ID/Giftcard Code</th>
+                                    <th scope="col">Points addition</th>
                                     <th scope="col">Points consumption</th>
                                     <th scope="col">Points balance</th>
+                                    <th scope="col">Date</th>
                                     <th scope="col">Details</th>
                                   </tr>
                                 </thead>
@@ -54,10 +55,15 @@
                                     <td>+ 200</td>
                                     <td>- 200</td>
                                     <td>100</td>
-                                    <td>button</td>
+                                    <td>09-09-2023</td>
+                                    <td>
+                                    <a class="btn view_order" role="button" data-bs-toggle="offcanvas" data-bs-target="#viewOrder1" data-user-id="1" data-bs-toggle="tooltip" title="Order details">
+                                        <i class="fas fa-list fa-lg me-3 fa-fw"></i>
+                                        </a>
+                                    </td>
                                   </tr>
                                 </tbody>
-                              </table>
+                            </table>
                         </div>
                     </div>
                 </div>               
@@ -71,40 +77,22 @@
                     </h2>
                     <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails">
                         <div class="accordion-body">
-                            <div class="row mb-4">
-                                <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Giftcard ID<sup>*</sup></label>
-                                <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="consumer_giftcard" name="gift_card_id" pattern="[A-Za-z\s]{1,50}" >
-                                    <div class="invalid-feedback">Please provide a valid card holder's name (letters only, up to 70 characters).</div>
+                            <form id="giftcard"  method="POST" action="/consumer/points" class="needs-validation" novalidate>
+                                <div class="row mb-4">
+                                    <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Giftcard Code<sup>*</sup></label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="consumer_giftcard" name="gift_card_id" pattern="[A-Za-z\s]{1,50}" >
+                                        <div class="invalid-feedback">Please input the right giftcard code.</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row mb-4">
-                                <label for="cardNumber" class="col-sm-4 col-form-label text-start">Password<sup>*</sup></label>
-                                <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="code_password" name="code" pattern="\d{13,19}" >
-                                    <div class="invalid-feedback">Please provide a valid card number (13-19 digits).</div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
                                 </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary mt-3">Submit</button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- Giftcard points history -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingShippingAddress1">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingAddress1" aria-expanded="false" aria-controls="collapseShippingAddress1">
-                            <i class="fas fa-list me-2"></i>Giftcard Redemption History
-                        </button>
-                    </h2>
-                    <div id="collapseShippingAddress1" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress1">
-                        <div class="accordion-body">
-
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
