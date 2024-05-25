@@ -36,6 +36,7 @@
             </div>
             {% if session.loggedin and session.type == 'Consumer' %}
               <a href="{{ url_for('profileConsumer') }}" class="nav-item nav-link {% if is_profile_consumer %}active{% endif %}">My Account</a>
+              <a href="{{ url_for('consumer_points') }}" class="nav-item nav-link {% if is_consumer_points %}active{% endif %}">My Points</a>
             {% endif %}
             <a href="{{ url_for('contact') }}" class="nav-item nav-link {% if is_contact %}active{% endif %}">Contact</a>
             <a href="{{ url_for('about') }}" class="nav-item nav-link {% if is_about %}active{% endif %}">About</a>

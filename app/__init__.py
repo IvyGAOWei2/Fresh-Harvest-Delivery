@@ -17,6 +17,7 @@ from app import cart
 from app import contact
 from app import authenticate
 from app import profile_consumer
+from app import consumer_points
 
 
 # Employees
