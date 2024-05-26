@@ -13,22 +13,6 @@
 {% endblock %}
 
 {% block content %}
-<style>
-    .hidden-file-input {
-        display: none;
-    }
-    .modal-header {
-            background-color: #f8f9fa;
-        }
-    .modal-title {
-        width: 100%;
-        text-align: center;
-    }
-    .form-label {
-        text-align: left !important;
-    }
-</style>
-
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
     <div class="container mt-5">
@@ -98,7 +82,7 @@
                     <div class="offcanvas offcanvas-end w-50" id="updateproduct{{ product.product_id }}" tabindex="-1"
                         aria-labelledby="updateProductModalLabel">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product.name}}</h5>
+                            <h5 class="offcanvas-title modal-title mx-auto" id="updateproductLabel">Update {{product.name}}</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                                 aria-label="Close"></button>
                         </div>
@@ -148,11 +132,15 @@
                                 <div class="mb-3">
                                     <label for="updateDepot" class="form-label">Depot</label>
                                     <select class="form-control" name="depot_id" id="updateDepot" required>
-                                        {% for depot in depotList %}
-                                        <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
-                                            {{depot.location}}
-                                        </option>
-                                        {% endfor %}
+                                        {% if session.type == 'National_Manager' %}
+                                            {% for depot in depotList %}
+                                            <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
+                                                {{depot.location}}
+                                            </option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="{{product.depot_id}}" selected>{{depotList[product.depot_id -1].location}}</option>
+                                        {% endif %}
                                     </select>
                                     <div class="invalid-feedback">Please select one depot from the list.</div>
                                 </div>
@@ -207,8 +195,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-center" id="addProductModalLabel">Add New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" ></button>
+                    <h5 class="modal-title mx-auto" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addProductForm" method="post">
                     <div class="modal-body">
@@ -256,12 +244,16 @@
                         <div class="mb-3">
                             <label for="addDepot" class="form-label">Depot</label>
                             <select class="form-control" name="depot_id" id="addDepot" required>
-                                <option selected value="">Please select the depot</option>
-                                <option value="1">Christchurch</option>
-                                <option value="2">Invercargill</option>
-                                <option value="3">Wellington</option>
-                                <option value="4">Hamilton</option>
-                                <option value="5">Auckland</option>
+                                {% if session.type == 'National_Manager' %}
+                                    {% for depot in depotList %}
+                                    <option value="{{depot.depot_id}}">
+                                        {{depot.location}}
+                                    </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="{{session.depot_id}}" selected>{{depotList[session.depot_id-1].location}}</option>
+                                {% endif %}
+                        </select>
                             </select>
                             <div class="invalid-feedback">Please select one depot from the list.</div>
                         </div>
