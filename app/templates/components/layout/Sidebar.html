@@ -20,10 +20,16 @@
     <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Discounts
     </a>
+    <a href="{{ url_for('manage_applications') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Applications
+    </a>
+    <a href="{{ url_for('business_accounts') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Accounts
+    </a>
     <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
     </a>
-    <a href="#admin-actions">
+    <a href="#admin-actions"> 
       <i class="fas fa-tools"></i> <span>Manage Customer</span>
     </a>
 </div>
