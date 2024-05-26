@@ -42,9 +42,8 @@
                                 <thead>
                                   <tr>
                                     <th scope="col">Order ID/Giftcard Code</th>
-                                    <th scope="col">Points addition</th>
-                                    <th scope="col">Points consumption</th>
-                                    <th scope="col">Points balance</th>
+                                    <th scope="col">Points change amount</th>
+                                    <th scope="col">Balance</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Details</th>
                                   </tr>
@@ -52,9 +51,8 @@
                                 <tbody>
                                   <tr>
                                     <th scope="row">1</th>
-                                    <td>+ 200</td>
-                                    <td>- 200</td>
-                                    <td>100</td>
+                                    <td><i class="fas fa-plus fa-lg me-3 fa-fw"></i>200</td>
+                                    <td>300</td>
                                     <td>09-09-2023</td>
                                     <td>
                                     <a class="btn view_order" role="button" data-bs-toggle="offcanvas" data-bs-target="#viewOrder1" data-user-id="1" data-bs-toggle="tooltip" title="Order details">
@@ -81,8 +79,9 @@
                                 <div class="row mb-4">
                                     <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Giftcard Code<sup>*</sup></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="consumer_giftcard" name="gift_card_id" pattern="[A-Za-z\s]{1,50}" >
+                                        <input type="text" class="form-control" id="consumer_giftcard" name="gift_card_id">
                                         <div class="invalid-feedback">Please input the right giftcard code.</div>
+                                        <div class="valid-feedback">Please input the right giftcard code.</div>
                                     </div>
                                 </div>
                                 <div class="text-center">
