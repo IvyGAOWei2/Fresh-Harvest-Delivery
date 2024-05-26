@@ -59,6 +59,10 @@ def adminProfileUpdate():
 
     update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
 
+    employee_type = request.form.get("type")
+    print(type)
+    updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
+
     if update_successful:
         return {"status": True}, 200
     else:
@@ -80,7 +84,7 @@ def adminProfileDel():
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminProfileAdd():
     new_account = validateRegisterEmployee(request.form.to_dict())
-
+    print(new_account)
     if not new_account:
         return {"status": False, 'message': 'Invalid register request !!!'}, 500
 

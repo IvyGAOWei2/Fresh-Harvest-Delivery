@@ -163,9 +163,9 @@
               <input type="date" class="form-control" value="{{ member.hire_date }}" id="employees_hire_date" disabled>
             </div>
             <div class="col-md-6 mb-3">
-            <label class="form-label">User type<sup>*</sup></label>
+            <label class="form-label">Type</label>
               <div class="d-flex align-items-center">
-                <select class="form-control"name="type" id="user_type">
+                <select class="form-control" name="type"id="user_type">
                   <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
                   <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
                 </select>
@@ -282,6 +282,18 @@
               <label class="form-label">Hire date<sup>*</sup></label>
               <input type="date" class="form-control" id="add_hire_date" name="hire_date" required>
             </div>  
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Type<sup>*</sup></label>
+                <div class="d-flex align-items-center">
+                  <select class="form-control" name="type" id="user_type">
+                    <option value="" selected >Please select an employee type</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Local_Manager">Local manager</option>
+                  </select>
+                  <div class="invalid-feedback">Please select a type from the list.</div>
+                  <div class="valid-feedback">Looks good!</div>      
+                </div>
+            </div>
             <div class="col-md-6 mb-3">
               <label for="basic-url" class="form-label">Password<sup>*</sup></label>
               <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="add_password" name="password" required>
