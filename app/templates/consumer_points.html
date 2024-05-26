@@ -31,17 +31,17 @@
             <div class="accordion" id="consumerPoints">
                 <!-- Rewards points history -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingShippingAddress0">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingAddress" aria-expanded="false" aria-controls="collapseShippingAddress">
+                    <h2 class="accordion-header" id="pointsHistory">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="false" aria-controls="pointsHistory">
                             <i class="fas fa-list me-2"></i>Points History
                         </button>
                     </h2>
-                    <div id="collapseShippingAddress" class="accordion-collapse collapse" aria-labelledby="headingShippingAddress">
+                    <div id="pointsHistory" class="accordion-collapse collapse" aria-labelledby="pointsHistory">
                         <div class="accordion-body">
                             <table class="table">
                                 <thead>
                                   <tr>
-                                    <th scope="col">Order ID/Giftcard Code</th>
+                                    <th scope="col">Order ID / Giftcard Code</th>
                                     <th scope="col">Points change amount</th>
                                     <th scope="col">Balance</th>
                                     <th scope="col">Date</th>
@@ -77,11 +77,11 @@
                         <div class="accordion-body">
                             <form id="giftcard"  method="POST" action="/consumer/points" class="needs-validation" novalidate>
                                 <div class="row mb-4">
-                                    <label for="cardHolderName" class="col-sm-4 col-form-label text-start">Giftcard Code<sup>*</sup></label>
-                                    <div class="col-sm-7">
+                                    <label for="cardCode" class="col-sm-4 col-form-label">Giftcard Code<sup>*</sup></label>
+                                    <div class="col-sm-4">
                                         <input type="text" class="form-control" id="consumer_giftcard" name="gift_card_id">
                                         <div class="invalid-feedback">Please input the right giftcard code.</div>
-                                        <div class="valid-feedback">Please input the right giftcard code.</div>
+                                        <div class="valid-feedback">You have successfully redeemed points.</div>
                                     </div>
                                 </div>
                                 <div class="text-center">
