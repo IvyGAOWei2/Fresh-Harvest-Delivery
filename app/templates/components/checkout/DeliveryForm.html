@@ -1,0 +1,64 @@
+<div class="delivery-form">
+  <h1 class="mb-4">Delivery Address</h1>
+  <form action="#">
+      <div class="row g-5">
+          <div class="col-md-6">
+              <div class="form-item">
+                  <label class="form-label">First Name<sup>*</sup></label>
+                  <input id="deliveryfirstname" type="text" class="form-control" name="given_name" maxlength="35" pattern="^[a-zA-Z\s]+$" required>
+                  <div class="invalid-feedback">Please enter your first name.</div>
+                  <div class="valid-feedback">Looks good!</div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-item">
+                  <label class="form-label">Last Name<sup>*</sup></label>
+                  <input type="text" class="form-control" name="family_name" pattern="^[a-zA-Z\s\-]+$" id="deliverylastname" maxlength="35" required>
+                  <div class="invalid-feedback">Please enter your last name.</div>
+                  <div class="valid-feedback">Looks good!</div>
+              </div>
+          </div>
+          <div class="col-12">
+              <div class="form-item">
+                  <label class="form-label">Address<sup>*</sup></label>
+                  <input type="text" id="deliveryaddress" class="form-control" name="delivery_address" placeholder="Apartment, studio, or floor" pattern="^[a-zA-Z0-9\s\,\.\-]+$" maxlength="80" required>
+                  <div class="invalid-feedback">Please enter a valid address.</div>
+                  <div class="valid-feedback">Looks good!</div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-item">
+                  <label class="form-label">Town/City<sup>*</sup></label>
+                  <input type="text" id="deliverycity"class="form-control" name="city" value="Christchurch" readonly>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-item">
+                  <label class="form-label">Postcode/Zip<sup>*</sup></label>
+                  <input type="text" id="deliverypostcode" class="form-control" name="postcode" pattern="^[a-zA-Z0-9\s\-]+$" maxlength="10" required>
+                  <div class="invalid-feedback">Please enter a valid postcode.</div>
+                  <div class="valid-feedback">Looks good!</div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-item">
+                  <label the class="form-label">Phone Number<sup>*</sup></label>
+                  <input type="tel" id="deliveryphone" class="form-control" name="phone" pattern="^\+?[0-9\s\-]+$" maxlength="13" required>
+                  <div class="invalid-feedback">Please enter a valid phone number.</div>
+                  <div class="valid-feedback">Looks good!</div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-item">
+                  <label class="form-label">Email Address<sup>*</sup></label>
+                  <input type="email" id="deliveryemail" class="form-control" name="email" maxlength="50" required>
+                  <div class="invalid-feedback">Please enter a valid email address.</div>
+                  <div class="valid-feedback">Looks good!</div>
+              </div>
+          </div>
+      </div>
+      <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-primary next-step">Continue to Billing</button>
+      </div>
+  </form>
+</div>

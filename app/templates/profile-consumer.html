@@ -32,7 +32,7 @@
                                     <div class="col text-center">
                                         
                                         <div>
-                                            <img id="profileImage" style="height: 12rem !important; cursor: pointer;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture" title="Click to update picture">
+                                            <img id="profileImage" style="height: 12rem !important; cursor: pointer;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture" data-bs-toggle="updateImg" title="Click to update picture">
                                             <input type="file" class="form-control w-50 mx-auto" id="profilePicture" name="profilePicture" style="display: none;">
                                         </div>
                                     </div>
@@ -59,11 +59,11 @@
                                             <label for="oldPassword" class="col-sm-4 col-form-label text-start">Old Password</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword">
+                                                    <input type="password" class="form-control" id="oldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
                                                     <button class="btn btn-outline-secondary" type="button" id="showOldPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <div class="invalid-feedback">Old password is incorrect.</div>
+                                                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -115,11 +115,11 @@
                                             <label for="newPassword" class="col-sm-4 col-form-label text-start">New Password</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                                                    <input type="password" class="form-control" id="newPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
                                                     <button class="btn btn-outline-secondary" type="button" id="showNewPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character.</div>
+                                                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -332,31 +332,6 @@
             buttonIcon.classList.add('fa-eye');
         }
     }
-
-    // Validate Old Password
-    document.getElementById('oldPassword').addEventListener('blur', function () {
-        var oldPasswordInput = this;
-        // Simulate server-side validation
-        var storedPassword = "StoredPassword"; // Replace this with the actual stored password
-        if (oldPasswordInput.value !== storedPassword) {
-            oldPasswordInput.classList.add('is-invalid');
-        } else {
-            oldPasswordInput.classList.remove('is-invalid');
-            oldPasswordInput.classList.add('is-valid');
-        }
-    });
-
-    // Validate New Password
-    document.getElementById('newPassword').addEventListener('input', function () {
-        var newPasswordInput = this;
-        var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-        if (!passwordPattern.test(newPasswordInput.value)) {
-            newPasswordInput.classList.add('is-invalid');
-        } else {
-            newPasswordInput.classList.remove('is-invalid');
-            newPasswordInput.classList.add('is-valid');
-        }
-    });
 </script>
 <script>
     (function () {
@@ -367,7 +342,8 @@
             'phone',
             'myDepot',
             'addressLine1',
-            'addressLine2',
+            'newPassword',
+            'oldPassword',
             'postalCode',
             'cardHolderName',
             'cvv'
@@ -504,10 +480,12 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.status == 1) {
+                                // console.log(data)
                                 // Show updateSuccess modal if update is successful
                                 new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                             } else {
-                                alert("Invalid request");
+                                alert(data.message);
+                                location.reload(); // Reload the page on failure
                             }
                         })
                         .catch(error => console.error('Error:', error));
@@ -517,4 +495,12 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="updateImg"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
 {% endblock %}

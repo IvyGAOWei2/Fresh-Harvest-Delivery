@@ -13,43 +13,6 @@
 {% endblock %}
 
 {% block content %}
-<style>
-    /* Pagination styling */
-    .pagination a {
-        color: #007bff;
-        padding: 10px 15px;
-        text-decoration: none;
-        transition: background-color 0.3s;
-        border-radius: 5px;
-        margin: 0 5px;
-    }
-
-    .pagination a.active {
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-    }
-
-    .pagination a:hover:not(.active) {
-        background-color: #ddd;
-        border-radius: 5px;
-    }
-
-    /* button style */
-    .btn-primary:hover {
-      transform: scale(1.1);
-    }
-
-    .btn-secondary:hover {
-      transform: scale(1.2);
-      background-color: 177, 205, 252;
-      color: #fff;
-      border-color: #0c0c0c
-    }
-
-
-</style>
-
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
     <div class="container mt-5">
@@ -99,65 +62,106 @@
                 <tbody id="productTableBody">
                     {% for product in productList %}
                     <tr>
-                        <td class="align-middle fw-bold">{{ product[1] }}</td>
-                        <td class="align-middle">{{ product[5] }}</td>
-                        <td class="align-middle">{{ product[3] }}</td>
-                        <td class="align-middle">{{ product[4] }}</td>
+                        
+                        <td class="align-middle fw-bold">{{ product.name }}</td>
+                        <td class="align-middle">{{categoryList[product.category_id -1].category_name}}</td>
+                        <td class="align-middle">{{ product.price}}</td>
+                        <td class="align-middle">{{ product.stock }}</td>
                         <td>
-                            <a class="btn product-update" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateproduct{{ product[0] }}" data-product-id="{{ product[0] }}">
+                            <a class="btn" role="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#updateproduct{{ product.product_id }}">
                                 <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                            </a>
+                            <a class="btn product-del" role="button" data-product-id="{{product.product_id}}">
+                                <i class="fas fa-store-slash fa-lg me-3" title="Delist the Product"></i>
                             </a>
                         </td>
                     </tr>
 
                     <!-- Update Product offcanvas -->
-                    <div class="offcanvas offcanvas-end" id="updateproduct{{ product[0] }}" tabindex="-1"
+                    <div class="offcanvas offcanvas-end w-50" id="updateproduct{{ product.product_id }}" tabindex="-1"
                         aria-labelledby="updateProductModalLabel">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product[1]}}</h5>
+                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product.name}}</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                                 aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <form id="updateProductForm{{ product[0] }}" method="POST">
+                            <form id="updateProductForm{{ product.product_id }}" class="update-product-form"
+                                action="/product/update" method="POST">
+                                <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
+
                                 <!-- 图片上传及展示部分需要修改 -->
                                 <div class="card shadow-sm" style="width: 8vw;">
-                                    <label for="imgUpdate{{ product[0] }}">                                  
+                                    <label for="imgUpdate{{ product.product_id }}">
                                         <!-- 图片占位符 -->
-                                        <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect> </svg>
-
-                                        <img src="" class="card-img-top" id="imagePreview{{ product[0] }}">
+                                        <img src="{{ url_for('static', filename='images/product/' + product.image) }}"
+                                            class="card-img-top" id="imagePreview{{ product.product_id }}">
                                     </label>
-                                    <input class="form-control" type="file" id="imgUpdate{{ product[0] }}" style="display: none;" accept="image/*">
+                                    <input class="form-control" type="file" id="imgUpdate{{ product.product_id }}"
+                                        style="display: none;" accept="image/*">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" value="{{product[1]}}"
-                                        id="updateProductName" required>
+                                    <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product.name}}" required>
+                                    <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateCategory" class="form-label">Category</label>
-                                    <input type="text" class="form-control" value="{{product[5]}}" id="updateCategory"
-                                        required>
+                                    <select class="form-control" id="updateCategory" name="category_id" required>
+                                        {% for category in categoryList %}
+                                        <option value="{{category.category_id}}" {% if product.category_id == category.category_id %}selected{% endif %}>
+                                            {{category.category_name}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select one category from the list.</div>
                                 </div>
-                                <div>
-                                    <label for="addDescription" class="form-label">Description</label>
-                                    <textarea type="text" class="form-control form-textarea" value="{{product[2]}}"
-                                        id="addDescription" required> </textarea>
+                                <!-- unit -->
+                                <div class="mb-3">
+                                    <label for="updateUnit" class="form-label">Unit</label>
+                                    <select class="form-control" id="updateUnit" name="unit_id" required>
+                                        {% for unit in unitList %}
+                                        <option value="{{unit.unit_id}}" {% if product.unit_id == unit.unit_id %}selected{% endif %}>
+                                            {{unit.unit_name}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select one unit from the list.</div>
+                                </div>
+                                <!-- depot -->
+                                <div class="mb-3">
+                                    <label for="updateDepot" class="form-label">Depot</label>
+                                    <select class="form-control" name="depot_id" id="updateDepot" required>
+                                        {% if session.type == 'National_Manager' %}
+                                            {% for depot in depotList %}
+                                            <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
+                                                {{depot.location}}
+                                            </option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="{{product.depot_id}}" selected>{{depotList[product.depot_id -1].location}}</option>
+                                        {% endif %}
+                                    </select>
+                                    <div class="invalid-feedback">Please select one depot from the list.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updatePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product[3]}}" id="updatePrice"
-                                        required>
+                                    <input type="number" class="form-control" value="{{product.price}}" id="updatePrice" name="price" min="0" step="0.01" required>
+                                    <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateStock" class="form-label">Stock</label>
-                                    <input type="number" class="form-control" value="{{product[4]}}" id="updateStock"
-                                        required>
+                                    <input type="number" class="form-control" value="{{product.stock}}" id="updateStock" name="stock" min="0" required>
+                                    <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <div>
+                                    <label for="updateDescription" class="form-label">Description</label>
+                                    <textarea rows="5" type="text" class="form-control form-textarea" id="updateDescription" name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product.description}}</textarea>
+                                    <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
+                                </div>
+                                <button type="submit" class="btn btn-secondary product-update" data-product-id="{{product.product_id}}">Update</button>
                             </form>
                         </div>
                     </div>
@@ -193,31 +197,86 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <h5 class="modal-title mx-auto" id="addProductModalLabel">Add New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="addProductForm">
+                <form id="addProductForm" method="post">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="addProductName" class="form-label">Product Name</label>
-                            <input type="text" class="form-control" id="addProductName" required>
+                            <input type="text" class="form-control" id="addProductName" name="name" minlength="1"
+                                maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                            <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.
+                            </div>
                         </div>
+                        <!-- category -->
                         <div class="mb-3">
                             <label for="addCategory" class="form-label">Category</label>
-                            <input type="text" class="form-control" id="addCategory" required>
+                            <select class="form-control" id="addCategory" name="category_id" required>
+                                <option selected value="">Please select the category</option>
+                                <option value="1">Fruit</option>
+                                <option value="2">Vegetable</option>
+                                <option value="3">Herb</option>
+                                <option value="4">Egg</option>
+                                <option value="5">Honey</option>
+                                <option value="6">GiftCard</option>
+                                <option value="7">Salad</option>
+                            </select>
+                            <div class="invalid-feedback">Please select one category from the list.
+                            </div>
                         </div>
+
+                        <!-- unit -->
                         <div class="mb-3">
-                            <label for="addDescription" class="form-label">Description</label>
-                            <textarea type="text" class="form-control form-textarea" id="addDescription"
-                                required> </textarea>
+                            <label for="addUnit" class="form-label">Unit</label>
+                            <select class="form-control" id="addUnit" name="unit_id" required>
+                                <option selected value="">Please select the unit</option>
+                                <option value="1">Bunch</option>
+                                <option value="2">Weight</option>
+                                <option value="3">Each</option>
+                                <option value="4">Half-size</option>
+                                <option value="5">Punnet</option>
+                                <option value="6">Tray</option>
+                                <option value="7">kg</option>
+                                <option value="8">g</option>
+                            </select>
+                            <div class="invalid-feedback">Please select one unit from the list.</div>
+                        </div>
+                        <!-- depot -->
+                        <div class="mb-3">
+                            <label for="addDepot" class="form-label">Depot</label>
+                            <select class="form-control" name="depot_id" id="addDepot" required>
+                                {% if session.type == 'National_Manager' %}
+                                    {% for depot in depotList %}
+                                    <option value="{{depot.depot_id}}">
+                                        {{depot.location}}
+                                    </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="{{session.depot_id}}" selected>{{depotList[session.depot_id-1].location}}</option>
+                                {% endif %}
+                        </select>
+                            </select>
+                            <div class="invalid-feedback">Please select one depot from the list.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addPrice" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="addPrice" required>
+                            <input type="number" class="form-control" id="addPrice" name="price" min="0" step="0.01"
+                                required>
+                            <div class="invalid-feedback">Please enter a valid price, numbers only.</div>
                         </div>
                         <div class="mb-3">
                             <label for="addStock" class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="addStock" required>
+                            <input type="number" class="form-control" id="addStock" name="stock" min="0" required>
+                            <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
+                        </div>
+                        <!-- description -->
+                        <div class="mb-3">
+                            <label for="addDescription" class="form-label">Description</label>
+                            <textarea type="text" class="form-control form-textarea" id="addDescription"
+                                name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required> </textarea>
+                            <div class="invalid-feedback">Please enter a valid description with at least 1 characters.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <button type="button" class="btn btn-primary"> Upload Image </button>
@@ -226,99 +285,229 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <!-- 按钮增加边距 -->
-                        <button type="button" class="btn btn-primary"> Add </button>
+                        <button type="submit" class="btn btn-primary"> Add </button>
                     </div>
-
                 </form>
 
             </div>
         </div>
     </div>
+    <!-- Update Success btn code start here -->
+    {% with
+    btn_show = 0,
+    bg_color = '#81C408',
+    title = 'Update Success',
+    msg = 'Your {item} has been successfully added'
+    %}
+    {% include "components/elements/addSuccess.html" %}
+    {% endwith %}
 
+    <!-- deleteMemberModal -->
+    {% with
+        btn_show = 0,
+        bg_color = '#dc3545',
+        bg_color2 = '#3399ff',
+        modal_id = 'deleteMemberModal',
+        title = 'Delete Confirmation',
+        msg = 'Are you sure to delete this product?'
+      %}
+        {% include "components/elements/delConfirm.html" %}
+    {% endwith %}
 
+    <!-- delProfileSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'delProfileSuccessModal',
+        bg_color = '#3399ff',
+        title = 'Deleted Successfully',
+        msg = 'Product has been successfully deleted'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
 
+    <!-- updateProductSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'updateProductSuccessModal',
+        bg_color = '#3399ff',
+        title = 'Update Successfully',
+        msg = 'Product has been successfully updated'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+
+    {% include "components/elements/loadingModal.html" %}
 </section>
 {% endblock %}
 
 
 
 {% block script %}
+{% include "components/elements/InputValidate.html" %}
 
 <script>
-    // Add product
-    let addProductData = {};
+    // validation
+    //  update product validation
+    document.getElementById('updateProductName').addEventListener('input', function () {
+        InputValidate('updateProductName');
+    });
+    document.getElementById('updateCategory').addEventListener('input', function () {
+        InputValidate('updateCategory');
+    });
+    document.getElementById('updateDescription').addEventListener('input', function () {
+        InputValidate('updateDescription');
+    });
+    document.getElementById('updateDepot').addEventListener('input', function () {
+        InputValidate('updateDepot');
+    });
+    document.getElementById('updateUnit').addEventListener('input', function () {
+        InputValidate('updateUnit');
+    });
+    document.getElementById('updatePrice').addEventListener('input', function () {
+        InputValidate('updatePrice');
+    });
+    document.getElementById('updateStock').addEventListener('input', function () {
+        InputValidate('updateStock');
+    });
+
+    //  New product validation
+    document.getElementById('addProductName').addEventListener('input', function () {
+        InputValidate('addProductName');
+    });
+    document.getElementById('addCategory').addEventListener('input', function () {
+        InputValidate('addCategory');
+    });
+    document.getElementById('addDescription').addEventListener('input', function () {
+        InputValidate('addDescription');
+    });
+    document.getElementById('addDepot').addEventListener('input', function () {
+        InputValidate('addDepot');
+    });
+    document.getElementById('addUnit').addEventListener('input', function () {
+        InputValidate('addUnit');
+    });
+    document.getElementById('addPrice').addEventListener('input', function () {
+        InputValidate('addPrice');
+    });
+    document.getElementById('addStock').addEventListener('input', function () {
+        InputValidate('addStock');
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
-        // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
+        document.getElementById('updateProductSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        document.querySelectorAll('.product-update').forEach(function (update) {
+        const product_id = update.getAttribute('data-product-id')
+        const updateProductForm = document.getElementById('updateProductForm' + product_id);
+
+        updateProductForm.addEventListener('submit', event => {
+          if (!updateProductForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          const formData = new FormData(updateProductForm);
+
+          fetch('/product/update', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  new bootstrap.Modal(document.getElementById('updateProductSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+    });
+
+    // Add product
+    document.addEventListener('DOMContentLoaded', function () {
+        //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
         document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-        const productTableBody = document.getElementById('productTableBody');
-        const updateProductForm = document.getElementById('updateProductForm');
         const addProductForm = document.getElementById('addProductForm');
-
-        addProductForm.addEventListener('input', event => {
-            // console.log(event.target.name)
-            // console.log(event.target.value)
-            const keyName = event.target.name;
-            const keyValue = event.target.value;
-
-            addProductData[keyName] = keyValue;
-            // 新增商品的id是自动生成的吗?这样设置？
-            addProductData[product_id] = product_id;
-        });
-
 
         // Handle add form submission
         addProductForm.addEventListener('submit', function (event) {
-            if (!updateProfileForm.checkValidity()) return // Stop further execution if form is invalid
+            if (!addProductForm.checkValidity()) return // Stop further execution if form is invalid
             event.preventDefault();
             event.stopPropagation();
 
+            const formData = new FormData(this); // Prepare form data
+
             // Send login request to flask server
-            fetch('/employee/products', {
+            fetch('/product/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(addProductData)
+                body: formData
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status == true) { // Redirect user if login is successful
+                        // console.log(data)
                         // Show updateStaffSuccess modal if update is successful
                         new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
                     }
                     else {
                         alert("Invalid request");
-                        location.reload(); // Reload the page on failure
                     }
                 })
                 .catch(error => console.error('Error:', error));
         });
 
+        // del product
+        document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+        const productDel = document.querySelectorAll('.product-del');
 
+        // Iterate over all delete buttons
+        productDel.forEach(function (del) {
+            // Add click event listener to each delete button
+            del.addEventListener('click', function (event) {
+                event.preventDefault();
+                const product_id = del.getAttribute('data-product-id');
 
+                // Show delConfirm modal when delete button is clicked
+                const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                const deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
+                const confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
+                deleteMemberModal.show();
 
-
-
-        // Handle update form submission
-        updateProductForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const productId = parseInt(document.getElementById('updateProductModal').getAttribute('data-product-id'));
-            const updatedProduct = {
-                id: productId,
-                name: document.getElementById('updateProductName').value,
-                category: document.getElementById('updateCategory').value,
-                price: parseFloat(document.getElementById('updatePrice').value),
-                stock: parseInt(document.getElementById('updateStock').value),
-            };
-            products = products.map(p => p.id === productId ? updatedProduct : p);
-            renderProductRows();
-            bootstrap.Modal.getInstance(document.getElementById('updateProductModal')).hide();
+                // Add click event listener to the confirmButton
+                confirmButton.addEventListener('click', function () {
+                    // Send request to server
+                    fetch('/product/delist', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 'product_id': product_id })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status) {
+                                // Reload page if deletion is successful
+                                deleteMemberModal.hide();
+                                loadingModal.show();
+                                setTimeout(() => {
+                                    loadingModal.hide();
+                                    new bootstrap.Modal(document.getElementById('delProfileSuccessModal')).show();
+                                }, 1000);
+                            }
+                            else {
+                                alert("Invalid request");
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
         });
 
-
-
+    });
 </script>
 
 {% endblock %}

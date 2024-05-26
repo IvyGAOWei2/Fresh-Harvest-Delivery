@@ -49,37 +49,31 @@
                     <label for="firstName" class="form-label">First Name</label>
                     <input type="text" id="mfirstName" class="form-control" name="given_name" value="{{ profile.given_name }}" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
                     <div class="invalid-feedback">Please enter your first name.</div>
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
                 <div class="col-md-6">
                     <label for="lastName" class="form-label">Last Name</label>
                     <input type="text" id="mlastName" class="form-control" name="family_name" value="{{ profile.family_name }}" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
                     <div class="invalid-feedback">Please enter your last name.</div>
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
                 <div class="col-12">
                     <label for="address" class="form-label">Address</label>
                     <input type="text" id="maddress" class="form-control" name="address" value="{{ profile.address }}" maxlength="50" required>
                     <div class="invalid-feedback">Please enter your address.</div>
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
                 <div class="col-md-6">
                     <label for="phone" class="form-label">Phone Number</label>
                     <input type="tel" id="mphone" class="form-control" name="phone" value="{{ profile.phone }}" pattern="\d{10,14}" maxlength="13" required>
                     <div class="invalid-feedback">Please enter a valid phone number (10-13 digits).</div>
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
                 <div class="col-md-6">
                     <label for="email" class="form-label">Email Address</label>
                     <input type="email" id="memail" class="form-control" name="email" value="{{ session.email }}" disabled required>
                     <div class="invalid-feedback">Please enter a valid email address.</div>
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
                 <div class="col-md-6">
                     <label for="hireDate" class="form-label">Hire Date</label>
                     <input type="date" id="mhireDate" class="form-control" name="hire_date" value="{{ profile.hire_date }}" required>
                     <div class="invalid-feedback">Please select your hire date.</div>
-                    <div class="valid-feedback">Looks good!</div>
                 </div>
                 <div class="col-md-6">
                     <label for="depotName" class="form-label">Depot Name</label>
@@ -92,36 +86,30 @@
                         <option value="6" {% if profile.depot_id == 6 %}selected{% endif %}>NZ</option>
                     </select>
                     <div class="invalid-feedback">Please select a depot.</div>
-                    <div class="valid-feedback">Looks good!</div>
                     </select>
                 </div>
-            <!-- Old Password -->
-            <div class="col-md-6">
-                <label for="oldPassword" class="form-label">Old Password</label>
-                <input type="password" class="form-control" id="moldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
-                <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
-                <div class="valid-feedback">Looks good!</div>
-            </div>
+                <div class="col-md-6">
+                    <label for="oldPassword" class="form-label">Old Password</label>
+                    <input type="password" class="form-control" id="moldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                </div>
 
-            <!-- New Password -->
-            <div class="col-md-6">
-                <label for="newPassword" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="mnewPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
-                <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
-                <div class="valid-feedback">Looks good!</div>
-            </div>                
-                <div class="col-12 text-center">
-                    <button type="submit" class="btn custom-btn disabled">Save changes</button>
+                <!-- New Password -->
+                <div class="col-md-6">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="mnewPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                </div>       
+                <div class="col-12 text-center mt-5">
+                    <button type="submit" class="btn custom-btn disabled">Save Profile</button>
                 </div>
             </form>
-
 
         <!-- Update Success Message -->
         <div class="p-3">
             {% with
               btn_show = 0,
-              btn_text = 'Profile Update Success',
-              bg_color = '#81C408',
+              bg_color = '#3399ff',
               title = 'Profile Update Success',
               msg = 'Your profile has been successfully updated'
             %}
@@ -134,6 +122,8 @@
 {% endblock %}
 
 {% block script %}
+    {% include "components/elements/InputValidate.html" %}
+
   <script>
     document.getElementById('mfirstName').addEventListener('input', function() {
         InputValidate('mfirstName');
@@ -163,6 +153,8 @@
     let differentUpdateStaffData = {};
 
     document.addEventListener('DOMContentLoaded', function () {
+        const updatePasswordForm = document.getElementById('updatePasswordForm');
+
         document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
         const updateProfileForm = document.getElementById('updateProfileForm');
@@ -206,7 +198,7 @@
             }
 
             differentUpdateStaffData['user_id'] = user_id;
-            console.log(differentUpdateStaffData)
+            // console.log(differentUpdateStaffData)
             fetch('/profile/update', {
                 method: 'POST',
                 headers: {
@@ -217,11 +209,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status == 1) {
+                    // console.log(data)
                     // Show updateStaffSuccess modal if update is successful
                     new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                 }
                 else {
-                    alert("Invalid request");
+                    alert(data.message);
                     location.reload(); // Reload the page on failure
                 }
             })
