@@ -359,3 +359,63 @@
 
 </div>
 
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
+  <script>
+
+  document.getElementById('member_given_name').addEventListener('input', function() {
+    InputValidate('member_given_name');
+  });
+
+  document.getElementById('member_family_name').addEventListener('input', function() {
+    InputValidate('member_family_name');
+  });
+
+  document.getElementById('phone').addEventListener('input', function() {
+    InputValidate('phone');
+  });
+
+  document.getElementById('address').addEventListener('input', function() {
+    InputValidate('address');
+  });
+
+  document.getElementById('consumer_postcode').addEventListener('input', function() {
+    InputValidate('consumer_postcode');
+  });
+
+  document.getElementById('member_new_password').addEventListener('input', function() {
+    InputValidate('member_new_password');
+  });
+
+  document.getElementById('add_email').addEventListener('input', function() {
+    InputValidate('add_email');
+  });
+
+  document.getElementById('add_given_name').addEventListener('input', function() {
+    InputValidate('add_given_name');
+  });
+
+  document.getElementById('add_family_name').addEventListener('input', function() {
+    InputValidate('add_family_name');
+  });
+
+  document.getElementById('add_phone').addEventListener('input', function() {
+    InputValidate('add_phone');
+  });
+
+  document.getElementById('add_address').addEventListener('input', function() {
+    InputValidate('add_address');
+  });
+  
+
+  document.getElementById('add_depot').addEventListener('input', function() {
+    InputValidate('add_depot');
+  });
+
+  </script>
+
+{% endblock %}
+
+
+
