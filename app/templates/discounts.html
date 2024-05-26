@@ -39,8 +39,9 @@
                         <td class="align-middle">{{ discount.title }}</td>
                         <td class="align-middle">{{ discount.description }}</td>
                         <td class="align-middle">{{ discount.discount_rate }}%</td>
-                        <td class="align-middle">{{ discount.start_date }}</td>
-                        <td class="align-middle">{{ discount.end_date }}</td>
+                        <td class="align-middle nz-date">{{ discount.start_date }}</td>
+                        <td class="align-middle nz-date">{{ discount.end_date }}</td>
+
                         <td class="align-middle">{{ discount.status }}</td>
                         <td>
                             <a href="{{ url_for('manageDiscountProducts', discount_id=discount.discount_id) }}" class="btn btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="View Products">
@@ -52,11 +53,9 @@
                                 </button>
                             </div>
                         </td>
-                        
-                        
                     </tr>
 
-                                    <!-- Update Discount Modal -->
+                    <!-- Update Discount Modal -->
                     <div class="offcanvas offcanvas-end" id="updateDiscount{{ discount.discount_id }}" tabindex="-1" aria-labelledby="updateDiscountLabel{{ discount.discount_id }}">
                         <div class="offcanvas-header">
                             <h5 class="offcanvas-title w-100 text-center" id="updateDiscountLabel{{ discount.discount_id }}">Update Discount</h5>
@@ -142,12 +141,49 @@
             </div>
         </div>
     </div>
+
+    <!-- Update Success Message -->
+    <div class="p-3">
+        {% with
+          btn_show = 0,
+          bg_color = '#3399ff',
+          title = 'Discount Update Success',
+          msg = 'The discount has been successfully updated'
+        %}
+            {% include "components/elements/updateSuccess.html" %}
+        {% endwith %}
+    </div>
+
+    <!-- Add Success Message -->
+    <div class="p-3">
+        {% with
+          btn_show = 0,
+          bg_color = '#28a745',
+          title = 'Discount Add Success',
+          msg = 'The discount has been successfully added'
+        %}
+            {% include "components/elements/addSuccess.html" %}
+        {% endwith %}
+    </div>
 </section>
 {% endblock %}
 
 {% block script %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        const nzDateCells = document.querySelectorAll('.nz-date');
+        
+        nzDateCells.forEach(cell => {
+            const dateText = cell.textContent;
+            const dateParts = dateText.split('-'); // Assuming the date is in yyyy-mm-dd format
+
+            if (dateParts.length === 3) {
+                const [year, month, day] = dateParts;
+                const nzFormattedDate = `${day}/${month}/${year}`;
+                cell.textContent = nzFormattedDate;
+            }
+        });
         const addDiscountForm = document.getElementById('addDiscountForm');
         const updateDiscountForms = document.querySelectorAll('.update-discount-form');
         const discountStartDate = document.getElementById('discountStartDate');
@@ -213,8 +249,7 @@
             })
             .then(data => {
                 if (data.status === true) {
-                    alert('Discount added successfully.');
-                    location.reload();
+                    new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
                 } else {
                     alert("Invalid request");
                 }
@@ -279,8 +314,7 @@
             })
             .then(data => {
                 if (data.status === true) {
-                    alert('Discount updated successfully.');
-                    location.reload();
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                 } else {
                     alert("Invalid request");
                 }
@@ -365,9 +399,15 @@
                 }
             });
         });
+
+        // Add event listener to close buttons of success modals to refresh page
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
+            location.reload();
+        });
+
+        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
+            location.reload();
+        });
     });
 </script>
 {% endblock %}
-
-
-

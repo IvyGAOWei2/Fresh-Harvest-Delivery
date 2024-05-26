@@ -189,6 +189,30 @@
                 </div>
             </div>
         </div>
+
+        <!-- Update Success Message -->
+        <div class="p-3">
+            {% with
+              btn_show = 0,
+              bg_color = '#3399ff',
+              title = 'Discount Product Update Success',
+              msg = 'The discount product has been successfully updated'
+            %}
+                {% include "components/elements/updateSuccess.html" %}
+            {% endwith %}
+        </div>
+
+        <!-- Add Success Message -->
+        <div class="p-3">
+            {% with
+              btn_show = 0,
+              bg_color = '#28a745',
+              title = 'Discount Product Add Success',
+              msg = 'The discount product has been successfully added'
+            %}
+                {% include "components/elements/addSuccess.html" %}
+            {% endwith %}
+        </div>
 </section>
 {% endblock %}
 
@@ -285,8 +309,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
-                    alert('Discount product added successfully.');
-                    location.reload();
+                    new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
                 } else {
                     alert("Invalid request");
                 }
@@ -330,14 +353,22 @@
                 })
                 .then(data => {
                     if (data.status === true) {
-                        alert('Discount product updated successfully.');
-                        location.reload();
+                        new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                     } else {
                         alert("Invalid request");
                     }
                 })
                 .catch(error => console.error('Error:', error));
             });
+        });
+
+        // Add event listener to close buttons of success modals to refresh page
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
+            location.reload();
+        });
+
+        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
+            location.reload();
         });
     });
 </script>

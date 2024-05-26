@@ -125,6 +125,18 @@
         </div>
     </div>
 </div>
+
+<!-- Include success modal -->
+{% with
+  btn_show = 0,
+  modal_id = 'updateProfileSuccessModal',
+  bg_color = '#3399ff',
+  title = 'Updated Successfully',
+  msg = 'Account holder application has been approved'
+%}
+  {% include "components/elements/updateSuccess.html" %}
+{% endwith %}
+
 {% endblock %}
 
 {% block script %}
@@ -165,7 +177,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status) {
-                        location.reload();
+                        const successModal = new bootstrap.Modal(document.getElementById('updateProfileSuccessModal'));
+                        successModal.show();
                     } else {
                         alert('Failed to approve the application.');
                     }
