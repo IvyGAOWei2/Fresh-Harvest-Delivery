@@ -19,7 +19,7 @@ def adminProfiles():
         else:
             result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
                 JOIN Users ON Employees.user_id = Users.user_id \
-                WHERE Users.type = 'Staff' OR Users.type = 'Local_Manager' AND Users.is_deleted = FALSE;""",None ,True)
+                WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
 
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list)
 
@@ -72,6 +72,7 @@ def adminProfileUpdate():
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminProfileDel():
     data = request.get_json()
+    print(data)
     update_successful = updateSQL("UPDATE Users SET is_deleted = TRUE WHERE user_id = %s;", (data['user_id'],))
 
     if update_successful:
