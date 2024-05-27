@@ -235,41 +235,41 @@
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
                 <label for="img_add{{ profile_type }}{{ member.user_id }}">
-                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}">
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}" required>
                 </label>
                 <input class="form-control" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
               </div>
             </div>
             
             <div class="col-md-6 mb-3">
-              <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="add_email" name="email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <label class="form-label" for="add_email">Email <sup>*</sup></label>
+              <input type="email" maxlength="50" class="form-control" id="add_email" name="email" placeholder="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">First Name<sup>*</sup></label>
+              <label class="form-label" for="add_given_name">First Name<sup>*</sup></label>
               <input type="text" class="form-control" id="add_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Last Name<sup>*</sup></label>
+              <label class="form-label" for="add_family_name">Last Name<sup>*</sup></label>
               <input type="text" class="form-control" id="add_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Phone<sup>*</sup></label>
+              <label class="form-label" for="add_phone">Phone<sup>*</sup></label>
               <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone" name="phone" required>
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Address<sup>*</sup></label>
+              <label class="form-label" for="add_address">Address<sup>*</sup></label>
               <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address" name="address" required>
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Depot<sup>*</sup></label>
+              <label class="form-label" for="add_depot">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control" id="add_depot" name="depot_id" required>
+                  <select class="form-control" id="add_depot" name="depot_id">
                     {% for depot in depotList %}
                     <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
                         {{depot.location}}
@@ -279,11 +279,11 @@
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Hire date<sup>*</sup></label>
-              <input type="date" class="form-control" id="add_hire_date" name="hire_date" required>
+              <label class="form-label" for="add_hire_date">Hire date<sup>*</sup></label>
+              <input type="date" class="form-control" id="add_hire_date" name="hire_date">
             </div>  
             <div class="col-md-6 mb-3">
-              <label class="form-label">Type<sup>*</sup></label>
+              <label class="form-label" for="user_type">Type<sup>*</sup></label>
                 <div class="d-flex align-items-center">
                   <select class="form-control" name="type" id="user_type">
                     <option value="" selected >Please select an employee type</option>
@@ -295,8 +295,8 @@
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-              <label for="basic-url" class="form-label">Password<sup>*</sup></label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="add_password" name="password" required>
+              <label for="add_password" class="form-label">Password<sup>*</sup></label>
+              <input type="text" minlength="8" maxlength="20" class="form-control" id="add_password" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -406,11 +406,6 @@
 
   document.getElementById('add_address').addEventListener('input', function() {
     InputValidate('add_address');
-  });
-  
-
-  document.getElementById('add_depot').addEventListener('input', function() {
-    InputValidate('add_depot');
   });
 
   </script>
