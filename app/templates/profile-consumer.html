@@ -82,7 +82,7 @@
                                         <div class="text-center mt-5">
                                             <a href="{{ url_for('apply_business_account') }}" class="btn btn-primary">Apply for Business Account</a>
                                         </div>
-                                        {% elif application_status %}
+                                        {% elif profile.user_type == 'Residential' and application_status %}
                                         <div class="text-center mt-5">
                                             <p>Account application status: <strong>{{ application_status }}</strong></p>
                                         </div>

@@ -62,7 +62,7 @@
         <div class="d-flex align-items-center mb-3">
             <div class="col-xl-3">
                 <div class="input-group">
-                    <input type="search" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
+                    <input type="search" id="searchKeyword" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
                     <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                 </div>
             </div>
@@ -222,6 +222,8 @@
         const categorySelect = document.getElementById('selectCategory');
         const productSelect = document.getElementById('selectProduct');
         const discountSelect = document.getElementById('selectDiscount');
+        const searchKeywordInput = document.getElementById('searchKeyword');
+        const discountProductTableBody = document.getElementById('discountProductTableBody');
 
         // Fetch categories and populate the category dropdown
         fetch('/api/categories')
@@ -369,6 +371,27 @@
 
         document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
             location.reload();
+        });
+
+        // Search functionality
+        searchKeywordInput.addEventListener('input', function () {
+            const keyword = searchKeywordInput.value.toLowerCase();
+            const rows = discountProductTableBody.getElementsByTagName('tr');
+
+            Array.from(rows).forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                let containsKeyword = false;
+                Array.from(cells).forEach(cell => {
+                    if (cell.textContent.toLowerCase().includes(keyword)) {
+                        containsKeyword = true;
+                    }
+                });
+                if (containsKeyword) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         });
     });
 </script>

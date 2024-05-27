@@ -119,7 +119,31 @@ def shopDetail():
 
             categories = fetchAll("SELECT c.category_name, COUNT(p.product_id) AS item_count FROM Category c LEFT JOIN Products p ON c.category_id = p.category_id GROUP BY c.category_name;", None, True)
 
-            return render_template('shop-detail.html', product=product, categories=categories, reviews=fakeReview())
+            discounted_products = fetchAll("""
+                SELECT 
+                    P.product_id, P.name, P.description, P.price, P.stock, 
+                    C.category_name, U.unit_name, PI.image AS primary_image, 
+                    COALESCE(DS.discount_rate, 0) AS discount_rate 
+                FROM 
+                    Products AS P 
+                LEFT JOIN 
+                    Category AS C ON P.category_id = C.category_id 
+                LEFT JOIN 
+                    Unit AS U ON P.unit_id = U.unit_id 
+                LEFT JOIN 
+                    (SELECT * FROM ProductImages WHERE is_deleted = FALSE AND is_primary = TRUE) AS PI ON P.product_id = PI.product_id 
+                LEFT JOIN 
+                    DiscountedProducts DP ON P.product_id = DP.product_id 
+                LEFT JOIN 
+                    Discounts DS ON DP.discount_id = DS.discount_id AND DS.status = TRUE 
+                WHERE 
+                    DS.status = TRUE
+            """, None, True)
+
+            for dp in discounted_products:
+                dp['discounted_price'] = round(dp['price'] * (1 - dp['discount_rate'] / 100), 2)
+
+            return render_template('shop-detail.html', product=product, categories=categories, discounted_products=discounted_products, reviews=fakeReview())
         else:
             print("Product not found.")
             return render_template('404.html')

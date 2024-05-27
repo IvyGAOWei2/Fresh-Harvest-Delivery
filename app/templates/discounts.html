@@ -17,7 +17,10 @@
     <h1 class="text-center">Discount List</h1>
     <div class="container mt-5">
         <div class="d-flex align-items-center mb-3">
-            <input type="search" id="searchKeyword" class="form-control me-3" placeholder="Search by title">
+            <div class="input-group" style="max-width: 200px;">
+                <input type="search" id="searchKeyword" class="form-control p-2" placeholder="Search by title" aria-describedby="search-icon-1">
+                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+            </div>
             <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addDiscountModal">Add New Discount</button>
         </div>
         <div class="table-responsive">
