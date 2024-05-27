@@ -40,14 +40,15 @@
           <input type="text" id="cc-cvv" class="form-control" placeholder="CVV" required>
           <div class="invalid-feedback">Invalid CVV. Must be 3 or 4 digits.</div>
       </div>
-      <button type="button" class="btn btn-secondary go-back">Go Back</button>
-      <button type="submit" id="submitall" class="btn btn-primary">Place Order</button>
+      <div class="d-flex justify-content-between mt-4"> <!-- Button align right -->
+        <button type="button" class="btn btn-secondary go-back">Go Back</button>
+        <button type="submit" class="btn btn-primary btn-checkout">Place Order</button>
+    </div>
   </form>
   <div class="p-3">
     <!-- Update Success btn code start here -->
     {% with
-      btn_show = 1,
-      btn_text = 'Order Success',
+      btn_show = 0,
       bg_color = '#81C408',
       title = 'Make a order Success',
       msg = 'Your order has been successfully placed'
@@ -121,9 +122,9 @@
   border-radius: 4px;
 }
 
-.btn {
+.btn-checkout {
   display: block;
-  width: 100%;
+  width: 16rem;
   padding: 10px;
   background-color: #007bff;
   color: white;
@@ -132,7 +133,7 @@
   cursor: pointer;
 }
 
-.btn-primary:hover {
+.btn-checkout .btn-primary:hover {
   background-color: #0056b3;
 }
 </style>
