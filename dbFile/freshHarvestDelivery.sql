@@ -194,4 +194,22 @@ CREATE TABLE Reviews (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
-)
+);
+
+CREATE TABLE Discounts (
+    discount_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    discount_rate DECIMAL(5, 2) NOT NULL,
+    status BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE DiscountedProducts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    discount_id INT,
+    product_id SMALLINT,
+    FOREIGN KEY (discount_id) REFERENCES Discounts(discount_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);

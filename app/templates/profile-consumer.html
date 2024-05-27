@@ -27,14 +27,13 @@
                         </h2>
                         <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails">
                             <div class="accordion-body">
-                                <div>
-                                    <img style="height: 12rem !important;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture">
-                                </div>
+                              
                                 <div class="row mb-4">
                                     <div class="col text-center">
-                                        <label for="profilePicture" class="form-label text-start">Profile Picture</label>
+                                        
                                         <div>
-                                            <input type="file" class="form-control w-50 mx-auto" id="profilePicture" name="profilePicture">
+                                            <img id="profileImage" style="height: 12rem !important; cursor: pointer;" src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture" data-bs-toggle="updateImg" title="Click to update picture">
+                                            <input type="file" class="form-control w-50 mx-auto" id="profilePicture" name="profilePicture" style="display: none;">
                                         </div>
                                     </div>
                                 </div>
@@ -60,26 +59,24 @@
                                             <label for="oldPassword" class="col-sm-4 col-form-label text-start">Old Password</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword">
+                                                    <input type="password" class="form-control" id="oldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
                                                     <button class="btn btn-outline-secondary" type="button" id="showOldPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <div class="invalid-feedback">Old password is incorrect.</div>
+                                                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-4">
                                             <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="500" disabled>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="500" disabled>
+                                                    <button type="button" class="btn btn-secondary">Review</button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-4">
-                                            <div class="col-sm-4"></div>
-                                            <div class="col-sm-7 text-start">
-                                                <button type="button" class="btn btn-secondary mt-0">Review Limit</button>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                     <div class="col-md-6">
                                         <div class="row mb-4">
@@ -108,11 +105,11 @@
                                             <label for="newPassword" class="col-sm-4 col-form-label text-start">New Password</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="password" class="form-control" id="newPassword" name="newPassword" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                                                    <input type="password" class="form-control" id="newPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
                                                     <button class="btn btn-outline-secondary" type="button" id="showNewPassword">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character.</div>
+                                                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -146,13 +143,7 @@
                                         <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
                                     </div>
                                 </div>
-                                <div class="row mb-4">
-                                    <label for="addressLine2" class="col-sm-4 col-form-label text-start">Address Line 2</label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="addressLine2" name="addressLine2" pattern=".{0,80}">
-                                        <div class="invalid-feedback">Please provide a valid address (up to 80 characters).</div>
-                                    </div>
-                                </div>
+
                                 <div class="row mb-4">
                                     <label for="city" class="col-sm-4 col-form-label text-start">City<sup>*</sup></label>
                                     <div class="col-sm-7">
@@ -292,6 +283,20 @@
   {% include "components/elements/InputValidate.html" %}
 
 <script>
+    document.getElementById('profileImage').addEventListener('click', function () {
+        document.getElementById('profilePicture').click();
+    });
+
+    document.getElementById('profilePicture').addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('profileImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
     // Show/Hide Password
     document.getElementById('showOldPassword').addEventListener('click', function () {
         togglePasswordVisibility('oldPassword');
@@ -315,31 +320,6 @@
             buttonIcon.classList.add('fa-eye');
         }
     }
-
-    // Validate Old Password
-    document.getElementById('oldPassword').addEventListener('blur', function () {
-        var oldPasswordInput = this;
-        // Simulate server-side validation
-        var storedPassword = "StoredPassword"; // Replace this with the actual stored password
-        if (oldPasswordInput.value !== storedPassword) {
-            oldPasswordInput.classList.add('is-invalid');
-        } else {
-            oldPasswordInput.classList.remove('is-invalid');
-            oldPasswordInput.classList.add('is-valid');
-        }
-    });
-
-    // Validate New Password
-    document.getElementById('newPassword').addEventListener('input', function () {
-        var newPasswordInput = this;
-        var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-        if (!passwordPattern.test(newPasswordInput.value)) {
-            newPasswordInput.classList.add('is-invalid');
-        } else {
-            newPasswordInput.classList.remove('is-invalid');
-            newPasswordInput.classList.add('is-valid');
-        }
-    });
 </script>
 <script>
     (function () {
@@ -350,7 +330,8 @@
             'phone',
             'myDepot',
             'addressLine1',
-            'addressLine2',
+            'newPassword',
+            'oldPassword',
             'postalCode',
             'cardHolderName',
             'cvv'
@@ -426,66 +407,88 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-        const updateConsumerProfileForm = document.getElementById('updateConsumerProfileForm');
-        const formData = new FormData(updateConsumerProfileForm);
-        const formDataObject = Object.fromEntries(formData.entries());
-        const btn = updateConsumerProfileForm.querySelector('button[type="submit"]');
-        const enableSubmit = () => btn.classList.remove('disabled');
-        const disableSubmit = () => btn.classList.add('disabled');
+        const updateForms = document.querySelectorAll('form.needs-validation');
+        updateForms.forEach(form => {
+            const formData = new FormData(form);
+            const formDataObject = Object.fromEntries(formData.entries());
+            const sections = form.querySelectorAll('.accordion-item');
 
-        updateConsumerProfileForm.reset();
-        disableSubmit();
+            sections.forEach(section => {
+                const inputs = section.querySelectorAll('input, select');
+                const submitButton = section.querySelector('button[type="submit"]');
 
-        updateConsumerProfileForm.addEventListener('input', event => {
-            const keyName = event.target.name;
-            const keyValue = event.target.value;
+                const enableSubmit = () => submitButton.classList.remove('disabled');
+                const disableSubmit = () => submitButton.classList.add('disabled');
 
-            newUpdateProfileData[keyName] = keyValue;
+                let initialData = {};
+                inputs.forEach(input => {
+                    initialData[input.name] = input.value;
+                });
 
-            for (const keyName in formDataObject) {
-                if (newUpdateProfileData.hasOwnProperty(keyName)) {
-                    if (formDataObject[keyName] !== newUpdateProfileData[keyName]) {
-                        enableSubmit();
-                        return
+                disableSubmit();
+
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        let hasChanges = false;
+                        inputs.forEach(input => {
+                            if (initialData[input.name] !== input.value) {
+                                hasChanges = true;
+                            }
+                        });
+
+                        if (hasChanges) {
+                            enableSubmit();
+                        } else {
+                            disableSubmit();
+                        }
+                    });
+                });
+
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) return; // Stop further execution if form is invalid
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    let updatedData = {};
+                    inputs.forEach(input => {
+                        if (initialData[input.name] !== input.value) {
+                            updatedData[input.name] = input.value;
+                        }
+                    });
+
+                    if (Object.keys(updatedData).length > 0) {
+                        updatedData['user_id'] = "{{ profile.user_id }}";
+                        fetch('/profile/update', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updatedData)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status == 1) {
+                                // console.log(data)
+                                // Show updateSuccess modal if update is successful
+                                new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                            } else {
+                                alert(data.message);
+                                location.reload(); // Reload the page on failure
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
                     }
-                    disableSubmit();
-                }
-            }
+                });
+            });
         });
-        
-        updateConsumerProfileForm.addEventListener('submit', event => {
-            if (!updateConsumerProfileForm.checkValidity()) return // Stop further execution if form is invalid
-            event.preventDefault();
-            event.stopPropagation();
-
-            for (let key in newUpdateProfileData) {
-                if (formDataObject.hasOwnProperty(key) && newUpdateProfileData[key] !== formDataObject[key]) {
-                    differentUpdateStaffData[key] = newUpdateProfileData[key];
-                }
-            }
-
-            differentUpdateStaffData['user_id'] = user_id;
-            fetch('/profile/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(differentUpdateStaffData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == 1) {
-                    // console.log(data)
-                    // Show updateStaffSuccess modal if update is successful
-                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-                }
-                else {
-                    alert("Invalid request");
-                    // location.reload(); // Reload the page on failure
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    })
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="updateImg"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
   </script>
 {% endblock %}

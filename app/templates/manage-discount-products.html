@@ -1,0 +1,287 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with is_manageDiscountProduct='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Discount Products' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .pagination a {
+        color: #007bff;
+        padding: 10px 15px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+
+    .pagination a.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .pagination a:hover:not(.active) {
+        background-color: #ddd;
+        border-radius: 5px;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-secondary:hover {
+        transform: scale(1.2);
+        background-color: 177, 205, 252;
+        color: #fff;
+        border-color: #0c0c0c;
+    }
+</style>
+
+<section class="main-content">
+    <h1 class="text-center">Discount Product Management</h1>
+    <div class="container mt-5">
+        <div class="d-flex align-items-center mb-3">
+            <div class="col-xl-3">
+                <div class="input-group">
+                    <input type="search" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
+                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+            <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addDiscountProductModal">Add New Discount Product</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Discount Rate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="discountProductTableBody">
+                    {% if discountedProductList %}
+                        {% for product in discountedProductList %}
+                        <tr>
+                            <td class="align-middle fw-bold">{{ product.name }}</td>
+                            <td class="align-middle">{{ product.category_name }}</td>
+                            <td class="align-middle">{{ product.price }}</td>
+                            <td class="align-middle">{{ product.discount_rate }}%</td>
+                            <td>
+                                <a class="btn product-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product.id }}" data-product-id="{{ product.id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <div class="offcanvas offcanvas-end" id="updateDiscountProduct{{ product.id }}" tabindex="-1" aria-labelledby="updateDiscountProductModalLabel">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title text-center" id="updateDiscountProductLabel">Update {{product.name}}</h5>
+                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form id="updateDiscountProductForm{{ product.id }}" method="POST">
+                                    <div class="mb-3">
+                                        <label for="updateDiscountProductName" class="form-label">Product Name</label>
+                                        <input type="text" class="form-control" value="{{product.name}}" id="updateDiscountProductName" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="updateDiscountCategory" class="form-label">Category</label>
+                                        <input type="text" class="form-control" value="{{product.category_name}}" id="updateDiscountCategory" required>
+                                    </div>
+                                    <div>
+                                        <label for="updateDiscountDescription" class="form-label">Description</label>
+                                        <textarea type="text" class="form-control form-textarea" id="updateDiscountDescription" required>{{product.description}}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="updateDiscountPrice" class="form-label">Price</label>
+                                        <input type="number" class="form-control" value="{{product.price}}" id="updateDiscountPrice" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="updateDiscountRate" class="form-label">Discount Rate</label>
+                                        <input type="number" class="form-control" value="{{discountRate}}" id="updateDiscountRate" disabled>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">No discounted products found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <nav aria-label="manageDiscountProduct">
+        <ul class="pagination d-flex justify-content-center mt-5">
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="modal fade" id="addDiscountProductModal" tabindex="-1" aria-labelledby="addDiscountProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDiscountProductModalLabel">Add New Discount Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addDiscountProductForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="selectCategory" class="form-label">Category</label>
+                            <select id="selectCategory" class="form-select" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectProduct" class="form-label">Product</label>
+                            <select id="selectProduct" class="form-select" required>
+                                <option value="">Select Product</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectDiscount" class="form-label">Discount</label>
+                            <select id="selectDiscount" class="form-select" required>
+                                <option value="">Select Discount</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const categorySelect = document.getElementById('selectCategory');
+        const productSelect = document.getElementById('selectProduct');
+        const discountSelect = document.getElementById('selectDiscount');
+
+        // Fetch categories and populate the category dropdown
+        fetch('/api/categories')
+            .then(response => response.json())
+            .then(data => {
+                if (data.categories.length > 0) {
+                    categorySelect.innerHTML = '<option value="">Select Category</option>';
+                    data.categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                } else {
+                    console.error('No categories found');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch categories.');
+            });
+
+        // Fetch discounts and populate the discount dropdown
+        fetch('/api/discounts')
+            .then(response => response.json())
+            .then(data => {
+                if (data.discounts.length > 0) {
+                    discountSelect.innerHTML = '<option value="">Select Discount</option>';
+                    data.discounts.forEach(discount => {
+                        const option = document.createElement('option');
+                        option.value = discount.id;
+                        option.textContent = discount.title;
+                        discountSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('No discounts found');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch discounts.');
+            });
+
+        // Event listener for category change
+        categorySelect.addEventListener('change', function () {
+            const categoryId = categorySelect.value;
+            productSelect.innerHTML = '<option value="">Select Product</option>'; // Clear previous options
+            if (categoryId) {
+                fetch(`/api/products?category_id=${categoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.products.length > 0) {
+                            data.products.forEach(product => {
+                                const option = document.createElement('option');
+                                option.value = product.id;
+                                option.textContent = product.name;
+                                productSelect.appendChild(option);
+                            });
+                        } else {
+                            console.error('No products found');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to fetch products.');
+                    });
+            }
+        });
+
+        const addDiscountProductForm = document.getElementById('addDiscountProductForm');
+        addDiscountProductForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const discountProductData = {
+                discount_id: discountSelect.value,
+                product_id: productSelect.value
+            };
+
+            fetch('/employee/add-discount-product', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(discountProductData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    alert('Discount product added successfully.');
+                    location.reload();
+                } else {
+                    alert("Invalid request");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+{% endblock %}

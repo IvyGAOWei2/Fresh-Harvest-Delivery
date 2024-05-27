@@ -1,10 +1,10 @@
 from app import app
-from flask import render_template, request, session
-from dbFile.config import fetchAll, fetchOne,updateSQL
+from flask import render_template, request
+from dbFile.config import fetchAll, updateSQL
 
 # User-defined function
 from dbFile.config import updateSQL, insertSQL
-from common import roleRequired, getUserProfile, validateEmployeeProfile, validateProductProfile
+from common import roleRequired, validateProductProfile
 
 @app.route("/product/list", methods = ["GET"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -23,16 +23,16 @@ def manageProduct():
         FROM 
             Products p
         INNER JOIN 
-            ProductImages PI ON p.product_id = PI.product_id
-        WHERE 
-            is_active = TRUE;
-"""
+            Category c ON p.category_id = c.category_id
+        INNER JOIN 
+            Unit u ON p.unit_id = u.unit_id
+        INNER JOIN 
+            Depots d ON p.depot_id = d.depot_id
+        INNER JOIN 
+            ProductImages PI ON p.product_id = PI.product_id;
+    """
     product_list = fetchAll(sql_products, None, True)
-    category_list = fetchAll("""SELECT * FROM Category;""", None, True)
-    unit_list = fetchAll("""SELECT * FROM Unit;""", None, True)
-    depot_list = fetchAll("""SELECT * FROM Depots;""", None, True)
-
-    return render_template('manage-products.html', productList = product_list, categoryList=category_list, unitList=unit_list, depotList=depot_list)
+    return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list)
 
 
 @app.route("/product/add",methods = ["POST"])
@@ -40,9 +40,10 @@ def manageProduct():
 def addProduct():
     data = dict(request.form)
 
-    product_id = insertSQL("INSERT INTO Products (name, description, price, stock) VALUES (%s, %s, %s, %s);", \
-        (data['name'], data['description'],data['price'], data['stock']))
+    product_id = insertSQL("INSERT INTO Products (name, category_id, unit_id, depot_id, price, stock, description) VALUES (%s, %s, %s, %s, %s, %s, %s);", \
+        (data['name'], data['category_id'], data['unit_id'], data['depot_id'], data['price'],data['stock'], data['description']))
 
+    img_id = insertSQL("INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES (%s, %s, %s, %s);", (product_id, 'image_coming_soon.jpg', True, False))
     if product_id:
         return {"status": True}, 200
     else:

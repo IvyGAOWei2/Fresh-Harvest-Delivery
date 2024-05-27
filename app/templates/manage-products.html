@@ -134,11 +134,15 @@
                                 <div class="mb-3">
                                     <label for="updateDepot" class="form-label">Depot</label>
                                     <select class="form-control" name="depot_id" id="updateDepot" required>
-                                        {% for depot in depotList %}
-                                        <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
-                                            {{depot.location}}
-                                        </option>
-                                        {% endfor %}
+                                        {% if session.type == 'National_Manager' %}
+                                            {% for depot in depotList %}
+                                            <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
+                                                {{depot.location}}
+                                            </option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="{{product.depot_id}}" selected>{{depotList[product.depot_id -1].location}}</option>
+                                        {% endif %}
                                     </select>
                                     <div class="invalid-feedback">Please select one depot from the list.</div>
                                 </div>
@@ -193,7 +197,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <h5 class="modal-title mx-auto" id="addProductModalLabel">Add New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addProductForm" method="post">
@@ -208,7 +212,7 @@
                         <!-- category -->
                         <div class="mb-3">
                             <label for="addCategory" class="form-label">Category</label>
-                            <select class="form-control" id="addCategory" name="category_name" required>
+                            <select class="form-control" id="addCategory" name="category_id" required>
                                 <option selected value="">Please select the category</option>
                                 <option value="1">Fruit</option>
                                 <option value="2">Vegetable</option>
@@ -225,7 +229,7 @@
                         <!-- unit -->
                         <div class="mb-3">
                             <label for="addUnit" class="form-label">Unit</label>
-                            <select class="form-control" id="addUnit" name="unit_name" required>
+                            <select class="form-control" id="addUnit" name="unit_id" required>
                                 <option selected value="">Please select the unit</option>
                                 <option value="1">Bunch</option>
                                 <option value="2">Weight</option>
@@ -242,12 +246,16 @@
                         <div class="mb-3">
                             <label for="addDepot" class="form-label">Depot</label>
                             <select class="form-control" name="depot_id" id="addDepot" required>
-                                <option selected value="">Please select the depot</option>
-                                <option value="1">Christchurch</option>
-                                <option value="2">Invercargill</option>
-                                <option value="3">Wellington</option>
-                                <option value="4">Hamilton</option>
-                                <option value="5">Auckland</option>
+                                {% if session.type == 'National_Manager' %}
+                                    {% for depot in depotList %}
+                                    <option value="{{depot.depot_id}}">
+                                        {{depot.location}}
+                                    </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="{{session.depot_id}}" selected>{{depotList[session.depot_id-1].location}}</option>
+                                {% endif %}
+                        </select>
                             </select>
                             <div class="invalid-feedback">Please select one depot from the list.</div>
                         </div>
