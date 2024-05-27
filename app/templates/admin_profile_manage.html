@@ -408,6 +408,76 @@
     InputValidate('add_address');
   });
 
+  // update member
+  document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('updateMemberSuccess').addEventListener('hidden.bs.modal', () => location.reload());
+
+        document.querySelectorAll('.user-update').forEach(function (update) {
+        const user_id = update.getAttribute('data-user-id')
+        const updateMemberFormForm = document.getElementById('updateMemberForm' + user_id);
+
+        updateMemberForm.addEventListener('submit', event => {
+          if (!updateMemberForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          const formData = new FormData(updateMemberForm);
+
+          fetch('/admin/profile/update', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  new bootstrap.Modal(document.getElementById('updateMemberSuccess')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+    });
+  
+  // add member
+  document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        document.querySelectorAll('.user-add').forEach(function (add) {
+        const user_id = update.getAttribute('data-user-id')
+        const addMemberForm = document.getElementById('addMemberForm' + user_id);
+
+        // Handle add form submission
+        addMemberForm.addEventListener('submit', function (event) {
+            if (!addMemberForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
+
+            const formData = new FormData(this); // Prepare form data
+
+            // Send login request to flask server
+            fetch('/admin/profile/add', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == true) { // Redirect user if login is successful
+                        // console.log(data)
+                        // Show updateStaffSuccess modal if update is successful
+                        new bootstrap.Modal(document.getElementById('addProfileSuccessModal')).show();
+                    }
+                    else {
+                        alert("Invalid request");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+      })
+    });
   </script>
 
 {% endblock %}
