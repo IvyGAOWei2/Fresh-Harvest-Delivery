@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, request, session
 
 # User-defined function
-from dbFile.config import insertSQL, updateSQL, fetchAll
+from dbFile.config import fetchOne, insertSQL, updateSQL, fetchAll
 from common import roleRequired, validateEmail, validateRegisterEmployee, validateEmployeeProfile, validateConsumerProfile
 
 @app.route("/admin/profiles")
@@ -40,6 +40,7 @@ def adminProfiles():
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfileUpdate():
     # need password futcion
+    print(request.form.get("image"))
     if request.form.get('profile_type') == 'Consumer':
         table_name = "Consumer"
         verified_data = validateConsumerProfile({key: value for key, value in dict(request.form).items() if value})
@@ -49,6 +50,10 @@ def adminProfileUpdate():
 
     user_id = verified_data['user_id']
     verified_data.pop('user_id')
+    print(verified_data,999)
+
+    employee_type = verified_data['type']
+    verified_data.pop('type')
 
     if verified_data:
         updates,params = [], []
@@ -59,9 +64,11 @@ def adminProfileUpdate():
 
     update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
 
-    # employee_type = request.form.get("type")
-    # print(employee_type)
-    # updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
+    print(employee_type,11111111111)
+    original_employee_type = fetchOne("select type from Users where user_id=%s",(user_id,),withDescription=False)[0]
+    print(original_employee_type,00000000)
+    if original_employee_type != employee_type:
+        update_successful = updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
 
     if update_successful:
         return {"status": True}, 200
@@ -85,7 +92,8 @@ def adminProfileDel():
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminProfileAdd():
     new_account = validateRegisterEmployee(request.form.to_dict())
-    print(new_account)
+    employee_type = request.form.get("type")
+  
     if not new_account:
         return {"status": False, 'message': 'Invalid register request !!!'}, 500
 
@@ -94,7 +102,10 @@ def adminProfileAdd():
     else:
         try:
             hashed = app.hashing.hash_value(new_account.password, salt=app.salt)
-            user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id, type) VALUES(%s,%s,%s,%s);", (new_account.email, hashed, new_account.depot_id, 'Staff'))
+            if employee_type == "Staff":
+                user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id, type) VALUES(%s,%s,%s,%s);", (new_account.email, hashed, new_account.depot_id, 'Staff'))
+            elif employee_type == "Local_Manager":
+                user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id, type) VALUES(%s,%s,%s,%s);", (new_account.email, hashed, new_account.depot_id, 'Local_Manager'))
 
             insertSQL("INSERT INTO Employees (user_id, given_name, family_name, address, phone, hire_date, depot_id, image) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);", \
             (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.hire_date, new_account.depot_id, 'user_default_image.png'))

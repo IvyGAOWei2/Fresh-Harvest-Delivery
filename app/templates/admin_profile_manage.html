@@ -75,7 +75,7 @@
                 <label for="imgUpdate{{ member.user_id }}">
                     <img src="{{ url_for('static', filename='images/' + member.image) }}" class="card-img-top" id="imagePreview{{ member.user_id }}">
                 </label>
-                <input class="form-control" type="file" id="imgUpdate{{ member.user_id }}" style="display: none;" accept="image/*">
+                <input class="form-control" type="file" name="image" id="imgUpdate{{ member.user_id }}" style="display: none;" accept="image/*">
               </div>
             </div>
             <div class="col-md-6 mb-3">
@@ -167,13 +167,19 @@
                 <div class="col-md-6 mb-3">
                 <label class="form-label">Type</label>
                   <div class="d-flex align-items-center">
-                    <select class="form-control" name="type"id="user_type">
+                    <select class="form-control" name="type" id="user_type">
                       <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
                       <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
                     </select>
                     <div class="invalid-feedback">Please select a employee type from the list.</div>
                     <div class="valid-feedback">Looks good!</div>      
                   </div>
+                </div>
+                {% elif profile_type == 'Local_Manager' %}
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" for="add_phone">Type<sup>*</sup></label>
+                  <input type="text" class="form-control" value="Staff" disabled>
+                  <input type="text" class="form-control d-none" name="type" value="Staff"/>
                 </div>
                 {% endif %}
             {% endif %}
@@ -293,7 +299,7 @@
             <div class="col-md-6 mb-3">
               <label class="form-label" for="user_type">Type<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control" name="type" id="user_type">
+                  <select class="form-control" name="type" id="user_type" required>
                     <option value="" selected >Please select an employee type</option>
                     <option value="Staff">Staff</option>
                     <option value="Local_Manager">Local manager</option>
@@ -301,6 +307,12 @@
                   <div class="invalid-feedback">Please select a type from the list.</div>
                   <div class="valid-feedback">Looks good!</div>      
                 </div>
+            </div>
+            {% elif profile_type == 'Local_Manager' %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="add_phone">Type<sup>*</sup></label>
+              <input type="text" class="form-control" value="Staff" disabled>
+              <input type="text" class="form-control d-none" name="type" value="Staff"/>
             </div>
             {% endif %}
             
