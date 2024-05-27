@@ -18,7 +18,7 @@
       </label>
   </div>
 
-  <form action="#" id="payment-form" class="card-details" method ="post">
+  <form action="/checkout" id="paymentform" class="card-details" method ="post">
       <div class="form-group">
           <label for="cc-name">Name on card</label>
           <input type="text" id="cc-name" class="form-control" placeholder="Full name as displayed on card" required>
@@ -41,7 +41,7 @@
           <div class="invalid-feedback">Invalid CVV. Must be 3 or 4 digits.</div>
       </div>
       <button type="button" class="btn btn-secondary go-back">Go Back</button>
-      <button type="submit" class="btn btn-primary">Place Order</button>
+      <button type="submit" id="submitall" class="btn btn-primary">Place Order</button>
   </form>
   <div class="p-3">
     <!-- Update Success btn code start here -->

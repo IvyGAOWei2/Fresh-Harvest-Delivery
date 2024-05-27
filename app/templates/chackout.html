@@ -233,17 +233,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        if (validateForm()) {
-            console.log('Form is valid, process payment.');
-            // 这里可以添加进一步处理付款的代码
-        } else {
-            console.log('Form is invalid, show errors.');
-            // 显示错误信息
-        }
-    });
+    // const form = document.getElementById('payment-form');
+    // form.addEventListener('submit', function(event) {
+    //     event.preventDefault();
+    //     if (validateForm()) {
+    //         console.log('Form is valid, process payment.');
+    //         // 这里可以添加进一步处理付款的代码
+    //     } else {
+    //         console.log('Form is invalid, show errors.');
+    //         // 显示错误信息
+    //     }
+    // });
 
     function validateForm() {
         let isValid = true;
@@ -316,60 +316,99 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-document.getElementById('deliveryfirstname').addEventListener('input', function() {
-        InputValidate('deliveryfirstname');
-    });    
-    document.getElementById('deliverylastname').addEventListener('input', function() {
-        InputValidate('deliverylastname');
-    });    
-    document.getElementById('deliveryaddress').addEventListener('input', function() {
-        InputValidate('deliveryaddress');
-    });    
-    document.getElementById('deliverycity').addEventListener('input', function() {
-        InputValidate('deliverycity');
-    });    
-    document.getElementById('deliverypostcode').addEventListener('input', function() {
-        InputValidate('deliverypostcode');
-    });    
-    document.getElementById('deliveryphone').addEventListener('input', function() {
-        InputValidate('deliveryphone');
-    });    
-    document.getElementById('deliveryemail').addEventListener('input', function() {
-        InputValidate('deliveryemail');
-    });    
-    document.getElementById('billingfirstname').addEventListener('input', function() {
-        InputValidate('billingfirstname');
-    });    
-    document.getElementById('billinglastname').addEventListener('input', function() {
-        InputValidate('billinglastname');
-    });   
-    document.getElementById('billingaddress').addEventListener('input', function() {
-        InputValidate('billingaddress');
-    });     
-    document.getElementById('billingcity').addEventListener('input', function() {
-        InputValidate('billingcity');
-    });    
-    document.getElementById('billingpostcode').addEventListener('input', function() {
-        InputValidate('billingpostcode');
-    });    
-    document.getElementById('billingphone').addEventListener('input', function() {
-        InputValidate('billingphone');
-    });    
-    document.getElementById('billingemail').addEventListener('input', function() {
-        InputValidate('billingemail');
-    });    
-    document.getElementById('cc-name').addEventListener('input', function() {
-        InputValidate('cc-name');
-    });    
-    document.getElementById('cc-number').addEventListener('input', function() {
-        InputValidate('cc-number');
-    });    
-    document.getElementById('cc-expiration').addEventListener('input', function() {
-        InputValidate('cc-expiration');
-    });    
-    document.getElementById('cc-cvv').addEventListener('input', function() {
-        InputValidate('cc-cvv');
-    });    
+document.getElementById('submitAll').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    let combinedFormData = new FormData();
+
+    // 假设从表单中获取数据
+    const billingFormData = new FormData(document.getElementById('billingform'));
+    const deliveryFormData = new FormData(document.getElementById('deliveryform'));
+    const reviewFormData = new FormData(document.getElementById('reviewform'));
+    console.log(billingFormData, billingFormData, billingFormData)
+    // 将表单数据合并
+    [billingFormData, deliveryFormData, reviewFormData].forEach(formData => {
+        for (let [key, value] of formData) {
+            combinedFormData.append(key, value);
+        }
+    });
+
+    // 从 localStorage 或其他存储获取购物车数据
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    cartItems.forEach((item, index) => {
+        combinedFormData.append(`items[${index}][id]`, item.id);
+        combinedFormData.append(`items[${index}][quantity]`, item.quantity);
+    });
+
+    // 发送 POST 请求
+    fetch('/checkout', {
+        method: 'POST',
+        body: combinedFormData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+
+// document.getElementById('deliveryfirstname').addEventListener('input', function() {
+//         InputValidate('deliveryfirstname');
+//     });    
+//     document.getElementById('deliverylastname').addEventListener('input', function() {
+//         InputValidate('deliverylastname');
+//     });    
+//     document.getElementById('deliveryaddress').addEventListener('input', function() {
+//         InputValidate('deliveryaddress');
+//     });    
+//     document.getElementById('deliverycity').addEventListener('input', function() {
+//         InputValidate('deliverycity');
+//     });    
+//     document.getElementById('deliverypostcode').addEventListener('input', function() {
+//         InputValidate('deliverypostcode');
+//     });    
+//     document.getElementById('deliveryphone').addEventListener('input', function() {
+//         InputValidate('deliveryphone');
+//     });    
+//     document.getElementById('deliveryemail').addEventListener('input', function() {
+//         InputValidate('deliveryemail');
+//     });    
+//     document.getElementById('billingfirstname').addEventListener('input', function() {
+//         InputValidate('billingfirstname');
+//     });    
+//     document.getElementById('billinglastname').addEventListener('input', function() {
+//         InputValidate('billinglastname');
+//     });   
+//     document.getElementById('billingaddress').addEventListener('input', function() {
+//         InputValidate('billingaddress');
+//     });     
+//     document.getElementById('billingcity').addEventListener('input', function() {
+//         InputValidate('billingcity');
+//     });    
+//     document.getElementById('billingpostcode').addEventListener('input', function() {
+//         InputValidate('billingpostcode');
+//     });    
+//     document.getElementById('billingphone').addEventListener('input', function() {
+//         InputValidate('billingphone');
+//     });    
+//     document.getElementById('billingemail').addEventListener('input', function() {
+//         InputValidate('billingemail');
+//     });    
+//     document.getElementById('cc-name').addEventListener('input', function() {
+//         InputValidate('cc-name');
+//     });    
+//     document.getElementById('cc-number').addEventListener('input', function() {
+//         InputValidate('cc-number');
+//     });    
+//     document.getElementById('cc-expiration').addEventListener('input', function() {
+//         InputValidate('cc-expiration');
+//     });    
+//     document.getElementById('cc-cvv').addEventListener('input', function() {
+//         InputValidate('cc-cvv');
+//     });    
 
 </script>
 {% endblock %}
