@@ -59,9 +59,9 @@ def adminProfileUpdate():
 
     update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
 
-    employee_type = request.form.get("type")
-    print(employee_type)
-    updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
+    # employee_type = request.form.get("type")
+    # print(employee_type)
+    # updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
 
     if update_successful:
         return {"status": True}, 200
