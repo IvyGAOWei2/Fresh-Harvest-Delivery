@@ -101,13 +101,13 @@
                                 action="/product/update" method="POST">
                                 <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
 
-                                <!-- 图片上传及展示部分需要修改 -->
+                                <!-- upload image -->
                                  <div class="card shadow-sm" style="width: 8vw;">
                                     <label for="imgUpdate{{ product.product_id }}">
                                         <img src="{{ url_for('static', filename='images/product/' + product.image) }}"
                                             class="card-img-top" id="imagePreview{{ product.product_id }}">
                                     </label>
-                                    <input class="form-control" type="file" id="imgUpdate{{ product.product_id }}"
+                                    <input class="form-control" name = "image" type="file" id="imgUpdate{{ product.product_id }}"
                                         style="display: none;" accept="image/*">
                                 </div> 
                                 <div class="mb-3">
@@ -289,7 +289,7 @@
                         <div class="mb-3 d-flex align-items-center">
                             <button type="button" class="btn btn-primary text-center" id="uploadImageButton">Click to Upload Image</button>
                         </div>
-                        <input type="file" id="fileInput" class="hidden-file-input">
+                        <input type="file" name="image" id="fileInput" class="hidden-file-input">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
