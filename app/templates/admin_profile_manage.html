@@ -60,7 +60,7 @@
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member.user_id }}" aria-labelledby="updateMemberLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="updateMemberLabel">Update {{profile_type}} Profile</h5>
+          <h5 class="offcanvas-title" id="updateMemberLabel">Update Profile</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
@@ -162,17 +162,20 @@
               <label class="form-label">Hire date</label>
               <input type="date" class="form-control" value="{{ member.hire_date }}" id="employees_hire_date" disabled>
             </div>
-            <div class="col-md-6 mb-3">
-            <label class="form-label">Type</label>
-              <div class="d-flex align-items-center">
-                <select class="form-control" name="type"id="user_type">
-                  <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
-                  <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
-                </select>
-                <div class="invalid-feedback">Please select a city from the list.</div>
-                <div class="valid-feedback">Looks good!</div>      
-              </div>
-            </div>
+           
+              {% if profile_type == "National_Manager" %}
+                <div class="col-md-6 mb-3">
+                <label class="form-label">Type</label>
+                  <div class="d-flex align-items-center">
+                    <select class="form-control" name="type"id="user_type">
+                      <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
+                      <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a employee type from the list.</div>
+                    <div class="valid-feedback">Looks good!</div>      
+                  </div>
+                </div>
+                {% endif %}
             {% endif %}
   
             <div class="col-md-6 mb-3">
@@ -224,7 +227,7 @@
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="addEmployee{{ member.user_id }}" aria-labelledby="addEmployeeLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="addEmployeeLabel">Add {{profile_type}}</h5>
+          <h5 class="offcanvas-title" id="addEmployeeLabel">Add employee</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
@@ -232,12 +235,15 @@
         <form id="addMemberForm{{ member.user_id }}" method="POST" action="/admin/profile/add" class="needs-validation" novalidate>
           <div class="row">
 
+            <input type="text" class="form-control d-none" name="user_id" value="{{ member.user_id }}"/>     
+            <input type="text" class="form-control d-none" name="profile_type" value="{{ profile_type }}"/>
+
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
                 <label for="img_add{{ profile_type }}{{ member.user_id }}">
                   <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}" required>
                 </label>
-                <input class="form-control" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
+                <input class="form-control" name="image" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
               </div>
             </div>
             
@@ -282,6 +288,8 @@
               <label class="form-label" for="add_hire_date">Hire date<sup>*</sup></label>
               <input type="date" class="form-control" id="add_hire_date" name="hire_date">
             </div>  
+
+            {% if profile_type == 'National_Manager' %}
             <div class="col-md-6 mb-3">
               <label class="form-label" for="user_type">Type<sup>*</sup></label>
                 <div class="d-flex align-items-center">
@@ -294,6 +302,8 @@
                   <div class="valid-feedback">Looks good!</div>      
                 </div>
             </div>
+            {% endif %}
+            
             <div class="col-md-6 mb-3">
               <label for="add_password" class="form-label">Password<sup>*</sup></label>
               <input type="text" minlength="8" maxlength="20" class="form-control" id="add_password" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
@@ -447,7 +457,7 @@
         document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
         document.querySelectorAll('.user-add').forEach(function (add) {
-        const user_id = update.getAttribute('data-user-id')
+        const user_id = add.getAttribute('data-user-id')
         const addMemberForm = document.getElementById('addMemberForm' + user_id);
 
         // Handle add form submission
@@ -456,7 +466,7 @@
             event.preventDefault();
             event.stopPropagation();
 
-            const formData = new FormData(this); // Prepare form data
+            const formData = new FormData(addMemberForm); // Prepare form data
 
             // Send login request to flask server
             fetch('/admin/profile/add', {
@@ -474,7 +484,7 @@
                         alert("Invalid request");
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .alert(error => console.error('Error:', error));
         });
       })
     });
