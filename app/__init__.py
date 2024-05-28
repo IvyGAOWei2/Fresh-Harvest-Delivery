@@ -19,6 +19,7 @@ app.hashing = Hashing(app)
 # Consumer and Employees
 from app import authenticate
 from app import profile
+from app import order_history
 
 # Consumer
 from app import index
