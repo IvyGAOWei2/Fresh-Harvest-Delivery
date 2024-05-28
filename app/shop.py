@@ -70,27 +70,3 @@ def shopDetail():
         return render_template('shop-detail.html', product=product, categories=categories, reviews=fakeReview())
     except:
         return render_template('404.html')
-
-@app.route('/checkout', methods=['POST'])
-def checkoutt():
-    # 打印普通表单字段
-    print("Received form data:")
-    for key in request.form:
-        print(f"{key}: {request.form[key]}")
-
-    # 检查是否有购物车项并打印
-    items = request.form.getlist('items[]')  # 获取所有名为 'items[]' 的表单字段
-    if items:
-        print("Received cart items:")
-        for item in items:
-            print(item)
-
-    # 如果你的表单中还可能包含文件，这是处理文件的方式
-    if request.files:
-        print("Received files:")
-        for file_key in request.files:
-            file = request.files[file_key]
-            print(f"File field {file_key}: {file.filename} - {file.content_type}")
-
-    # 返回响应
-    return "Data received successfully", 200

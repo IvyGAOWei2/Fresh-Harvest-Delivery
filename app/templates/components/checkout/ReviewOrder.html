@@ -3,46 +3,46 @@
   <div class="payment-options">
       <label class="payment-option">
           <input type="radio" name="paymentMethod" value="Credit Card" checked>
-          <span class="payment-icon credit-card"></span>
+          <i class="fa-regular fa-credit-card"></i>
           <span>Credit Card</span>
       </label>
       <label class="payment-option">
           <input type="radio" name="paymentMethod" value="Debit Card">
-          <span class="payment-icon debit-card"></span>
+          <i class="fa-solid fa-credit-card"></i>
           <span>Debit Card</span>
       </label>
       <label class="payment-option">
           <input type="radio" name="paymentMethod" value="Point">
-          <span class="payment-icon point"></span>
+          <i class="fa-solid fa-gift"></i>
           <span>Point</span>
       </label>
   </div>
 
-  <form action="/checkout" id="paymentform" class="card-details" method ="post">
+  <form  id="payment-form" class="card-details">
       <div class="form-group">
           <label for="cc-name">Name on card</label>
-          <input type="text" id="cc-name" class="form-control" placeholder="Full name as displayed on card" required>
-          <div class="invalid-feedback">Name is required.</div>
+          <input type="text" id="cc-name" class="form-control" placeholder="Full name as displayed on card" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$"required>
+          <div class="invalid-feedback">Please enter letters only, with a maximum length of 35 characters.</div>   
       </div>
       <div class="form-group">
         <label for="cc-number">Card number</label>
-        <input type="text" id="cc-number" class="form-control" placeholder="xxxx-xxxx-xxxx-xxxx" required>
+        <input type="text" id="cc-number" class="form-control" placeholder="xxxx-xxxx-xxxx-xxxx" pattern="^(\d{4}-){3}\d{4}$"required>
         <div class="invalid-feedback">Invalid card number. Format must be xxxx-xxxx-xxxx-xxxx.</div>
     </div>
     
       <div class="form-group half-width">
           <label for="cc-expiration">Expiration</label>
-          <input type="text" id="cc-expiration" class="form-control" placeholder="MM/YY" required>
+          <input type="text" id="cc-expiration" class="form-control" placeholder="MM/YY" pattern="^(0[1-9]|1[0-2])\/([0-9]{2})$"required>
           <div class="invalid-feedback">Invalid expiration date.</div>
       </div>
       <div class="form-group half-width">
           <label for="cc-cvv">CVV</label>
-          <input type="text" id="cc-cvv" class="form-control" placeholder="CVV" required>
+          <input type="text" id="cc-cvv" class="form-control" placeholder="CVV" pattern="^\d{3,4}$" required>
           <div class="invalid-feedback">Invalid CVV. Must be 3 or 4 digits.</div>
       </div>
       <div class="d-flex justify-content-between mt-4"> <!-- Button align right -->
         <button type="button" class="btn btn-secondary go-back">Go Back</button>
-        <button type="submit" class="btn btn-primary btn-checkout">Place Order</button>
+        <button type="submit" id="submitall" class="btn btn-primary btn-checkout">Place Order</button>
     </div>
   </form>
   <div class="p-3">
@@ -87,18 +87,6 @@
   background-size: contain;
   background-repeat: no-repeat;
   margin-right: 10px;
-}
-
-.credit-card {
-  background-image: url('path/to/credit-card-icon.png');
-}
-
-.debit-card {
-  background-image: url('path/to/debit-card-icon.png');
-}
-
-.gift-card {
-  background-image: url('path/to/gift-card-icon.png');
 }
 
 .form-group {

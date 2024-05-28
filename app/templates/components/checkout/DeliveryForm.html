@@ -5,21 +5,21 @@
           <div class="col-md-6">
               <div class="form-item">
                   <label class="form-label">First Name<sup>*</sup></label>
-                  <input id="deliveryfirstname" type="text" class="form-control" name="given_name" value="{{checkoutProfile.given_name}}" maxlength="35" pattern="^[a-zA-Z\s]+$" required>
+                  <input id="deliveryfirstname" type="text" class="form-control" name="given_name" value="{{checkoutProfile.given_name}}" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$" required>
                   <div class="invalid-feedback">Please enter your first name.</div>
               </div>
           </div>
           <div class="col-md-6">
               <div class="form-item">
                   <label class="form-label">Last Name<sup>*</sup></label>
-                  <input type="text" class="form-control" name="family_name" pattern="^[a-zA-Z\s\-]+$" id="deliverylastname" value="{{checkoutProfile.family_name}}" maxlength="35" required>
+                  <input type="text" class="form-control" name="family_name" pattern="^[a-zA-Z\s\-]+$" id="deliverylastname" value="{{checkoutProfile.family_name}}" minlength="2" maxlength="35" pattern="^[a-zA-Z]+$" required>
                   <div class="invalid-feedback">Please enter your last name.</div>
               </div>
           </div>
           <div class="col-12">
               <div class="form-item">
                   <label class="form-label">Address<sup>*</sup></label>
-                  <input type="text" id="deliveryaddress" class="form-control" name="delivery_address" value="{{checkoutProfile.address}}" pattern="^[a-zA-Z0-9\s\,\.\-]+$" maxlength="80" required>
+                  <input type="text" id="deliveryaddress" class="form-control" name="delivery_address" value="{{checkoutProfile.address}}" pattern="^(?!\s)[a-zA-Z0-9\s\,\.\-]+$" maxlength="80" required>
                   <div class="invalid-feedback">Please enter a valid address.</div>
               </div>
           </div>
@@ -32,14 +32,14 @@
           <div class="col-md-6">
               <div class="form-item">
                   <label class="form-label">Postcode/Zip<sup>*</sup></label>
-                  <input type="text" id="deliverypostcode" class="form-control" name="postcode" value="{{checkoutProfile.postcode}}" pattern="^[a-zA-Z0-9\s\-]+$" maxlength="10" required>
+                  <input type="text" id="deliverypostcode" class="form-control" name="postcode" value="{{checkoutProfile.postcode}}" pattern= "^(?!0000)\d{4}$" minlength="4" maxlength="4" required>
                   <div class="invalid-feedback">Please enter a valid postcode.</div>
               </div>
           </div>
           <div class="col-md-6">
               <div class="form-item">
                   <label the class="form-label">Phone Number<sup>*</sup></label>
-                  <input type="tel" id="deliveryphone" class="form-control" name="phone" value="{{checkoutProfile.phone}}" pattern="^\+?[0-9\s\-]+$" maxlength="13" required>
+                  <input type="tel" id="deliveryphone" class="form-control" name="phone" value="{{checkoutProfile.phone}}" pattern="^[0-9]+$" minlength="7" maxlength="13" required>
                   <div class="invalid-feedback">Please enter a valid phone number.</div>
               </div>
           </div>
