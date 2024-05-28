@@ -29,7 +29,8 @@ def manageProduct():
         INNER JOIN 
             Depots d ON p.depot_id = d.depot_id
         INNER JOIN 
-            ProductImages PI ON p.product_id = PI.product_id;
+            ProductImages PI ON p.product_id = PI.product_id
+        AND p.is_active = True;
     """
     product_list = fetchAll(sql_products, None, True)
     return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list)
