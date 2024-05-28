@@ -38,7 +38,6 @@ def profileSearch():
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
             JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%'),True)
-        print(result,8888888)
     else:
         if session.get('type') in ['Local_Manager']:
             result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
@@ -72,11 +71,8 @@ def adminProfileUpdate():
         reset_password = verified_data['new_password'] # get new_password to update in Users
         verified_data.pop('new_password')
 
-        print(reset_password,00000000000)
-
     user_id = verified_data['user_id'] 
     verified_data.pop('user_id')
-    print(verified_data,999)
 
     if verified_data:
         updates,params = [], []
@@ -86,23 +82,24 @@ def adminProfileUpdate():
         params.append(user_id)
 
         update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
-    print(update_successful,1)
-     # if employee type change, update Users
+   
+    # if employee type change, update Users
     original_employee_type = fetchOne("select type from Users where user_id=%s",(user_id,),withDescription=False)[0]
     if original_employee_type != "Consumer" and original_employee_type != employee_type:
         update_successful = updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
-        print(update_successful,2)
-     # if new password, update Users
+      
+    # if new password, update Users
     if reset_password != 0:
         new_hashed = app.hashing.hash_value(reset_password, salt=app.salt)
         print(new_hashed)
         updateSQL("UPDATE Users SET password_hash = %s WHERE user_id = %s;", (new_hashed, user_id))
         update_successful = 1
-        print(update_successful,3)
+  
     if update_successful:
         return {"status": True}, 200
     else:
         return {"status": False}, 500
+
 
 @app.route("/admin/profile/delete", methods = ["POST"])
 @roleRequired(['Local_Manager', 'National_Manager'])
