@@ -17,10 +17,7 @@
     <h1 class="text-center">Discount List</h1>
     <div class="container mt-5">
         <div class="d-flex align-items-center mb-3">
-            <div class="input-group" style="max-width: 200px;">
-                <input type="search" id="searchKeyword" class="form-control p-2" placeholder="Search by title" aria-describedby="search-icon-1">
-                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-            </div>
+            <input type="search" id="searchKeyword" class="form-control me-3" placeholder="Search by title">
             <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addDiscountModal">Add New Discount</button>
         </div>
         <div class="table-responsive">
@@ -42,26 +39,19 @@
                         <td class="align-middle">{{ discount.title }}</td>
                         <td class="align-middle">{{ discount.description }}</td>
                         <td class="align-middle">{{ discount.discount_rate }}%</td>
-                        <td class="align-middle nz-date">{{ discount.start_date }}</td>
-                        <td class="align-middle nz-date">{{ discount.end_date }}</td>
-
+                        <td class="align-middle">{{ discount.start_date }}</td>
+                        <td class="align-middle">{{ discount.end_date }}</td>
                         <td class="align-middle">{{ discount.status }}</td>
                         <td>
-                            <a href="{{ url_for('manageDiscountProducts', discount_id=discount.discount_id) }}" class="btn btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="View Products">
-                                <i class="fas fa-box-open fa-lg me-3 fa-fw"></i>
-                            </a>
-                            <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Discount">
-                                <button class="btn btn-icon ms-2" data-bs-toggle="offcanvas" data-bs-target="#updateDiscount{{ discount.discount_id }}" aria-controls="updateDiscount{{ discount.discount_id }}">
-                                    <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
-                                </button>
-                            </div>
+                            <a href="{{ url_for('manageDiscountProducts', discount_id=discount.discount_id) }}" class="btn btn-info">View Products</a>
+                            <button class="btn btn-primary ms-2" data-bs-toggle="offcanvas" data-bs-target="#updateDiscount{{ discount.discount_id }}" aria-controls="updateDiscount{{ discount.discount_id }}">Edit</button>
                         </td>
                     </tr>
 
                     <!-- Update Discount Modal -->
                     <div class="offcanvas offcanvas-end" id="updateDiscount{{ discount.discount_id }}" tabindex="-1" aria-labelledby="updateDiscountLabel{{ discount.discount_id }}">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title w-100 text-center" id="updateDiscountLabel{{ discount.discount_id }}">Update Discount</h5>
+                            <h5 class="offcanvas-title" id="updateDiscountLabel{{ discount.discount_id }}">Update Discount</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
@@ -83,10 +73,6 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updateDiscountStartDate{{ discount.discount_id }}" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control" id="updateDiscountStartDate{{ discount.discount_id }}" value="{{ discount.start_date }}" data-discount-start-date required>
-                                </div>
-                                <div class="mb-3">
                                     <label for="updateDiscountEndDate{{ discount.discount_id }}" class="form-label">End Date</label>
                                     <input type="date" class="form-control" id="updateDiscountEndDate{{ discount.discount_id }}" value="{{ discount.end_date }}" data-discount-end-date required>
                                 </div>
@@ -94,7 +80,6 @@
                             </form>
                         </div>
                     </div>
-
                     {% endfor %}
                 </tbody>
             </table>
@@ -106,21 +91,21 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title w-100 text-center text-black" id="addDiscountModalLabel">Add New Discount</h5>
+                    <h5 class="modal-title" id="addDiscountModalLabel">Add New Discount</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addDiscountForm">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="discountTitle" class="form-label text-black">Title</label>
+                            <label for="discountTitle" class="form-label">Title</label>
                             <input type="text" class="form-control" id="discountTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label for="discountDescription" class="form-label text-black">Description</label>
+                            <label for="discountDescription" class="form-label">Description</label>
                             <textarea class="form-control" id="discountDescription" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="selectDiscountRate" class="form-label text-black">Discount Rate</label>
+                            <label for="selectDiscountRate" class="form-label">Discount Rate</label>
                             <select class="form-select" id="selectDiscountRate" required>
                                 <option value="15">15%</option>
                                 <option value="20">20%</option>
@@ -128,11 +113,11 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="discountStartDate" class="form-label text-black">Start Date</label>
+                            <label for="discountStartDate" class="form-label">Start Date</label>
                             <input type="date" class="form-control" id="discountStartDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="discountEndDate" class="form-label text-black">End Date</label>
+                            <label for="discountEndDate" class="form-label">End Date</label>
                             <input type="date" class="form-control" id="discountEndDate" required>
                         </div>
                     </div>
@@ -144,98 +129,47 @@
             </div>
         </div>
     </div>
-
-    <!-- Update Success Message -->
-    <div class="p-3">
-        {% with
-          btn_show = 0,
-          bg_color = '#3399ff',
-          title = 'Discount Update Success',
-          msg = 'The discount has been successfully updated'
-        %}
-            {% include "components/elements/updateSuccess.html" %}
-        {% endwith %}
-    </div>
-
-    <!-- Add Success Message -->
-    <div class="p-3">
-        {% with
-          btn_show = 0,
-          bg_color = '#28a745',
-          title = 'Discount Add Success',
-          msg = 'The discount has been successfully added'
-        %}
-            {% include "components/elements/addSuccess.html" %}
-        {% endwith %}
-    </div>
 </section>
 {% endblock %}
+
 
 {% block script %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM fully loaded and parsed'); // Log to ensure DOMContentLoaded is fired
 
-        const nzDateCells = document.querySelectorAll('.nz-date');
-        
-        nzDateCells.forEach(cell => {
-            const dateText = cell.textContent;
-            const dateParts = dateText.split('-'); // Assuming the date is in yyyy-mm-dd format
-
-            if (dateParts.length === 3) {
-                const [year, month, day] = dateParts;
-                const nzFormattedDate = `${day}/${month}/${year}`;
-                cell.textContent = nzFormattedDate;
-            }
-        });
         const addDiscountForm = document.getElementById('addDiscountForm');
         const updateDiscountForms = document.querySelectorAll('.update-discount-form');
-        const discountStartDate = document.getElementById('discountStartDate');
-        const discountEndDate = document.getElementById('discountEndDate');
-        const today = new Date().toISOString().split('T')[0];
 
-        // Set the min attribute of start date to today
-        if (discountStartDate) {
-            discountStartDate.setAttribute('min', today);
-            // Update the min attribute of end date based on the selected start date
-            discountStartDate.addEventListener('change', function () {
-                discountEndDate.value = ''; // Clear the end date value
-                discountEndDate.setAttribute('min', discountStartDate.value);
-            });
+        console.log('addDiscountForm:', addDiscountForm); // Log to ensure form element is found
+        console.log('updateDiscountForms:', updateDiscountForms); // Log to ensure update forms are found
+
+        // Utility function to format date from yyyy-MM-dd to dd/MM/yyyy
+        function formatDateNZ(dateString) {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
         }
 
-        // Initialize Bootstrap tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        // Utility function to format date from dd/MM/yyyy to yyyy-MM-dd
+        function formatDateForInput(dateString) {
+            const [day, month, year] = dateString.split('/');
+            return `${year}-${month}-${day}`;
+        }
 
         // Add new discount
         addDiscountForm.addEventListener('submit', function (event) {
             event.preventDefault();
-
-            const title = document.getElementById('discountTitle').value;
-            const description = document.getElementById('discountDescription').value;
-            const discountRate = document.getElementById('selectDiscountRate').value;
-            const startDate = discountStartDate.value;
-            const endDate = discountEndDate.value;
-
-            if (startDate < today) {
-                alert('Start date cannot be earlier than today.');
-                return;
-            }
-
-            if (endDate < startDate) {
-                alert('End date cannot be earlier than start date.');
-                return;
-            }
+            console.log('Add Discount Form submitted'); // Log to ensure event listener is attached
 
             const discountData = {
-                title: title,
-                description: description,
-                discount_rate: discountRate,
-                start_date: startDate,
-                end_date: endDate
+                title: document.getElementById('discountTitle').value,
+                description: document.getElementById('discountDescription').value,
+                discount_rate: document.getElementById('selectDiscountRate').value,
+                start_date: document.getElementById('discountStartDate').value,
+                end_date: document.getElementById('discountEndDate').value
             };
+
+            console.log('Sending discount data:', discountData); // Log data being sent
 
             fetch('/employee/add-discount', {
                 method: 'POST',
@@ -245,62 +179,55 @@
                 body: JSON.stringify(discountData)
             })
             .then(response => {
+                console.log('Response:', response); // Log response
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Data:', data); // Log data received
                 if (data.status === true) {
-                    new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                    alert('Discount added successfully.');
+                    location.reload();
                 } else {
                     alert("Invalid request");
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error)); // Log any errors
         });
 
         // Function to update discount
         const updateDiscount = (event) => {
             event.preventDefault();
+            console.log('Update Discount Form submitted'); // Log to ensure event listener is attached
 
             const form = event.target;
             const discountId = form.getAttribute('data-discount-id');
-            const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
-            const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
-            const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
-            const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
-            const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
+            const titleInput = form.querySelector('input[data-discount-title]');
+            const descriptionInput = form.querySelector('textarea[data-discount-description]');
+            const rateInput = form.querySelector('select[data-discount-rate]');
+            const endDateInput = form.querySelector('input[data-discount-end-date]');
 
-            const today = new Date().toISOString().split('T')[0];
+            console.log('titleInput:', titleInput); // Log elements found
+            console.log('descriptionInput:', descriptionInput); // Log elements found
+            console.log('rateInput:', rateInput); // Log elements found
+            console.log('endDateInput:', endDateInput); // Log elements found
 
-            // Set the min attribute for the start date and end date inputs
-            startDateInput.setAttribute('min', today);
-            endDateInput.setAttribute('min', startDateInput.value);
-
-            // Update the min attribute for end date when start date changes
-            startDateInput.addEventListener('change', function () {
-                endDateInput.value = ''; // Clear the end date value
-                endDateInput.setAttribute('min', startDateInput.value);
-            });
+            if (!titleInput || !descriptionInput || !rateInput || !endDateInput) {
+                console.error('One or more elements not found');
+                console.log('Form:', form); // Log the form for debugging
+                return;
+            }
 
             const discountData = {
                 title: titleInput.value,
                 description: descriptionInput.value,
                 discount_rate: rateInput.value,
-                start_date: startDateInput.value,
-                end_date: endDateInput.value
+                end_date: formatDateForInput(endDateInput.value)
             };
 
-            if (startDateInput.value < today) {
-                alert('Start date cannot be earlier than today.');
-                return;
-            }
-
-            if (endDateInput.value < startDateInput.value) {
-                alert('End date cannot be earlier than start date.');
-                return;
-            }
+            console.log('Sending update discount data:', discountData); // Log data being sent
 
             fetch(`/employee/update-discount/${discountId}`, {
                 method: 'POST',
@@ -310,107 +237,43 @@
                 body: JSON.stringify(discountData)
             })
             .then(response => {
+                console.log('Response:', response); // Log response
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Data:', data); // Log data received
                 if (data.status === true) {
-                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                    alert('Discount updated successfully.');
+                    location.reload();
                 } else {
                     alert("Invalid request");
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error)); // Log any errors
         };
 
-        // Function to enable/disable the update button based on changes
-        const handleInputChange = (event) => {
-            const form = event.target.form;
-            const discountId = form.getAttribute('data-discount-id');
-            const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
-            const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
-            const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
-            const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
-            const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
-            const updateButton = form.querySelector('button[type="submit"]');
-
-            const initialValues = {
-                title: titleInput.defaultValue,
-                description: descriptionInput.defaultValue,
-                discount_rate: rateInput.defaultValue,
-                start_date: startDateInput.defaultValue,
-                end_date: endDateInput.defaultValue
-            };
-
-            const currentValues = {
-                title: titleInput.value,
-                description: descriptionInput.value,
-                discount_rate: rateInput.value,
-                start_date: startDateInput.value,
-                end_date: endDateInput.value
-            };
-
-            const isChanged = Object.keys(initialValues).some(key => initialValues[key] !== currentValues[key]);
-            updateButton.disabled = !isChanged;
-        };
-
+        // Attach submit event to update discount forms
         updateDiscountForms.forEach(form => {
-            form.addEventListener('submit', updateDiscount);
+            console.log('Attaching submit event to form:', form); // Log form being attached
 
-            const discountId = form.getAttribute('data-discount-id');
-            const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
-            const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
-            const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
-            const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
-            const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
+            const endDateInput = form.querySelector('input[data-discount-end-date]');
+            if (endDateInput) {
+                const currentEndDate = endDateInput.value;
 
-            // Set the min attribute for the start date and end date inputs
-            startDateInput.setAttribute('min', today);
-            endDateInput.setAttribute('min', startDateInput.value);
-
-            // Update the min attribute for end date when start date changes
-            startDateInput.addEventListener('change', function () {
-                endDateInput.value = ''; // Clear the end date value
-                endDateInput.setAttribute('min', startDateInput.value);
-            });
-
-            titleInput.addEventListener('input', handleInputChange);
-            descriptionInput.addEventListener('input', handleInputChange);
-            rateInput.addEventListener('change', handleInputChange);
-            startDateInput.addEventListener('change', handleInputChange);
-            endDateInput.addEventListener('input', handleInputChange);
-        });
-
-        // Search by title functionality
-        const searchKeywordInput = document.getElementById('searchKeyword');
-        const discountTableBody = document.getElementById('discountTableBody');
-
-        searchKeywordInput.addEventListener('input', function () {
-            const keyword = searchKeywordInput.value.toLowerCase();
-            const rows = discountTableBody.getElementsByTagName('tr');
-
-            Array.from(rows).forEach(row => {
-                const titleCell = row.getElementsByTagName('td')[0]; // Title is in the first cell
-                const titleText = titleCell.textContent.toLowerCase();
-
-                if (titleText.includes(keyword)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+                // Format date for display as dd/MM/yyyy
+                if (currentEndDate.includes('-')) {
+                    endDateInput.value = formatDateNZ(currentEndDate);  // Format end date on load
                 }
-            });
-        });
+            } else {
+                console.error('endDateInput not found for form:', form);
+            }
 
-        // Add event listener to close buttons of success modals to refresh page
-        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
-            location.reload();
-        });
-
-        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
-            location.reload();
+            form.addEventListener('submit', updateDiscount);
         });
     });
 </script>
 {% endblock %}
+

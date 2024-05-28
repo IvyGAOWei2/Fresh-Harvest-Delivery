@@ -75,124 +75,122 @@
 {% endblock %}
 
 
-{% block script %}
+{% block script%}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
+    
     function displayCart() {
-        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        const cartBody = document.querySelector('#cart tbody');
-        cartBody.innerHTML = ''; // Clear existing content
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartBody = document.querySelector('#cart tbody');
+    cartBody.innerHTML = ''; // Clear existing content
 
-        let sumTotal = 0;
-        cartItems.forEach((item, index) => {
-            const price = parseFloat(item.price);
-            const discountRate = parseFloat(item.discount_rate || 0);
-            const discountedPrice = discountRate > 0 ? price * (1 - discountRate / 100) : price;
-            let increment = 1; // Default increment
-            if (item.unit === 'kg') {
-                increment = 0.25; // Assuming 'kg' should increment by 0.25
-            } else if (item.unit === 'g') {
-                increment = 10; // Assuming 'g' should increment by 10
-            } else if (item.unit === 'Each') {
-                increment = 1; // Assuming 'Each' should increment by 1
-            }
+    let sumTotal = 0;
+    cartItems.forEach((item, index) => {
+        const price = parseFloat(item.price);
+        let increment = 1; // Default increment
+        if (item.unit === 'kg') {
+            increment = 0.25; // Assuming 'kg' should increment by 0.25
+        } else if (item.unit === 'g') {
+            increment = 10; // Assuming 'g' should increment by 10
+        } else if (item.unit === 'Each') {
+            increment = 1; // Assuming 'Each' should increment by 1
+        }
 
-            const total = discountedPrice * item.quantity;
-            sumTotal += total;
+        const total = price * item.quantity;
+        sumTotal += total;
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <th scope="row">
-                    <div class="d-flex align-items-center">
-                        <img src="${item.imgSrc}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="${item.name}">
-                    </div>
-                </th>
-                <td>
-                    <p class="mb-0 mt-4" style="font-size: 1.25rem;">${item.name}</p>
-                </td>
-                <td>
-                    <p class="mb-0 mt-4" style="font-size: 1.25rem;">
-                        $${discountedPrice.toFixed(2)}
-                        ${discountRate > 0 ? `<span class="text-danger text-decoration-line-through">$${price.toFixed(2)}</span>` : ''}
-                    </p>
-                </td>
-                <td>
-                    <div class="input-group quantity mt-4" style="width: 140px;">
-                        <button class="btn btn-sm btn-minus rounded-circle bg-light border" data-index="${index}" data-increment="${increment}">
-                            <i class="fa fa-minus"></i>
-                        </button>
-                        <input type="text" class="form-control form-control-sm text-center border-0" value="${item.quantity.toFixed(2)} ${item.unit}">
-                        <button class="btn btn-sm btn-plus rounded-circle bg-light border" data-index="${index}" data-increment="${increment}">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </td>
-                <td>
-                    <p class="mb-0 mt-4" style="font-size: 1.25rem;">$${total.toFixed(2)}</p>
-                </td>
-                <td>
-                    <button class="btn btn-md rounded-circle bg-light border mt-4 remove-btn" data-index="${index}" style="font-size: 1.25rem;">
-                        <i class="fa fa-times text-danger"></i>
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <th scope="row">
+                <div class="d-flex align-items-center">
+                    <img src="${item.imgSrc}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="${item.name}">
+                </div>
+            </th>
+            <td>
+                <p class="mb-0 mt-4" style="font-size: 1.25rem;">${item.name}</p>
+            </td>
+            <td>
+                <p class="mb-0 mt-4" style="font-size: 1.25rem;">$${price.toFixed(2)}</p>
+            </td>
+            <td>
+                <div class="input-group quantity mt-4" style="width: 140px;">
+                    <button class="btn btn-sm btn-minus rounded-circle bg-light border" data-index="${index}" data-increment="${increment}">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <input type="text" class="form-control form-control-sm text-center border-0"   value="${item.quantity.toFixed(2)} ${item.unit}">
+                    <button class="btn btn-sm btn-plus rounded-circle bg-light border" data-index="${index}" data-increment="${increment}">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </td>
+            <td>
+                <p class="mb-0 mt-4" style="font-size: 1.25rem;">$${total.toFixed(2)}</p>
+            </td>
+            <td>
+                <button class="btn btn-md rounded-circle bg-light border mt-4 remove-btn" data-index="${index}" style="font-size: 1.25rem;">
+                    <i class="fa fa-times text-danger"></i>
                     </button>
                 </td>
             `;
-            cartBody.appendChild(row);
+        cartBody.appendChild(row);
+    });
+
+    setupQuantityChangeListeners();
+    setupRemoveButtonListeners();
+    updateShippingAndTotal(sumTotal);
+    setupQuantityInputListeners();
+
+}
+
+function setupQuantityInputListeners() {
+    document.querySelectorAll('.quantity input').forEach(input => {
+        input.addEventListener('input', function() {
+            const index = parseInt(this.parentNode.querySelector('.btn-minus').dataset.index); // 使用减号按钮的索引
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            const newQuantity = parseFloat(this.value); // 获取用户输入的新数量
+            if (newQuantity > 0) {
+                cart[index].quantity = newQuantity; // 更新数量
+            } else {
+                cart.splice(index, 1); // 如果数量小于等于0，则移除该商品
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart(); // 刷新购物车显示
+            updateCartCount(); // 更新购物车计数显示
         });
+    });
+}
 
-        setupQuantityChangeListeners();
-        setupRemoveButtonListeners();
-        updateShippingAndTotal(sumTotal);
-        setupQuantityInputListeners();
-    }
 
-    function setupQuantityInputListeners() {
-        document.querySelectorAll('.quantity input').forEach(input => {
-            input.addEventListener('input', function() {
-                const index = parseInt(this.parentNode.querySelector('.btn-minus').dataset.index);
-                let cart = JSON.parse(localStorage.getItem('cart'));
-                const newQuantity = parseFloat(this.value);
-                if (newQuantity > 0) {
-                    cart[index].quantity = newQuantity;
+function setupQuantityChangeListeners() {
+    document.querySelectorAll('.btn-plus, .btn-minus').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            const increment = parseFloat(this.dataset.increment);
+            const isAdding = this.classList.contains('btn-plus');
+            const unit = this.dataset.unit;  // 确保单位数据正确传递到每个按钮
+
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            if (isAdding) {
+                cart[index].quantity += increment;
+            } else {
+                if (cart[index].quantity > increment) {
+                    cart[index].quantity -= increment;
                 } else {
-                    cart.splice(index, 1);
+                    cart.splice(index, 1); // 如果数量减到0或以下，从购物车中移除该项
                 }
-                localStorage.setItem('cart', JSON.stringify(cart));
-                displayCart();
-                updateCartCount();
-            });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart(); // 刷新购物车显示
+            updateCartCount(); // 更新购物车计数显示
         });
-    }
+    });
+}
 
-    function setupQuantityChangeListeners() {
-        document.querySelectorAll('.btn-plus, .btn-minus').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.dataset.index);
-                const increment = parseFloat(this.dataset.increment);
-                const isAdding = this.classList.contains('btn-plus');
-                const unit = this.dataset.unit;
 
-                let cart = JSON.parse(localStorage.getItem('cart'));
-                if (isAdding) {
-                    cart[index].quantity += increment;
-                } else {
-                    if (cart[index].quantity > increment) {
-                        cart[index].quantity -= increment;
-                    } else {
-                        cart.splice(index, 1);
-                    }
-                }
-
-                localStorage.setItem('cart', JSON.stringify(cart));
-                displayCart();
-                updateCartCount();
-            });
-        });
-    }
-
-    function updateShippingAndTotal(sumTotal) {
+function updateShippingAndTotal(sumTotal) {
         const shippingCostElement = document.getElementById('shipping-cost');
         const finalTotalElement = document.getElementById('final-total');
 
@@ -203,32 +201,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let finalTotal = sumTotal + shippingCost;
 
+        // Update the UI with the new values
         document.getElementById('cart-total').textContent = `$${sumTotal.toFixed(2)}`;
         shippingCostElement.textContent = `Flat rate: $${shippingCost.toFixed(2)}`;
         finalTotalElement.textContent = `$${finalTotal.toFixed(2)}`;
     }
 
+
     function updateCartCount() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const cartCountElement = document.getElementById('cart-count');
-        cartCountElement.textContent = cart.length;
-    }
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartCountElement = document.getElementById('cart-count');
+    cartCountElement.textContent = cart.length; // 直接使用购物车数组的长度来表示商品项数
+}
+
 
     function setupRemoveButtonListeners() {
-        document.querySelectorAll('.remove-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                let cart = JSON.parse(localStorage.getItem('cart'));
-                cart.splice(index, 1);
-                localStorage.setItem('cart', JSON.stringify(cart));
-                displayCart();
-                updateCartCount();
-            });
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            cart.splice(index, 1); // Remove the item from the array
+            localStorage.setItem('cart', JSON.stringify(cart)); // Update local storage
+            displayCart(); // Refresh cart display
+            updateCartCount(); // Update cart count display
         });
-    }
+    });
+}
 
-    displayCart();
+    displayCart(); // Initially display the cart contents
 });
-</script>
-{% endblock %}
 
+
+
+    </script>
+    
+    
+{% endblock %}

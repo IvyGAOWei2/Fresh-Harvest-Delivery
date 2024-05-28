@@ -32,8 +32,10 @@ def manageProduct():
             ProductImages PI ON p.product_id = PI.product_id
         AND p.is_active = True;
     """
-    product_list = fetchAll(sql_products)
-    return render_template('manage-products.html', productList = product_list)
+    product_list = fetchAll(sql_products, None, True)
+    return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list)
+
+
 @app.route("/product/add",methods = ["POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def addProduct():
@@ -47,6 +49,8 @@ def addProduct():
         return {"status": True}, 200
     else:
         return {"status": False}, 500
+
+
 @app.route("/product/update", methods = ["POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def updateProduct():
@@ -79,6 +83,3 @@ def productDelist():
         return {"status": True}, 200
     else:
         return {"status": False}, 500
-
-
-

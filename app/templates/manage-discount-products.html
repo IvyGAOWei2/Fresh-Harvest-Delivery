@@ -44,16 +44,6 @@
         color: #fff;
         border-color: #0c0c0c;
     }
-
-    .btn-icon {
-        background: none;
-        border: none;
-        color: black;
-    }
-    .btn-icon:hover {
-        color: #007bff;
-        transform: scale(1.2);
-    }
 </style>
 
 <section class="main-content">
@@ -62,7 +52,7 @@
         <div class="d-flex align-items-center mb-3">
             <div class="col-xl-3">
                 <div class="input-group">
-                    <input type="search" id="searchKeyword" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
+                    <input type="search" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
                     <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                 </div>
             </div>
@@ -88,11 +78,9 @@
                             <td class="align-middle">{{ product.price }}</td>
                             <td class="align-middle">{{ product.discount_rate }}%</td>
                             <td>
-                                <div data-bs-toggle="tooltip" data-bs-placement="top" title="Update Info">
-                                    <button class="btn btn-icon product-update" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product.id }}" data-product-id="{{ product.product_id }}" data-discounted-product-id="{{ product.id }}">
-                                        <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
-                                    </button>
-                                </div>
+                                <a class="btn product-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product.id }}" data-product-id="{{ product.id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                                </a>
                             </td>
                         </tr>
                         <div class="offcanvas offcanvas-end" id="updateDiscountProduct{{ product.id }}" tabindex="-1" aria-labelledby="updateDiscountProductModalLabel">
@@ -101,23 +89,26 @@
                                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body">
-                                <form class="update-discount-product-form" data-product-id="{{ product.product_id }}" data-discounted-product-id="{{ product.id }}">
-                                    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                                <form id="updateDiscountProductForm{{ product.id }}" method="POST">
                                     <div class="mb-3">
-                                        <label for="updateDiscountProductName{{ product.id }}" class="form-label">Product Name</label>
-                                        <input type="text" class="form-control" name="name" value="{{product.name}}" id="updateDiscountProductName{{ product.id }}" required>
+                                        <label for="updateDiscountProductName" class="form-label">Product Name</label>
+                                        <input type="text" class="form-control" value="{{product.name}}" id="updateDiscountProductName" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountCategory{{ product.id }}" class="form-label">Category</label>
-                                        <input type="text" class="form-control" name="category_name" value="{{product.category_name}}" id="updateDiscountCategory{{ product.id }}" required>
+                                        <label for="updateDiscountCategory" class="form-label">Category</label>
+                                        <input type="text" class="form-control" value="{{product.category_name}}" id="updateDiscountCategory" required>
+                                    </div>
+                                    <div>
+                                        <label for="updateDiscountDescription" class="form-label">Description</label>
+                                        <textarea type="text" class="form-control form-textarea" id="updateDiscountDescription" required>{{product.description}}</textarea>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountDescription{{ product.id }}" class="form-label">Description</label>
-                                        <textarea class="form-control" name="description" id="updateDiscountDescription{{ product.id }}" required>{{product.description}}</textarea>
+                                        <label for="updateDiscountPrice" class="form-label">Price</label>
+                                        <input type="number" class="form-control" value="{{product.price}}" id="updateDiscountPrice" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountPrice{{ product.id }}" class="form-label">Price</label>
-                                        <input type="number" class="form-control" name="price" value="{{product.price}}" id="updateDiscountPrice{{ product.id }}" required>
+                                        <label for="updateDiscountRate" class="form-label">Discount Rate</label>
+                                        <input type="number" class="form-control" value="{{discountRate}}" id="updateDiscountRate" disabled>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </form>
@@ -132,87 +123,61 @@
                 </tbody>
             </table>
         </div>
-        <nav aria-label="manageDiscountProduct">
-            <ul class="pagination d-flex justify-content-center mt-5">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <div class="d-flex justify-content-center mt-5">
-            <button class="btn btn-secondary" onclick="window.location.href='/employee/discounts'">Return</button>
-        </div>
-        <div class="modal fade" id="addDiscountProductModal" tabindex="-1" aria-labelledby="addDiscountProductModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <h5 class="modal-title text-center text-black" id="addDiscountProductModalLabel">Add New Discount Product</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="addDiscountProductForm">
-                        <div class="modal-body">
-                            <div class="mb-3 text-black">
-                                <label for="selectCategory" class="form-label">Category</label>
-                                <select id="selectCategory" class="form-select" required>
-                                    <option value="">Select Category</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 text-black">
-                                <label for="selectProduct" class="form-label">Product</label>
-                                <select id="selectProduct" class="form-select" required>
-                                    <option value="">Select Product</option>
-                                </select>
-                            </div>
-                            <div class="mb-3 text-black">
-                                <label for="selectDiscount" class="form-label">Discount</label>
-                                <select id="selectDiscount" class="form-select" required>
-                                    <option value="">Select Discount</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Add</button>
-                        </div>
-                    </form>
+    </div>
+    <nav aria-label="manageDiscountProduct">
+        <ul class="pagination d-flex justify-content-center mt-5">
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="modal fade" id="addDiscountProductModal" tabindex="-1" aria-labelledby="addDiscountProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDiscountProductModalLabel">Add New Discount Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <form id="addDiscountProductForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="selectCategory" class="form-label">Category</label>
+                            <select id="selectCategory" class="form-select" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectProduct" class="form-label">Product</label>
+                            <select id="selectProduct" class="form-select" required>
+                                <option value="">Select Product</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectDiscount" class="form-label">Discount</label>
+                            <select id="selectDiscount" class="form-select" required>
+                                <option value="">Select Discount</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <!-- Update Success Message -->
-        <div class="p-3">
-            {% with
-              btn_show = 0,
-              bg_color = '#3399ff',
-              title = 'Discount Product Update Success',
-              msg = 'The discount product has been successfully updated'
-            %}
-                {% include "components/elements/updateSuccess.html" %}
-            {% endwith %}
-        </div>
-
-        <!-- Add Success Message -->
-        <div class="p-3">
-            {% with
-              btn_show = 0,
-              bg_color = '#28a745',
-              title = 'Discount Product Add Success',
-              msg = 'The discount product has been successfully added'
-            %}
-                {% include "components/elements/addSuccess.html" %}
-            {% endwith %}
-        </div>
+    </div>
 </section>
 {% endblock %}
 
@@ -222,8 +187,6 @@
         const categorySelect = document.getElementById('selectCategory');
         const productSelect = document.getElementById('selectProduct');
         const discountSelect = document.getElementById('selectDiscount');
-        const searchKeywordInput = document.getElementById('searchKeyword');
-        const discountProductTableBody = document.getElementById('discountProductTableBody');
 
         // Fetch categories and populate the category dropdown
         fetch('/api/categories')
@@ -311,87 +274,13 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
-                    new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                    alert('Discount product added successfully.');
+                    location.reload();
                 } else {
                     alert("Invalid request");
                 }
             })
             .catch(error => console.error('Error:', error));
-        });
-
-        // Enable tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-
-        // Update discount product
-        const updateDiscountProductForms = document.querySelectorAll('.update-discount-product-form');
-        updateDiscountProductForms.forEach(form => {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const formData = new FormData(form);
-                const productId = form.getAttribute('data-product-id');
-                const updatedProductData = {
-                    product_id: formData.get('product_id'),
-                    name: formData.get('name'),
-                    category_name: formData.get('category_name'),
-                    description: formData.get('description'),
-                    price: parseFloat(formData.get('price')),
-                };
-
-                fetch(`/employee/update-discount-product/${productId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updatedProductData)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Bad request');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === true) {
-                        new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-                    } else {
-                        alert("Invalid request");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        });
-
-        // Add event listener to close buttons of success modals to refresh page
-        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
-            location.reload();
-        });
-
-        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
-            location.reload();
-        });
-
-        // Search functionality
-        searchKeywordInput.addEventListener('input', function () {
-            const keyword = searchKeywordInput.value.toLowerCase();
-            const rows = discountProductTableBody.getElementsByTagName('tr');
-
-            Array.from(rows).forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                let containsKeyword = false;
-                Array.from(cells).forEach(cell => {
-                    if (cell.textContent.toLowerCase().includes(keyword)) {
-                        containsKeyword = true;
-                    }
-                });
-                if (containsKeyword) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
         });
     });
 </script>
