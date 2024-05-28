@@ -51,6 +51,24 @@ CREATE TABLE Consumer (
 	FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
 
+CREATE TABLE BusinessApplications (
+    application_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT NOT NULL,
+    business_name VARCHAR(100) NOT NULL,
+    contact_name VARCHAR(100) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postcode VARCHAR(10) NOT NULL,
+    documentation VARCHAR(255) NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    application_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    approved_by SMALLINT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (approved_by) REFERENCES Users(user_id)
+);
+
 CREATE TABLE Category (
     category_id TINYINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL
