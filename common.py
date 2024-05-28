@@ -58,7 +58,6 @@ class employeeProfile(BaseModel):
     phone: Optional[str] = Field(None, min_length=1, max_length=13)
     hire_date: Optional[datetime] = Field(None)
     depot_id: Optional[int] = Field(None, ge=1, le=10)
-    type:Optional[str] = Field(None)
     new_password: Optional[str] = Field(None, min_length=1, max_length=50)
     old_password: Optional[str] = Field(None, min_length=1, max_length=50)
 

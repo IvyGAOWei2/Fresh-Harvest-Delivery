@@ -24,7 +24,6 @@ from app import profile
 from app import index
 from app import shop
 from app import cart
-from app import consumer_points
 
 # Employees
 from app import admin
