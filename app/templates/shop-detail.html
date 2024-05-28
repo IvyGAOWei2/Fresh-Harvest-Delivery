@@ -36,10 +36,12 @@
                             <h5 class="fw-bold mb-3">
                                 $ {{product.price}}
                                 /
-                                {% if product.unit_name == 'Weight' %}kg{% endif %}
-                                {% if product.unit_name == 'kg' %}kg{% endif %}
-                                {% if product.unit_name == 'g' %}g{% endif %}
+                                {% if product.unit_name == 'Weight_kg' %}kg{% endif %}
+                                {% if product.unit_name == 'Weight_g' %}g{% endif %}
+                                {% if product.unit_name == 'Tray' %}ty{% endif %}
                                 {% if product.unit_name == 'Each' %}ea{% endif %}
+                                {% if product.unit_name == 'Bunch' %}ea{% endif %}
+                                {% if product.unit_name == 'Punnet' %}ea{% endif %}
                             </h5>
                             <div class="d-flex mb-4">
                                 <i class="fa fa-star text-secondary"></i>
@@ -66,7 +68,7 @@
                             data-id="{{ product.product_id }}"
                             data-name="{{ product.name }}"
                             data-price="{{ product.price }}"
-                            data-img="{{ url_for('static', filename='images/product/' + product.primary_image) }}" data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
+                            data-img="{{ url_for('static', filename='images/product/' + product.primary_image) }}" data-unit="{% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
                             <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                          </a>
                          
@@ -90,10 +92,16 @@
                                             <div class="col-6">
                                                 <div class="row bg-light align-items-center text-center justify-content-center py-2">
                                                     <div class="col-6">
-                                                        <p class="mb-0">Weight</p>
+                                                        <p class="mb-0">
+                                                            {% if product.unit_name == 'Weight_kg' or product.unit_name == 'Weight_g'%}
+                                                                Weight
+                                                            {% else %}
+                                                                {{product.unit_name }}
+                                                            {% endif %}
+                                                        </p>
                                                     </div>
                                                     <div class="col-6">
-                                                        <p class="mb-0">1 kg</p>
+                                                        <p class="mb-0">{{product.unit_std}}</p>
                                                     </div>
                                                 </div>
                                                 <div class="row text-center align-items-center justify-content-center py-2">
@@ -122,10 +130,11 @@
                                                 </div>
                                                 <div class="row bg-light text-center align-items-center justify-content-center py-2">
                                                     <div class="col-6">
-                                                        <p class="mb-0">Min Weight</p>
+                                                        <p class="mb-0">
+                                                            Min {% if product.unit_name == 'Weight_kg' or product.unit_name == 'Weight_g'%}Weight{% endif %}</p>
                                                     </div>
                                                     <div class="col-6">
-                                                        <p class="mb-0">250 Kg</p>
+                                                        <p class="mb-0">{{product.unit_min}}</p>
                                                     </div>
                                                 </div>
                                             </div>

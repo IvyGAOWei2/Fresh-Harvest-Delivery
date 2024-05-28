@@ -35,7 +35,6 @@ CREATE TABLE Consumer (
     family_name VARCHAR(35) NOT NULL,
     address VARCHAR(80),
     phone VARCHAR(13) NOT NULL,
-	city VARCHAR(100),
 	postcode VARCHAR(10),
 	image VARCHAR(80),
 	credit_available DECIMAL(10, 2),
@@ -58,7 +57,9 @@ CREATE TABLE Category (
 
 CREATE TABLE Unit (
     unit_id TINYINT PRIMARY KEY AUTO_INCREMENT,
-    unit_name VARCHAR(50) NOT NULL
+    unit_name VARCHAR(50) NOT NULL,
+    unit_std  VARCHAR(5) NOT NULL,
+    unit_min VARCHAR(5) NOT NULL
 );
 
 CREATE TABLE Products (
