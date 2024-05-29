@@ -85,22 +85,22 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" value="{{ member.given_name }}" id="member_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member.given_name }}" id="member_given_name{{ member.user_id }}" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" value="{{ member.family_name }}" id="member_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member.family_name }}" id="member_family_name{{ member.user_id }}" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" value="{{ member.phone }}" minlength="7" maxlength="13" id="phone" name="phone" pattern="^[0-9]+$" >
+              <input type="text" class="form-control" value="{{ member.phone }}" minlength="7" maxlength="13" id="phone{{ member.user_id }}" name="phone" pattern="^[0-9]+$" >
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member.address }}" id="address" name="address">
+              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member.address }}" id="address{{ member.user_id }}" name="address">
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
@@ -119,7 +119,7 @@
             {% if profile_type == "Consumer" %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Postcode</label>
-              <input class="form-control form-textarea" value="{{ member.postcode }}" minlength="4" maxlength="4" id="consumer_postcode" name="postcode" pattern="^[0-9]+$" >
+              <input class="form-control form-textarea" value="{{ member.postcode }}" minlength="4" maxlength="4" id="consumer_postcode{{ member.user_id }}" name="postcode" pattern="^[0-9]+$" >
               <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
             </div>
             <div class="col-md-6 mb-3">
@@ -162,8 +162,7 @@
               <label class="form-label">Hire date</label>
               <input type="date" class="form-control" value="{{ member.hire_date }}" id="employees_hire_date" disabled>
             </div>
-           
-              {% if profile_type == "National_Manager" %}
+                {% if profile_type == "National_Manager" %}
                 <div class="col-md-6 mb-3">
                 <label class="form-label">Type</label>
                   <div class="d-flex align-items-center">
@@ -177,7 +176,7 @@
                 </div>
                 {% elif profile_type == 'Local_Manager' %}
                 <div class="col-md-6 mb-3">
-                  <label class="form-label" for="add_phone">Type<sup>*</sup></label>
+                  <label class="form-label" for="update_type">Type<sup>*</sup></label>
                   <input type="text" class="form-control" value="Staff" disabled>
                   <input type="text" class="form-control d-none" name="type" value="Staff"/>
                 </div>
@@ -185,8 +184,8 @@
             {% endif %}
   
             <div class="col-md-6 mb-3">
-              <label for="basic-url" class="form-label">New Password</label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="member_new_password" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+              <label class="form-label" for="member_new_password{{ member.user_id }}">New Password</label>
+              <input type="text" class="form-control" minlength="8" maxlength="20" value=""  name="new_password" id="member_new_password{{ member.user_id }}" >
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -255,57 +254,57 @@
             
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_email">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="add_email" name="email" placeholder="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <input type="email" maxlength="50" class="form-control" id="add_email{{ member.user_id }}" name="email" placeholder="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_given_name">First Name<sup>*</sup></label>
-              <input type="text" class="form-control" id="add_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
+              <input type="text" class="form-control" id="add_given_name{{ member.user_id }}" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_family_name">Last Name<sup>*</sup></label>
-              <input type="text" class="form-control" id="add_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
+              <input type="text" class="form-control" id="add_family_name{{ member.user_id }}" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_phone">Phone<sup>*</sup></label>
-              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone" name="phone" required>
+              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone{{ member.user_id }}" name="phone" pattern="^[0-9]+$" required>
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_address">Address<sup>*</sup></label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address" name="address" required>
+              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address{{ member.user_id }}" name="address" required>
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_depot">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control" id="add_depot" name="depot_id">
+                  <select class="form-control" id="add_depot{{ member.user_id }}" name="depot_id">
                     {% for depot in depotList %}
                     <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
                         {{depot.location}}
                     </option>
                     {% endfor %}
                   </select>
+                  <div class="invalid-feedback">Please select a depot.</div>
                 </div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label" for="add_hire_date">Hire date<sup>*</sup></label>
-              <input type="date" class="form-control" id="add_hire_date" name="hire_date">
+              <input type="date" class="form-control" id="add_hire_date{{ member.user_id }}" name="hire_date">
             </div>  
 
             {% if profile_type == 'National_Manager' %}
             <div class="col-md-6 mb-3">
               <label class="form-label" for="user_type">Type<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control" name="type" id="user_type" required>
+                  <select class="form-control" name="type" id="user_type{{ member.user_id }}" required>
                     <option value="" selected >Please select an employee type</option>
                     <option value="Staff">Staff</option>
                     <option value="Local_Manager">Local manager</option>
                   </select>
                   <div class="invalid-feedback">Please select a type from the list.</div>
-                  <div class="valid-feedback">Looks good!</div>      
                 </div>
             </div>
             {% elif profile_type == 'Local_Manager' %}
@@ -318,7 +317,7 @@
             
             <div class="col-md-6 mb-3">
               <label for="add_password" class="form-label">Password<sup>*</sup></label>
-              <input type="text" minlength="8" maxlength="20" class="form-control" id="add_password" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+              <input type="text" minlength="8" maxlength="20" class="form-control" id="add_password{{ member.user_id }}" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -382,124 +381,138 @@
 </div>
 
 {% block script %}
+
   {% include "components/elements/InputValidate.html" %}
 
   <script>
 
-  document.getElementById('member_given_name').addEventListener('input', function() {
-    InputValidate('member_given_name');
+  document.getElementById('member_given_name' + user_id).addEventListener('input', function() {
+    InputValidate('member_given_name' + user_id);
   });
 
-  document.getElementById('member_family_name').addEventListener('input', function() {
-    InputValidate('member_family_name');
-  });
+  // document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('member_family_name{{ member.user_id }}');
+  // });
 
-  document.getElementById('phone').addEventListener('input', function() {
-    InputValidate('phone');
-  });
+  // document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('phone{{ member.user_id }}');
+  // });
 
-  document.getElementById('address').addEventListener('input', function() {
-    InputValidate('address');
-  });
+  // document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('address{{ member.user_id }}');
+  // });
 
-  document.getElementById('consumer_postcode').addEventListener('input', function() {
-    InputValidate('consumer_postcode');
-  });
+  // document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('consumer_postcode{{ member.user_id }}');
+  // });
 
-  document.getElementById('member_new_password').addEventListener('input', function() {
-    InputValidate('member_new_password');
-  });
+  // document.getElementById('member_new_password{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('member_new_password{{ member.user_id }}');
+  // });
 
-  document.getElementById('add_email').addEventListener('input', function() {
-    InputValidate('add_email');
-  });
+  // document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_email{{ member.user_id }}');
+  // });
 
-  document.getElementById('add_given_name').addEventListener('input', function() {
-    InputValidate('add_given_name');
-  });
+  // document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_given_name{{ member.user_id }}');
+  // });
 
-  document.getElementById('add_family_name').addEventListener('input', function() {
-    InputValidate('add_family_name');
-  });
+  // document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_family_name{{ member.user_id }}');
+  // });
 
-  document.getElementById('add_phone').addEventListener('input', function() {
-    InputValidate('add_phone');
-  });
+  // document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_phone{{ member.user_id }}');
+  // });
 
-  document.getElementById('add_address').addEventListener('input', function() {
-    InputValidate('add_address');
+  // document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_address{{ member.user_id }}');
+  // });
+
+  // document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_depot{{ member.user_id }}');
+  // });
+
+  // document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('add_password{{ member.user_id }}');
+  // });
+
+  // document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
+  //   InputValidate('user_type{{ member.user_id }}');
   });
 
   // update member
-  document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('updateMemberSuccess').addEventListener('hidden.bs.modal', () => location.reload());
+  // document.addEventListener('DOMContentLoaded', function () {
+  //       document.getElementById('updateMemberSuccess').addEventListener('hidden.bs.modal', () => location.reload());
 
-        document.querySelectorAll('.user-update').forEach(function (update) {
-        const user_id = update.getAttribute('data-user-id')
-        const updateMemberFormForm = document.getElementById('updateMemberForm' + user_id);
+  //       document.querySelectorAll('.user-update').forEach(function (update) {
+  //       const user_id = update.getAttribute('data-user-id')
+  //       const updateMemberFormForm = document.getElementById('updateMemberForm' + user_id);
 
-        updateMemberForm.addEventListener('submit', event => {
-          if (!updateMemberForm.checkValidity()) return // Stop further execution if form is invalid
-          event.preventDefault();
-          const formData = new FormData(updateMemberForm);
+  //       updateMemberForm.addEventListener('submit', event => {
+  //         if (!updateMemberForm.checkValidity()) return // Stop further execution if form is invalid
+  //         event.preventDefault();
+  //         const formData = new FormData(updateMemberForm);
 
-          fetch('/admin/profile/update', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.status == 1) {
-                  console.log(data.status)
-                  // Show updateNewsSuccess modal if update is successful
-                  new bootstrap.Modal(document.getElementById('updateMemberSuccess')).show();
-              }
-              else {
-                  alert("Invalid request");
-                  // location.reload(); // Reload the page on failure
-              }
-          })
-          .catch(error => console.error('Error:', error));
-        });
-      })
-    });
+  //         fetch('/admin/profile/update', {
+  //             method: 'POST',
+  //             body: formData
+  //         })
+  //         .then(response => response.json())
+  //         .then(data => {
+  //             if (data.status == 1) {
+  //                 console.log(data.status)
+  //                 // Show updateNewsSuccess modal if update is successful
+  //                 new bootstrap.Modal(document.getElementById('updateMemberSuccess')).show();
+  //             }
+  //             else {
+  //                 alert("Invalid request");
+  //                 // location.reload(); // Reload the page on failure
+  //             }
+  //         })
+  //         .catch(error => console.error('Error:', error));
+  //       });
+  //     })
+  //   });
   
   // add member
-  document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+  // document.addEventListener('DOMContentLoaded', function () {
+  //       document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-        document.querySelectorAll('.user-add').forEach(function (add) {
-        const user_id = add.getAttribute('data-user-id')
-        const addMemberForm = document.getElementById('addMemberForm' + user_id);
+  //       document.querySelectorAll('.user-add').forEach(function (add) {
+  //       const user_id = add.getAttribute('data-user-id')
+  //       const addMemberForm = document.getElementById('addMemberForm' + user_id);
 
-        // Handle add form submission
-        addMemberForm.addEventListener('submit', function (event) {
-            if (!addMemberForm.checkValidity()) return // Stop further execution if form is invalid
-            event.preventDefault();
-            event.stopPropagation();
+  //       // Handle add form submission
+  //       addMemberForm.addEventListener('submit', function (event) {
+  //           if (!addMemberForm.checkValidity()) return // Stop further execution if form is invalid
+  //           event.preventDefault();
+  //           event.stopPropagation();
 
-            const formData = new FormData(addMemberForm); // Prepare form data
+  //           const formData = new FormData(addMemberForm); // Prepare form data
 
-            // Send login request to flask server
-            fetch('/admin/profile/add', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status == true) { // Redirect user if login is successful
-                        // console.log(data)
-                        // Show updateStaffSuccess modal if update is successful
-                        new bootstrap.Modal(document.getElementById('addProfileSuccessModal')).show();
-                    }
-                    else {
-                        alert("Invalid request");
-                    }
-                })
-                .alert(error => console.error('Error:', error));
-        });
-      })
-    });
+  //           // Send login request to flask server
+  //           fetch('/admin/profile/add', {
+  //               method: 'POST',
+  //               body: formData
+  //           })
+  //               .then(response => response.json())
+  //               .then(data => {
+  //                   if (data.status == true) { // Redirect user if login is successful
+  //                       // console.log(data)
+  //                       // Show updateStaffSuccess modal if update is successful
+  //                       new bootstrap.Modal(document.getElementById('addProfileSuccessModal')).show();
+  //                   }
+  //                   else {
+  //                       alert("Invalid request");
+  //                   }
+  //               })
+  //               .alert(error => console.error('Error:', error));
+  //       });
+  //     })
+  //   });
   </script>
+
 
 {% endblock %}
