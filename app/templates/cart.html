@@ -82,7 +82,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     function displayCart() {
+    const userId = localStorage.getItem('userId'); // 获取当前用户ID
+
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const userCartItems = cartItems.filter(item => item.userId === userId); // 只获取当前用户的购物车项
+
     const cartBody = document.querySelector('#cart tbody');
     cartBody.innerHTML = ''; // Clear existing content
 
@@ -147,14 +151,25 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupQuantityInputListeners() {
     document.querySelectorAll('.quantity input').forEach(input => {
         input.addEventListener('input', function() {
-            const index = parseInt(this.parentNode.querySelector('.btn-minus').dataset.index); // 使用减号按钮的索引
+            const index = parseInt(this.parentNode.querySelector('.btn-minus').dataset.index);
             let cart = JSON.parse(localStorage.getItem('cart'));
-            const newQuantity = parseFloat(this.value); // 获取用户输入的新数量
+            let item = cart[index];
+            const newQuantity = parseFloat(this.value);
+
             if (newQuantity > 0) {
-                cart[index].quantity = newQuantity; // 更新数量
+                item.quantity = newQuantity;
+                // 重新计算qty
+                if (item.unit === 'kg') {
+                    item.qty = item.quantity / 0.25;
+                } else if (item.unit === 'g') {
+                    item.qty = item.quantity / 10;
+                } else if (item.unit === 'ea') {
+                    item.qty = item.quantity;
+                }
             } else {
                 cart.splice(index, 1); // 如果数量小于等于0，则移除该商品
             }
+
             localStorage.setItem('cart', JSON.stringify(cart));
             displayCart(); // 刷新购物车显示
             updateCartCount(); // 更新购物车计数显示
@@ -163,22 +178,34 @@ function setupQuantityInputListeners() {
 }
 
 
+
 function setupQuantityChangeListeners() {
     document.querySelectorAll('.btn-plus, .btn-minus').forEach(button => {
         button.addEventListener('click', function() {
             const index = parseInt(this.dataset.index);
             const increment = parseFloat(this.dataset.increment);
             const isAdding = this.classList.contains('btn-plus');
-            const unit = this.dataset.unit;  // 确保单位数据正确传递到每个按钮
-
             let cart = JSON.parse(localStorage.getItem('cart'));
+            let item = cart[index];
+
             if (isAdding) {
-                cart[index].quantity += increment;
+                item.quantity += increment;
             } else {
-                if (cart[index].quantity > increment) {
-                    cart[index].quantity -= increment;
+                if (item.quantity > increment) {
+                    item.quantity -= increment;
                 } else {
                     cart.splice(index, 1); // 如果数量减到0或以下，从购物车中移除该项
+                }
+            }
+
+            // 重新计算qty
+            if (item) {
+                if (item.unit === 'kg') {
+                    item.qty = item.quantity / 0.25;
+                } else if (item.unit === 'g') {
+                    item.qty = item.quantity / 10;
+                } else if (item.unit === 'ea') {
+                    item.qty = item.quantity;
                 }
             }
 
@@ -188,6 +215,7 @@ function setupQuantityChangeListeners() {
         });
     });
 }
+
 
 
 function updateShippingAndTotal(sumTotal) {

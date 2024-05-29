@@ -169,5 +169,30 @@
         })
         .catch(error => console.error('Error:', error));
     });
+    document.addEventListener('DOMContentLoaded', function() {
+    var loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            fetch('/login', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    localStorage.setItem('userId', data.userId);
+                    window.location.href = data.message;
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    } else {
+        console.log('Login form not found');
+    }
+});
+
   </script>
 {% endblock %}

@@ -153,10 +153,10 @@
 })(jQuery);
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
     const cartCountElement = document.getElementById('cart-count');
-    
     // 初始化购物车计数
     updateCartCount();
 
@@ -167,28 +167,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function addToCart(button) {
-        const name = button.dataset.name;
-        const price = parseFloat(button.dataset.price);
-        const imgSrc = button.dataset.img;
-        const unit = button.dataset.unit;
-        const id = button.dataset.id
-        let increment = 1;
-        if (unit === 'kg') increment = 0.25;
-        else if (unit === 'g') increment = 10;
+    // function addToCart(button) {
+    //     const name = button.dataset.name;
+    //     const price = parseFloat(button.dataset.price);
+    //     const imgSrc = button.dataset.img;
+    //     const unit = button.dataset.unit;
+    //     const id = button.dataset.id
+    //     let increment = 1;
+    //     if (unit === 'kg') increment = 0.25;
+    //     else if (unit === 'g') increment = 10;
 
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let found = cart.find(item => item.id === id && item.unit === unit);
+    //     let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    //     let found = cart.find(item => item.id === id && item.unit === unit);
 
-        if (found) {
-            found.quantity += increment;
-        } else {
-            cart.push({ id, name, price, imgSrc, quantity: increment, unit});
-        }
+    //     if (found) {
+    //         found.quantity += increment;
+    //     } else {
+    //         cart.push({ id, name, price, imgSrc, quantity: increment, unit});
+    //     }
 
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount(); // 更新购物车计数显示
-    }
+    //     localStorage.setItem('cart', JSON.stringify(cart));
+    //     updateCartCount(); // 更新购物车计数显示
+    // }
 
     function updateCartCount() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -200,3 +200,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
 });
+
