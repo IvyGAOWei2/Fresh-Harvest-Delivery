@@ -86,4 +86,4 @@ def passwordReset():
         print(email)
         #send_reset_email(email)
         return render_template('reset-confirmation.html', email=email)
-    return render_template('reset-password.html.html')
+    return render_template('reset-password.html')

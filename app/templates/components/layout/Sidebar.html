@@ -44,6 +44,9 @@
     <a href="{{ url_for('manageProduct') }}" class="{% if is_manageProduct %}is_active{% endif %}">
       <i class="fas fa-boxes"></i> <span>Products</span>
     </a>
+    <a href="{{ url_for('staffOrderHistory') }}" class="{% if is_manageProduct %}is_active{% endif %}">
+      <i class="fas fa-boxes"></i> <span>Order History</span>
+    </a>
     {% if session.type != 'Staff' %}
     <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Discounts
