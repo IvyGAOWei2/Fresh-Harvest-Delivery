@@ -29,7 +29,7 @@ def login():
                 # If the password is correct, set session variables and redirect to the dashboard
                 session['loggedin'], session['id'], session['email'], session['type'], session['depot_id'] = True, account['user_id'], account['email'], account['type'], account['depot_id']
                 if account['type'] == 'Consumer':
-                    return {"status": True, 'message': '/', 'userId': account['user_id']}, 200
+                    return {"status": True, 'message': '/'}, 200
                 else:
                     return {"status": True, 'message': '/admin'}, 200
             else:

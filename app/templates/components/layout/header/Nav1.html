@@ -31,7 +31,7 @@
                 <a href="{{ url_for('checkout') }}" class="dropdown-item {% if is_checkout %}active{% endif %}">Chackout</a>
                 <a href="{{ url_for('exmaples') }}" class="dropdown-item {% if is_examples %}active{% endif %}">Example Page</a>
                 <a href="{{ url_for('notFound') }}" class="dropdown-item {% if is_404 %}active{% endif %}">404 Page</a>
-                <a href="{{ url_for('logout') }}" class="dropdown-item {% if is_404 %}active{% endif %}" >Logout</a>
+                <a href="{{ url_for('logout') }}" class="dropdown-item {% if is_404 %}active{% endif %}">Logout</a>
               </div>
             </div>
             {% if session.loggedin and session.type == 'Consumer' %}
