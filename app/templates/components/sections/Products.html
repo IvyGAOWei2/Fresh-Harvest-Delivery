@@ -11,26 +11,26 @@
             <div class="mt-2 mb-4">
                 <strong class="text-dark fs-5 fw-bold">
                     ${{ product.price }} / 
-                    {% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% endif %}
+                    {% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% endif %}
                 </strong>
             </div>
-            <div class="d-flex justify-content-between align-items-center btn-add-to-cart">
-                <div class="quantity-controls">
+            <div class="d-flex justify-content-between align-items-center btn-add-to-cart" >
+                <div class="quantity-controls" style="display: flex; justify-content: center; align-items: center; margin-left:30px; ">
                     <button class="btn btn-sm btn-minus rounded-circle bg-light" data-unit="{{ product.unit_name }}">-</button>
                     <input type="number" class="quantity-input form-control form-control-sm text-center"
-                        value="{% if product.unit_name == 'Weight' or product.unit_name == 'kg' %}0.25{% elif product.unit_name == 'g' %}10{% elif product.unit_name == 'Each' %}1{% endif %}"
-                        min="{% if product.unit_name == 'Weight' or product.unit_name == 'kg' %}0.25{% elif product.unit_name == 'g' %}10{% else %}1{% endif %}"
-                        step="{% if product.unit_name == 'Weight' or product.unit_name == 'kg' %}0.25{% elif product.unit_name == 'g' %}10{% else %}1{% endif %}"
+                        value="{% if product.unit_name == 'Weight_kg' %}0.25{% elif product.unit_name == 'Weight_g' %}10{% elif product.unit_name == 'Each' %}1{% endif %}"
+                        min="{% if product.unit_name == 'Weight_kg' %}0.25{% elif product.unit_name == 'Weight_g' %}10{% else %}1{% endif %}"
+                        step="{% if product.unit_name == 'Weight_kg'  %}0.25{% elif product.unit_name == 'Weight_g' %}10{% else %}1{% endif %}"
                         style="width: 65px;">
                     <button class="btn btn-sm btn-plus rounded-circle bg-light" data-unit="{{ product.unit_name }}">+</button>
+                    <span class="ms-2" style="font-size: 20px;">{% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{ product.unit_name }}{% endif %}</span>
                 </div>
                 
-                <span class="ms-2" style="font-size: 20px;">{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{ product.unit_name }}{% endif %}</span>
                 
-                <a href="#" class="btn-add-to-cart btn btn-primary rounded-pill px-3" data-id="{{ product.product_id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" data-img="{{ url_for('static', filename='images/product/' + product.image) }}" data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{ product.unit_name }}{% endif %}">
-                    <i class="fa fa-shopping-bag me-2"></i> Add to cart
-                </a>
             </div>
+            <a href="#" class="btn-add-to-cart btn btn-primary rounded-pill px-3" data-id="{{ product.product_id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" data-img="{{ url_for('static', filename='images/product/' + product.image) }}" data-unit="{% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{ product.unit_name }}{% endif %}" style="margin-top:20px;  width:100%">
+                <i class="fa fa-shopping-bag me-2"></i> Add to cart
+            </a>
         </div>
     </div>
 </div>

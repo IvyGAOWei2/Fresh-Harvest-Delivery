@@ -218,10 +218,12 @@
             let increment = 1; // 默认增量为1
 
             // 根据单位设置适当的增量
-            if (unit === 'Weight' || unit === 'kg') {
+            if (unit === 'Weight_kg') {
                 increment = 0.25;
-            } else if (unit === 'g') {
+            } else if (unit === 'Weight_g') {
                 increment = 10;
+            }else{
+                increment = 1;
             }
 
             // 根据按钮类型增加或减少值

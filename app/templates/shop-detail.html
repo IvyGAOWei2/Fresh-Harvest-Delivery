@@ -54,12 +54,12 @@
                             <div class="quantity-controls" style="display: flex; align-items: center;">
                                 <button class="btn btn-sm btn-minus rounded-circle bg-light" data-unit="{{ product.unit_name }}" style="margin-right: 5px;">-</button>
                                 <input type="number" class="quantity-input form-control form-control-sm text-center"
-                                    value="{% if product.unit_name == 'Weight' or product.unit_name == 'kg' %}0.25{% elif product.unit_name == 'g' %}10{% elif product.unit_name == 'Each' %}1{% endif %}"
-                                    min="{% if product.unit_name == 'Weight' or product.unit_name == 'kg' %}0.25{% elif product.unit_name == 'g' %}10{% else %}1{% endif %}"
-                                    step="{% if product.unit_name == 'Weight' or product.unit_name == 'kg' %}0.25{% elif product.unit_name == 'g' %}10{% else %}1{% endif %}"
+                                    value="{% if product.unit_name == 'Weight_kg' %}0.25{% elif product.unit_name == 'Weight_g' %}10{% elif product.unit_name == 'Each' %}1{% endif %}"
+                                    min="{% if product.unit_name == 'Weight_kg'  %}0.25{% elif product.unit_name == 'Weight_g' %}10{% else %}1{% endif %}"
+                                    step="{% if product.unit_name == 'Weight_kg'  %}0.25{% elif product.unit_name == 'Weight_g' %}10{% else %}1{% endif %}"
                                     style="width: 70px;">
                                 <button class="btn btn-sm btn-plus rounded-circle bg-light" data-unit="{{ product.unit_name }}" style="margin-right: 5px;">+</button>
-                                <span class="ms-2" style="font-size: 20px;">{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{ product.unit_name }}{% endif %}</span>
+                                <span class="ms-2" style="font-size: 20px;">{% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{ product.unit_name }}{% endif %}</span>
                             </div>
 
                             <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary" style="margin-top:15px"
@@ -465,10 +465,12 @@
             let increment = 1; // 默认增量为1
 
             // 根据单位设置适当的增量
-            if (unit === 'Weight' || unit === 'kg') {
+            if (unit === 'Weight_kg' ) {
                 increment = 0.25;
-            } else if (unit === 'g') {
+            } else if (unit === 'Weight_g') {
                 increment = 10;
+            }else{
+                increment = 1;
             }
 
             // 根据按钮类型增加或减少值
