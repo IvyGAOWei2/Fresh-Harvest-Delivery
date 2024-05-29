@@ -147,7 +147,11 @@ function validateForm(formSelector) {
 }
 
 function loadCartDetails() {
+    const userId = localStorage.getItem('userId');  // 从 localStorage 获取当前用户ID
+
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const filteredCartItems = cartItems.filter(item => item.userId === userId);  // 过滤出当前用户的购物车项
+
     const cartBody = document.querySelector('.table-group-divider');
     const orderForm = document.querySelector('#payment-form');
     cartBody.innerHTML = '';
@@ -345,6 +349,52 @@ document.getElementById('deliveryfirstname').addEventListener('input', function(
     document.getElementById('cc-cvv').addEventListener('input', function() {
         InputValidate('cc-cvv');
     });    
+    
+    function formatCreditCardNumber(event) {
+    let input = event.target;
+    let value = input.value.replace(/\D/g, ''); // 移除非数字字符
 
+    if (value.length > 16) {
+      value = value.slice(0, 16); // 限制输入最大长度为16位数字
+    }
+
+    value = value.replace(/(\d{4})(?=\d)/g, '$1-'); // 在每4个数字后添加连字符 "-"
+    input.value = value;
+
+    if (value.length < 18) {
+      input.setCustomValidity('Credit card number must be at least 16 characters long');
+      input.classList.add('is-invalid');
+    } else {
+      input.setCustomValidity('');
+      input.classList.remove('is-invalid');
+    }
+  }
+  function formatExpirationDate(event) {
+    let input = event.target;
+    let currentDate = new Date();
+    let currentYear = currentDate.getFullYear() % 100; // 获取当前年份的后两位数字
+    let currentMonth = currentDate.getMonth() + 1; // 获取当前月份
+    let value = input.value.replace(/\D/g, ''); // 移除非数字字符
+    let maxYear = currentYear + 5; // 当前年份后的五年
+    let maxMonth = 12; // 最大月份为12
+
+    if (value.length > 4) {
+      value = value.slice(0, 4); // 限制输入最大长度为4位数字
+    }
+
+    value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2'); // 在输入两个数字后自动添加斜杠 "/"
+    input.value = value;
+
+    let inputYear = parseInt(value.slice(3, 5), 10);
+    let inputMonth = parseInt(value.slice(0, 2), 10);
+
+    if (inputYear > maxYear || inputMonth > maxMonth || inputYear < currentYear || (inputYear === currentYear && inputMonth < currentMonth)) {
+      input.setCustomValidity('something');
+      input.classList.add('is-invalid');
+    } else {
+      input.setCustomValidity('');
+      input.classList.remove('is-invalid');
+    }
+  }
 </script>
 {% endblock %}
