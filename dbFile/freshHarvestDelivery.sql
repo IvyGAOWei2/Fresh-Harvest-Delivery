@@ -50,6 +50,12 @@ CREATE TABLE Consumer (
 	FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
 
+CREATE TABLE ConsumerCart (
+    user_id SMALLINT PRIMARY KEY,
+    cart JSON,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
 CREATE TABLE Category (
     category_id TINYINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL

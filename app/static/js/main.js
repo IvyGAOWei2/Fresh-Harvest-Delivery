@@ -187,6 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
+        fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(cart)
+        })
         updateCartCount(); // 更新购物车计数显示
     }
 
