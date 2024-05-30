@@ -245,10 +245,44 @@ INSERT INTO GiftCardcode (product_id, user_id, code, balance, is_used) VALUES
 (6, 1, 'GC789GHI', 50.00, FALSE);
 
 -- Orders table
-INSERT INTO Orders (order_id, user_id, order_date, delivery_date, delivery_address, payment_status, status, total) VALUES
-(1, 1, '2024-05-03', '2024-05-10', '123 Main St, Christchurch', 'Completed', 'Delivered', 10.45),
-(2, 5, '2024-04-01', '2024-04-08', '456 Elm St, Christchurch', 'Completed', 'Delivered', 71.96),
-(3, 5, '2024-04-02', '2024-04-09', '456 Elm St, Christchurch', 'Completed', 'Delivered', 34.98);
+INSERT INTO Orders (user_id, order_date, delivery_date, billing_address, delivery_address, payment_method, payment_info, payment_status, status, total)
+VALUES 
+(
+    1, 
+    '2024-05-30', 
+    '2024-06-05', 
+    JSON_OBJECT('street', '123 Main St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    JSON_OBJECT('street', '456 Market St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    'Credit Card', 
+    '1111-2222-3333-4444', 
+    'Completed', 
+    'Delivered', 
+    10.45
+),
+(
+    2, 
+    '2024-05-29', 
+    '2024-06-04', 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    'Debit Card', 
+    '1111-2222-3333-4444', 
+    'Completed', 
+    'Delivered', 
+    71.96
+),
+(
+    3, 
+    '2024-04-02', 
+    '2024-04-09', 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    'Debit Card', 
+    '1111-2222-3333-4444', 
+    'Completed', 
+    'Delivered', 
+    34.98
+);
 
 -- OrderItems table
 INSERT INTO OrderItems (order_id, product_id, quantity, subtotal) VALUES

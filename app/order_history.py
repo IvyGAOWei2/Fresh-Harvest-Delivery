@@ -8,13 +8,13 @@ from common import roleRequired, validateProductProfile, getUserProfile
 
 
 
-@app.route("/consumer/order/history", methods = ["GET",'POST'])
+@app.route("/order/history", methods = ["GET",'POST'])
 @roleRequired(['Consumer'])
-def consumerOrderHistory():
+def orderHistory():
     profile = getUserProfile(session['id'], session['type'])
 
   
-    return render_template('consumer-order-history.html', profile=profile )
+    return render_template('order-history.html', profile=profile )
 
 
 

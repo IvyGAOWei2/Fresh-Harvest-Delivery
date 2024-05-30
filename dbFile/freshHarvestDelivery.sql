@@ -110,10 +110,12 @@ CREATE TABLE Orders (
     user_id SMALLINT,
     order_date DATE,
     delivery_date DATE,
-	delivery_address VARCHAR(150),
+    billing_address JSON,
+    delivery_address JSON,
+    payment_method ENUM('Credit Card', 'Debit Card', 'Account', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    payment_info VARCHAR(20) NOT NULL,
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	payment_method ENUM('Residential', 'Commercial', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
-    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
     total DECIMAL(10, 2),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );

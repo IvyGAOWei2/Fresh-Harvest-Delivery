@@ -64,6 +64,17 @@
             </div>
         </div>
     </div>
+
+    <!-- updateProductSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'checkoutSuccessModal',
+        bg_color = '#81C408',
+        title = 'Thanks for shopping with us',
+        msg = 'Your order is pending confirmation by our staff'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
 </section>
 {% endblock %}
 
@@ -147,9 +158,7 @@ function validateForm(formSelector) {
 }
 
 function loadCartDetails() {
-    const userId = `{{session.id}}`;
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    const userCartItems = cartItems.filter(item => item.userId === userId);
     const cartBody = document.querySelector('.table-group-divider');
     const orderForm = document.querySelector('#payment-form');
     cartBody.innerHTML = '';
@@ -235,9 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('payment-form');
+    const form = document.getElementById('paymentform');
     const expiration = document.getElementById('cc-expiration');
 
     expiration.addEventListener('input', function() {
@@ -249,9 +257,48 @@ document.addEventListener('DOMContentLoaded', () => {
         if (validateForm()) {
             console.log('Form is valid, process payment.');
             // 这里可以添加进一步处理付款的代码
-        } else {
-            console.log('Form is invalid, show errors.');
-            // 显示错误信息
+
+            const forms = ['billingform', 'deliveryform', 'paymentform'];
+            const combinedData = {};
+
+            forms.forEach(formId => {
+                const form = document.getElementById(formId);
+                const formData = new FormData(form);
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                formObject[key] = value;
+                });
+
+                combinedData[formId] = formObject;
+            });
+
+            // Add cart data from localStorage
+            const cartData = localStorage.getItem('cart');
+            if (cartData) {
+                combinedData['cart'] = JSON.parse(cartData);
+            }
+
+            fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(combinedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 1) {
+                    // console.log(data)
+                    new bootstrap.Modal(document.getElementById('checkoutSuccessModal')).show();
+                    document.getElementById('checkoutSuccessModal').addEventListener('hidden.bs.modal', () => window.location.href = data.message);
+                }
+                else {
+                    alert(data.message);
+                    location.reload(); // Reload the page on failure
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     });
 
@@ -347,7 +394,7 @@ document.getElementById('deliveryfirstname').addEventListener('input', function(
     document.getElementById('cc-cvv').addEventListener('input', function() {
         InputValidate('cc-cvv');
     });
- function formatCreditCardNumber(event) {
+    function formatCreditCardNumber(event) {
     let input = event.target;
     let value = input.value.replace(/\D/g, ''); // 移除非数字字符
 

@@ -154,3 +154,6 @@ def fakeReview():
     {'user_name': 'Sarah', 'img': 'user_default_image.png', 'depot_location': 'Wellington', 'product_id': 999, 'review_date': 'May 03, 2024', 'review_text': "As a busy professional, Fresh Harvest has been a lifesaver. Their pre-made boxes are perfect for quick and healthy meals. The delivery service is reliable, and the quality of the produce is always top-notch."}]
 
     return random.sample(Reviews, 2)
+
+def toDay():
+    return datetime.now().strftime('%Y-%m-%d')
