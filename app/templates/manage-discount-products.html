@@ -108,8 +108,8 @@
                                         <input type="text" class="form-control" name="name" value="{{product.name}}" id="updateDiscountProductName{{ product.id }}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountCategory{{ product.id }}" class="form-label">Category</label>
-                                        <input type="text" class="form-control" name="category_name" value="{{product.category_name}}" id="updateDiscountCategory{{ product.id }}" required>
+                                        <label for="updateDiscountCategory{{ product.id }}" class="form-label" forbidden>Category</label>
+                                        <input type="text" class="form-control" name="category_name" value="{{product.category_name}}" id="updateDiscountCategory{{ product.id }}" readonly>
                                     </div>
                                     <div class="mb-3">
                                         <label for="updateDiscountDescription{{ product.id }}" class="form-label">Description</label>
@@ -174,12 +174,7 @@
                                     <option value="">Select Product</option>
                                 </select>
                             </div>
-                            <div class="mb-3 text-black">
-                                <label for="selectDiscount" class="form-label">Discount</label>
-                                <select id="selectDiscount" class="form-select" required>
-                                    <option value="">Select Discount</option>
-                                </select>
-                            </div>
+                            <input type="hidden" id="discountIdInput" name="discount_id">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -224,6 +219,16 @@
         const discountSelect = document.getElementById('selectDiscount');
         const searchKeywordInput = document.getElementById('searchKeyword');
         const discountProductTableBody = document.getElementById('discountProductTableBody');
+        const addDiscountProductModal = new bootstrap.Modal(document.getElementById('addDiscountProductModal'));
+        const discountIdInput = document.getElementById('discountIdInput');
+
+        // Assume we have the discount ID stored somewhere, e.g., in a hidden element or passed from the server
+        const discountId = "{{ discount_id }}"; // Replace with actual discount ID if available
+
+        // Pre-fill the discount ID input when opening the add product modal
+        document.querySelector('.btn.btn-primary.ms-auto').addEventListener('click', function () {
+            discountIdInput.value = discountId;
+        });
 
         // Fetch categories and populate the category dropdown
         fetch('/api/categories')
@@ -297,7 +302,7 @@
         addDiscountProductForm.addEventListener('submit', function (event) {
             event.preventDefault();
             const discountProductData = {
-                discount_id: discountSelect.value,
+                discount_id: discountIdInput.value, // Use the pre-filled discount ID
                 product_id: productSelect.value
             };
 
@@ -311,6 +316,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
+                    addDiscountProductModal.hide();
                     new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
                 } else {
                     alert("Invalid request");

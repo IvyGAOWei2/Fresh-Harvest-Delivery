@@ -63,6 +63,9 @@
     <a href="{{ url_for('manage_applications') }}" class="{% if is_manageApplication %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Applications
     </a>
+    <a href="{{ url_for('manageWeeklyBoxes') }}" class="{% if is_manageApplication %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Boxes
+    </a>
     <a href="{{ url_for('business_accounts') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Accounts
     {% endif %}    

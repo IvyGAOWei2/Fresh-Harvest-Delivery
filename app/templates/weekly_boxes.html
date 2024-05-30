@@ -1,0 +1,117 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with is_manageDiscount='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Weekly Boxes' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<section class="main-content">
+    <h1 class="text-center">Weekly Package List</h1>
+    <div class="container mt-5">
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPackageModal">Add New Package</button>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Title</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Depot</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for package in packageList %}
+                    <tr>
+                        <td>{{ package.title }}</td>
+                        <td>{{ package.start_date }}</td>
+                        <td>{{ package.end_date }}</td>
+                        <td>{{ package.depot_id }}</td>
+                        <td>
+                            <a href="{{ url_for('manage_box_products', package_id=package.package_id) }}" class="btn btn-primary">Manage Boxes</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Package Modal -->
+    <div class="modal fade" id="addPackageModal" tabindex="-1" aria-labelledby="addPackageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPackageModalLabel">Add New Package</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addPackageForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="depot" class="form-label">Depot</label>
+                            <input type="number" class="form-control" id="depot" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addPackageForm = document.getElementById('addPackageForm');
+
+        addPackageForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const packageData = {
+                title: document.getElementById('title').value,
+                start_date: document.getElementById('startDate').value,
+                end_date: document.getElementById('endDate').value,
+                depot_id: document.getElementById('depot').value
+            };
+
+            fetch('/employee/add-package', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(packageData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    window.location.href = `/employee/box-products/${data.package_id}`;
+                } else {
+                    alert("Invalid request");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+{% endblock %}

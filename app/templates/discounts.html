@@ -44,7 +44,6 @@
                         <td class="align-middle">{{ discount.discount_rate }}%</td>
                         <td class="align-middle nz-date">{{ discount.start_date }}</td>
                         <td class="align-middle nz-date">{{ discount.end_date }}</td>
-
                         <td class="align-middle">{{ discount.status }}</td>
                         <td>
                             <a href="{{ url_for('manageDiscountProducts', discount_id=discount.discount_id) }}" class="btn btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="View Products">
@@ -53,6 +52,11 @@
                             <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Discount">
                                 <button class="btn btn-icon ms-2" data-bs-toggle="offcanvas" data-bs-target="#updateDiscount{{ discount.discount_id }}" aria-controls="updateDiscount{{ discount.discount_id }}">
                                     <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+                                </button>
+                            </div>
+                            <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'Deactivate Discount' if discount.status == 'Active' else 'Activate Discount' }}">
+                                <button class="btn btn-icon ms-2 toggle-discount-btn" data-discount-id="{{ discount.discount_id }}" data-status="{{ discount.status }}">
+                                    <i class="fas fa-toggle-{{ 'on' if discount.status == 'Active' else 'off' }} fa-lg me-3 fa-fw"></i>
                                 </button>
                             </div>
                         </td>
@@ -187,6 +191,7 @@
                 cell.textContent = nzFormattedDate;
             }
         });
+
         const addDiscountForm = document.getElementById('addDiscountForm');
         const updateDiscountForms = document.querySelectorAll('.update-discount-form');
         const discountStartDate = document.getElementById('discountStartDate');
@@ -382,6 +387,41 @@
             startDateInput.addEventListener('change', handleInputChange);
             endDateInput.addEventListener('input', handleInputChange);
         });
+
+        const toggleDiscountStatus = (event) => {
+        const button = event.currentTarget;
+        const discountId = button.getAttribute('data-discount-id');
+        const currentStatus = button.getAttribute('data-status');
+        const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+        const url = `/employee/${newStatus === 'Active' ? 'activate' : 'deactivate'}-discount/${discountId}`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === true) {
+                location.reload();
+            } else {
+                alert(`Failed to ${newStatus === 'Active' ? 'activate' : 'deactivate'} the discount.`);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    };
+
+    const toggleButtons = document.querySelectorAll('.toggle-discount-btn');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', toggleDiscountStatus);
+    });
+
 
         // Search by title functionality
         const searchKeywordInput = document.getElementById('searchKeyword');

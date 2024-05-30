@@ -12,11 +12,11 @@ CREATE TABLE Users (
     user_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(64) NOT NULL,
-	type ENUM('Consumer', 'Staff', 'Local_Manager', 'National_Manager', 'Placeholder1', 'Placeholder2', 'Placeholder3') NOT NULL,
+    type ENUM('Consumer', 'Staff', 'Local_Manager', 'National_Manager', 'Placeholder1', 'Placeholder2', 'Placeholder3') NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     is_deleted BOOLEAN DEFAULT FALSE,
-	depot_id TINYINT,
-	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+    depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
 CREATE TABLE Subscription (
@@ -35,20 +35,20 @@ CREATE TABLE Consumer (
     family_name VARCHAR(35) NOT NULL,
     address VARCHAR(80),
     phone VARCHAR(13) NOT NULL,
-	city VARCHAR(100),
-	postcode VARCHAR(10),
-	image VARCHAR(80),
-	credit_available DECIMAL(10, 2),
-	account_limit DECIMAL(10, 2),
-	account_available DECIMAL(10, 2),
-	registration_date DATE DEFAULT (CURRENT_DATE),
-	last_login_date DATETIME,
-	user_type ENUM('Residential', 'Business', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
-	depot_id TINYINT,
-	subscription_id SMALLINT,
+    city VARCHAR(100),
+    postcode VARCHAR(10),
+    image VARCHAR(80),
+    credit_available DECIMAL(10, 2),
+    account_limit DECIMAL(10, 2),
+    account_available DECIMAL(10, 2),
+    registration_date DATE DEFAULT (CURRENT_DATE),
+    last_login_date DATETIME,
+    user_type ENUM('Residential', 'Business', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
+    depot_id TINYINT,
+    subscription_id SMALLINT,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
-	FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
+    FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
 
 CREATE TABLE BusinessApplications (
@@ -81,35 +81,34 @@ CREATE TABLE Unit (
 
 CREATE TABLE Products (
     product_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(50),
-	description TEXT,
+    name VARCHAR(50),
+    description TEXT,
     price DECIMAL(10, 2),
-	discount_price DECIMAL(10, 2), -- record?
+    discount_price DECIMAL(10, 2),
     stock SMALLINT,
     category_id TINYINT,
-	unit_id TINYINT,
-	depot_id TINYINT,
+    unit_id TINYINT,
+    depot_id TINYINT,
     is_active BOOLEAN DEFAULT TRUE,
-	FOREIGN KEY (category_id) REFERENCES Category(category_id),
-	FOREIGN KEY (unit_id) REFERENCES Unit(unit_id),
-	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+    FOREIGN KEY (category_id) REFERENCES Category(category_id),
+    FOREIGN KEY (unit_id) REFERENCES Unit(unit_id),
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
--- another product??
 CREATE TABLE GiftCardcode (
     gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-	product_id SMALLINT,
-	user_id SMALLINT,
+    product_id SMALLINT,
+    user_id SMALLINT,
     code VARCHAR(20) UNIQUE NOT NULL,
     balance DECIMAL(10, 2),
     is_used BOOLEAN DEFAULT FALSE,
-	FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE ProductImages (
     product_image_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-	product_id SMALLINT,
+    product_id SMALLINT,
     image VARCHAR(80) NOT NULL,
     is_primary BOOLEAN DEFAULT FALSE,
     is_deleted BOOLEAN DEFAULT FALSE,
@@ -121,9 +120,9 @@ CREATE TABLE Orders (
     user_id SMALLINT,
     order_date DATE,
     delivery_date DATE,
-	delivery_address VARCHAR(150),
-	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	payment_method ENUM('Residential', 'Commercial', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
+    delivery_address VARCHAR(150),
+    payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    payment_method ENUM('Residential', 'Commercial', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
     status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     total DECIMAL(10, 2),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
@@ -146,7 +145,7 @@ CREATE TABLE Invoices (
     due_date DATE,
     total DECIMAL(10, 2),
     gst_rate SMALLINT DEFAULT 15,
-	order_list JSON,
+    order_list JSON,
     is_paid BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
@@ -157,20 +156,29 @@ CREATE TABLE Employees (
     family_name VARCHAR(35) NOT NULL,
     address VARCHAR(80),
     phone VARCHAR(13) NOT NULL,
-	image VARCHAR(80),
+    image VARCHAR(80),
     hire_date DATE,
-	depot_id TINYINT,
+    depot_id TINYINT,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
+
+CREATE TABLE Packages (
+    package_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+);
+
 
 CREATE TABLE Boxes (
     box_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-    box_type ENUM('Large', 'Medium', 'Small', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-	depot_id TINYINT,
-    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+    package_id SMALLINT,
+    box_type ENUM('Large', 'Medium', 'Small') NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (package_id) REFERENCES Packages(package_id)
 );
 
 CREATE TABLE BoxItems (
@@ -183,10 +191,10 @@ CREATE TABLE BoxItems (
 );
 
 CREATE TABLE Promotions (
-    promotion_id INT PRIMARY KEY,
+    promotion_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     description TEXT,
-	start_date DATE NOT NULL,
+    start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     discount_rate TINYINT
 );
@@ -210,7 +218,7 @@ CREATE TABLE Reviews (
     review_date DATE NOT NULL,
     review_text TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 

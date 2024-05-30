@@ -1,0 +1,180 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with is_manageDiscount='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Discount List' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+{% block content %}
+<section class="main-content">
+    <h1 class="text-center">Box Products</h1>
+    <h2 class="text-center">Package: {{ package.title }}</h2>
+    <p class="text-center">Start Date: {{ package.start_date }} | End Date: {{ package.end_date }}</p>
+    
+    <div class="container mt-5">
+        <div class="accordion" id="accordionExample">
+            {% for box_type, box in boxes.items() %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ box.box_id }}">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ box.box_id }}" aria-expanded="true" aria-controls="collapse{{ box.box_id }}">
+                        {{ box_type }} Box - ${{ box.price }}
+                    </button>
+                </h2>
+                <div id="collapse{{ box.box_id }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ box.box_id }}" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <form class="update-box-price-form" data-box-id="{{ box.box_id }}">
+                            <div class="mb-3">
+                                <label for="price{{ box.box_id }}" class="form-label">Price</label>
+                                <input type="number" class="form-control" id="price{{ box.box_id }}" value="{{ box.price }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Price</button>
+                        </form>
+                        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addProductModal{{ box.box_id }}">Add Product</button>
+                        
+                        <!-- Add Product Modal -->
+                        <div class="modal fade" id="addProductModal{{ box.box_id }}" tabindex="-1" aria-labelledby="addProductModalLabel{{ box.box_id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addProductModalLabel{{ box.box_id }}">Add Product to {{ box_type }} Box</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form class="add-product-form" data-box-id="{{ box.box_id }}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="selectCategory{{ box.box_id }}" class="form-label">Category</label>
+                                                <select id="selectCategory{{ box.box_id }}" class="form-select" required>
+                                                    <option value="">Select Category</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="selectProduct{{ box.box_id }}" class="form-label">Product</label>
+                                                <select id="selectProduct{{ box.box_id }}" class="form-select" required>
+                                                    <option value="">Select Product</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="quantity{{ box.box_id }}" class="form-label">Quantity</label>
+                                                <input type="number" class="form-control" id="quantity{{ box.box_id }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Add</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Add Product Modal -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addProductForms = document.querySelectorAll('.add-product-form');
+
+        // Fetch and populate categories on page load
+        fetch('/api/categories')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetched data:', data); // Log the fetched data
+                if (data.categories && data.categories.length > 0) {
+                    addProductForms.forEach(form => {
+                        const boxId = form.getAttribute('data-box-id');
+                        const categorySelect = document.getElementById(`selectCategory${boxId}`);
+                        data.categories.forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category.category_id; // Access category_id
+                            option.textContent = category.category_name; // Access category_name
+                            categorySelect.appendChild(option);
+                        });
+                    });
+                } else {
+                    console.error('No categories found');
+                    alert('No categories found.');
+                }
+            })
+            .catch(error => {
+                console.error('Failed to fetch categories:', error);
+                alert('Failed to fetch categories.');
+            });
+
+        addProductForms.forEach(form => {
+            const boxId = form.getAttribute('data-box-id');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const categoryId = document.getElementById(`selectCategory${boxId}`).value;
+                const productId = document.getElementById(`selectProduct${boxId}`).value;
+                const quantity = document.getElementById(`quantity${boxId}`).value;
+
+                fetch('/employee/add-box-product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ box_id: boxId, product_id: productId, quantity: quantity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === true) {
+                        alert("Product added successfully");
+                        location.reload();
+                    } else {
+                        alert("Failed to add product");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+
+            document.getElementById(`selectCategory${boxId}`).addEventListener('change', function () {
+                const categoryId = this.value;
+                const productSelect = document.getElementById(`selectProduct${boxId}`);
+                productSelect.innerHTML = '<option value="">Select Product</option>';
+
+                if (categoryId) {
+                    fetch(`/api/products?category_id=${categoryId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.products.length > 0) {
+                                data.products.forEach(product => {
+                                    const option = document.createElement('option');
+                                    option.value = product.product_id;
+                                    option.textContent = product.name;
+                                    productSelect.appendChild(option);
+                                });
+                            } else {
+                                console.error('No products found');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to fetch products.');
+                        });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+
+

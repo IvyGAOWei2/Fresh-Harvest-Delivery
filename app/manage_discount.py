@@ -39,7 +39,7 @@ def manageDiscount():
         """
         discount_list = fetchAll(sql_discounts)
         
-        # Format dates in dd/mm/yyyy format and convert Decimal to string
+        
         formatted_discount_list = [
             {
                 'discount_id': discount[0],
@@ -48,7 +48,7 @@ def manageDiscount():
                 'start_date': discount[3],
                 'end_date': discount[4],
                 'discount_rate': str(discount[5]),  # Convert Decimal to string
-                'status': 'Active' if discount[6] else 'Expired'
+                'status': 'Active' if discount[6] else 'Inactive'
             }
             for discount in discount_list
         ]
@@ -82,7 +82,7 @@ def add_discount():
         discount_id = insertSQL(sql_insert_discount, (title, description, start_date, end_date, discount_rate))
 
         if discount_id:
-            return jsonify({'status': True})
+            return jsonify({'status': True, 'discount_id': discount_id})
         else:
             return jsonify({'status': False, 'message': 'Failed to add discount'}), 500
     except Exception as err:
@@ -114,6 +114,30 @@ def update_discount(discount_id):
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
     
+@app.route('/employee/deactivate-discount/<int:discount_id>', methods=['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def deactivate_discount(discount_id):
+    try:
+        sql_deactivate_discount = "UPDATE Discounts SET status = FALSE WHERE discount_id = %s"
+        updateSQL(sql_deactivate_discount, (discount_id,))
+
+        return jsonify({'status': True})
+    except Exception as err:
+        print(f"Error: {err}")
+        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+    
+@app.route('/employee/activate-discount/<int:discount_id>', methods=['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def activate_discount(discount_id):
+    try:
+        sql_activate_discount = "UPDATE Discounts SET status = TRUE WHERE discount_id = %s"
+        updateSQL(sql_activate_discount, (discount_id,))
+
+        return jsonify({'status': True})
+    except Exception as err:
+        print(f"Error: {err}")
+        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+
 
 @app.route('/employee/manage-discount-products/<int:discount_id>')
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -160,7 +184,7 @@ def manageDiscountProducts(discount_id):
             for product in discounted_product_list
         ]
 
-        return render_template('manage-discount-products.html', discountedProductList=formatted_product_list, discountRate=str(discount_rate[0]))
+        return render_template('manage-discount-products.html', discount_id=discount_id, discountedProductList=formatted_product_list, discountRate=str(discount_rate[0]))
 
 
     except Exception as e:
@@ -192,18 +216,18 @@ def add_discount_product():
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
-@app.route('/api/categories', methods=['GET'])
+@app.route('/api/categories')
 def get_categories():
     try:
-        sql = "SELECT category_id as id, category_name as name FROM Category"
-        categories = fetchAll(sql, withDescription=True)
-       
-        return jsonify({'categories': categories})
-    except Exception as err:
-        print(f"Error: {err}")
-        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+        print("Attempting to fetch categories from the database.")
+        categories = fetchAll("SELECT * FROM Category")
+        print("Fetched categories:", categories)
+        return jsonify(categories)
+    except Exception as e:
+        print("Error occurred while fetching categories:", str(e))
+        return jsonify({"error": "An error occurred while fetching categories"}), 500
 
-
+    
 @app.route('/api/products', methods=['GET'])
 def get_products():
     try:
