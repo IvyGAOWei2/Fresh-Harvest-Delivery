@@ -260,7 +260,7 @@ VALUES
     10.45
 ),
 (
-    2, 
+    1, 
     '2024-05-29', 
     '2024-06-04', 
     JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
