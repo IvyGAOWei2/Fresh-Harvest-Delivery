@@ -25,9 +25,11 @@ from app import order_history
 from app import index
 from app import shop
 from app import cart
+from app import consumer_points
 
 # Employees
 from app import admin
 from app import manage_product
 from app import manage_profile
 from app import manage_discount
+from app import manage_news

@@ -38,8 +38,9 @@
             <div class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle {% if is_cart %}active{% endif %}" data-bs-toggle="dropdown">My Account</a>
               <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                <a href="{{ url_for('profileConsumer') }}" class="dropdown-item {% if is_profile_consumer %}active{% endif %}">Profile</a>
+                <a href="{{ url_for('profileConsumer') }}" class="dropdown-item {% if is_profile_consumer %}active{% endif %}">My Profile</a>
                 <a href="{{ url_for('orderHistory') }}" class="dropdown-item {% if is_order_history %}active{% endif %}">Order History</a>
+                <a href="{{ url_for('consumer_points') }}" class="dropdown-item {% if is_consumer_points %}active{% endif %}">My Points</a>
               </div>
             </div>
             {% endif %}

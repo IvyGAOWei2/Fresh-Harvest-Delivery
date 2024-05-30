@@ -4,9 +4,7 @@
       <!-- Table header -->
       <tr class="table-primary">
         <th class="text-secondary-emphasis" scope="col">No.</th>
-        {% if profile_type == "Consumer" %}
-        <th class="text-secondary-emphasis" scope="col">User Type</th>
-        {% endif %}
+        <th class="text-secondary-emphasis" scope="col">Type</th>
         <th class="text-secondary-emphasis" scope="col">First Name</th>
         <th class="text-secondary-emphasis" scope="col">Last Name</th>
         <th class="text-secondary-emphasis" scope="col">Phone</th>
@@ -24,6 +22,8 @@
         <td class="align-middle fw-bold">{{ member.user_id }}</td>
         {% if profile_type == "Consumer" %}
         <td class="align-middle">{{ member.user_type }}</td>
+        {% else %}
+        <td class="align-middle">{{ member.type }}</td>
         {% endif %}
         <td class="align-middle">{{ member.given_name }}</td>
         <td class="align-middle">{{ member.family_name }}</td>
@@ -60,7 +60,7 @@
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member.user_id }}" aria-labelledby="updateMemberLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="updateMemberLabel">Update {{profile_type}} Profile</h5>
+          <h5 class="offcanvas-title" id="updateMemberLabel">Update Profile</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
@@ -75,7 +75,7 @@
                 <label for="imgUpdate{{ member.user_id }}">
                     <img src="{{ url_for('static', filename='images/' + member.image) }}" class="card-img-top" id="imagePreview{{ member.user_id }}">
                 </label>
-                <input class="form-control" type="file" id="imgUpdate{{ member.user_id }}" style="display: none;" accept="image/*">
+                <input class="form-control" type="file" name="image" id="imgUpdate{{ member.user_id }}" style="display: none;" accept="image/*">
               </div>
             </div>
             <div class="col-md-6 mb-3">
@@ -85,22 +85,22 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" value="{{ member.given_name }}" id="member_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member.given_name }}" id="member_given_name{{ member.user_id }}" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" value="{{ member.family_name }}" id="member_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
+              <input type="text" class="form-control" value="{{ member.family_name }}" id="member_family_name{{ member.user_id }}" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$">
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Phone</label>
-              <input type="text" class="form-control" value="{{ member.phone }}" minlength="7" maxlength="13" id="phone" name="phone" pattern="^[0-9]+$" >
+              <input type="text" class="form-control" value="{{ member.phone }}" minlength="7" maxlength="13" id="phone{{ member.user_id }}" name="phone" pattern="^[0-9]+$" >
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member.address }}" id="address" name="address">
+              <input type="text" minlength="5" maxlength="50" class="form-control" value="{{ member.address }}" id="address{{ member.user_id }}" name="address">
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
@@ -119,7 +119,7 @@
             {% if profile_type == "Consumer" %}
             <div class="col-md-6 mb-3">
               <label class="form-label">Postcode</label>
-              <input class="form-control form-textarea" value="{{ member.postcode }}" minlength="4" maxlength="4" id="consumer_postcode" name="postcode" pattern="^[0-9]+$" >
+              <input class="form-control form-textarea" value="{{ member.postcode }}" minlength="4" maxlength="4" id="consumer_postcode{{ member.user_id }}" name="postcode" pattern="^[0-9]+$" >
               <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
             </div>
             <div class="col-md-6 mb-3">
@@ -162,11 +162,30 @@
               <label class="form-label">Hire date</label>
               <input type="date" class="form-control" value="{{ member.hire_date }}" id="employees_hire_date" disabled>
             </div>
+                {% if profile_type == "National_Manager" %}
+                <div class="col-md-6 mb-3">
+                <label class="form-label">Type</label>
+                  <div class="d-flex align-items-center">
+                    <select class="form-control" name="type" id="user_type">
+                      <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
+                      <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a employee type from the list.</div>
+                    <div class="valid-feedback">Looks good!</div>      
+                  </div>
+                </div>
+                {% elif profile_type == 'Local_Manager' %}
+                <div class="col-md-6 mb-3">
+                  <label class="form-label" for="update_type">Type<sup>*</sup></label>
+                  <input type="text" class="form-control" value="Staff" disabled>
+                  <input type="text" class="form-control d-none" name="type" value="Staff"/>
+                </div>
+                {% endif %}
             {% endif %}
   
             <div class="col-md-6 mb-3">
-              <label for="basic-url" class="form-label">New Password</label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="member_new_password" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+              <label class="form-label" for="member_new_password{{ member.user_id }}">New Password</label>
+              <input type="text" class="form-control" minlength="8" maxlength="20" value=""  name="new_password" id="member_new_password{{ member.user_id }}" >
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -194,7 +213,7 @@
 
 
     <!-- consumer payment history-->
-    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerPayment{{ member.user_id }}" aria-labelledby="consumerPaymentLabel">
+    <!-- <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerPayment{{ member.user_id }}" aria-labelledby="consumerPaymentLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
           <h5 class="offcanvas-title" id="consumerPaymentLabel">Consumer Payment History</h5>
@@ -206,14 +225,14 @@
 
         </form>
       </div>
-    </div>
+    </div> -->
 
 
     <!-- add employee modal-->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="addEmployee{{ member.user_id }}" aria-labelledby="addEmployeeLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="addEmployeeLabel">Add {{profile_type}}</h5>
+          <h5 class="offcanvas-title" id="addEmployeeLabel">Add employee</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
@@ -221,59 +240,84 @@
         <form id="addMemberForm{{ member.user_id }}" method="POST" action="/admin/profile/add" class="needs-validation" novalidate>
           <div class="row">
 
+            <input type="text" class="form-control d-none" name="user_id" value="{{ member.user_id }}"/>     
+            <input type="text" class="form-control d-none" name="profile_type" value="{{ profile_type }}"/>
+
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
-                <label for="imgUpdate{{ profile_type }}{{ member.user_id }}">
-                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}">
+                <label for="img_add{{ profile_type }}{{ member.user_id }}">
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}" required>
                 </label>
-                <input class="form-control" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
+                <input class="form-control" name="image" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
               </div>
             </div>
             
             <div class="col-md-6 mb-3">
-              <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
-              <input type="email" maxlength="50" class="form-control" id="add_email" name="email" value="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+              <label class="form-label" for="add_email">Email <sup>*</sup></label>
+              <input type="email" maxlength="50" class="form-control" id="add_email{{ member.user_id }}" name="email" placeholder="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
               <div class="invalid-feedback">Please enter a valid email address</div> 
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">First Name<sup>*</sup></label>
-              <input type="text" class="form-control" id="add_given_name" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
+              <label class="form-label" for="add_given_name">First Name<sup>*</sup></label>
+              <input type="text" class="form-control" id="add_given_name{{ member.user_id }}" name="given_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
               <div class="invalid-feedback">First Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Last Name<sup>*</sup></label>
-              <input type="text" class="form-control" id="add_family_name" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
+              <label class="form-label" for="add_family_name">Last Name<sup>*</sup></label>
+              <input type="text" class="form-control" id="add_family_name{{ member.user_id }}" name="family_name" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
               <div class="invalid-feedback">Last Name must be letters from a to z</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Phone<sup>*</sup></label>
-              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone" name="phone" required>
+              <label class="form-label" for="add_phone">Phone<sup>*</sup></label>
+              <input type="text" class="form-control" minlength="7" maxlength="13" id="add_phone{{ member.user_id }}" name="phone" pattern="^[0-9]+$" required>
               <div class="invalid-feedback">The phone number cannot exceed 13 digits</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Address<sup>*</sup></label>
-              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address" name="address" required>
+              <label class="form-label" for="add_address">Address<sup>*</sup></label>
+              <input type="text" minlength="5" maxlength="50" class="form-control" id="add_address{{ member.user_id }}" name="address" required>
               <div class="invalid-feedback">The address cannot exceed 50 characters</div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Depot<sup>*</sup></label>
+              <label class="form-label" for="add_depot">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
-                  <select class="form-control" id="add_depot" name="depot_id" required>
+                  <select class="form-control" id="add_depot{{ member.user_id }}" name="depot_id">
                     {% for depot in depotList %}
                     <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
                         {{depot.location}}
                     </option>
                     {% endfor %}
                   </select>
+                  <div class="invalid-feedback">Please select a depot.</div>
                 </div>
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label">Hire date<sup>*</sup></label>
-              <input type="date" class="form-control" id="add_hire_date" name="hire_date" required>
+              <label class="form-label" for="add_hire_date">Hire date<sup>*</sup></label>
+              <input type="date" class="form-control" id="add_hire_date{{ member.user_id }}" name="hire_date">
             </div>  
+
+            {% if profile_type == 'National_Manager' %}
             <div class="col-md-6 mb-3">
-              <label for="basic-url" class="form-label">Password<sup>*</sup></label>
-              <input type="text" minlength="8" maxlength="20" value="" class="form-control" id="add_password" name="password" required>
+              <label class="form-label" for="user_type">Type<sup>*</sup></label>
+                <div class="d-flex align-items-center">
+                  <select class="form-control" name="type" id="user_type{{ member.user_id }}" required>
+                    <option value="" selected >Please select an employee type</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Local_Manager">Local manager</option>
+                  </select>
+                  <div class="invalid-feedback">Please select a type from the list.</div>
+                </div>
+            </div>
+            {% elif profile_type == 'Local_Manager' %}
+            <div class="col-md-6 mb-3">
+              <label class="form-label" for="add_phone">Type<sup>*</sup></label>
+              <input type="text" class="form-control" value="Staff" disabled>
+              <input type="text" class="form-control d-none" name="type" value="Staff"/>
+            </div>
+            {% endif %}
+            
+            <div class="col-md-6 mb-3">
+              <label for="add_password" class="form-label">Password<sup>*</sup></label>
+              <input type="text" minlength="8" maxlength="20" class="form-control" id="add_password{{ member.user_id }}" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -336,3 +380,139 @@
 
 </div>
 
+{% block script %}
+{% for member in member_list %}
+  {% include "components/elements/InputValidate.html" %}
+
+  <script>
+
+  document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_given_name{{ member.user_id }}');
+  });
+
+  document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_family_name{{ member.user_id }}');
+  });
+
+  document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('phone{{ member.user_id }}');
+  });
+
+  document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('address{{ member.user_id }}');
+  });
+
+  document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('consumer_postcode{{ member.user_id }}');
+  });
+
+  document.getElementById('member_new_password{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_new_password{{ member.user_id }}');
+  });
+
+  document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_email{{ member.user_id }}');
+  });
+
+  document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_given_name{{ member.user_id }}');
+  });
+
+  document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_family_name{{ member.user_id }}');
+  });
+
+  document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_phone{{ member.user_id }}');
+  });
+
+  document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_address{{ member.user_id }}');
+  });
+
+  document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_depot{{ member.user_id }}');
+  });
+
+  document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_password{{ member.user_id }}');
+  });
+
+  document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('user_type{{ member.user_id }}');
+  });
+
+  // update member
+  // document.addEventListener('DOMContentLoaded', function () {
+  //       document.getElementById('updateMemberSuccess').addEventListener('hidden.bs.modal', () => location.reload());
+
+  //       document.querySelectorAll('.user-update').forEach(function (update) {
+  //       const user_id = update.getAttribute('data-user-id')
+  //       const updateMemberFormForm = document.getElementById('updateMemberForm' + user_id);
+
+  //       updateMemberForm.addEventListener('submit', event => {
+  //         if (!updateMemberForm.checkValidity()) return // Stop further execution if form is invalid
+  //         event.preventDefault();
+  //         const formData = new FormData(updateMemberForm);
+
+  //         fetch('/admin/profile/update', {
+  //             method: 'POST',
+  //             body: formData
+  //         })
+  //         .then(response => response.json())
+  //         .then(data => {
+  //             if (data.status == 1) {
+  //                 console.log(data.status)
+  //                 // Show updateNewsSuccess modal if update is successful
+  //                 new bootstrap.Modal(document.getElementById('updateMemberSuccess')).show();
+  //             }
+  //             else {
+  //                 alert("Invalid request");
+  //                 // location.reload(); // Reload the page on failure
+  //             }
+  //         })
+  //         .catch(error => console.error('Error:', error));
+  //       });
+  //     })
+  //   });
+  
+  // add member
+  // document.addEventListener('DOMContentLoaded', function () {
+  //       document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+  //       document.querySelectorAll('.user-add').forEach(function (add) {
+  //       const user_id = add.getAttribute('data-user-id')
+  //       const addMemberForm = document.getElementById('addMemberForm' + user_id);
+
+  //       // Handle add form submission
+  //       addMemberForm.addEventListener('submit', function (event) {
+  //           if (!addMemberForm.checkValidity()) return // Stop further execution if form is invalid
+  //           event.preventDefault();
+  //           event.stopPropagation();
+
+  //           const formData = new FormData(addMemberForm); // Prepare form data
+
+  //           // Send login request to flask server
+  //           fetch('/admin/profile/add', {
+  //               method: 'POST',
+  //               body: formData
+  //           })
+  //               .then(response => response.json())
+  //               .then(data => {
+  //                   if (data.status == true) { // Redirect user if login is successful
+  //                       // console.log(data)
+  //                       // Show updateStaffSuccess modal if update is successful
+  //                       new bootstrap.Modal(document.getElementById('addProfileSuccessModal')).show();
+  //                   }
+  //                   else {
+  //                       alert("Invalid request");
+  //                   }
+  //               })
+  //               .alert(error => console.error('Error:', error));
+  //       });
+  //     })
+  //   });
+  </script>
+{% endfor %}
+
+{% endblock %}
