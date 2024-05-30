@@ -166,6 +166,13 @@ function setupQuantityInputListeners() {
             localStorage.setItem('cart', JSON.stringify(cart));
             displayCart(); // 刷新购物车显示
             updateCartCount(); // 更新购物车计数显示
+            fetch('/cart/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart)
+            })
         });
     });
 }
@@ -204,6 +211,13 @@ function setupQuantityChangeListeners() {
             localStorage.setItem('cart', JSON.stringify(cart));
             displayCart(); // 刷新购物车显示
             updateCartCount(); // 更新购物车计数显示
+            fetch('/cart/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart)
+            })
         });
     });
 }
@@ -243,6 +257,13 @@ function updateShippingAndTotal(sumTotal) {
             localStorage.setItem('cart', JSON.stringify(cart)); // Update local storage
             displayCart(); // Refresh cart display
             updateCartCount(); // Update cart count display
+            fetch('/cart/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cart)
+            })
         });
     });
 }
