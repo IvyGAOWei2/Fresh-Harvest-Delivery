@@ -80,7 +80,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    
     function displayCart() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const cartBody = document.querySelector('#cart tbody');
@@ -94,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
             increment = 0.25; // Assuming 'kg' should increment by 0.25
         } else if (item.unit === 'g') {
             increment = 10; // Assuming 'g' should increment by 10
-        } else if (item.unit === 'Each') {
+        } else if (item.unit === 'ea') {
             increment = 1; // Assuming 'Each' should increment by 1
         }
 
@@ -149,9 +148,18 @@ function setupQuantityInputListeners() {
         input.addEventListener('input', function() {
             const index = parseInt(this.parentNode.querySelector('.btn-minus').dataset.index); // 使用减号按钮的索引
             let cart = JSON.parse(localStorage.getItem('cart'));
+            let item = cart[index];
             const newQuantity = parseFloat(this.value); // 获取用户输入的新数量
             if (newQuantity > 0) {
-                cart[index].quantity = newQuantity; // 更新数量
+                item.quantity = newQuantity;
+                // 重新计算qty
+                if (item.unit === 'kg') {
+                    item.qty = item.quantity / 0.25;
+                } else if (item.unit === 'g') {
+                    item.qty = item.quantity / 10;
+                } else {
+                    item.qty = item.quantity;
+                }; // 更新数量
             } else {
                 cart.splice(index, 1); // 如果数量小于等于0，则移除该商品
             }
@@ -169,16 +177,27 @@ function setupQuantityChangeListeners() {
             const index = parseInt(this.dataset.index);
             const increment = parseFloat(this.dataset.increment);
             const isAdding = this.classList.contains('btn-plus');
-            const unit = this.dataset.unit;  // 确保单位数据正确传递到每个按钮
 
             let cart = JSON.parse(localStorage.getItem('cart'));
+            let item = cart[index];
             if (isAdding) {
-                cart[index].quantity += increment;
+                item.quantity += increment;
             } else {
-                if (cart[index].quantity > increment) {
-                    cart[index].quantity -= increment;
+                if (item.quantity > increment) {
+                    item.quantity -= increment;
                 } else {
                     cart.splice(index, 1); // 如果数量减到0或以下，从购物车中移除该项
+                }
+            }
+
+            // 重新计算qty
+            if (item) {
+                if (item.unit === 'kg') {
+                    item.qty = item.quantity / 0.25;
+                } else if (item.unit === 'g') {
+                    item.qty = item.quantity / 10;
+                } else if (item.unit === 'ea') {
+                    item.qty = item.quantity;
                 }
             }
 
