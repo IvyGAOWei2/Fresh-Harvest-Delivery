@@ -84,13 +84,12 @@ CREATE TABLE Products (
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
--- another product??
-CREATE TABLE GiftCardcode (
+CREATE TABLE GiftCards (
     gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
 	product_id SMALLINT,
 	user_id SMALLINT,
     code VARCHAR(20) UNIQUE NOT NULL,
-    balance DECIMAL(10, 2),
+    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     is_used BOOLEAN DEFAULT FALSE,
 	FOREIGN KEY (product_id) REFERENCES Products(product_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
@@ -128,6 +127,20 @@ CREATE TABLE OrderItems (
     subtotal DECIMAL(10, 2),
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+CREATE TABLE ConsumerPoints (
+    point_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT,
+    order_id INT,
+    gift_card_id SMALLINT,
+    point_type ENUM('Order Purchase ', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    point_variation DECIMAL(10, 2),
+    point_balance DECIMAL(10, 2),
+    point_date DATE,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (gift_card_id) REFERENCES GiftCards(gift_card_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE Invoices (

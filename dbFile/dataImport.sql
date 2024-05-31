@@ -134,7 +134,10 @@ INSERT INTO Products (name,description,price,stock,category_id,unit_id,depot_id)
 ("Pams Fresh Basil","Basil delivers the unmistakable aroma and flavour of basil,a versatile herb prized for its sweet,peppery taste. Whether used in pasta dishes,salads,sauces,or soups,chopped basil leaves add a burst of freshness and depth to your cooking.",3.99,100,3,3,1),
 ("Pams Fresh Rosemary","Rosemary offers the pine-like aroma and pungent flavour of rosemary,perfect for adding depth to roasted meats,potatoes,bread,and more. Whether used as whole sprigs or chopped leaves,rosemary infuses dishes with a bold,herbal taste and fragrance.",3.99,100,3,3,1),
 ("Pams Fresh Coriander","Coriander offers the citrusy,aromatic flavour of coriander,perfect for adding a zesty kick to curries,salsas,salads,and marinades. Whether used as a garnish or a seasoning,chopped coriander leaves add freshness and vibrancy to a variety of dishes.",3.99,100,3,3,1),
-("Ginger Imported","Imported ginger offers a pungent,spicy flavour and aromatic fragrance,making it a versatile ingredient in both sweet and savoury dishes. Whether used fresh,dried,or powdered,ginger adds warmth and depth to curries,stir-fries,marinades,teas,and baked goods.",12.99,100,3,6,1);
+("Ginger Imported","Imported ginger offers a pungent,spicy flavour and aromatic fragrance,making it a versatile ingredient in both sweet and savoury dishes. Whether used fresh,dried,or powdered,ginger adds warmth and depth to curries,stir-fries,marinades,teas,and baked goods.",12.99,100,3,6,1),
+-- gift card
+('Gift Card $25','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',25,20,6,3,1),
+('Gift Card $50','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',50,20,6,3,1);
 
 -- ProductImages table
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
@@ -236,13 +239,70 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (96, "Pams Fresh Basil.png", TRUE, FALSE),
 (97, "Pams Fresh Rosemary.png", TRUE, FALSE),
 (98, "Pams Fresh Coriander.png", TRUE, FALSE),
-(99, "Ginger Imported.png", TRUE, FALSE);
+(99, "Ginger Imported.png", TRUE, FALSE),
+(100, "GiftCard25.png", TRUE, FALSE),
+(101, "GiftCard50.png", TRUE, FALSE);
 
 -- GiftCardcode table
-INSERT INTO GiftCardcode (product_id, user_id, code, balance, is_used) VALUES
-(6, 1, 'GC123ABC', 50.00, TRUE),
-(6, 1, 'GC456DEF', 50.00, TRUE),
-(6, 1, 'GC789GHI', 50.00, FALSE);
+INSERT INTO GiftCards (product_id, code, balance, is_used) VALUES
+(100, 'DKFQN2E0', '25', FALSE),
+(100, 'UM9V51Y4', '25', FALSE),
+(100, 'R7U7T5D2', '25', FALSE),
+(100, 'V2F1U3W0', '25', FALSE),
+(100, 'E7K4M9A1', '25', FALSE),
+(100, 'X3Z9L2R6', '25', FALSE),
+(100, 'B1N5T4Y8', '25', FALSE),
+(100, 'P8O2Q6R4', '25', FALSE),
+(100, 'H6J8F3T0', '25', FALSE),
+(100, 'L2K1N8P9', '25', FALSE),
+(100, 'D7A2M5E3', '25', FALSE),
+(100, 'G5H2F6L8', '25', FALSE),
+(100, 'J1K8V4X0', '25', FALSE),
+(100, 'C4B9P6O2', '25', FALSE),
+(100, 'W9Z7U3Q1', '25', FALSE),
+(100, 'T3E0N9R5', '25', FALSE),
+(100, 'Q6X2G7B3', '25', FALSE),
+(100, 'F9R4J5H7', '25', FALSE),
+(100, 'S5V8W1Z3', '25', FALSE),
+(100, 'M8P9D1A2', '25', FALSE),
+(100, 'Y4U7K3E5', '25', FALSE),
+(100, 'N1L2X9V6', '25', FALSE),
+(100, 'U7T5W4Q8', '25', FALSE),
+(100, 'K3R6M7T2', '25', FALSE),
+(100, 'Z9S8C0B1', '25', FALSE),
+(100, 'O2H6U5V9', '25', FALSE),
+(100, 'E0X3Q4A7', '25', FALSE),
+(100, 'R4G5F2L1', '25', FALSE),
+(100, 'V6J9N8P0', '25', FALSE),
+(101, 'DWQ1R4E7', '25', FALSE),
+(101, 'TY2U8O5P', '25', FALSE),
+(101, 'LK3J9H6F', '25', FALSE),
+(101, 'ZX4V7M2N', '25', FALSE),
+(101, 'PO5Q8W3S', '25', FALSE),
+(101, 'UE6Y1I9K', '25', FALSE),
+(101, 'AM7D4G0C', '25', FALSE),
+(101, 'BN8T2F5H', '25', FALSE),
+(101, 'QW9Z3X6V', '25', FALSE),
+(101, 'RE0U7T1W', '25', FALSE),
+(101, 'CF2B5P8O', '25', FALSE),
+(101, 'VG3M6L9N', '25', FALSE),
+(101, 'UK4Y7I2E', '25', FALSE),
+(101, 'AD5G0C3H', '25', FALSE),
+(101, 'NB6T9F1S', '25', FALSE),
+(101, 'WE7Q2X5V', '25', FALSE),
+(101, 'RT8U3W6Z', '25', FALSE),
+(101, 'FG9H4J7K', '25', FALSE),
+(101, 'SM0N1L8X', '25', FALSE),
+(101, 'YI2E5K3R', '25', FALSE),
+(101, 'QW3R6M7T', '25', FALSE),
+(101, 'ZX4C9B2P', '25', FALSE),
+(101, 'OA5I8U0V', '25', FALSE),
+(101, 'EQ6W9Q4A', '25', FALSE),
+(101, 'RT7F2L5G', '25', FALSE),
+(101, 'VY8N3P9D', '25', FALSE),
+(101, 'UB1O6V2X', '25', FALSE),
+(101, 'AS4D7F0H', '25', FALSE),
+(101, 'BM9T2G5J', '25', FALSE);
 
 -- Orders table
 INSERT INTO Orders (user_id, order_date, delivery_date, billing_address, delivery_address, payment_method, payment_info, payment_status, status, total)
