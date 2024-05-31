@@ -25,7 +25,7 @@
             </div>
             <div class="container">
                 <div class="d-flex justify-content-start">
-                    <p class="custom-text">Points Balance: 100</p>
+                    <p class="custom-text">Points Balance: {{pointsBalance}}</p>
                 </div>
             </div>
             <div class="accordion" id="consumerPoints">
@@ -49,17 +49,19 @@
                                   </tr>
                                 </thead>
                                 <tbody>
+                                  {% for point in pointsHistory %}
                                   <tr>
-                                    <th scope="row">1</th>
-                                    <td><i class="fas fa-plus fa-lg me-3 fa-fw"></i>200</td>
-                                    <td>300</td>
-                                    <td>09-09-2023</td>
+                                    <th scope="row">{{point.point_type}}</th>
+                                    <td><i class="fas fa-plus fa-lg me-3 fa-fw"></i>{{point.point_variation}}</td>
+                                    <td>{{point.point_balance}}</td>
+                                    <td>{{point.point_date}}</td>
                                     <td>
-                                    <a class="btn view_order" role="button" data-bs-toggle="offcanvas" data-bs-target="#viewOrder1" data-user-id="1" data-bs-toggle="tooltip" title="Order details">
+                                    <a href="{{ url_for('orderHistory') }}" class="btn view_order" role="button" title="Order details">
                                         <i class="fas fa-list fa-lg me-3 fa-fw"></i>
-                                        </a>
+                                    </a>
                                     </td>
                                   </tr>
+                                  {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -75,11 +77,11 @@
                     </h2>
                     <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails">
                         <div class="accordion-body">
-                            <form id="giftcard"  method="POST" action="/consumer/points" class="needs-validation" novalidate>
+                            <form id="giftcardRedeem"  method="POST" action="/giftcard/redeem" class="needs-validation" novalidate>
                                 <div class="row mb-4">
                                     <label for="cardCode" class="col-sm-4 col-form-label">Giftcard Code<sup>*</sup></label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control" id="consumer_giftcard" name="gift_card_id">
+                                        <input type="text" class="form-control" id="giftcard_code" name="code">
                                         <div class="invalid-feedback">Please input the right giftcard code.</div>
                                         <div class="valid-feedback">You have successfully redeemed points.</div>
                                     </div>
@@ -99,10 +101,10 @@
     <div class="p-3">
         {% with
             btn_show = 0,
-            btn_text = 'Profile Update Success',
+            modal_id = 'redemptionSuccessModal',
             bg_color = '#81C408',
-            title = 'Profile Update Success',
-            msg = 'Your profile has been successfully updated'
+            title = 'Redemption Success',
+            msg = 'Your gift card has been successfully redemption'
         %}
             {% include "components/elements/updateSuccess.html" %}
         {% endwith %}
@@ -165,201 +167,43 @@
 {% block script %}
   {% include "components/elements/InputValidate.html" %}
 
-<script>
-    // Show/Hide Password
-    document.getElementById('showOldPassword').addEventListener('click', function () {
-        togglePasswordVisibility('oldPassword');
-    });
-
-    document.getElementById('showNewPassword').addEventListener('click', function () {
-        togglePasswordVisibility('newPassword');
-    });
-
-    function togglePasswordVisibility(inputId) {
-        var passwordInput = document.getElementById(inputId);
-        var buttonIcon = document.querySelector('#' + inputId + ' + .btn i');
-
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            buttonIcon.classList.remove('fa-eye');
-            buttonIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            buttonIcon.classList.remove('fa-eye-slash');
-            buttonIcon.classList.add('fa-eye');
-        }
-    }
-
-    // Validate Old Password
-    document.getElementById('oldPassword').addEventListener('blur', function () {
-        var oldPasswordInput = this;
-        // Simulate server-side validation
-        var storedPassword = "StoredPassword"; // Replace this with the actual stored password
-        if (oldPasswordInput.value !== storedPassword) {
-            oldPasswordInput.classList.add('is-invalid');
-        } else {
-            oldPasswordInput.classList.remove('is-invalid');
-            oldPasswordInput.classList.add('is-valid');
-        }
-    });
-
-    // Validate New Password
-    document.getElementById('newPassword').addEventListener('input', function () {
-        var newPasswordInput = this;
-        var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-        if (!passwordPattern.test(newPasswordInput.value)) {
-            newPasswordInput.classList.add('is-invalid');
-        } else {
-            newPasswordInput.classList.remove('is-invalid');
-            newPasswordInput.classList.add('is-valid');
-        }
-    });
-</script>
-<script>
-    (function () {
-        'use strict';
-        var inputs = [
-            'firstName',
-            'lastName',
-            'phone',
-            'myDepot',
-            'addressLine1',
-            'addressLine2',
-            'postalCode',
-            'cardHolderName',
-            'cvv'
-        ];
-
-        inputs.forEach(function (id) {
-            document.getElementById(id).addEventListener('input', function () {
-                InputValidate(id);
-            });
-        });
-
-
-        // Credit Card Number Formatting and Validation
-        document.getElementById('cardNumber').addEventListener('input', formatCreditCardNumber);
-
-        // Expiration Date Formatting and Validation
-        document.getElementById('expiryDate').addEventListener('input', formatExpirationDate);
-
-        function formatCreditCardNumber(event) {
-            let input = event.target;
-            let value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-
-            if (value.length > 16) {
-                value = value.slice(0, 16); // Limit input to 16 digits
-            }
-
-            value = value.replace(/(\d{4})(?=\d)/g, '$1-'); // Add hyphen after every four digits
-            input.value = value;
-
-            if (value.length < 16) {
-                input.setCustomValidity('Credit card number must be 16 digits long');
-                input.classList.add('is-invalid');
-            } else {
-                input.setCustomValidity('');
-                input.classList.remove('is-invalid');
-            }
-        }
-
-        function formatExpirationDate(event) {
-            let input = event.target;
-            let currentDate = new Date();
-            let currentYear = currentDate.getFullYear() % 100; // Get last two digits of current year
-            let currentMonth = currentDate.getMonth() + 1; // Get current month
-            let value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-            let maxYear = currentYear + 5; // Max five years in future
-            let maxMonth = 12; // Max month is 12
-
-            if (value.length > 4) {
-                value = value.slice(0, 4); // Limit input to 4 characters
-            }
-
-            value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2'); // Add slash after first two digits
-            input.value = value;
-
-            let inputYear = parseInt(value.slice(3, 5), 10);
-            let inputMonth = parseInt(value.slice(0, 2), 10);
-
-            if (inputYear > maxYear || inputMonth > maxMonth || inputYear < currentYear || (inputYear === currentYear && inputMonth < currentMonth)) {
-                input.setCustomValidity('Expiration date must be in the future');
-                input.classList.add('is-invalid');
-            } else {
-                input.setCustomValidity('');
-                input.classList.remove('is-invalid');
-            }
-        }
-    })();
-</script>
-<script>
-    let user_id = "{{ profile.user_id }}"
-    let newUpdateProfileData = {};
-    let differentUpdateStaffData = {};
-
+  <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+    const giftcardRedeem = document.getElementById('giftcardRedeem');
+    document.getElementById('redemptionSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+    // const registerErrorElement = document.getElementById("registerError");
 
-        const updateConsumerProfileForm = document.getElementById('updateConsumerProfileForm');
-        const formData = new FormData(updateConsumerProfileForm);
-        const formDataObject = Object.fromEntries(formData.entries());
-        const btn = updateConsumerProfileForm.querySelector('button[type="submit"]');
-        const enableSubmit = () => btn.classList.remove('disabled');
-        const disableSubmit = () => btn.classList.add('disabled');
+  // Handle registerForm submission
+    giftcardRedeem.addEventListener('submit', function (event) {
+          if (!giftcardRedeem.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          event.stopPropagation();
 
-        updateConsumerProfileForm.reset();
-        disableSubmit();
+          const formData = new FormData(this); // Prepare form data
 
-        updateConsumerProfileForm.addEventListener('input', event => {
-            const keyName = event.target.name;
-            const keyValue = event.target.value;
-
-            newUpdateProfileData[keyName] = keyValue;
-
-            for (const keyName in formDataObject) {
-                if (newUpdateProfileData.hasOwnProperty(keyName)) {
-                    if (formDataObject[keyName] !== newUpdateProfileData[keyName]) {
-                        enableSubmit();
-                        return
-                    }
-                    disableSubmit();
-                }
-            }
-        });
-        
-        updateConsumerProfileForm.addEventListener('submit', event => {
-            if (!updateConsumerProfileForm.checkValidity()) return // Stop further execution if form is invalid
-            event.preventDefault();
-            event.stopPropagation();
-
-            for (let key in newUpdateProfileData) {
-                if (formDataObject.hasOwnProperty(key) && newUpdateProfileData[key] !== formDataObject[key]) {
-                    differentUpdateStaffData[key] = newUpdateProfileData[key];
-                }
-            }
-
-            differentUpdateStaffData['user_id'] = user_id;
-            fetch('/profile/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(differentUpdateStaffData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == 1) {
-                    // console.log(data)
-                    // Show updateStaffSuccess modal if update is successful
-                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-                }
-                else {
-                    alert("Invalid request");
-                    // location.reload(); // Reload the page on failure
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+          // Send register request to flask server
+          fetch('/giftcard/redeem', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == true) { // Redirect user if register is successful
+                  console.log(data)
+                  new bootstrap.Modal(document.getElementById('redemptionSuccessModal')).show();
+                //   window.location.href = data.message;
+              }
+              else {
+                alert(data.message);
+                // console.log(data)
+                // Remove the "d-none" class
+                // registerErrorElement.classList.remove("d-none");
+                // Display error message if register fails
+                // registerErrorElement.textContent = data.message;
+              }
+        })
+        .catch(error => console.error('Error:', error));
+    });
     })
   </script>
 {% endblock %}

@@ -37,9 +37,9 @@ CREATE TABLE Consumer (
     phone VARCHAR(13) NOT NULL,
 	postcode VARCHAR(10),
 	image VARCHAR(80),
-	credit_available DECIMAL(10, 2),
-	account_limit DECIMAL(10, 2),
-	account_available DECIMAL(10, 2),
+	points DECIMAL(10, 2) DEFAULT 0,
+	account_limit DECIMAL(10, 2) DEFAULT NULL,
+	account_available DECIMAL(10, 2) DEFAULT NULL,
 	registration_date DATE DEFAULT (CURRENT_DATE),
 	last_login_date DATETIME,
 	user_type ENUM('Residential', 'Business', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
@@ -84,17 +84,6 @@ CREATE TABLE Products (
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
-CREATE TABLE GiftCards (
-    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-	product_id SMALLINT,
-	user_id SMALLINT,
-    code VARCHAR(20) UNIQUE NOT NULL,
-    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-    is_used BOOLEAN DEFAULT FALSE,
-	FOREIGN KEY (product_id) REFERENCES Products(product_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
-
 CREATE TABLE ProductImages (
     product_image_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
 	product_id SMALLINT,
@@ -129,6 +118,17 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
+CREATE TABLE GiftCards (
+    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	product_id SMALLINT,
+	order_id INT,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    is_active BOOLEAN DEFAULT FALSE,
+	FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id)
+);
+
 CREATE TABLE ConsumerPoints (
     point_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     user_id SMALLINT,
@@ -138,6 +138,7 @@ CREATE TABLE ConsumerPoints (
     point_variation DECIMAL(10, 2),
     point_balance DECIMAL(10, 2),
     point_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (gift_card_id) REFERENCES GiftCards(gift_card_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
