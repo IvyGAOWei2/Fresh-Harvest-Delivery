@@ -1,5 +1,7 @@
 from app import app
-from flask import render_template, session
+from flask import render_template, session, request
+
+from emailMethod.method import sendFhdContact
 
 @app.route("/")
 def index():
@@ -14,8 +16,12 @@ def notFound():
 def about():
     return render_template('about.html')
 
-@app.route("/contact")
+@app.route("/contact", methods=['GET','POST'])
 def contact():
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        sendFhdContact(data['name'], data['email'], data['type'], data['msg'])
+        return {"status": False}, 404
     return render_template('contact.html')
 
 @app.route("/exmaples")
