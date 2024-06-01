@@ -182,7 +182,7 @@
                             <th>Total Cost</th>
                             <th>Status</th>
                             <th>Actions</th>
-                            <th>Status</th>
+                            <th>Change Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -200,20 +200,18 @@
                                 </a>
                             </td>
                             <td>
-                                <div class="btn-group dropend">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Action
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">Pending</a></li>
-                                            <li><a class="dropdown-item" href="#">Comfirmed</a></li>
-                                            <li><a class="dropdown-item" href="#">Shipped</a></li>
-                                            <li><a class="dropdown-item" href="#">Delivered</a></li>
-                                            <li><a class="dropdown-item" href="#">Cancelled</a></li>
-                                          </ul>
-                                    </ul>
-                                  </div>
+                            <div class="btn-group dropend">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu">                       
+                                    <li><a class="dropdown-item" href="#">Pending</a></li>
+                                    <li><a class="dropdown-item" href="#">Comfirmed</a></li>
+                                    <li><a class="dropdown-item" href="#">Shipped</a></li>
+                                    <li><a class="dropdown-item" href="#">Delivered</a></li>
+                                    <li><a class="dropdown-item" href="#">Cancelled</a></li>
+                                </ul>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
