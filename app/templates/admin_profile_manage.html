@@ -75,7 +75,7 @@
                 <label for="imgUpdate{{ member.user_id }}">
                     <img src="{{ url_for('static', filename='images/' + member.image) }}" class="card-img-top" id="imagePreview{{ member.user_id }}">
                 </label>
-                <input class="form-control" type="file" name="image" id="imgUpdate{{ member.user_id }}" style="display: none;" accept="image/*">
+                <input class="form-control" type="file" name="image" id="imgUpdate{{ member.user_id }}" style="display: none;" accept="image/*" onchange="previewImage(event, '{{ member.user_id }}')">
               </div>
             </div>
             <div class="col-md-6 mb-3">
@@ -190,7 +190,7 @@
             </div>
           </div>
           <div class="col text-center">
-            <button type="submit" class="btn btn-secondary profile-update" data-profile-id="{{member.user_id}}">Submit</button>
+            <button type="submit" class="btn btn-primary profile-update" data-profile-id="{{member.user_id}}">Submit</button>
           </div>
         </form>
       </div>
@@ -381,11 +381,11 @@
 </div>
 
 {% block script %}
-{% for member in member_list %}
+
   {% include "components/elements/InputValidate.html" %}
 
+  {% for member in member_list %}
   <script>
-
   document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
     InputValidate('member_given_name{{ member.user_id }}');
   });
@@ -441,78 +441,16 @@
   document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
     InputValidate('user_type{{ member.user_id }}');
   });
-
-  // update member
-  // document.addEventListener('DOMContentLoaded', function () {
-  //       document.getElementById('updateMemberSuccess').addEventListener('hidden.bs.modal', () => location.reload());
-
-  //       document.querySelectorAll('.user-update').forEach(function (update) {
-  //       const user_id = update.getAttribute('data-user-id')
-  //       const updateMemberFormForm = document.getElementById('updateMemberForm' + user_id);
-
-  //       updateMemberForm.addEventListener('submit', event => {
-  //         if (!updateMemberForm.checkValidity()) return // Stop further execution if form is invalid
-  //         event.preventDefault();
-  //         const formData = new FormData(updateMemberForm);
-
-  //         fetch('/admin/profile/update', {
-  //             method: 'POST',
-  //             body: formData
-  //         })
-  //         .then(response => response.json())
-  //         .then(data => {
-  //             if (data.status == 1) {
-  //                 console.log(data.status)
-  //                 // Show updateNewsSuccess modal if update is successful
-  //                 new bootstrap.Modal(document.getElementById('updateMemberSuccess')).show();
-  //             }
-  //             else {
-  //                 alert("Invalid request");
-  //                 // location.reload(); // Reload the page on failure
-  //             }
-  //         })
-  //         .catch(error => console.error('Error:', error));
-  //       });
-  //     })
-  //   });
-  
-  // add member
-  // document.addEventListener('DOMContentLoaded', function () {
-  //       document.getElementById('addProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
-  //       document.querySelectorAll('.user-add').forEach(function (add) {
-  //       const user_id = add.getAttribute('data-user-id')
-  //       const addMemberForm = document.getElementById('addMemberForm' + user_id);
-
-  //       // Handle add form submission
-  //       addMemberForm.addEventListener('submit', function (event) {
-  //           if (!addMemberForm.checkValidity()) return // Stop further execution if form is invalid
-  //           event.preventDefault();
-  //           event.stopPropagation();
-
-  //           const formData = new FormData(addMemberForm); // Prepare form data
-
-  //           // Send login request to flask server
-  //           fetch('/admin/profile/add', {
-  //               method: 'POST',
-  //               body: formData
-  //           })
-  //               .then(response => response.json())
-  //               .then(data => {
-  //                   if (data.status == true) { // Redirect user if login is successful
-  //                       // console.log(data)
-  //                       // Show updateStaffSuccess modal if update is successful
-  //                       new bootstrap.Modal(document.getElementById('addProfileSuccessModal')).show();
-  //                   }
-  //                   else {
-  //                       alert("Invalid request");
-  //                   }
-  //               })
-  //               .alert(error => console.error('Error:', error));
-  //       });
-  //     })
-  //   });
   </script>
 {% endfor %}
-
+<script>
+  function previewImage(event, userId) {
+      var reader = new FileReader();
+      reader.onload = function() {
+          var output = document.getElementById('imagePreview' + userId);
+          output.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
 {% endblock %}

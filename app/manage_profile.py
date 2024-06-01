@@ -1,9 +1,30 @@
 from app import app
 from flask import render_template, request, session
+import os
 
 # User-defined function
 from dbFile.config import fetchOne, insertSQL, updateSQL, fetchAll
-from common import roleRequired, validateEmail, validateRegisterEmployee, validateEmployeeProfile, validateConsumerProfile
+from common import getImageExt, generateImageId, roleRequired, validateEmail, validateRegisterEmployee, validateEmployeeProfile, validateConsumerProfile
+
+
+# Function to save uploaded images
+def saveImage(img):
+    # Get the file extension of the uploaded image
+    ext = getImageExt(img.filename)
+
+    # Check if the extension is valid
+    if not ext:
+        return ext
+
+    # Generate a unique image name using a custom function
+    image_name = generateImageId() + '.' + ext
+    # Construct the full path where the image will be saved
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], image_name)
+
+    # Save the uploaded image to the specified location
+    img.save(filename)
+    # Return the name of the saved image
+    return 'upload/' + image_name
 
 @app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -54,7 +75,8 @@ def profileSearch():
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfileUpdate():
     # need password futcion
-    print(request.form.get("image"))
+
+
     if request.form.get('profile_type') == 'Consumer':
         table_name = "Consumer"
         verified_data = validateConsumerProfile({key: value for key, value in dict(request.form).items() if value})
@@ -83,6 +105,10 @@ def adminProfileUpdate():
 
         update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
    
+    if 'image' in request.files:
+        image_name = saveImage(request.files['image'])
+        update_successful = updateSQL("UPDATE " + table_name + " SET image = %s WHERE user_id = %s;", (image_name, user_id))
+
     # if employee type change, update Users
     original_employee_type = fetchOne("select type from Users where user_id=%s",(user_id,),withDescription=False)[0]
     if original_employee_type != "Consumer" and original_employee_type != employee_type:
