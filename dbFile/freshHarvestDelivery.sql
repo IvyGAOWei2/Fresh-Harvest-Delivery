@@ -51,22 +51,10 @@ CREATE TABLE Consumer (
     FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
 
-CREATE TABLE BusinessApplications (
-    application_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id SMALLINT NOT NULL,
-    business_name VARCHAR(100) NOT NULL,
-    contact_name VARCHAR(100) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    address TEXT NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    postcode VARCHAR(10) NOT NULL,
-    documentation VARCHAR(255) NOT NULL,
-    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
-    application_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    approved_by SMALLINT,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (approved_by) REFERENCES Users(user_id)
+CREATE TABLE ConsumerCart (
+    user_id SMALLINT PRIMARY KEY,
+    cart JSON,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE AccountLimitReviewRequests (
@@ -87,7 +75,9 @@ CREATE TABLE Category (
 
 CREATE TABLE Unit (
     unit_id TINYINT PRIMARY KEY AUTO_INCREMENT,
-    unit_name VARCHAR(50) NOT NULL
+    unit_name VARCHAR(50) NOT NULL,
+    unit_std  VARCHAR(5) NOT NULL,
+    unit_min VARCHAR(5) NOT NULL
 );
 
 CREATE TABLE Products (
@@ -147,6 +137,32 @@ CREATE TABLE OrderItems (
     subtotal DECIMAL(10, 2),
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+CREATE TABLE GiftCards (
+    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	product_id SMALLINT,
+	order_id INT,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    is_active BOOLEAN DEFAULT FALSE,
+	FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id)
+);
+
+CREATE TABLE ConsumerPoints (
+    point_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT,
+    order_id INT,
+    gift_card_id SMALLINT,
+    point_type ENUM('Order Purchase ', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    point_variation DECIMAL(10, 2),
+    point_balance DECIMAL(10, 2),
+    point_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (gift_card_id) REFERENCES GiftCards(gift_card_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE Invoices (

@@ -64,12 +64,24 @@
             </div>
         </div>
     </div>
+
+    <!-- updateProductSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'checkoutSuccessModal',
+        bg_color = '#81C408',
+        title = 'Thanks for shopping with us',
+        msg = 'Your order is pending confirmation by our staff'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
 </section>
 {% endblock %}
 
 {% block script %}
 {% include "components/elements/InputValidate.html" %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://kit.fontawesome.com/baa7f7aeb2.js" crossorigin="anonymous"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     setupSteps();
@@ -232,59 +244,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('payment-form');
+    const form = document.getElementById('paymentform');
+    const expiration = document.getElementById('cc-expiration');
+
+    expiration.addEventListener('input', function() {
+        validateExpirationDate(this); // 实时验证到期日期
+    });
+
     form.addEventListener('submit', function(event) {
         event.preventDefault();
         if (validateForm()) {
             console.log('Form is valid, process payment.');
             // 这里可以添加进一步处理付款的代码
-        } else {
-            console.log('Form is invalid, show errors.');
-            // 显示错误信息
+
+            const forms = ['billingform', 'deliveryform', 'paymentform'];
+            const combinedData = {};
+
+            forms.forEach(formId => {
+                const form = document.getElementById(formId);
+                const formData = new FormData(form);
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                formObject[key] = value;
+                });
+
+                combinedData[formId] = formObject;
+            });
+
+            // Add cart data from localStorage
+            const cartData = localStorage.getItem('cart');
+            if (cartData) {
+                combinedData['cart'] = JSON.parse(cartData);
+            }
+
+            fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(combinedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 1) {
+                    // console.log(data)
+                    new bootstrap.Modal(document.getElementById('checkoutSuccessModal')).show();
+                    document.getElementById('checkoutSuccessModal').addEventListener('hidden.bs.modal', () => window.location.href = data.message);
+                }
+                else {
+                    alert(data.message);
+                    location.reload(); // Reload the page on failure
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     });
 
     function validateForm() {
         let isValid = true;
-        const name = document.getElementById('cc-name');
-        const number = document.getElementById('cc-number');
-        const expiration = document.getElementById('cc-expiration');
-        const cvv = document.getElementById('cc-cvv');
-
-        // 验证姓名
-        if (!name.value.trim()) {
-            console.error('Name on card is required');
-            name.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            name.classList.remove('is-invalid');
-        }
-
-        // 验证信用卡号 (格式 xxxx-xxxx-xxxx-xxxx)
-        const cardNumberRegex = /^(\d{4}-){3}\d{4}$/;
-        if (!cardNumberRegex.test(number.value)) {
-            console.error('Invalid card number, must be in the format xxxx-xxxx-xxxx-xxxx');
-            number.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            number.classList.remove('is-invalid');
-        }
 
         // 验证到期日期 (格式MM/YY)
         if (!validateExpirationDate(expiration)) {
             isValid = false;
-        }
-
-        // 验证CVV (3或4位数字)
-        const cvvRegex = /^\d{3,4}$/;
-        if (!cvvRegex.test(cvv.value)) {
-            console.error('Invalid CVV, must be 3 or 4 digits');
-            cvv.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            cvv.classList.remove('is-invalid');
         }
 
         return isValid;
@@ -300,12 +323,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const currentDate = new Date();
             const currentMonth = currentDate.getMonth() + 1;
-            const currentYear = currentDate.getFullYear();
+            const currentYear = currentDate.getFullYear() % 100;  // 获取当前年份的最后两位
 
             const [expMonth, expYear] = expirationValue.split('/').map(Number);
             const expDate = new Date(2000 + expYear, expMonth - 1);
 
-            if (expDate < currentDate || expDate > new Date(currentYear + 10, currentMonth - 1)) {
+            if (expDate < currentDate || expYear > currentYear + 10) {
                 console.error('Expiration date must be within a reasonable future range');
                 expiration.classList.add('is-invalid');
                 return false;
@@ -370,7 +393,52 @@ document.getElementById('deliveryfirstname').addEventListener('input', function(
     });    
     document.getElementById('cc-cvv').addEventListener('input', function() {
         InputValidate('cc-cvv');
-    });    
+    });
+    function formatCreditCardNumber(event) {
+    let input = event.target;
+    let value = input.value.replace(/\D/g, ''); // 移除非数字字符
 
+    if (value.length > 16) {
+      value = value.slice(0, 16); // 限制输入最大长度为16位数字
+    }
+
+    value = value.replace(/(\d{4})(?=\d)/g, '$1-'); // 在每4个数字后添加连字符 "-"
+    input.value = value;
+
+    if (value.length < 18) {
+      input.setCustomValidity('Credit card number must be at least 16 characters long');
+      input.classList.add('is-invalid');
+    } else {
+      input.setCustomValidity('');
+      input.classList.remove('is-invalid');
+    }
+  }
+  function formatExpirationDate(event) {
+    let input = event.target;
+    let currentDate = new Date();
+    let currentYear = currentDate.getFullYear() % 100; // 获取当前年份的后两位数字
+    let currentMonth = currentDate.getMonth() + 1; // 获取当前月份
+    let value = input.value.replace(/\D/g, ''); // 移除非数字字符
+    let maxYear = currentYear + 5; // 当前年份后的五年
+    let maxMonth = 12; // 最大月份为12
+
+    if (value.length > 4) {
+      value = value.slice(0, 4); // 限制输入最大长度为4位数字
+    }
+
+    value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2'); // 在输入两个数字后自动添加斜杠 "/"
+    input.value = value;
+
+    let inputYear = parseInt(value.slice(3, 5), 10);
+    let inputMonth = parseInt(value.slice(0, 2), 10);
+
+    if (inputYear > maxYear || inputMonth > maxMonth || inputYear < currentYear || (inputYear === currentYear && inputMonth < currentMonth)) {
+      input.setCustomValidity('something');
+      input.classList.add('is-invalid');
+    } else {
+      input.setCustomValidity('');
+      input.classList.remove('is-invalid');
+    }
+  }
 </script>
 {% endblock %}

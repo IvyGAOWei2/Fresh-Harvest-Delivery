@@ -171,7 +171,6 @@ def manageDiscountProducts(discount_id):
         sql_discounted_products = """
             SELECT 
                 dp.id,
-                p.product_id,
                 p.name,
                 p.description,
                 p.price,
@@ -189,6 +188,7 @@ def manageDiscountProducts(discount_id):
                 dp.discount_id = %s
         """
         discounted_product_list = fetchAll(sql_discounted_products, (discount_id,))
+        print(f"Fetched discounted products: {discounted_product_list}")
 
         formatted_product_list = [
             {
@@ -202,6 +202,7 @@ def manageDiscountProducts(discount_id):
             }
             for product in discounted_product_list
         ]
+        print(f"Formatted product list: {formatted_product_list}")
 
         return render_template('manage-discount-products.html',
                                discount_id=discount_id,
@@ -245,6 +246,7 @@ def add_discount_product():
             VALUES (%s, %s)
         """
         row_count = insertSQL(sql_insert_discounted_product, (discount_id, product_id))
+        print(f"Insert row_count: {row_count}")
 
         # Update the product's discount price
         sql_update_product = """
@@ -317,8 +319,15 @@ def update_discount_product(product_id):
             WHERE product_id = %s
         """
         updateSQL(sql_update_product, (name, description, price, product_id))
-
-        return jsonify({'status': True, 'message': 'Product updated successfully'})
+    except Exception as err:
+        print(f"Error: {err}")
+        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+@app.route('/api/discounts', methods=['GET'])
+def get_discounts():
+    try:
+        sql_discounts = "SELECT discount_id as id, title, discount_rate FROM Discounts"
+        discounts = fetchAll(sql_discounts, withDescription=True)
+        return jsonify({'discounts': discounts})
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500

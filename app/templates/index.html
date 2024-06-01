@@ -9,34 +9,6 @@
 {% endblock %}
 
 {% block content %}
-<style>
-    .service-item {
-        position: relative;
-    }
-    .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: rgba(0, 0, 0, 0.5); /* optional: adds a semi-transparent overlay */
-    }
-    .discount-rate {
-        background-color: red; /* Set your desired background color */
-        color: white; /* Set the text color */
-        font-size: 2rem; /* Adjust size as needed */
-        font-weight: bold;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* optional: adds a shadow for better readability */
-        padding: 10px; /* Adjust padding as needed */
-        border-radius: 10px; /* Add rounded corners */
-    }
-    .bg-orange {
-        background-color: orange;
-    }
-    </style>
 <section>
     <!-- Hero Start -->
     <div class="container-fluid py-5 mb-5 hero-header">
@@ -88,36 +60,72 @@
         </div>
     </div>
     <!-- Hero End -->
-    <!-- Special of the Week Start -->
-    <div class="container-fluid py-5 special-week-section">
+
+     <!-- News Start-->
+     <div class="container-fluid vesitable py-5">
         <div class="container py-5">
-            <div class="row g-5 align-items-center">
-                <div class="col-lg-6">
-                    <a href="#" class="text-decoration-none">
-                        <div class="service-item position-relative bg-secondary rounded border border-secondary">
-                            <img src="{{ url_for('static', filename='images/promotion.jpg') }}" class="img-fluid rounded-top w-100" alt="">
-                            <div class="overlay d-flex justify-content-center align-items-center">
-                                <div class="discount-rate bg-red text-white p-2 rounded">
-                                    <h3 class="mb-0">{{ discount.rate }}</h3>
-                                </div>
-                            </div>
-                            <div class="px-4 rounded-bottom">
-                                <div class="service-content bg-orange text-center p-4 rounded">
-                                    <h5 class="text-white">Selected Items</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+            <h1 class="mb-0">Latest News</h1>
+            <div class="owl-carousel vegetable-carousel justify-content-center">     
+            <div class="border border-primary rounded position-relative vesitable-item">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
                 </div>
                 <div class="col-lg-6">
                     <h1 class="display-4 text-primary mb-4">Week Special</h1>
                     <p class="text-dark mb-4">{{ discount.description }}</p>
                     <a href="{{ url_for('shop') }}"class="btn btn-primary px-4 py-2 rounded-pill">Shop Now</a>
+                <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">05/05/2024</div>
+                <div class="p-4 rounded-bottom">
+                    <h4>Discount</h4>
+                    <p>Discount fruits products.</p>
+                    <div class="d-flex justify-content-between flex-lg-wrap">
+                        <a href="{{ url_for('newsDetail') }}" class="{% if is_home %}active{% endif %} border border-secondary rounded-pill px-3 text-primary btn"><i class="fas fa-angle-double-right me-2 text-primary"></i> Learn more</a>
+                    </div>
                 </div>
+            </div>       
+            <div class="border border-primary rounded position-relative vesitable-item">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                </div>
+                <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">04/05/2024</div>
+                <div class="p-4 rounded-bottom">
+                    <h4>Discount</h4>
+                    <p>Discount fruits products.</p>
+                    <div class="d-flex justify-content-between flex-lg-wrap">
+                        <a href="{{ url_for('newsDetail') }}"  class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-angle-double-right me-2 text-primary"></i> Learn more</a>
+                    </div>
+                </div>
+            </div>      
+            <div class="border border-primary rounded position-relative vesitable-item">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                </div>
+                <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">03/05/2024</div>
+                <div class="p-4 rounded-bottom">
+                    <h4>Discount</h4>
+                    <p>Discount fruits products.</p>
+                    <div class="d-flex justify-content-between flex-lg-wrap">
+                        <a href="{{ url_for('newsDetail') }}"  class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-angle-double-right me-2 text-primary"></i> Learn more</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border border-primary rounded position-relative vesitable-item">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                </div>
+                <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">02/05/2024</div>
+                <div class="p-4 rounded-bottom">
+                    <h4>Discount</h4>
+                    <p>Discount fruits products.</p>
+                    <div class="d-flex justify-content-between flex-lg-wrap">
+                        <a href="{{ url_for('newsDetail') }}"  class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary"><i class="fas fa-angle-double-right me-2 text-primary"></i> Learn more</a>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
-
+    <!-- News End -->
 
     <!-- Featurs Section Start -->
     <div class="container-fluid featurs py-5">
@@ -542,7 +550,7 @@
                             <div class="px-4 rounded-bottom">
                                 <div class="service-content bg-primary text-center p-4 rounded">
                                     <h5 class="text-white">Fresh Apples</h5>
-                                    <h3 class="mb-0">{{ discount.rate }}</h3>
+                                    <h3 class="mb-0">20% OFF</h3>
                                 </div>
                             </div>
                         </div>
@@ -1070,5 +1078,4 @@
     </div>
     <!-- Tastimonial End -->
 </section>
-
 {% endblock %}

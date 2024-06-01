@@ -77,7 +77,7 @@
                     <!-- Update Discount Modal -->
                     <div class="offcanvas offcanvas-end" id="updateDiscount{{ discount.discount_id }}" tabindex="-1" aria-labelledby="updateDiscountLabel{{ discount.discount_id }}">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title w-100 text-center" id="updateDiscountLabel{{ discount.discount_id }}">Update Discount</h5>
+                            <h5 class="offcanvas-title" id="updateDiscountLabel{{ discount.discount_id }}">Update Discount</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
@@ -97,10 +97,6 @@
                                         <option value="20" {% if discount.discount_rate == '20.00' %}selected{% endif %}>20%</option>
                                         <option value="25" {% if discount.discount_rate == '25.00' %}selected{% endif %}>25%</option>
                                     </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="updateDiscountStartDate{{ discount.discount_id }}" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control" id="updateDiscountStartDate{{ discount.discount_id }}" value="{{ discount.start_date }}" data-discount-start-date required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="updateDiscountEndDate{{ discount.discount_id }}" class="form-label">End Date</label>
@@ -124,21 +120,21 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title w-100 text-center text-black" id="addDiscountModalLabel">Add New Discount</h5>
+                    <h5 class="modal-title" id="addDiscountModalLabel">Add New Discount</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addDiscountForm">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="discountTitle" class="form-label text-black">Title</label>
+                            <label for="discountTitle" class="form-label">Title</label>
                             <input type="text" class="form-control" id="discountTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label for="discountDescription" class="form-label text-black">Description</label>
+                            <label for="discountDescription" class="form-label">Description</label>
                             <textarea class="form-control" id="discountDescription" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="selectDiscountRate" class="form-label text-black">Discount Rate</label>
+                            <label for="selectDiscountRate" class="form-label">Discount Rate</label>
                             <select class="form-select" id="selectDiscountRate" required>
                                 <option value="15">15%</option>
                                 <option value="20">20%</option>
@@ -146,11 +142,11 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="discountStartDate" class="form-label text-black">Start Date</label>
+                            <label for="discountStartDate" class="form-label">Start Date</label>
                             <input type="date" class="form-control" id="discountStartDate" required>
                         </div>
                         <div class="mb-3">
-                            <label for="discountEndDate" class="form-label text-black">End Date</label>
+                            <label for="discountEndDate" class="form-label">End Date</label>
                             <input type="date" class="form-control" id="discountEndDate" required>
                         </div>
                         {% if user_role == 'National_Manager' %}
@@ -173,36 +169,14 @@
             </div>
         </div>
     </div>
-
-    <!-- Update Success Message -->
-    <div class="p-3">
-        {% with
-          btn_show = 0,
-          bg_color = '#3399ff',
-          title = 'Discount Update Success',
-          msg = 'The discount has been successfully updated'
-        %}
-            {% include "components/elements/updateSuccess.html" %}
-        {% endwith %}
-    </div>
-
-    <!-- Add Success Message -->
-    <div class="p-3">
-        {% with
-          btn_show = 0,
-          bg_color = '#28a745',
-          title = 'Discount Add Success',
-          msg = 'The discount has been successfully added'
-        %}
-            {% include "components/elements/addSuccess.html" %}
-        {% endwith %}
-    </div>
 </section>
 {% endblock %}
+
 
 {% block script %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM fully loaded and parsed'); // Log to ensure DOMContentLoaded is fired
 
 const nzDateCells = document.querySelectorAll('.nz-date');
 

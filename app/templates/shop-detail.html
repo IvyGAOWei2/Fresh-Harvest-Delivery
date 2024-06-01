@@ -14,6 +14,7 @@
   {% endwith %}
 {% endblock %}
 
+
 {% block content %}
 <section id="shop_detail">
     <!-- Single Product Start -->
@@ -21,7 +22,7 @@
         <div class="container py-5">
             <div class="row g-4 mb-5">
                 <div class="col-lg-8 col-xl-9">
-                    <div class="row g-4">
+                    <div class="row g-4 product-detail">
                         <div class="col-lg-6">
                             <div class="me-3">
                                 <a href="#">
@@ -30,19 +31,18 @@
                             </div>
                         </div>
                         <div class="col-lg-6">
-                            <h4 class="fw-bold mb-3">{{ product.name }}</h4>
-                            <p class="mb-3">Category: {{ product.category_name }}</p>
-                            {% if product.discount_rate > 0 %}
-                                <h5 class="fw-bold mb-3">
-                                    $ {{ product.discounted_price }} 
-                                    <span class="text-danger text-decoration-line-through">${{ product.price }}</span>
-                                    / {{ product.unit_name }}
-                                </h5>
-                            {% else %}
-                                <h5 class="fw-bold mb-3">
-                                    $ {{ product.price }} / {{ product.unit_name }}
-                                </h5>
-                            {% endif %}
+                            <h4 class="fw-bold mb-3">{{product.name}}</h4>
+                            <p class="mb-3">Category: {{product.category_name}}</p>
+                            <h5 class="fw-bold mb-3">
+                                $ {{product.price}}
+                                /
+                                {% if product.unit_name == 'Weight_kg' %}kg{% endif %}
+                                {% if product.unit_name == 'Weight_g' %}g{% endif %}
+                                {% if product.unit_name == 'Tray' %}ty{% endif %}
+                                {% if product.unit_name == 'Each' %}ea{% endif %}
+                                {% if product.unit_name == 'Bunch' %}ea{% endif %}
+                                {% if product.unit_name == 'Punnet' %}ea{% endif %}
+                            </h5>
                             <div class="d-flex mb-4">
                                 <i class="fa fa-star text-secondary"></i>
                                 <i class="fa fa-star text-secondary"></i>
@@ -50,51 +50,70 @@
                                 <i class="fa fa-star text-secondary"></i>
                                 <i class="fa fa-star"></i>
                             </div>
-                            <p id="product-shot-des" class="mb-4">{{ product.description }}</p>
-                            <div class="input-group quantity mb-5" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
+                            <p id="product-shot-des" class="mb-4">{{product.description}}</p>
+
+                            <div class="quantity d-flex align-items-center mx-auto" style="width: 10rem;">
+                                <button class="btn btn-sm btn-minus rounded-circle bg-light border" data-unit="{{ product.unit_name }}">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                
+                                <input type="text" class="quantity-input fs-6 form-control-sm text-center border-0 p-0"
+                                    value="{% if product.unit_name == 'Weight_kg' %}0.25{% elif product.unit_name == 'Weight_g' %}10{% elif product.unit_name == 'Each' %}1{% endif %}"
+                                    style="background-color: #fff;max-width: 3rem;" disabled>
+                                
+                                <div class="input-group-text border-0 p-0" style="background-color: #fff;margin-left: -0.3rem;">
+                                    {% if product.unit_name == 'Weight_kg' %}
+                                        kg
+                                    {% elif product.unit_name == 'Weight_g' %}
+                                        g
+                                    {% endif %}
                                 </div>
-                                <input type="text" class="form-control form-control-sm text-center border-0" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
+                                
+                                <button class="btn btn-sm btn-plus rounded-circle bg-light border mx-1" data-unit="{{ product.unit_name }}">
+                                    <i class="fa fa-plus"></i>
+                                </button>
                             </div>
-                            <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
-                               data-id="{{ product.product_id }}"
-                               data-name="{{ product.name }}"
-                               data-price="{{ product.price }}"
-                               data-img="{{ url_for('static', filename='images/product/' + product.primary_image) }}" data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
-                               <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-                            </a>
+                            
+
+                            <div class="d-flex justify-content-center" style="margin-left: -1.8rem; margin-top: 2rem;">
+                                <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+                                data-id="{{ product.product_id }}"
+                                data-name="{{ product.name }}"
+                                data-price="{{ product.price }}"
+                                data-img="{{ url_for('static', filename='images/product/' + product.primary_image) }}" data-unit="{% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
+                                <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                </a>
+                            </div>
                         </div>
                         <div class="col-lg-12">
                             <nav>
                                 <div class="nav nav-tabs mb-3">
                                     <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
-                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
-                                            aria-controls="nav-about" aria-selected="true">Description</button>
+                                        id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                        aria-controls="nav-about" aria-selected="true">Description</button>
                                     <button class="nav-link border-white border-bottom-0" type="button" role="tab"
-                                            id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
-                                            aria-controls="nav-mission" aria-selected="false">Reviews</button>
+                                        id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                                        aria-controls="nav-mission" aria-selected="false">Reviews</button>
                                 </div>
                             </nav>
                             <div class="tab-content mb-5">
                                 <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
-                                    <p style="text-align: justify;">{{ product.description }}</p>
+                                    <p style="text-align: justify;">{{product.description}}</p>
                                     <div class="px-2">
                                         <div class="row g-4">
                                             <div class="col-6">
                                                 <div class="row bg-light align-items-center text-center justify-content-center py-2">
                                                     <div class="col-6">
-                                                        <p class="mb-0">Weight</p>
+                                                        <p class="mb-0">
+                                                            {% if product.unit_name == 'Weight_kg' or product.unit_name == 'Weight_g'%}
+                                                                Weight
+                                                            {% else %}
+                                                                {{product.unit_name }}
+                                                            {% endif %}
+                                                        </p>
                                                     </div>
                                                     <div class="col-6">
-                                                        <p class="mb-0">1 kg</p>
+                                                        <p class="mb-0">{{product.unit_std}}</p>
                                                     </div>
                                                 </div>
                                                 <div class="row text-center align-items-center justify-content-center py-2">
@@ -110,12 +129,12 @@
                                                         <p class="mb-0">Depot Location</p>
                                                     </div>
                                                     <div class="col-6">
-                                                        <p class="mb-0">{{ product.depot_location }}</p>
+                                                        <p class="mb-0">{{product.depot_location}}</p>
                                                     </div>
                                                 </div>
                                                 <div class="row text-center align-items-center justify-content-center py-2">
                                                     <div class="col-6">
-                                                        <p class="mb-0">Check</p>
+                                                        <p class="mb-0">Сheck</p>
                                                     </div>
                                                     <div class="col-6">
                                                         <p class="mb-0">Healthy</p>
@@ -123,10 +142,11 @@
                                                 </div>
                                                 <div class="row bg-light text-center align-items-center justify-content-center py-2">
                                                     <div class="col-6">
-                                                        <p class="mb-0">Min Weight</p>
+                                                        <p class="mb-0">
+                                                            Min {% if product.unit_name == 'Weight_kg' or product.unit_name == 'Weight_g'%}Weight{% endif %}</p>
                                                     </div>
                                                     <div class="col-6">
-                                                        <p class="mb-0">250 Kg</p>
+                                                        <p class="mb-0">{{product.unit_min}}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -142,7 +162,7 @@
                             <div class="row g-4">
                                 <div class="col-lg-6">
                                     <div class="border-bottom rounded">
-                                        <input type="text" class="form-control border-0 me-4" placeholder="Your Name *">
+                                        <input type="text" class="form-control border-0 me-4" placeholder="Yur Name *">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -167,7 +187,7 @@
                                                 <i class="fa fa-star"></i>
                                             </div>
                                         </div>
-                                        <a href="#" class="btn border border-secondary text-primary rounded-pill px-4 py-3">Post Comment</a>
+                                        <a href="#" class="btn border border-secondary text-primary rounded-pill px-4 py-3"> Post Comment</a>
                                     </div>
                                 </div>
                             </div>
@@ -181,37 +201,122 @@
 
                         <div class="col-lg-12">
                             <h4 class="mb-4">Featured products</h4>
-                            {% for product in discounted_products %}
-                                <div class="d-flex align-items-center justify-content-start mb-4">
-                                    <div class="rounded" style="width: 100px; height: 100px;">
-                                        <a href="/product/detail?product_id={{ product.product_id }}">
-                                            <img src="{{ url_for('static', filename='images/product/' ~ product.primary_image) }}" class="img-fluid rounded" alt="{{ product.name }}">
-                                        </a>
+                            <div class="d-flex align-items-center justify-content-start">
+                                <div class="rounded" style="width: 100px; height: 100px;">
+                                    <img src="{{ url_for('static', filename='images/promotion1.jpg') }}" class="img-fluid rounded" alt="Image">
+                                </div>
+                                <div>
+                                    <h6 class="mb-2">Big Banana</h6>
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star"></i>
                                     </div>
-                                    <div>
-                                        <h6 class="mb-2">{{ product.name }}</h6>
-                                        <div class="d-flex mb-2">
-                                            <i class="fa fa-star text-secondary"></i>
-                                            <i class="fa fa-star text-secondary"></i>
-                                            <i class="fa fa-star text-secondary"></i>
-                                            <i class="fa fa-star text-secondary"></i>
-                                            <i class="fa fa-star"></i>
-                                        </div>
-                                        {% if product.discount_rate > 0 %}
-                                            <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">${{ product.discounted_price }}</h5>
-                                                <h5 class="text-danger text-decoration-line-through">${{ product.price }}</h5>
-                                            </div>
-                                        {% else %}
-                                            <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">${{ product.price }}</h5>
-                                            </div>
-                                        {% endif %}
+                                    <div class="d-flex mb-2">
+                                        <h5 class="fw-bold me-2">2.99 $</h5>
+                                        <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
                                     </div>
                                 </div>
-                            {% endfor %}
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start">
+                                <div class="rounded" style="width: 100px; height: 100px;">
+                                    <img src="{{ url_for('static', filename='images/promotion2.jpg') }}" class="img-fluid rounded" alt="">
+                                </div>
+                                <div>
+                                    <h6 class="mb-2">Big Banana</h6>
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <h5 class="fw-bold me-2">2.99 $</h5>
+                                        <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start">
+                                <div class="rounded" style="width: 100px; height: 100px;">
+                                    <img src="{{ url_for('static', filename='images/promotion3.jpg') }}" class="img-fluid rounded" alt="">
+                                </div>
+                                <div>
+                                    <h6 class="mb-2">Big Banana</h6>
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <h5 class="fw-bold me-2">2.99 $</h5>
+                                        <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start">
+                                <div class="rounded me-4" style="width: 100px; height: 100px;">
+                                    <img src="{{ url_for('static', filename='images/vegetable4.jpg') }}" class="img-fluid rounded" alt="">
+                                </div>
+                                <div>
+                                    <h6 class="mb-2">Big Banana</h6>
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <h5 class="fw-bold me-2">2.99 $</h5>
+                                        <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start">
+                                <div class="rounded me-4" style="width: 100px; height: 100px;">
+                                    <img src="{{ url_for('static', filename='images/vegetable5.jpg') }}" class="img-fluid rounded" alt="">
+                                </div>
+                                <div>
+                                    <h6 class="mb-2">Big Banana</h6>
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <h5 class="fw-bold me-2">2.99 $</h5>
+                                        <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-start">
+                                <div class="rounded me-4" style="width: 100px; height: 100px;">
+                                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid rounded" alt="">
+                                </div>
+                                <div>
+                                    <h6 class="mb-2">Big Banana</h6>
+                                    <div class="d-flex mb-2">
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star text-secondary"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <h5 class="fw-bold me-2">2.99 $</h5>
+                                        <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-center my-4">
-                                <a href="/shop" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">View More</a>
+                                <a href="#" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Vew More</a>
                             </div>
                         </div>
                         <div class="col-lg-12">

@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, redirect, url_for, request, session
 
 # User-defined function
-from dbFile.config import insertSQL
+from dbFile.config import insertSQL, fetchOne
 from common import validateLogin, validateUserAccount, validateRegister, validateEmail
 
 
@@ -29,7 +29,8 @@ def login():
                 # If the password is correct, set session variables and redirect to the dashboard
                 session['loggedin'], session['id'], session['email'], session['type'], session['depot_id'] = True, account['user_id'], account['email'], account['type'], account['depot_id']
                 if account['type'] == 'Consumer':
-                    return {"status": True, 'message': '/'}, 200
+                    consumerCart = fetchOne("SELECT cart FROM ConsumerCart WHERE user_id = %s;", (account['user_id'],))
+                    return {"status": True, 'message': '/', 'cart': consumerCart}, 200
                 else:
                     return {"status": True, 'message': '/admin'}, 200
             else:
@@ -48,7 +49,7 @@ def login():
 def logout():
     if session.get('loggedin'):
         # Remove session data
-        [session.pop(key, None) for key in ['loggedin', 'id', 'email', 'type']]
+        [session.pop(key, None) for key in ['loggedin', 'id', 'email', 'type', 'depot_id']]
     return redirect(url_for('index'))
 
 @app.route("/register", methods=['GET','POST'])
@@ -86,4 +87,4 @@ def passwordReset():
         print(email)
         #send_reset_email(email)
         return render_template('reset-confirmation.html', email=email)
-    return render_template('reset-password.html.html')
+    return render_template('reset-password.html')

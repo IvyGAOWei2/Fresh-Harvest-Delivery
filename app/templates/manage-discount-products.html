@@ -44,16 +44,6 @@
         color: #fff;
         border-color: #0c0c0c;
     }
-
-    .btn-icon {
-        background: none;
-        border: none;
-        color: black;
-    }
-    .btn-icon:hover {
-        color: #007bff;
-        transform: scale(1.2);
-    }
 </style>
 
 <section class="main-content">
@@ -65,7 +55,7 @@
         <div class="d-flex align-items-center mb-3">
             <div class="col-xl-3">
                 <div class="input-group">
-                    <input type="search" id="searchKeyword" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
+                    <input type="search" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
                     <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                 </div>
             </div>
@@ -91,11 +81,9 @@
                             <td class="align-middle">{{ product.price }}</td>
                             <td class="align-middle">{{ product.discount_rate }}%</td>
                             <td>
-                                <div data-bs-toggle="tooltip" data-bs-placement="top" title="Update Info">
-                                    <button class="btn btn-icon product-update" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product.id }}" data-product-id="{{ product.product_id }}" data-discounted-product-id="{{ product.id }}">
-                                        <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
-                                    </button>
-                                </div>
+                                <a class="btn product-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateDiscountProduct{{ product.id }}" data-product-id="{{ product.id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                                </a>
                             </td>
                         </tr>
                         <div class="offcanvas offcanvas-end" id="updateDiscountProduct{{ product.id }}" tabindex="-1" aria-labelledby="updateDiscountProductModalLabel">
@@ -104,23 +92,22 @@
                                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body">
-                                <form class="update-discount-product-form" data-product-id="{{ product.product_id }}" data-discounted-product-id="{{ product.id }}">
-                                    <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                                <form id="updateDiscountProductForm{{ product.id }}" method="POST">
                                     <div class="mb-3">
-                                        <label for="updateDiscountProductName{{ product.id }}" class="form-label">Product Name</label>
-                                        <input type="text" class="form-control" name="name" value="{{product.name}}" id="updateDiscountProductName{{ product.id }}" required>
+                                        <label for="updateDiscountProductName" class="form-label">Product Name</label>
+                                        <input type="text" class="form-control" value="{{product.name}}" id="updateDiscountProductName" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="updateDiscountCategory{{ product.id }}" class="form-label">Category</label>
                                         <input type="text" class="form-control" name="category_name" value="{{product.category_name}}" id="updateDiscountCategory{{ product.id }}" readonly>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountDescription{{ product.id }}" class="form-label">Description</label>
-                                        <textarea class="form-control" name="description" id="updateDiscountDescription{{ product.id }}" required>{{product.description}}</textarea>
+                                        <label for="updateDiscountPrice" class="form-label">Price</label>
+                                        <input type="number" class="form-control" value="{{product.price}}" id="updateDiscountPrice" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountPrice{{ product.id }}" class="form-label">Price</label>
-                                        <input type="number" class="form-control" name="price" value="{{product.price}}" id="updateDiscountPrice{{ product.id }}" required>
+                                        <label for="updateDiscountRate" class="form-label">Discount Rate</label>
+                                        <input type="number" class="form-control" value="{{discountRate}}" id="updateDiscountRate" disabled>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </form>
@@ -179,38 +166,27 @@
                             </div>
                             <input type="hidden" id="discountIdInput" name="discount_id">
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Add</button>
+                        <div class="mb-3">
+                            <label for="selectProduct" class="form-label">Product</label>
+                            <select id="selectProduct" class="form-select" required>
+                                <option value="">Select Product</option>
+                            </select>
                         </div>
-                    </form>
-                </div>
+                        <div class="mb-3">
+                            <label for="selectDiscount" class="form-label">Discount</label>
+                            <select id="selectDiscount" class="form-select" required>
+                                <option value="">Select Discount</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <!-- Update Success Message -->
-        <div class="p-3">
-            {% with
-              btn_show = 0,
-              bg_color = '#3399ff',
-              title = 'Discount Product Update Success',
-              msg = 'The discount product has been successfully updated'
-            %}
-                {% include "components/elements/updateSuccess.html" %}
-            {% endwith %}
-        </div>
-
-        <!-- Add Success Message -->
-        <div class="p-3">
-            {% with
-              btn_show = 0,
-              bg_color = '#28a745',
-              title = 'Discount Product Add Success',
-              msg = 'The discount product has been successfully added'
-            %}
-                {% include "components/elements/addSuccess.html" %}
-            {% endwith %}
-        </div>
+    </div>
 </section>
 {% endblock %}
 

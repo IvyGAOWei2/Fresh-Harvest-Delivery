@@ -1,0 +1,73 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+  {% with is_news='1' %}
+  {% include "components/layout/Sidebar.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Post News' %}
+  {% include "components/layout/Breadcrumb2.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+
+<section class="main-content">
+  <!-- Admin Section (visible to managers and system administrators) -->
+  <div id="admin-actions" class="card">
+    <div class="card-header">
+      <h2>Post News</h2>
+    </div>
+    <div class="card-body">
+      <form id="postnews" method="POST" action="/admin/news" class="needs-validation" novalidate>
+      <div class="container mt-5">
+        <div class="row">
+            <!-- Left side input fields -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter Title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="subtitle" class="form-label">Subtitle</label>
+                    <input type="number" class="form-control" name="subtitle" id="subtitle" placeholder="Enter Subtitle" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Post date</label>
+                    <input type="date" class="form-control" name="date" id="date" required>
+                </div>
+            </div>
+            <!-- Right side image display -->
+            <div class="col-md-2 d-flex align-items-center">
+                <div class="card shadow-sm img-container">
+                    <label for="coverimg" class="d-block w-100 text-center">Cover image
+                    <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview1" alt="Cover Image" required>
+                    </label>
+                    <input class="form-control" type="file" name="coverimg" id="coverimg" style="display: none;" accept="image/*">
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+              <div class="card shadow-sm img-container">
+                  <label for="contentimg" class="d-block w-100 text-center">Content image
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview2" alt="Cover Image" required>
+                  </label>
+                  <input class="form-control" type="file" name="contentimg" id="contentimg" style="display: none;" accept="image/*">
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="content" class="form-label">News content</label>
+            <textarea type="text" class="form-control form-textarea" name="content" id="content" placeholder="Enter Content" rows="10" required></textarea>
+        </div>
+      </div>
+      <p></p>
+      <div class="col-12 text-center">
+        <button type="submit" class="btn custom-btn">Post</button>
+      </div>  
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
