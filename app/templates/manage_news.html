@@ -40,13 +40,16 @@
                 </div>
             </div>
             <!-- Right side image display -->
-            <div class="col-md-2 d-flex align-items-center">
+            <div class="col-md-6 d-flex justify-content-center">
+              <div class="col-md-4 d-flex align-items-center">
                 <div class="card shadow-sm img-container">
-                    <label for="post_img" class="d-block w-100 text-center">Cover image
+                  <label for="post_img" class="d-block w-100 text-center">
+                    Cover image
                     <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview1" alt="Cover Image" required>
-                    </label>
-                    <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*">
+                  </label>
+                  <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*">
                 </div>
+              </div>
             </div>
             <!-- <div class="col-md-2 d-flex align-items-center">
               <div class="card shadow-sm img-container">
