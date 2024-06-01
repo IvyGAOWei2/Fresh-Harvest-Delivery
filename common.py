@@ -158,3 +158,14 @@ def fakeReview():
 
 def toDay():
     return datetime.now().strftime('%Y-%m-%d')
+
+def getImageExt(filename):
+    try:
+        ext_name = filename.rsplit('.', 1)[1].lower()
+        return ext_name if ext_name in ['png', 'jpg', 'jpeg', 'gif'] else None
+    except (IOError, SyntaxError) as e:
+        return None
+
+def generateImageId():
+    image_uuid = uuid.uuid4()
+    return str(image_uuid)
