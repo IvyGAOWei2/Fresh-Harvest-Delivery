@@ -57,16 +57,18 @@
     <a href="{{ url_for('adminProfiles',profile_type='Employee') }}" class="{% if is_employeeList %}is_active{% endif %}">
       <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
     </a>
+    <a href="{{ url_for('manageWeeklyBoxes') }}" class="{% if is_manageBox %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Boxes
+    </a>
     <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Discounts
     </a>
     <a href="{{ url_for('manage_applications') }}" class="{% if is_manageApplication %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Applications
     </a>
-    <a href="{{ url_for('manageWeeklyBoxes') }}" class="{% if is_manageApplication %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Boxes
-    </a>
-    <a href="{{ url_for('business_accounts') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Accounts
+    <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Account Creadit
+    
+    
     {% endif %}    
 </div>

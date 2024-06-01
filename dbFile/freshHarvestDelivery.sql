@@ -69,6 +69,17 @@ CREATE TABLE BusinessApplications (
     FOREIGN KEY (approved_by) REFERENCES Users(user_id)
 );
 
+CREATE TABLE AccountLimitReviewRequests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id SMALLINT,
+    current_account_limit DECIMAL(10, 2),
+    new_account_limit DECIMAL(10, 2),
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    decision_date DATETIME,
+    FOREIGN KEY (user_id) REFERENCES Consumer(user_id)
+);
+
 CREATE TABLE Category (
     category_id TINYINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL
@@ -230,6 +241,8 @@ CREATE TABLE Discounts (
     end_date DATE NOT NULL,
     discount_rate DECIMAL(5, 2) NOT NULL,
     status BOOLEAN DEFAULT TRUE
+     depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
 CREATE TABLE DiscountedProducts (

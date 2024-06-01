@@ -57,7 +57,10 @@
 </style>
 
 <section class="main-content">
-    <h1 class="text-center">Discount Product Management</h1>
+    
+    <h2 class="text-center">Discount: {{ discount_title }}</h2>
+  
+    <p class="text-center">Start Date: {{ discount_start}} | End Date: {{ discount_end }}</p>
     <div class="container mt-5">
         <div class="d-flex align-items-center mb-3">
             <div class="col-xl-3">
@@ -108,7 +111,7 @@
                                         <input type="text" class="form-control" name="name" value="{{product.name}}" id="updateDiscountProductName{{ product.id }}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="updateDiscountCategory{{ product.id }}" class="form-label" forbidden>Category</label>
+                                        <label for="updateDiscountCategory{{ product.id }}" class="form-label">Category</label>
                                         <input type="text" class="form-control" name="category_name" value="{{product.category_name}}" id="updateDiscountCategory{{ product.id }}" readonly>
                                     </div>
                                     <div class="mb-3">
@@ -216,21 +219,18 @@
     document.addEventListener('DOMContentLoaded', function () {
         const categorySelect = document.getElementById('selectCategory');
         const productSelect = document.getElementById('selectProduct');
-        const discountSelect = document.getElementById('selectDiscount');
-        const searchKeywordInput = document.getElementById('searchKeyword');
-        const discountProductTableBody = document.getElementById('discountProductTableBody');
-        const addDiscountProductModal = new bootstrap.Modal(document.getElementById('addDiscountProductModal'));
         const discountIdInput = document.getElementById('discountIdInput');
-
-        // Assume we have the discount ID stored somewhere, e.g., in a hidden element or passed from the server
-        const discountId = "{{ discount_id }}"; // Replace with actual discount ID if available
+        const discountId = "{{ discount_id }}";
+        const depotId = "{{ depot_id }}";
+        const discountProductTableBody = document.getElementById('discountProductTableBody');
+        const searchKeywordInput = document.getElementById('searchKeyword');
+        const addDiscountProductModal = new bootstrap.Modal(document.getElementById('addDiscountProductModal'));
 
         // Pre-fill the discount ID input when opening the add product modal
         document.querySelector('.btn.btn-primary.ms-auto').addEventListener('click', function () {
             discountIdInput.value = discountId;
         });
 
-        // Fetch categories and populate the category dropdown
         fetch('/api/categories')
             .then(response => response.json())
             .then(data => {
@@ -242,8 +242,6 @@
                         option.textContent = category.name;
                         categorySelect.appendChild(option);
                     });
-                } else {
-                    console.error('No categories found');
                 }
             })
             .catch(error => {
@@ -251,33 +249,12 @@
                 alert('Failed to fetch categories.');
             });
 
-        // Fetch discounts and populate the discount dropdown
-        fetch('/api/discounts')
-            .then(response => response.json())
-            .then(data => {
-                if (data.discounts.length > 0) {
-                    discountSelect.innerHTML = '<option value="">Select Discount</option>';
-                    data.discounts.forEach(discount => {
-                        const option = document.createElement('option');
-                        option.value = discount.id;
-                        option.textContent = discount.title;
-                        discountSelect.appendChild(option);
-                    });
-                } else {
-                    console.error('No discounts found');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to fetch discounts.');
-            });
-
         // Event listener for category change
         categorySelect.addEventListener('change', function () {
             const categoryId = categorySelect.value;
             productSelect.innerHTML = '<option value="">Select Product</option>'; // Clear previous options
             if (categoryId) {
-                fetch(`/api/products?category_id=${categoryId}`)
+                fetch(`/api/products?category_id=${categoryId}&depot_id=${depotId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.products.length > 0) {
@@ -287,8 +264,6 @@
                                 option.textContent = product.name;
                                 productSelect.appendChild(option);
                             });
-                        } else {
-                            console.error('No products found');
                         }
                     })
                     .catch(error => {
@@ -302,7 +277,7 @@
         addDiscountProductForm.addEventListener('submit', function (event) {
             event.preventDefault();
             const discountProductData = {
-                discount_id: discountIdInput.value, // Use the pre-filled discount ID
+                discount_id: discountIdInput.value,
                 product_id: productSelect.value
             };
 
@@ -326,9 +301,9 @@
         });
 
         // Enable tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
         // Update discount product
@@ -353,12 +328,7 @@
                     },
                     body: JSON.stringify(updatedProductData)
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Bad request');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.status === true) {
                         new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();

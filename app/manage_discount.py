@@ -17,43 +17,59 @@ def get_discounts():
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
+
 @app.route('/employee/discounts')
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manageDiscount():
     try:
+        user_role = session['type']
         now = datetime.now().date()
-        # Fetch the latest discounts
+        
+        # SQL query based on user role
         sql_discounts = """
             SELECT
-                discount_id,
-                title,
-                description,
-                start_date,
-                end_date,
-                discount_rate,
-                status
+                d.discount_id,
+                d.title,
+                d.description,
+                d.start_date,
+                d.end_date,
+                d.discount_rate,
+                d.status,
+                dp.location as depot_name,
+                d.depot_id
             FROM
-                Discounts
-            ORDER BY
-                start_date DESC
+                Discounts d
+            LEFT JOIN
+                Depots dp ON d.depot_id = dp.depot_id
         """
-        discount_list = fetchAll(sql_discounts)
-        
-        
+        if user_role != 'National_Manager':
+            sql_discounts += " WHERE d.depot_id = %s"
+            sql_discounts += " ORDER BY d.start_date DESC"
+            discount_list = fetchAll(sql_discounts, (session['depot_id'],))
+        else:
+            sql_discounts += " ORDER BY d.start_date DESC"
+            discount_list = fetchAll(sql_discounts)
+
         formatted_discount_list = [
             {
                 'discount_id': discount[0],
                 'title': discount[1],
                 'description': discount[2],
-                'start_date': discount[3],
-                'end_date': discount[4],
+                'start_date': discount[3].strftime('%d/%m/%Y'),  # Format date as DD/MM/YYYY
+                'end_date': discount[4].strftime('%d/%m/%Y'),  # Format date as DD/MM/YYYY
                 'discount_rate': str(discount[5]),  # Convert Decimal to string
-                'status': 'Active' if discount[6] else 'Inactive'
+                'status': 'Active' if discount[6] else 'Inactive',
+                'depot_name': discount[7],
+                'depot_id': discount[8]
             }
             for discount in discount_list
         ]
 
-        return render_template('discounts.html', discountList=formatted_discount_list, now=now.strftime('%d/%m/%Y'))
+        # Fetch depots
+        sql_depots = "SELECT depot_id, location FROM Depots"
+        depots = fetchAll(sql_depots)
+
+        return render_template('discounts.html', discountList=formatted_discount_list, depots=depots, user_role=user_role, now=now.strftime('%d/%m/%Y'))
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
@@ -68,18 +84,21 @@ def add_discount():
         start_date = data.get('start_date')
         end_date = data.get('end_date')
         discount_rate = data.get('discount_rate')
+        user_role = session['type']
 
-        if not all([title, description, start_date, end_date, discount_rate]):
+        if user_role == 'National_Manager':
+            depot_id = data.get('depot_id')
+        else:
+            depot_id = session['depot_id']
+
+        if not all([title, description, start_date, end_date, discount_rate, depot_id]):
             return jsonify({'status': False, 'message': 'All fields are required'}), 400
 
-        # Log the data being inserted
-        print(f"Inserting discount: Title={title}, Description={description}, Start Date={start_date}, End Date={end_date}, Discount Rate={discount_rate}")
-
         sql_insert_discount = """
-            INSERT INTO Discounts (title, description, start_date, end_date, discount_rate)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO Discounts (title, description, start_date, end_date, discount_rate, depot_id)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
-        discount_id = insertSQL(sql_insert_discount, (title, description, start_date, end_date, discount_rate))
+        discount_id = insertSQL(sql_insert_discount, (title, description, start_date, end_date, discount_rate, depot_id))
 
         if discount_id:
             return jsonify({'status': True, 'discount_id': discount_id})
@@ -88,7 +107,8 @@ def add_discount():
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
-    
+
+
 @app.route('/employee/update-discount/<int:discount_id>', methods=['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def update_discount(discount_id):
@@ -113,7 +133,8 @@ def update_discount(discount_id):
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-    
+
+
 @app.route('/employee/deactivate-discount/<int:discount_id>', methods=['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def deactivate_discount(discount_id):
@@ -125,7 +146,8 @@ def deactivate_discount(discount_id):
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-    
+
+
 @app.route('/employee/activate-discount/<int:discount_id>', methods=['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def activate_discount(discount_id):
@@ -143,9 +165,9 @@ def activate_discount(discount_id):
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manageDiscountProducts(discount_id):
     try:
-        sql_discount_rate = "SELECT discount_rate FROM Discounts WHERE discount_id = %s"
-        discount_rate = fetchOne(sql_discount_rate, (discount_id,))
-
+        sql_discount_details = "SELECT title, discount_rate, depot_id, start_date, end_date FROM Discounts WHERE discount_id = %s"
+        discount_details = fetchOne(sql_discount_details, (discount_id,))
+        
         sql_discounted_products = """
             SELECT 
                 dp.id,
@@ -155,7 +177,6 @@ def manageDiscountProducts(discount_id):
                 p.price,
                 c.category_name,
                 d.discount_rate
-                
             FROM 
                 DiscountedProducts dp
             INNER JOIN 
@@ -178,18 +199,21 @@ def manageDiscountProducts(discount_id):
                 'price': str(product[4]),
                 'category_name': product[5],
                 'discount_rate': str(product[6]),
-                
-
             }
             for product in discounted_product_list
         ]
 
-        return render_template('manage-discount-products.html', discount_id=discount_id, discountedProductList=formatted_product_list, discountRate=str(discount_rate[0]))
-
-
+        return render_template('manage-discount-products.html',
+                               discount_id=discount_id,
+                               discountedProductList=formatted_product_list,
+                               discount_title=discount_details[0],
+                               discount_start=discount_details[3],
+                               discount_end=discount_details[4],
+                               discountRate=str(discount_details[1]),
+                               depot_id=discount_details[2])
     except Exception as e:
         print(f"Error: {e}")
-        return render_template('manage-discount-products.html', discountedProductList=[], discountRate=str(discount_rate[0]))
+        return render_template('manage-discount-products.html', discountedProductList=[], discountRate='0', depot_id=0)
     
 @app.route('/employee/add-discount-product', methods=['POST'])
 def add_discount_product():
@@ -201,12 +225,34 @@ def add_discount_product():
         if not discount_id or not product_id:
             return jsonify({'status': False, 'message': 'Discount ID and Product ID are required'}), 400
 
-        # Insert discounted product without discount_price
+        # Fetch depot ID and discount rate from the discount
+        sql_discount_details = "SELECT depot_id, discount_rate FROM Discounts WHERE discount_id = %s"
+        discount_details = fetchOne(sql_discount_details, (discount_id,))
+        if not discount_details:
+            return jsonify({'status': False, 'message': 'Discount not found'}), 404
+
+        depot_id, discount_rate = discount_details
+
+        # Check if the product belongs to the same depot
+        sql_product_depot = "SELECT depot_id FROM Products WHERE product_id = %s"
+        product_depot_id = fetchOne(sql_product_depot, (product_id,))
+        if not product_depot_id or product_depot_id[0] != depot_id:
+            return jsonify({'status': False, 'message': 'Product does not belong to the same depot'}), 400
+
+        # Insert discounted product with discount_price
         sql_insert_discounted_product = """
             INSERT INTO DiscountedProducts (discount_id, product_id)
             VALUES (%s, %s)
         """
         row_count = insertSQL(sql_insert_discounted_product, (discount_id, product_id))
+
+        # Update the product's discount price
+        sql_update_product = """
+            UPDATE Products
+            SET discount_price = price - (price * %s / 100)
+            WHERE product_id = %s
+        """
+        updateSQL(sql_update_product, (discount_rate, product_id))
 
         if row_count > 0:
             return jsonify({'status': True, 'message': 'Discounted product added successfully'})
@@ -216,32 +262,42 @@ def add_discount_product():
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
+
+
 @app.route('/api/categories')
 def get_categories():
     try:
         print("Attempting to fetch categories from the database.")
-        categories = fetchAll("SELECT * FROM Category")
+        categories = fetchAll("SELECT category_id, category_name FROM Category")
         print("Fetched categories:", categories)
-        return jsonify(categories)
+        formatted_categories = [{'id': category[0], 'name': category[1]} for category in categories]
+        return jsonify({'categories': formatted_categories})
     except Exception as e:
         print("Error occurred while fetching categories:", str(e))
         return jsonify({"error": "An error occurred while fetching categories"}), 500
 
-    
+
 @app.route('/api/products', methods=['GET'])
 def get_products():
     try:
         category_id = request.args.get('category_id')
-        sql = "SELECT product_id as id, name FROM Products"
+        depot_id = request.args.get('depot_id')
+        sql = "SELECT product_id as id, name FROM Products WHERE is_active = TRUE"
+        
+        params = []
         if category_id:
-            sql += " WHERE category_id = %s"
-            products = fetchAll(sql, (category_id,), withDescription=True)
-        else:
-            products = fetchAll(sql, withDescription=True)
+            sql += " AND category_id = %s"
+            params.append(category_id)
+        if depot_id:
+            sql += " AND depot_id = %s"
+            params.append(depot_id)
+        
+        products = fetchAll(sql, params, withDescription=True)
         return jsonify({'products': products})
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+
 
 @app.route('/employee/update-discount-product/<int:product_id>', methods=['POST'])
 def update_discount_product(product_id):
