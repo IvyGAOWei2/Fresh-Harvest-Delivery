@@ -187,39 +187,13 @@
                     </thead>
                     <tbody>
                         <!-- Example Order Row -->
+                        {% for order in orders %}
                         <tr>
-                            <td>#1</td>
-                            <td>2024-05-20</td>
-                            <td>2024-05-22</td>
-                            <td>$99.99</td>
-                            <td>Pending</td>
-                            <td>
-                                <a class="btn order-view" role="button" >
-                                    <i class="far fa-eye fa-lg me-3"></i>
-                                </a>
-                            </td>
-                            <td>
-                                <div class="btn-group dropend">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Action
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item" href="#">Pending</a></li>
-                                      <li><a class="dropdown-item" href="#">Comfirmed</a></li>
-                                      <li><a class="dropdown-item" href="#">Shipped</a></li>
-                                      <li><a class="dropdown-item" href="#">Delivered</a></li>
-                                      <li><a class="dropdown-item" href="#">Cancelled</a></li>
-                                    </ul>
-                                  </div>
-                            </td>
-                        </tr>
-                        <!-- Delivered Order Row -->
-                        <tr>
-                            <td>#2</td>
-                            <td>2024-04-15</td>
-                            <td>2024-04-17</td>
-                            <td>$49.99</td>
-                            <td>Delivered</td>
+                            <td>{{order.order_id}}</td>
+                            <td>{{order.order_date}}</td>
+                            <td>{{order.delivery_date}}</td>
+                            <td>{{order.total}}</td>
+                            <td>{{order.status}}</td>
                             <td>
                                 <a class="btn order-view" role="button" >
                                     <i class="far fa-eye fa-lg me-3"></i>
@@ -242,6 +216,7 @@
                                   </div>
                             </td>
                         </tr>
+                        {% endfor %}
                         <!-- Add more fixed data rows as needed -->
                     </tbody>
                 </table>

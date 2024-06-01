@@ -35,12 +35,11 @@ CREATE TABLE Consumer (
     family_name VARCHAR(35) NOT NULL,
     address VARCHAR(80),
     phone VARCHAR(13) NOT NULL,
-	city VARCHAR(100),
 	postcode VARCHAR(10),
 	image VARCHAR(80),
-	credit_available DECIMAL(10, 2),
-	account_limit DECIMAL(10, 2),
-	account_available DECIMAL(10, 2),
+	points DECIMAL(10, 2) DEFAULT 0,
+	account_limit DECIMAL(10, 2) DEFAULT NULL,
+	account_available DECIMAL(10, 2) DEFAULT NULL,
 	registration_date DATE DEFAULT (CURRENT_DATE),
 	last_login_date DATETIME,
 	user_type ENUM('Residential', 'Business', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
@@ -51,6 +50,12 @@ CREATE TABLE Consumer (
 	FOREIGN KEY (subscription_id) REFERENCES Subscription(subscription_id)
 );
 
+CREATE TABLE ConsumerCart (
+    user_id SMALLINT PRIMARY KEY,
+    cart JSON,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
 CREATE TABLE Category (
     category_id TINYINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(50) NOT NULL
@@ -58,7 +63,9 @@ CREATE TABLE Category (
 
 CREATE TABLE Unit (
     unit_id TINYINT PRIMARY KEY AUTO_INCREMENT,
-    unit_name VARCHAR(50) NOT NULL
+    unit_name VARCHAR(50) NOT NULL,
+    unit_std  VARCHAR(5) NOT NULL,
+    unit_min VARCHAR(5) NOT NULL
 );
 
 CREATE TABLE Products (
@@ -77,18 +84,6 @@ CREATE TABLE Products (
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
--- another product??
-CREATE TABLE GiftCardcode (
-    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-	product_id SMALLINT,
-	user_id SMALLINT,
-    code VARCHAR(20) UNIQUE NOT NULL,
-    balance DECIMAL(10, 2),
-    is_used BOOLEAN DEFAULT FALSE,
-	FOREIGN KEY (product_id) REFERENCES Products(product_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
-
 CREATE TABLE ProductImages (
     product_image_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
 	product_id SMALLINT,
@@ -103,10 +98,12 @@ CREATE TABLE Orders (
     user_id SMALLINT,
     order_date DATE,
     delivery_date DATE,
-	delivery_address VARCHAR(150),
+    billing_address JSON,
+    delivery_address JSON,
+    payment_method ENUM('Credit Card', 'Debit Card', 'Account', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    payment_info VARCHAR(20) NOT NULL,
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	payment_method ENUM('Residential', 'Commercial', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
-    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
     total DECIMAL(10, 2),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
@@ -119,6 +116,32 @@ CREATE TABLE OrderItems (
     subtotal DECIMAL(10, 2),
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+CREATE TABLE GiftCards (
+    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	product_id SMALLINT,
+	order_id INT,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    is_active BOOLEAN DEFAULT FALSE,
+	FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id)
+);
+
+CREATE TABLE ConsumerPoints (
+    point_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT,
+    order_id INT,
+    gift_card_id SMALLINT,
+    point_type ENUM('Order Purchase ', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    point_variation DECIMAL(10, 2),
+    point_balance DECIMAL(10, 2),
+    point_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (gift_card_id) REFERENCES GiftCards(gift_card_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE Invoices (

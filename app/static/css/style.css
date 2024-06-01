@@ -687,3 +687,7 @@
 }
 /*** Footer End ***/
 
+/* cart */
+.cart-anime {
+    transition: transform 0.5s ease;
+}

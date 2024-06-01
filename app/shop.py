@@ -57,7 +57,7 @@ def shopDetail():
     try:
         product_id = int(request.args.get('product_id'))
 
-        product = fetchOne("SELECT P.product_id,P.name,P.description,P.price,P.discount_price,P.stock,C.category_name,U.unit_name,D.location AS depot_location,PI.image AS primary_image \
+        product = fetchOne("SELECT P.product_id,P.name,P.description,P.price,P.discount_price,P.stock,C.category_name,U.unit_name,unit_std,unit_min,D.location AS depot_location,PI.image AS primary_image \
             FROM Products AS P \
             LEFT JOIN Category AS C ON P.category_id = C.category_id \
             LEFT JOIN Unit AS U ON P.unit_id = U.unit_id \
