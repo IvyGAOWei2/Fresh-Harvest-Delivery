@@ -1,4 +1,4 @@
-import uuid, json, random
+import uuid, json, random, string, time
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, ValidationError
@@ -169,3 +169,14 @@ def getImageExt(filename):
 def generateImageId():
     image_uuid = uuid.uuid4()
     return str(image_uuid)
+
+def generateCode(length):
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(characters, k=length))
+
+def getTimestamp(hours=0):
+    timestamp = int(time.time()) + (hours * 3600)
+    return timestamp
+
+def validateConsumerEmail(email):
+    return fetchOne('SELECT user_id FROM Users WHERE email = %s AND is_deleted = FALSE AND type = "Consumer"', (email,))

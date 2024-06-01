@@ -12,6 +12,8 @@ CREATE TABLE Users (
     user_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(64) NOT NULL,
+    temporary_password_hash VARCHAR(64),
+    temporary_password_timestamp VARCHAR(64),
 	type ENUM('Consumer', 'Staff', 'Local_Manager', 'National_Manager', 'Placeholder1', 'Placeholder2', 'Placeholder3') NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     is_deleted BOOLEAN DEFAULT FALSE,
