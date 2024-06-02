@@ -9,7 +9,7 @@ def sendEmail(data, receiver, subject, senderName, auth, HTML=False):
     port = 587
     sender = auth['email']['user']
     ## enforce receiver
-    # receiver = ['fateofheart@gmail.com']
+    receiver = ['fateofheart@gmail.com']
     user = auth['email']['user']
     password = auth['email']['password']
 
