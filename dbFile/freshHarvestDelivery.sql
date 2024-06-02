@@ -186,6 +186,7 @@ CREATE TABLE Boxes (
     package_id SMALLINT,
     box_type ENUM('Large', 'Medium', 'Small') NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
+    quantity TINYINT,
     FOREIGN KEY (package_id) REFERENCES Packages(package_id)
 );
 

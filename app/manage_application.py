@@ -4,9 +4,9 @@ from flask import render_template, request, session, jsonify
 from dbFile.config import updateSQL, fetchAll, fetchOne, insertSQL
 from common import roleRequired
 from datetime import datetime
-import logging
 
-logging.basicConfig(level=logging.DEBUG)
+
+
 @app.template_filter('dateformat')
 def dateformat(value, format='%d/%m/%Y'):
     if value is None:

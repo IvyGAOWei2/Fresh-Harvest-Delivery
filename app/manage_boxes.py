@@ -128,8 +128,7 @@ def addPackage():
         return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
 
 
-
-@app.route('/employee/box-products/<int:package_id>')
+@app.route('/employee/package/<int:package_id>')
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manage_box_products(package_id):
     try:
@@ -144,11 +143,22 @@ def manage_box_products(package_id):
         
         # Ensure Small, Medium, and Large boxes exist
         box_types = ['Small', 'Medium', 'Large']
-        boxes = {box_type: {'box_id': None, 'price': 0.00} for box_type in box_types}
+        boxes = {box_type: {'box_id': None, 'price': 0.00, 'products': []} for box_type in box_types}
         
         for box in existing_boxes:
-            boxes[box[1]] = {'box_id': box[0], 'price': box[2]}
-        
+            box_id, box_type, price = box
+            boxes[box_type] = {'box_id': box_id, 'price': price, 'products': []}
+
+            # Fetch products for each box
+            sql_products = """
+                SELECT bi.product_id, p.name, bi.quantity
+                FROM BoxItems bi
+                JOIN Products p ON bi.product_id = p.product_id
+                WHERE bi.box_id = %s
+            """
+            products = fetchAll(sql_products, (box_id,))
+            boxes[box_type]['products'] = [{'id': product[0], 'name': product[1], 'quantity': product[2]} for product in products]
+
         # Create any missing boxes with default values
         for box_type in box_types:
             if boxes[box_type]['box_id'] is None:
@@ -169,11 +179,12 @@ def manage_box_products(package_id):
             'end_date': package[2]
         }
 
-        return render_template('manage-box-products.html', package=package_data, boxes=boxes, categories=categories)
+        formatted_categories = [{'id': category[0], 'name': category[1]} for category in categories]
+
+        return render_template('manage-box-products.html', package=package_data, boxes=boxes, categories=formatted_categories)
     except Exception as e:
         print(f"Error: {e}")
         return str(e), 500
-
 
 
 @app.route('/employee/update-box-price', methods=['POST'])
@@ -198,44 +209,6 @@ def update_box_price():
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-@app.route('/api/products', methods=['GET'])
-def get_products_bix():
-   try:
-        category_id = request.args.get('category_id')
-        depot_id = request.args.get('depot_id')  # Retrieve depot_id from the query parameters
-        sql = "SELECT product_id as id, name FROM Products WHERE depot_id = %s"
-        params = [depot_id]
-        if category_id:
-            sql += " AND category_id = %s"
-            params.append(category_id)
-        products = fetchAll(sql, tuple(params), withDescription=True)
-        return jsonify({'products': products})
-   except Exception as err:
-        print(f"Error: {err}")
-        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-
-
-@app.route('/api/categories/box', methods=['GET'])
-def get_all_categories():
-    try:
-        # Fetch categories from the database
-        sql_categories = "SELECT category_id, category_name FROM Category"
-        categories = fetchAll(sql_categories)
-        
-        # Log the fetched raw categories
-        print("Raw fetched categories:", categories)
-        
-        # Convert list of tuples to list of dictionaries
-        categories_list = [{'category_id': category[0], 'category_name': category[1]} for category in categories]
-        
-        # Log the converted categories
-        print("Converted categories:", categories_list)
-        
-        # Return the list of dictionaries as a JSON response
-        return jsonify({'categories': categories_list})
-    except Exception as err:
-        print(f"Error: {err}")
-        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
 @app.route('/employee/add-box-product', methods=['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -244,7 +217,7 @@ def add_box_product():
         data = request.json
         box_id = data.get('box_id')
         product_id = data.get('product_id')
-        quantity = data.get('quantity')
+        quantity = int(data.get('quantity'))
 
         if not all([box_id, product_id, quantity]):
             return jsonify({'status': False, 'message': 'All fields are required'}), 400
@@ -252,36 +225,26 @@ def add_box_product():
         if product_id == 'undefined':
             return jsonify({'status': False, 'message': 'Invalid product selection'}), 400
 
+        # Insert product into the Small box
         sql_insert_box_item = """
             INSERT INTO BoxItems (box_id, product_id, quantity)
             VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)
         """
         insertSQL(sql_insert_box_item, (box_id, product_id, quantity))
 
+        # Automatically add the product to Medium and Large boxes
+        sql_get_box_ids = "SELECT box_id, box_type FROM Boxes WHERE package_id = (SELECT package_id FROM Boxes WHERE box_id = %s)"
+        boxes = fetchAll(sql_get_box_ids, (box_id,))
+        for box in boxes:
+            if box[1] == 'Medium':
+                medium_quantity =  quantity + 1
+                insertSQL(sql_insert_box_item, (box[0], product_id, medium_quantity))
+            elif box[1] == 'Large':
+                large_quantity = quantity + 2
+                insertSQL(sql_insert_box_item, (box[0], product_id, large_quantity))
+
         return jsonify({'status': True})
-    except Exception as err:
-        print(f"Error: {err}")
-        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-    
-@app.route('/api/box-products/<int:box_id>', methods=['GET'])
-def get_box_products(box_id):
-    try:
-        sql_products = """
-            SELECT
-                bi.product_id,
-                p.name,
-                bi.quantity
-            FROM
-                BoxItems bi
-            JOIN
-                Products p ON bi.product_id = p.product_id
-            WHERE
-                bi.box_id = %s
-        """
-        products = fetchAll(sql_products, (box_id,))
-        print(f"Fetched products for box {box_id}: {products}")
-        formatted_products = [{'id': product[0], 'name': product[1], 'quantity': product[2]} for product in products]
-        return jsonify({'products': formatted_products})
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
