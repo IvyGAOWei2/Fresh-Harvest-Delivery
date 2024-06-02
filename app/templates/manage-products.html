@@ -13,16 +13,6 @@
 {% endblock %}
 
 {% block content %}
-<style>
-    .hidden-file-input {
-    display: none;
-        }
-
-    #addProductModal {
-    color: black;
-}
-
-</style>
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
     <div class="container mt-5">
@@ -92,7 +82,7 @@
                     <div class="offcanvas offcanvas-end w-50" id="updateproduct{{ product.product_id }}" tabindex="-1"
                         aria-labelledby="updateProductModalLabel">
                         <div class="offcanvas-header">
-                            <h5 class="offcanvas-title modal-title mx-auto" id="updateproductLabel">Update {{product.name}}</h5>
+                            <h5 class="offcanvas-title text-center" id="updateproductLabel">Update {{product.name}}</h5>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                                 aria-label="Close"></button>
                         </div>
@@ -101,15 +91,17 @@
                                 action="/product/update" method="POST">
                                 <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
 
-                                <!-- upload image -->
-                                 <div class="card shadow-sm" style="width: 8vw;">
+                                <!-- 图片上传及展示部分需要修改 -->
+                                <div class="card shadow-sm" style="width: 8vw;">
                                     <label for="imgUpdate{{ product.product_id }}">
+                                        <!-- 图片占位符 -->
                                         <img src="{{ url_for('static', filename='images/product/' + product.image) }}"
                                             class="card-img-top" id="imagePreview{{ product.product_id }}">
                                     </label>
-                                    <input class="form-control" name = "image" type="file" id="imgUpdate{{ product.product_id }}"
+                                    <input class="form-control" type="file" id="imgUpdate{{ product.product_id }}"
                                         style="display: none;" accept="image/*">
-                                </div> 
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
                                     <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product.name}}" required>
@@ -286,10 +278,9 @@
                             <div class="invalid-feedback">Please enter a valid description with at least 1 characters.
                             </div>
                         </div>
-                        <div class="mb-3 d-flex align-items-center">
-                            <button type="button" class="btn btn-primary text-center" id="uploadImageButton">Click to Upload Image</button>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-primary"> Upload Image </button>
                         </div>
-                        <input type="file" name="image" id="fileInput" class="hidden-file-input">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -401,20 +392,6 @@
     document.getElementById('addStock').addEventListener('input', function () {
         InputValidate('addStock');
     });
-
-    document.getElementById('uploadImageButton').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
-
-    document.getElementById('fileInput').addEventListener('change', function() {
-        // Handle file selection here
-        var file = this.files[0];
-        console.log('Selected file:', file.name);
-    });
-
-
-
-
 
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('updateProductSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());

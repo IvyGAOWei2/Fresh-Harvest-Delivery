@@ -14,7 +14,6 @@
   {% endwith %}
 {% endblock %}
 
-
 {% block content %}
 <section id="shop">
     <!-- Fruits Shop Start-->
@@ -83,12 +82,15 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <h4 class="mb-3">Featured products</h4>
-                                    <div class="d-flex align-items-center justify-content-start">
+                                    {% for product in discounted_items %}
+                                    <div class="d-flex align-items-center justify-content-start mb-3">
                                         <div class="rounded me-4" style="width: 100px; height: 100px;">
-                                            <img src="{{ url_for('static', filename='images/promotion1.jpg') }}" class="img-fluid rounded" alt="">
+                                            <a href="{{ url_for('shopDetail', product_id=product.product_id) }}">
+                                            <img src="{{ url_for('static', filename='images/product/' ~ product.image) }}" class="img-fluid rounded" alt="{{ product.name }}">
+                                            </a>
                                         </div>
                                         <div>
-                                            <h6 class="mb-2">Big Banana</h6>
+                                            <h6 class="mb-2">{{ product.name }}</h6>
                                             <div class="d-flex mb-2">
                                                 <i class="fa fa-star text-secondary"></i>
                                                 <i class="fa fa-star text-secondary"></i>
@@ -97,51 +99,14 @@
                                                 <i class="fa fa-star"></i>
                                             </div>
                                             <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">2.99 $</h5>
-                                                <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                                <h5 class="fw-bold me-2">{{ product.discount_price }} $</h5>
+                                                <h5 class="text-danger text-decoration-line-through">{{ product.price }} $</h5>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-center justify-content-start">
-                                        <div class="rounded me-4" style="width: 100px; height: 100px;">
-                                            <img src="{{ url_for('static', filename='images/promotion2.jpg') }}" class="img-fluid rounded" alt="">
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-2">Big Banana</h6>
-                                            <div class="d-flex mb-2">
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star"></i>
-                                            </div>
-                                            <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">2.99 $</h5>
-                                                <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-start">
-                                        <div class="rounded me-4" style="width: 100px; height: 100px;">
-                                            <img src="{{ url_for('static', filename='images/promotion3.jpg') }}" class="img-fluid rounded" alt="">
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-2">Big Banana</h6>
-                                            <div class="d-flex mb-2">
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star text-secondary"></i>
-                                                <i class="fa fa-star"></i>
-                                            </div>
-                                            <div class="d-flex mb-2">
-                                                <h5 class="fw-bold me-2">2.99 $</h5>
-                                                <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {% endfor %}
                                     <div class="d-flex justify-content-center my-4">
-                                        <a href="#" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Vew More</a>
+                                        <a href="#" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">View More</a>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
@@ -174,8 +139,8 @@
     </div>
     <!-- Fruits Shop End-->
 </section>
-
 {% endblock %}
+
 {% block script %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -183,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const productCards = document.querySelectorAll('[data-product-id]');
     
     // 获取所有的“加入购物车”按钮
-    // const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+    const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
 
     // 遍历每个productCard元素并添加事件监听器
     productCards.forEach(function(productCard) {
@@ -203,13 +168,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 为每个“加入购物车”按钮添加事件监听器
-    // addToCartButtons.forEach(function(button) {
-    //     button.addEventListener('click', (event) => {
-    //         event.stopPropagation(); // 停止事件冒泡
-    //         event.preventDefault();  // 阻止链接的默认行为
+    addToCartButtons.forEach(function(button) {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); // 停止事件冒泡
+            event.preventDefault();  // 阻止链接的默认行为
 
-    //     });
-    // });
+        });
+    });
 });
 </script>
 {% endblock %}
