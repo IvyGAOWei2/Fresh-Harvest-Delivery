@@ -1039,14 +1039,24 @@
 
 <!-- View News Modal -->
 <div class="modal fade" id="viewnewsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 900px">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Discount</h1>
+          <h1 class="modal-title fs-5 text-primary fst-italic" id="exampleModalLabel"><i class="far fa-smile-wink"></i> Discount</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            This week at Fresh Harvest Delivery, we’re offering fantastic discounts on a range of fresh produce and grocery items! Enjoy 20% off on juicy apples, crisp lettuce, and ripe tomatoes. Stock up on your favorite dairy products with 15% off on milk, cheese, and yogurt. Don't miss out on our special offer of buy one, get one free on selected cereals. Plus, grab a sweet deal with 25% off all bakery items. Visit our store or shop online to take advantage of these incredible savings and keep your pantry stocked with fresh, high-quality groceries!
+            <div class="row">
+            <div class="col-md-6 fst-italic">
+                This week at Fresh Harvest Delivery, we’re offering fantastic discounts on a range of fresh produce and grocery items! Enjoy 20% off on juicy apples, crisp lettuce, and ripe tomatoes. Stock up on your favorite dairy products with 15% off on milk, cheese, and yogurt. Don't miss out on our special offer of buy one, get one free on selected cereals. Plus, grab a sweet deal with 25% off all bakery items. Visit our store or shop online to take advantage of these incredible savings and keep your pantry stocked with fresh, high-quality groceries!
+            </div>
+            
+            <div class="col-md-6">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                </div>
+            </div>
+        </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
