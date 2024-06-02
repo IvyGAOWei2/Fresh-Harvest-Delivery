@@ -78,10 +78,10 @@
                 <thead class="table-primary">
                     <tr>
                         <th>Request ID</th>
+                        <th>Request Date</th>
                         <th>Business Name</th>
                         <th>Current Credit Limit</th>
-                        <th>New Credit Limit</th>
-                        <th>Request Date</th>
+                        <th>New Credit Limit</th> 
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -90,10 +90,10 @@
                     {% for request in requests %}
                     <tr>
                         <td class="align-middle">{{ request[0] }}</td>
+                        <td class="align-middle">{{ request[5] | dateformat }}</td>
                         <td class="align-middle">{{ request[2] }}</td>
                         <td class="align-middle">{{ request[3] }}</td>
                         <td class="align-middle">{{ request[4] }}</td>
-                        <td class="align-middle">{{ request[5] }}</td>
                         <td class="align-middle">{{ request[6] }}</td>
                         <td class="align-middle">
                             <button class="btn btn-icon view-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details" data-request='{{ request|tojson }}'>
@@ -148,7 +148,7 @@
             <p id="status" class="form-control-plaintext"></p>
         </div>
         <div class="mb-3">
-            <label class="form-label">Approved Date</label>
+            <label class="form-label">Approve/Reject Date</label>
             <p id="approvedDate" class="form-control-plaintext"></p>
         </div>
     </div>
@@ -184,9 +184,9 @@
                 document.getElementById('businessName').innerText = request[2];
                 document.getElementById('currentAccountLimit').innerText = request[3];
                 document.getElementById('newAccountLimit').innerText = request[4];
-                document.getElementById('requestDate').innerText = request[5];
+                document.getElementById('requestDate').innerText = new Date(request[5]).toLocaleDateString('en-NZ');
                 document.getElementById('status').innerText = request[6];
-                document.getElementById('approvedDate').innerText = request[7] ? request[7] : 'N/A';
+                document.getElementById('approvedDate').innerText = request[7] ? new Date(request[7]).toLocaleDateString('en-NZ') : 'N/A';
 
                 const viewDetailsOffcanvas = new bootstrap.Offcanvas(document.getElementById('viewDetailsOffcanvas'));
                 viewDetailsOffcanvas.show();
@@ -208,7 +208,9 @@
                     if (data.status) {
                         const successModal = new bootstrap.Modal(document.getElementById('updateProfileSuccessModal'));
                         successModal.show();
-                        setTimeout(() => location.reload(), 2000);
+                        successModal.addEventListener('hidden.bs.modal', function () {
+                            location.reload();
+                        });
                     } else {
                         alert('Failed to approve the request.');
                     }

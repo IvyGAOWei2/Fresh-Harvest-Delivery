@@ -87,16 +87,16 @@
                     </tr>
                 </thead>
                 <tbody id="applicationsTableBody">
-                    {% for application in applications|sort(attribute=10) %}
+                    {% for application in applications %}
                     <tr>
                         <td class="align-middle">{{ application[0] }}</td>
-                        <td class="align-middle">{{ application[10] }}</td>
+                        <td class="align-middle">{{ application[10] | dateformat }}</td>
                         <td class="align-middle">{{ application[2] }}</td>
                         <td class="align-middle">{{ application[3] }}</td>
                         <td class="align-middle">{{ application[4] }}</td>
                         <td class="align-middle">{{ application[9] }}</td>
                         <td class="align-middle">
-                            <button class="btn btn-icon view-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Profile" data-application='{{ application|tojson }}'>
+                            <button class="btn btn-icon view-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="View Profile" data-application='{{ application | tojson }}'>
                                 <i class="fas fa-eye fa-lg me-3 fa-fw"></i>
                             </button>
                             {% if application[9] == 'Pending' %}
@@ -213,6 +213,7 @@
                     if (data.status) {
                         const successModal = new bootstrap.Modal(document.getElementById('updateProfileSuccessModal'));
                         successModal.show();
+                        setTimeout(() => location.reload(), 2000);
                     } else {
                         alert('Failed to approve the application.');
                     }

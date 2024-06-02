@@ -7,8 +7,16 @@ from datetime import datetime
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
-
-
+@app.template_filter('dateformat')
+def dateformat(value, format='%d/%m/%Y'):
+    if value is None:
+        return ""
+    if isinstance(value, datetime):
+        return value.strftime(format)
+    try:
+        return datetime.strptime(value, '%Y-%m-%d').strftime(format)
+    except ValueError:
+        return value
 
 @app.route('/manage-applications')
 @roleRequired(['Local_Manager','National_Manager'])
@@ -27,7 +35,12 @@ def approve_application():
     update_application_status(application_id, 'Approved')
     user_id = get_user_id_from_application(application_id)
     update_user_type(user_id, 'Business')
+    set_default_account_limit(user_id, 500) 
     return jsonify({"status": True})
+
+def set_default_account_limit(user_id, limit):
+    query = "UPDATE Consumer SET account_limit = %s WHERE user_id = %s"
+    updateSQL(query, (limit, user_id))
 
 @app.route('/reject-application', methods=['POST'])
 @roleRequired(['Local_Manager','National_Manager'])
@@ -91,7 +104,6 @@ def submitReviewRequest():
     return jsonify({"status": True})
 
 
-
 @app.route('/admin/reviewRequests', methods=['GET'])
 @roleRequired(['Local_Manager', 'National_Manager'])
 def viewReviewRequests():
@@ -101,15 +113,26 @@ def viewReviewRequests():
     JOIN Consumer c ON r.user_id = c.user_id
     JOIN BusinessApplications b ON r.user_id = b.user_id
     WHERE c.user_type = 'Business'
+    ORDER BY r.request_date DESC
     """
     requests = fetchAll(query)
-    logging.debug(f"Fetched review requests: {requests}")
+    formatted_requests = [
+        (
+            req[0],
+            req[1],
+            req[2],
+            req[3],
+            req[4],
+            req[5],
+            req[6],
+            req[7]
+        )
+        for req in requests
+    ]
 
-    return render_template('manage-credit-limit.html', requests=requests)
-
-
+    return render_template('manage-credit-limit.html', requests=formatted_requests)
 @app.route('/admin/decideReviewRequest', methods=['POST'])
-@roleRequired(['Local_Manager'])
+@roleRequired(['Local_Manager','National_Manager'])
 def decideReviewRequest():
     data = request.get_json()
     request_id = data['request_id']

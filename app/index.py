@@ -13,7 +13,7 @@ def index():
     discount_description = discount[0] if discount else 'No current discounts available.'
     discount_rate = discount[1] if discount else '0%'
 
-    return render_template('index.html', discount={'description': discount_description, 'rate': f'{discount_rate}% OFF'})
+    return render_template('index.html', discount={'description': discount_description, 'rate': f'{discount_rate} OFF'})
 
 @app.route("/404")
 def notFound():

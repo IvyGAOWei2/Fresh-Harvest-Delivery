@@ -172,6 +172,15 @@ CREATE TABLE Employees (
     FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
+CREATE TABLE Packages (
+    package_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+);
+
 CREATE TABLE Boxes (
     box_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     package_id SMALLINT,
@@ -228,8 +237,8 @@ CREATE TABLE Discounts (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     discount_rate DECIMAL(5, 2) NOT NULL,
-    status BOOLEAN DEFAULT TRUE
-    depot_id TINYINT,
+    status BOOLEAN DEFAULT TRUE,
+	depot_id TINYINT,
     FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
@@ -270,11 +279,4 @@ CREATE TABLE AccountLimitReviewRequests (
     FOREIGN KEY (user_id) REFERENCES Consumer(user_id)
 );
 
-CREATE TABLE Packages (
-    package_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    depot_id TINYINT,
-    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
-);
+

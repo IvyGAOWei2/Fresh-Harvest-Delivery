@@ -68,7 +68,7 @@
                                             <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="{{profile.account_limit | round(2)}}" disabled>
+                                                    <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="{{ profile.account_limit | default(0) | float | round(2) }}" disabled>
                                                     <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reviewAccountLimitModal">Review</button>
                                                 </div>
                                             </div>
@@ -122,7 +122,7 @@
                                         <div class="row mb-4">
                                             <label for="creditBalance" class="col-sm-4 col-form-label text-start">Credit Balance</label>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="{{profile.credit_available | round(2)}}" disabled>
+                                                <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="{{ profile.account_available | default(0) | float | round(2) }}" disabled>
                                             </div>
                                         </div>
                                         {% endif %}
@@ -253,6 +253,16 @@
         </div>
     </div>
 </div>
+<div class="p-3">
+    {% with
+      btn_show = 0,
+      bg_color = '#28a745',
+      title = 'Review Request Submitted',
+      msg = 'Your review request has been successfully submitted'
+    %}
+        {% include "components/elements/addSuccess.html" %}
+    {% endwith %}
+</div>
 
 <style>
     .account-header {
@@ -311,7 +321,7 @@
   {% include "components/elements/InputValidate.html" %}
 
 <script>
-    document.getElementById('reviewAccountLimitForm').addEventListener('submit', function (event) {
+   document.getElementById('reviewAccountLimitForm').addEventListener('submit', function (event) {
     event.preventDefault();
     var newAccountLimit = document.getElementById('newAccountLimit').value;
 
@@ -325,8 +335,12 @@
     .then(response => response.json())
     .then(data => {
         if (data.status) {
-            alert('Review request submitted successfully.');
-            new bootstrap.Modal(document.getElementById('reviewAccountLimitModal')).hide();
+            const successModal = new bootstrap.Modal(document.getElementById('addSuccessModal'));
+            successModal.show();
+
+            successModal._element.addEventListener('hidden.bs.modal', function () {
+                location.reload();
+            });
         } else {
             alert('Failed to submit review request.');
         }
