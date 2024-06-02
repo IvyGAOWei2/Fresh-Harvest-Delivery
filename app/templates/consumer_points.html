@@ -31,17 +31,17 @@
             <div class="accordion" id="consumerPoints">
                 <!-- Rewards points history -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="pointsHistory">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="false" aria-controls="pointsHistory">
+                    <h2 class="accordion-header" id="HeadingpointsHistory">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="true" aria-controls="pointsHistory">
                             <i class="fas fa-list me-2"></i>Points History
                         </button>
                     </h2>
-                    <div id="pointsHistory" class="accordion-collapse collapse" aria-labelledby="pointsHistory">
+                    <div id="pointsHistory" class="accordion-collapse show" aria-labelledby="pointsHistory">
                         <div class="accordion-body">
                             <table class="table">
                                 <thead>
                                   <tr>
-                                    <th scope="col">Order ID / Giftcard Code</th>
+                                    <th scope="col">Points categories</th>
                                     <th scope="col">Points change amount</th>
                                     <th scope="col">Balance</th>
                                     <th scope="col">Date</th>
@@ -83,7 +83,6 @@
                                     <div class="col-sm-4">
                                         <input type="text" class="form-control" id="giftcard_code" name="code">
                                         <div class="invalid-feedback">Please input the right giftcard code.</div>
-                                        <div class="valid-feedback">You have successfully redeemed points.</div>
                                     </div>
                                 </div>
                                 <div class="text-center">
