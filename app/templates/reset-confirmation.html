@@ -29,10 +29,10 @@
       background-color: #FFB524 !important;
     }
     #reset-password-confirmation a {
-      color: #0b57d0 !important;
+      color: #fff !important;
     }
     #reset-password-confirmation a:hover {
-      color: #c2c2c2 !important;
+      color: #fff !important;
     }
     #reset-password-confirmation .highlight-email {
       background-color: #FFFF00; /* Yellow highlight */
@@ -49,7 +49,7 @@
           <i class="fas fa-envelope-open-text me-2"></i>
           Help is on the way!
         </h2>
-        <p class="lead">We've sent an email to <b class="sign-in__byline-email highlight-email">{{ email }}</b> with a link to reset your password.</p>
+        <p class="lead">We've sent an email to <b class="sign-in__byline-email highlight-email">{{ email }}</b> with a temporary login password.</p>
         <p class="lead">Remember to check your spam folder too.</p>
         <a class="btn btn-primary mt-3" href="{{ url_for('login') }}">Back to Login</a>
       </div>

@@ -2,9 +2,9 @@ from app import app
 from flask import render_template, redirect, url_for, request, session
 
 # User-defined function
-from dbFile.config import insertSQL
-from common import validateLogin, validateUserAccount, validateRegister, validateEmail
-
+from dbFile.config import insertSQL, fetchOne, updateSQL
+from common import validateLogin, validateUserAccount, validateRegister, validateEmail, validateConsumerEmail, generateCode, getTimestamp
+from emailMethod.method import sendResetPassword
 
 @app.route("/login", methods=['GET','POST'])
 def login():
@@ -21,6 +21,8 @@ def login():
             # Check if the user account is disabled
             if account['is_active'] == False:
                 return {"status": False, 'message': login.email + ' is disabled'}, 200
+            elif account['temporary_password_hash'] and int(account['temporary_password_timestamp']) > getTimestamp():
+                password_hash = account['temporary_password_hash']
             else:
                 password_hash = account['password_hash']
 
@@ -83,7 +85,14 @@ def registered():
 def passwordReset():
     if request.method == 'POST':
         email = request.form['email']
-        print(email)
-        #send_reset_email(email)
-        return render_template('reset-confirmation.html', email=email)
-    return render_template('reset-password.html.html')
+
+        if validateConsumerEmail(email):
+            temporary_password = generateCode(12) + '@'       
+            updateSQL("UPDATE Users SET temporary_password_hash = %s, temporary_password_timestamp = %s WHERE email = %s;", \
+                (app.hashing.hash_value(temporary_password, salt=app.salt), getTimestamp(24), email))
+            sendResetPassword(email, temporary_password)
+            # print(temporary_password)
+            return render_template('reset-confirmation.html', email=email)
+        else:
+            return redirect(url_for('notFound'))
+    return render_template('reset-password.html')

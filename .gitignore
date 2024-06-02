@@ -3,6 +3,8 @@ outdated/
 test.py
 dbFile/config.cnf
 .DS_Store
+app/static/images/upload/*
+emailMethod/auth.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
