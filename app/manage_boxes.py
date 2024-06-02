@@ -128,60 +128,56 @@ def addPackage():
         return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
 
 
-@app.route('/employee/package/<int:package_id>')
+@app.route('/employee/box-products/<int:package_id>')
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manage_box_products(package_id):
     try:
-        sql_package = "SELECT title, start_date, end_date FROM Packages WHERE package_id = %s"
-        package = fetchOne(sql_package, (package_id,))
-        
+        sql_package = "SELECT package_id, title, start_date, end_date, depot_id FROM Packages WHERE package_id = %s"
+        package = fetchOne(sql_package, (package_id,), withDescription=True)
+
         if not package:
             return "Package not found", 404
 
-        sql_boxes = "SELECT box_id, box_type, price FROM Boxes WHERE package_id = %s"
+        sql_boxes = "SELECT box_id, box_type, price, quantity FROM Boxes WHERE package_id = %s"
         existing_boxes = fetchAll(sql_boxes, (package_id,))
-        
-        # Ensure Small, Medium, and Large boxes exist
         box_types = ['Small', 'Medium', 'Large']
-        boxes = {box_type: {'box_id': None, 'price': 0.00, 'products': []} for box_type in box_types}
-        
+        boxes = {box_type: {'box_id': None, 'price': 0.00, 'quantity': 0, 'products': []} for box_type in box_types}
+
         for box in existing_boxes:
-            box_id, box_type, price = box
-            boxes[box_type] = {'box_id': box_id, 'price': price, 'products': []}
+            box_data = {
+                'box_id': box[0],
+                'price': box[2],
+                'quantity': box[3],
+                'products': fetchAll("""
+                    SELECT bi.product_id, p.name, bi.quantity
+                    FROM BoxItems bi
+                    JOIN Products p ON bi.product_id = p.product_id
+                    WHERE bi.box_id = %s
+                """, (box[0],))
+            }
+            boxes[box[1]] = box_data
 
-            # Fetch products for each box
-            sql_products = """
-                SELECT bi.product_id, p.name, bi.quantity
-                FROM BoxItems bi
-                JOIN Products p ON bi.product_id = p.product_id
-                WHERE bi.box_id = %s
-            """
-            products = fetchAll(sql_products, (box_id,))
-            boxes[box_type]['products'] = [{'id': product[0], 'name': product[1], 'quantity': product[2]} for product in products]
-
-        # Create any missing boxes with default values
         for box_type in box_types:
             if boxes[box_type]['box_id'] is None:
-                sql_insert_box = """
-                    INSERT INTO Boxes (package_id, box_type, price)
-                    VALUES (%s, %s, %s)
-                """
-                box_id = insertSQL(sql_insert_box, (package_id, box_type, 0.00))
+                sql_insert_box = "INSERT INTO Boxes (package_id, box_type, price, quantity) VALUES (%s, %s, %s, %s)"
+                box_id = insertSQL(sql_insert_box, (package_id, box_type, 0.00, 0))
                 boxes[box_type]['box_id'] = box_id
 
-        sql_categories = "SELECT category_id, category_name FROM Category"
-        categories = fetchAll(sql_categories)
-
-        package_data = {
-            'package_id': package_id,
-            'title': package[0],
-            'start_date': package[1],
-            'end_date': package[2]
-        }
+        categories = fetchAll("SELECT category_id, category_name FROM Category")
+        products = fetchAll("SELECT product_id, name FROM Products WHERE depot_id = %s", (package['depot_id'],))
 
         formatted_categories = [{'id': category[0], 'name': category[1]} for category in categories]
+        formatted_products = [{'id': product[0], 'name': product[1]} for product in products]
 
-        return render_template('manage-box-products.html', package=package_data, boxes=boxes, categories=formatted_categories)
+        package_data = {
+            'package_id': package['package_id'],
+            'title': package['title'],
+            'start_date': package['start_date'],
+            'end_date': package['end_date'],
+            'depot_id': package['depot_id']
+        }
+
+        return render_template('manage-box-products.html', package=package_data, boxes=boxes, categories=formatted_categories, products=formatted_products)
     except Exception as e:
         print(f"Error: {e}")
         return str(e), 500
@@ -204,6 +200,29 @@ def update_box_price():
             WHERE box_id = %s
         """
         updateSQL(sql_update_price, (price, box_id))
+
+        return jsonify({'status': True})
+    except Exception as err:
+        print(f"Error: {err}")
+        return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+
+@app.route('/employee/update-box-quantity', methods=['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def update_box_quantity():
+    try:
+        data = request.json
+        box_id = data.get('box_id')
+        quantity = data.get('quantity')
+
+        if not all([box_id, quantity]):
+            return jsonify({'status': False, 'message': 'All fields are required'}), 400
+
+        sql_update_quantity = """
+            UPDATE Boxes
+            SET quantity = %s
+            WHERE box_id = %s
+        """
+        updateSQL(sql_update_quantity, (quantity, box_id))
 
         return jsonify({'status': True})
     except Exception as err:
@@ -238,7 +257,7 @@ def add_box_product():
         boxes = fetchAll(sql_get_box_ids, (box_id,))
         for box in boxes:
             if box[1] == 'Medium':
-                medium_quantity =  quantity + 1
+                medium_quantity = quantity + 1
                 insertSQL(sql_insert_box_item, (box[0], product_id, medium_quantity))
             elif box[1] == 'Large':
                 large_quantity = quantity + 2

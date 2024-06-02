@@ -13,6 +13,49 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .pagination a {
+        color: #007bff;
+        padding: 10px 15px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+
+    .pagination a.active {
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .pagination a:hover:not(.active) {
+        background-color: #ddd;
+        border-radius: 5px;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-secondary:hover {
+        transform: scale(1.2);
+        background-color: 177, 205, 252;
+        color: #fff;
+        border-color: #0c0c0c;
+    }
+
+    .btn-icon {
+        background: none;
+        border: none;
+        color: black;
+    }
+    .btn-icon:hover {
+        color: #007bff;
+        transform: scale(1.2);
+    }
+</style>
+
 <section class="main-content">
     <h1 class="text-center">Box Products</h1>
     <h2 class="text-center">Package: {{ package.title }}</h2>
@@ -24,48 +67,35 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading{{ box.box_id }}">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ box.box_id }}" aria-expanded="true" aria-controls="collapse{{ box.box_id }}">
-                        {{ box_type }} Box - ${{ box.price }}
+                        {{ box_type }} Box - ${{ box.price }} - Quantity: {{ box.quantity }}
                     </button>
                 </h2>
                 <div id="collapse{{ box.box_id }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ box.box_id }}" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <form class="update-box-price-form mb-3" data-box-id="{{ box.box_id }}">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="me-auto">
-                                    <label for="price{{ box.box_id }}" class="form-label">Price</label>
-                                    <input type="number" class="form-control me-2" id="price{{ box.box_id }}" value="{{ box.price }}" required>
+                            <div class="d-flex justify-content-center align-items-center mb-3">
+                                <div data-bs-toggle="tooltip" data-bs-placement="top" title="Update Price" class="me-2">
+                                    <button type="button" class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#updatePriceModal{{ box.box_id }}">
+                                        <i class="fas fa-dollar-sign fa-lg"></i>
+                                    </button>
                                 </div>
-                                <button type="submit" class="btn btn-primary me-2">Update Price</button>
+                                <div data-bs-toggle="tooltip" data-bs-placement="top" title="Update Quantity" class="me-2">
+                                    <button type="button" class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#updateQuantityModal{{ box.box_id }}">
+                                        <i class="fas fa-box fa-lg"></i>
+                                    </button>
+                                </div>
+                                {% if box_type == 'Small' %}
+                                <div data-bs-toggle="tooltip" data-bs-placement="top" title="Add Product">
+                                    <button type="button" class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#addProductModal{{ box.box_id }}">
+                                        <i class="fas fa-plus fa-lg"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
                             </div>
                         </form>
 
-                        <table class="table table-striped table-bordered text-center">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Quantity</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productList{{ box.box_id }}">
-                                {% for product in box.products %}
-                                <tr>
-                                    <td>{{ product.name }}</td>
-                                    <td>
-                                        <input type="number" class="form-control" style="width: 80px; display: inline-block;" value="{{ product.quantity }}" id="quantity{{ product.id }}">
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-primary me-2" onclick="updateProduct({{ box.box_id }}, {{ product.id }})">Update</button>
-                                        <button class="btn btn-danger" onclick="removeProduct({{ box.box_id }}, {{ product.id }})">Remove</button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-
                         <!-- Add Product Modal for Small Box Only -->
                         {% if box_type == 'Small' %}
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal{{ box.box_id }}">Add Product</button>
                         <div class="modal fade" id="addProductModal{{ box.box_id }}" tabindex="-1" aria-labelledby="addProductModalLabel{{ box.box_id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -106,13 +136,185 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Add Product Modal -->
                         {% endif %}
+                        
+                        <!-- Update Price Modal -->
+                        <div class="modal fade" id="updatePriceModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updatePriceModalLabel{{ box.box_id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="updatePriceModalLabel{{ box.box_id }}">Update Price for {{ box_type }} Box</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form class="update-price-form" data-box-id="{{ box.box_id }}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="modalPrice{{ box.box_id }}" class="form-label">Price</label>
+                                                <input type="number" class="form-control" id="modalPrice{{ box.box_id }}" value="{{ box.price }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Update Quantity Modal -->
+                        <div class="modal fade" id="updateQuantityModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updateQuantityModalLabel{{ box.box_id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="updateQuantityModalLabel{{ box.box_id }}">Update Quantity for {{ box_type }} Box</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form class="update-quantity-form" data-box-id="{{ box.box_id }}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="modalQuantity{{ box.box_id }}" class="form-label">Quantity</label>
+                                                <input type="number" class="form-control" id="modalQuantity{{ box.box_id }}" value="{{ box.quantity }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-striped table-bordered text-center">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productList{{ box.box_id }}">
+                                {% for product in box.products %}
+                                <tr>
+                                    <td>{{ product[1] }}</td>
+                                    <td>
+                                        <input type="number" class="form-control" style="width: 80px; display: inline-block;" value="{{ product[2] }}" id="quantity{{ product[0] }}" readonly>
+                                    </td>
+                                    <td>
+                                        <div data-bs-toggle="tooltip" data-bs-placement="top" title="Update Info">
+                                            <button class="btn btn-icon product-update" data-bs-toggle="offcanvas" data-bs-target="#updateBoxProduct{{ product[0] }}" data-product-id="{{ product[0] }}" data-box-id="{{ box.box_id }}">
+                                                <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <div class="offcanvas offcanvas-end" id="updateBoxProduct{{ product[0] }}" tabindex="-1" aria-labelledby="updateBoxProductModalLabel">
+                                    <div class="offcanvas-header">
+                                        <h5 class="offcanvas-title text-center" id="updateBoxProductLabel">Update {{ product[1] }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <form class="update-box-product-form" data-product-id="{{ product[0] }}" data-box-id="{{ box.box_id }}">
+                                            <input type="hidden" name="product_id" value="{{ product[0] }}">
+                                            <div class="mb-3">
+                                                <label for="updateBoxProductName{{ product[0] }}" class="form-label">Product Name</label>
+                                                <input type="text" class="form-control" name="name" value="{{ product[1] }}" id="updateBoxProductName{{ product[0] }}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="updateBoxQuantity{{ product[0] }}" class="form-label">Quantity</label>
+                                                <input type="number" class="form-control" name="quantity" value="{{ product[2] }}" id="updateBoxQuantity{{ product[0] }}" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+    </div>
+
+
+
+    <!-- Update Price Modal -->
+    {% for box_type, box in boxes.items() %}
+    <div class="modal fade" id="updatePriceModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updatePriceModalLabel{{ box.box_id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updatePriceModalLabel{{ box.box_id }}">Update Price for {{ box_type }} Box</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="update-price-form" data-box-id="{{ box.box_id }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="updatePrice{{ box.box_id }}" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="updatePrice{{ box.box_id }}" value="{{ box.price }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Update Quantity Modal -->
+    {% for box_type, box in boxes.items() %}
+    <div class="modal fade" id="updateQuantityModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updateQuantityModalLabel{{ box.box_id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateQuantityModalLabel{{ box.box_id }}">Update Quantity for {{ box_type }} Box</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="update-quantity-form" data-box-id="{{ box.box_id }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="updateQuantity{{ box.box_id }}" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="updateQuantity{{ box.box_id }}" value="{{ box.quantity }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Update Success Message -->
+    <div class="p-3">
+        {% with
+          btn_show = 0,
+          bg_color = '#3399ff',
+          title = 'Product Update Success',
+          msg = 'The product has been successfully updated'
+        %}
+            {% include "components/elements/updateSuccess.html" %}
+        {% endwith %}
+    </div>
+
+    <!-- Add Success Message -->
+    <div class="p-3">
+        {% with
+          btn_show = 0,
+          bg_color = '#28a745',
+          title = 'Product Add Success',
+          msg = 'The product has been successfully added'
+        %}
+            {% include "components/elements/addSuccess.html" %}
+        {% endwith %}
     </div>
 </section>
 {% endblock %}
@@ -131,7 +333,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
-            const categoryId = categorySelect.value;
             const productId = productSelect.value;
             const quantity = quantityInput.value;
 
@@ -150,8 +351,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
-                    alert("Product added successfully");
-                    location.reload();
+                    new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
                 } else {
                     alert("Failed to add product");
                 }
@@ -174,10 +374,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 option.textContent = product.name;
                                 productSelect.appendChild(option);
                             });
-
-                            productSelect.addEventListener('change', function() {
-                                console.log('Product selected:', productSelect.value);
-                            });
                         } else {
                             console.error('No products found');
                         }
@@ -190,11 +386,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    document.querySelectorAll('.update-box-price-form').forEach(form => {
+    const updatePriceForms = document.querySelectorAll('.update-price-form');
+    updatePriceForms.forEach(form => {
         form.addEventListener('submit', function (event) {
             event.preventDefault();
             const boxId = form.getAttribute('data-box-id');
-            const price = document.getElementById(`price${boxId}`).value;
+            const price = document.getElementById(`updatePrice${boxId}`).value;
 
             fetch('/employee/update-box-price', {
                 method: 'POST',
@@ -206,10 +403,35 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
-                    alert('Box price updated successfully');
-                    location.reload();
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                 } else {
-                    alert('Failed to update box price');
+                    alert('Failed to update price');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    const updateQuantityForms = document.querySelectorAll('.update-quantity-form');
+    updateQuantityForms.forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const boxId = form.getAttribute('data-box-id');
+            const quantity = document.getElementById(`updateQuantity${boxId}`).value;
+
+            fetch('/employee/update-box-quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ box_id: boxId, quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                } else {
+                    alert('Failed to update quantity');
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -229,8 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.status === true) {
-                alert('Product updated successfully');
-                location.reload();
+                new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
             } else {
                 alert('Failed to update product');
             }
@@ -250,8 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
-                    alert('Product removed successfully');
-                    location.reload();
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                 } else {
                     alert('Failed to remove product');
                 }
@@ -259,6 +479,19 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error:', error));
         }
     }
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
+        location.reload();
+    });
+
+    document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
+        location.reload();
+    });
 });
 </script>
 {% endblock %}
