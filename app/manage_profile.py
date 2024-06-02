@@ -104,9 +104,10 @@ def adminProfileUpdate():
         params.append(user_id)
 
         update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
-   
-    if 'image' in request.files:
-        image_name = saveImage(request.files['image'])
+
+    image = request.files['image']
+    if image.filename:
+        image_name = saveImage(image)
         update_successful = updateSQL("UPDATE " + table_name + " SET image = %s WHERE user_id = %s;", (image_name, user_id))
 
     # if employee type change, update Users
