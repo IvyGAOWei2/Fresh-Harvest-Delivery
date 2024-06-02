@@ -16,6 +16,7 @@
       </tr>
     </thead>
     
+    {% if member_list %}
     {% for member in member_list %}
     <tbody>
       <tr>
@@ -54,8 +55,10 @@
           </td>     
         {% endif %}         
       </tr>
+      
     </tbody>
-
+  
+  
     <!-- update member profile modal-->
     <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateMember{{ member.user_id }}" aria-labelledby="updateMemberLabel">
       <div class="offcanvas-header">
@@ -341,6 +344,12 @@
     {% endwith %}
 
   {% endfor %}
+
+  {% else %}
+  <tr>
+    <td colspan="8" class="text-align-center">No found.</td>
+  </tr>
+  {% endif %}
 
   <!-- updateProfileSuccessModal -->
   {% with
