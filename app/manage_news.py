@@ -28,10 +28,3 @@ def deleteNews():
 
     return render_template('manage_news.html')
 
-
-@app.route("/consumer/news/detail", methods=['GET', 'POST'])
-@roleRequired(['Consumer'])
-def newsDetail():
-    shop()
-    pass
-    return render_template('news_detail.html')
