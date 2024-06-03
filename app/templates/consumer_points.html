@@ -1,0 +1,209 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Points{% endblock %}
+
+{% block navbar %}
+    {% with is_consumer_points='1' %}
+        {% include "components/layout/header/Nav1.html" %}
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .custom-text {
+        color: #81c408;
+        font-weight: bold;
+    }
+</style>
+
+<section>
+    <div id="profile" class="container-fluid py-5 mt-5">
+        <div class="container py-5 text-center">
+            <div class="account-header d-flex justify-content-center align-items-center py-4" style="background: none;">
+                <i class="fas fa-coins fa-3x me-3"></i>
+                <h1 class="mb-0">My Points</h1>
+            </div>
+            <div class="container">
+                <div class="d-flex justify-content-start">
+                    <p class="custom-text">Points Balance: {{pointsBalance}}</p>
+                </div>
+            </div>
+            <div class="accordion" id="consumerPoints">
+                <!-- Rewards points history -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="pointsHistory">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="false" aria-controls="pointsHistory">
+                            <i class="fas fa-list me-2"></i>Points History
+                        </button>
+                    </h2>
+                    <div id="pointsHistory" class="accordion-collapse collapse" aria-labelledby="pointsHistory">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Order ID / Giftcard Code</th>
+                                    <th scope="col">Points change amount</th>
+                                    <th scope="col">Balance</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Details</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for point in pointsHistory %}
+                                  <tr>
+                                    <th scope="row">{{point.point_type}}</th>
+                                    <td><i class="fas fa-plus fa-lg me-3 fa-fw"></i>{{point.point_variation}}</td>
+                                    <td>{{point.point_balance}}</td>
+                                    <td>{{point.point_date}}</td>
+                                    <td>
+                                    <a href="{{ url_for('orderHistory') }}" class="btn view_order" role="button" title="Order details">
+                                        <i class="fas fa-list fa-lg me-3 fa-fw"></i>
+                                    </a>
+                                    </td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>               
+                
+                <!-- giftcard redemption-->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingPaymentDetails">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
+                            <i class="fas fa-credit-card me-2"></i> Giftcard Redemption
+                        </button>
+                    </h2>
+                    <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails">
+                        <div class="accordion-body">
+                            <form id="giftcardRedeem"  method="POST" action="/giftcard/redeem" class="needs-validation" novalidate>
+                                <div class="row mb-4">
+                                    <label for="cardCode" class="col-sm-4 col-form-label">Giftcard Code<sup>*</sup></label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" id="giftcard_code" name="code">
+                                        <div class="invalid-feedback">Please input the right giftcard code.</div>
+                                        <div class="valid-feedback">You have successfully redeemed points.</div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Update Success Message -->
+    <div class="p-3">
+        {% with
+            btn_show = 0,
+            modal_id = 'redemptionSuccessModal',
+            bg_color = '#81C408',
+            title = 'Redemption Success',
+            msg = 'Your gift card has been successfully redemption'
+        %}
+            {% include "components/elements/updateSuccess.html" %}
+        {% endwith %}
+    </div>
+</section>
+
+<style>
+    .account-header {
+        padding: 10px 20px;
+        border-radius: 10px;
+        background: linear-gradient(to right, #e7f1ff, #f8f9fa);
+        display: inline-block;
+    }
+    .account-header h1 {
+        display: inline-block;
+        margin: 0;
+        padding-left: 10px;
+        font-size: 2rem;
+    }
+    .form-label {
+        font-weight: bold;
+    }
+    .accordion-button {
+        background-color: #f8f9fa;
+        color: #000;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+    .accordion-button:not(.collapsed) {
+        color: #007bff;
+        background-color: #e7f1ff;
+    }
+    #updateConsumerProfileForm .btn-primary {
+        background-color: #81C408 !important;
+        border-color: #81C408 !important;
+    }
+    #updateConsumerProfileForm .btn-primary:hover {
+        background-color: #ffb524 !important;
+        border-color: #ffb524 !important;
+    }
+    .form-control {
+        max-width: 400px;
+    }
+    .col-form-label {
+        padding-left: 2rem !important;
+    }
+    .row.mb-2 .col-sm-7 {
+        padding-left: 10px;
+    }
+    form .row .col-sm-4 {
+        padding-right: 5px;
+    }
+    form .row .col-sm-7 {
+        padding-left: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const giftcardRedeem = document.getElementById('giftcardRedeem');
+    document.getElementById('redemptionSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+    // const registerErrorElement = document.getElementById("registerError");
+
+  // Handle registerForm submission
+    giftcardRedeem.addEventListener('submit', function (event) {
+          if (!giftcardRedeem.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          event.stopPropagation();
+
+          const formData = new FormData(this); // Prepare form data
+
+          // Send register request to flask server
+          fetch('/giftcard/redeem', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == true) { // Redirect user if register is successful
+                  console.log(data)
+                  new bootstrap.Modal(document.getElementById('redemptionSuccessModal')).show();
+                //   window.location.href = data.message;
+              }
+              else {
+                alert(data.message);
+                // console.log(data)
+                // Remove the "d-none" class
+                // registerErrorElement.classList.remove("d-none");
+                // Display error message if register fails
+                // registerErrorElement.textContent = data.message;
+              }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    })
+  </script>
+{% endblock %}
