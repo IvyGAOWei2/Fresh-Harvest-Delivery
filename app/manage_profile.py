@@ -57,8 +57,25 @@ def adminProfileUpdate():
             params.append(value)
         params.append(user_id)
 
-    update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
+        update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
 
+    image = request.files['image']
+    if image.filename:
+        image_name = saveImage(image)
+        update_successful = updateSQL("UPDATE " + table_name + " SET image = %s WHERE user_id = %s;", (image_name, user_id))
+
+    # if employee type change, update Users
+    original_employee_type = fetchOne("select type from Users where user_id=%s",(user_id,),withDescription=False)[0]
+    if original_employee_type != "Consumer" and original_employee_type != employee_type:
+        update_successful = updateSQL("update Users set type=%s where user_id=%s",(employee_type,user_id))
+      
+    # if new password, update Users
+    if reset_password != 0:
+        new_hashed = app.hashing.hash_value(reset_password, salt=app.salt)
+        print(new_hashed)
+        updateSQL("UPDATE Users SET password_hash = %s WHERE user_id = %s;", (new_hashed, user_id))
+        update_successful = 1
+  
     if update_successful:
         return {"status": True}, 200
     else:

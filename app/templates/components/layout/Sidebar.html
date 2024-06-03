@@ -18,7 +18,7 @@
 </style>
 
 <!-- Sidebar -->
-<div class="sidebar border-end">
+<div class="sidebar border-end d-flex flex-column h-100">
     <!-- Sidebar header with logo -->
     <div class="sidebar-header border-bottom d-flex align-items-center p-3">
       {% if session.type == 'Staff' %}
@@ -44,7 +44,12 @@
     <a href="{{ url_for('manageProduct') }}" class="{% if is_manageProduct %}is_active{% endif %}">
       <i class="fas fa-boxes"></i> <span>Products</span>
     </a>
- 
+    <a href="{{ url_for('staffOrderHistory') }}" class="{% if is_manage_order_history %}is_active{% endif %}">
+      <i class="fas fa-history"></i> <span>Order History</span>
+    </a>
+    {% if session.type != 'Staff' %}
+    <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Discounts
     </a>
     <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
@@ -68,6 +73,20 @@
     </a>
     <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Account Credit
-    
-    {% endif %}    
+      
+    {% endif %}
+
+
+    <div class="d-flex flex-column align-items-center mt-auto mb-4">
+      <div class="d-flex align-items-center" style="color: #fff;">
+        <i class="fas fa-location-arrow me-2"></i>
+        <span class="m-0" style="margin-top: -.1rem;">
+        {% if session.depot_id == 1 %}Christchurch{% endif %}
+        {% if session.depot_id == 2 %}Invercargill{% endif %}
+        {% if session.depot_id == 3 %}Wellington{% endif %}
+        {% if session.depot_id == 4 %}Hamilton{% endif %}
+        {% if session.depot_id == 5 %}Auckland{% endif %}
+      </span>
+      </div>
+    </div>
 </div>

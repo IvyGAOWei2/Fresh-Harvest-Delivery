@@ -1,5 +1,5 @@
 from emailMethod.sendEmail import sendEmail
-from emailMethod.html import fhdContactHTML, resetPasswordHTML
+from emailMethod.html import fhdContactHTML, resetPasswordHTML, orderStatususHTML
 from configparser import RawConfigParser
 
 
@@ -14,5 +14,8 @@ def sendFhdContact(name, surname, email, message):
 
 def sendResetPassword(email, temporary_password):
     htmlData = resetPasswordHTML(email, temporary_password)
-    sendEmail(htmlData, [config['reset_password']['consumerEmail']], config['reset_password']['subject'], \
-        config['reset_password']['header'], auth, True)
+    sendEmail(htmlData, email, config['reset_password']['subject'], config['reset_password']['header'], auth, True)
+    
+def sendOrderStatus(email, order_id, name, order_date, order_status):
+    htmlData = orderStatususHTML(order_id, name, order_date, order_status)
+    sendEmail(htmlData, email, config['order_status']['subject1'], config['order_status']['header'], auth, True)
