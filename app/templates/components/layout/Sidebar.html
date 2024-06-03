@@ -1,0 +1,88 @@
+<style>
+  .sidebar {
+      width: 250px;
+  }
+  .sidebar .nav-item .nav-link {
+      padding-left: 20px; /* Adjust as needed */
+  }
+  .sidebar .nav-item .nav-link.nav-sub {
+      padding-left: 40px; /* Indent sub-menu items */
+  }
+  .sidebar .nav-link {
+      display: flex;
+      align-items: center;
+  }
+  .sidebar .nav-link i {
+      margin-right: 10px; /* Space between icon and text */
+  }
+</style>
+
+<!-- Sidebar -->
+<div class="sidebar border-end d-flex flex-column h-100">
+    <!-- Sidebar header with logo -->
+    <div class="sidebar-header border-bottom d-flex align-items-center p-3">
+      {% if session.type == 'Staff' %}
+      <svg t="1716562110806" style="margin-right: -1rem;" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1230" width="32" height="32"><path d="M664.512 180.992a204.48 204.48 0 0 1 3.392 408.96h-3.392v-64a140.48 140.48 0 1 0-56.32-269.184l-0.96 0.384-26.176-58.432a203.904 203.904 0 0 1 83.456-17.728z" fill="#3399ff" p-id="1231"></path><path d="M664 526.016a286.528 286.528 0 0 1 286.976 281.28v4.672h-64a222.464 222.464 0 0 0-219.264-221.952h-3.712v-64z" fill="#3399ff" p-id="1232"></path><path d="M427.008 118.016a240.768 240.768 0 0 0-241.024 240.512 240.768 240.768 0 0 0 241.024 240.448 240.768 240.768 0 0 0 241.024-240.448 240.768 240.768 0 0 0-241.024-240.512z m0 64a176.768 176.768 0 0 1 177.024 176.512 176.768 176.768 0 0 1-177.024 176.448 176.768 176.768 0 0 1-177.024-176.448 176.768 176.768 0 0 1 177.024-176.512z" fill="#fff" p-id="1233"></path><path d="M427.008 535.04a340.032 340.032 0 0 1 339.968 334.336v5.632h-64A276.032 276.032 0 0 0 151.04 870.4v4.48h-64A340.032 340.032 0 0 1 426.944 535.04z" fill="#fff" p-id="1234"></path></svg>
+      {% elif session.type == 'Local_Manager' %}
+      <svg t="1716562543295" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11815" data-spm-anchor-id="a313x.search_index.0.i20.2dea3a81UvywGZ" width="32" height="32"><path d="M512 92.032a232 232 0 1 0 0 464 232 232 0 0 0 0-464z m0 64a168 168 0 1 1 0 336 168 168 0 0 1 0-336z" fill="#fff" p-id="11816"></path><path d="M481.28 540.288l-74.432 250.88a32 32 0 0 0 8.064 31.744l74.368 74.368a32 32 0 0 0 45.248 0l74.368-74.368a32 32 0 0 0 8.064-31.744l-74.368-250.88c-9.024-30.528-52.288-30.528-61.376 0z m30.656 121.664l38.272 129.152-38.272 38.336-38.336-38.336L512 661.952z" fill="#3399ff" p-id="11817" data-spm-anchor-id="a313x.search_index.0.i21.2dea3a81UvywGZ" class="selected"></path><path d="M512 492.032c208.896 0 378.56 168.064 381.952 376.64v6.336h-64c0-176.192-142.336-319.04-317.952-319.04-173.824 0-315.136 139.968-317.952 313.728v5.312h-64c0-211.52 170.944-383.04 381.952-383.04z" fill="#fff" p-id="11818"></path></svg>
+      {% else %}
+      <svg t="1716562543295" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11815" data-spm-anchor-id="a313x.search_index.0.i20.2dea3a81UvywGZ" width="32" height="32"><path d="M512 92.032a232 232 0 1 0 0 464 232 232 0 0 0 0-464z m0 64a168 168 0 1 1 0 336 168 168 0 0 1 0-336z" fill="#fff" p-id="11816"></path><path d="M481.28 540.288l-74.432 250.88a32 32 0 0 0 8.064 31.744l74.368 74.368a32 32 0 0 0 45.248 0l74.368-74.368a32 32 0 0 0 8.064-31.744l-74.368-250.88c-9.024-30.528-52.288-30.528-61.376 0z m30.656 121.664l38.272 129.152-38.272 38.336-38.336-38.336L512 661.952z" fill="#f63921" p-id="11817" data-spm-anchor-id="a313x.search_index.0.i21.2dea3a81UvywGZ" class="selected"></path><path d="M512 492.032c208.896 0 378.56 168.064 381.952 376.64v6.336h-64c0-176.192-142.336-319.04-317.952-319.04-173.824 0-315.136 139.968-317.952 313.728v5.312h-64c0-211.52 170.944-383.04 381.952-383.04z" fill="#fff" p-id="11818"></path></svg>
+      {% endif %}
+      <h1 class="flex-grow-1 p-0">Fresh Harvest</h1>
+      <!-- <i class="fas fa-id-card" style="color: #fff;margin-top: .4rem;"></i> -->
+    </div>
+
+    <!-- Sidebar links -->
+    <a href="{{ url_for('admin') }}" class="{% if is_dashboard %}is_active{% endif %}">
+      <i class="fas fa-tachometer-alt"></i>
+      <span>Dashboard</span>
+      <span class="badge badge-sm bg-info">NEW</span>
+    </a>
+    <a href="{{ url_for('profileEmployee') }}" class="{% if is_profile %}is_active{% endif %}">
+      <i class="fas fa-id-card"></i> <span>Profile</span>
+    </a>
+    <a href="{{ url_for('manageProduct') }}" class="{% if is_manageProduct %}is_active{% endif %}">
+      <i class="fas fa-boxes"></i> <span>Products</span>
+    </a>
+    <a href="{{ url_for('staffOrderHistory') }}" class="{% if is_manage_order_history %}is_active{% endif %}">
+      <i class="fas fa-history"></i> <span>Order History</span>
+    </a>
+    {% if session.type != 'Staff' %}
+    <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Discounts
+    </a>
+    <a href="{{ url_for('adminAction') }}" class="{% if is_action %}is_active{% endif %}">
+      <i class="fas fa-tools"></i> <span>Admin Actions</span>
+    </a>
+    <a href="{{ url_for('manageNews') }}" class="{% if is_news %}is_active{% endif %}">
+      <i class="fas fa-newspaper"></i><span>Post news</span>
+    </a>
+    {% endif %}
+    <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_consumerList %}is_active{% endif %}">
+      <i class="fas fa-users"></i> <span>Manage Consumer</span>
+    </a>
+    {% if session.type == 'Local_Manager' %}
+    <a href="{{ url_for('adminProfiles',profile_type='Local_Manager') }}" class="{% if is_employeeList %}is_active{% endif %}">
+      <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
+    </a>
+    {% elif session.type == 'National_Manager' %}
+    <a href="{{ url_for('adminProfiles',profile_type='National_Manager') }}" class="{% if is_employeeList %}is_active{% endif %}">
+      <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
+    </a>
+    {% endif %}
+
+
+    <div class="d-flex flex-column align-items-center mt-auto mb-4">
+      <div class="d-flex align-items-center" style="color: #fff;">
+        <i class="fas fa-location-arrow me-2"></i>
+        <span class="m-0">
+        {% if session.depot_id == 1 %}Christchurch{% endif %}
+        {% if session.depot_id == 2 %}Invercargill{% endif %}
+        {% if session.depot_id == 3 %}Wellington{% endif %}
+        {% if session.depot_id == 4 %}Hamilton{% endif %}
+        {% if session.depot_id == 5 %}Auckland{% endif %}
+        {% if session.depot_id == 6 %}New Zealand{% endif %}
+      </span>
+      </div>
+    </div>
+</div>

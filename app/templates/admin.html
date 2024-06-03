@@ -1,0 +1,20 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+  {% with is_dashboard='1' %}
+    {% include "components/layout/Sidebar.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Dashboard' %}
+    {% include "components/layout/Breadcrumb2.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+<!-- Main content -->
+<section class="main-content">
+  <h1>Welcome to Fresh Harvest Admin Panel</h1>
+</section>
+{% endblock %}
