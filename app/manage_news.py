@@ -7,7 +7,7 @@ from common import roleRequired, validateEmail, validateRegisterEmployee, valida
 
 @app.route("/admin/post/news", methods=['GET', 'POST'])
 @roleRequired(['Local_Manager', 'National_Manager'])
-def postNews():
+def manageNews():
   
 
     return render_template('manage_news.html')
