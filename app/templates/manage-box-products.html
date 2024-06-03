@@ -57,8 +57,7 @@
 </style>
 
 <section class="main-content">
-    <h1 class="text-center">Box Products</h1>
-    <h2 class="text-center">Package: {{ package.title }}</h2>
+    <h1 class="text-center">{{ package.title }}</h1>
     <p class="text-center">Start Date: {{ package.start_date }} | End Date: {{ package.end_date }}</p>
 
     <div class="container mt-5">
@@ -137,7 +136,7 @@
                             </div>
                         </div>
                         {% endif %}
-                        
+
                         <!-- Update Price Modal -->
                         <div class="modal fade" id="updatePriceModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updatePriceModalLabel{{ box.box_id }}" aria-hidden="true">
                             <div class="modal-dialog">
@@ -149,8 +148,8 @@
                                     <form class="update-price-form" data-box-id="{{ box.box_id }}">
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label for="modalPrice{{ box.box_id }}" class="form-label">Price</label>
-                                                <input type="number" class="form-control" id="modalPrice{{ box.box_id }}" value="{{ box.price }}" required>
+                                                <label for="updatePrice{{ box.box_id }}" class="form-label">Price</label>
+                                                <input type="number" class="form-control" id="updatePrice{{ box.box_id }}" value="{{ box.price }}" required min="0">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -173,8 +172,8 @@
                                     <form class="update-quantity-form" data-box-id="{{ box.box_id }}">
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label for="modalQuantity{{ box.box_id }}" class="form-label">Quantity</label>
-                                                <input type="number" class="form-control" id="modalQuantity{{ box.box_id }}" value="{{ box.quantity }}" required>
+                                                <label for="updateQuantity{{ box.box_id }}" class="form-label">Quantity</label>
+                                                <input type="number" class="form-control" id="updateQuantity{{ box.box_id }}" value="{{ box.quantity }}" required min="0">
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -219,11 +218,11 @@
                                             <input type="hidden" name="product_id" value="{{ product[0] }}">
                                             <div class="mb-3">
                                                 <label for="updateBoxProductName{{ product[0] }}" class="form-label">Product Name</label>
-                                                <input type="text" class="form-control" name="name" value="{{ product[1] }}" id="updateBoxProductName{{ product[0] }}" required>
+                                                <input type="text" class="form-control" name="name" value="{{ product[1] }}" id="updateBoxProductName{{ product[0] }}" readonly>
                                             </div>
                                             <div class="mb-3">
                                                 <label for="updateBoxQuantity{{ product[0] }}" class="form-label">Quantity</label>
-                                                <input type="number" class="form-control" name="quantity" value="{{ product[2] }}" id="updateBoxQuantity{{ product[0] }}" required>
+                                                <input type="number" class="form-control" name="quantity" value="{{ product[2] }}" id="updateBoxQuantity{{ product[0] }}" required min="0">
                                             </div>
                                             <button type="submit" class="btn btn-primary">Update</button>
                                         </form>
@@ -238,60 +237,6 @@
             {% endfor %}
         </div>
     </div>
-
-
-
-    <!-- Update Price Modal -->
-    {% for box_type, box in boxes.items() %}
-    <div class="modal fade" id="updatePriceModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updatePriceModalLabel{{ box.box_id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updatePriceModalLabel{{ box.box_id }}">Update Price for {{ box_type }} Box</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="update-price-form" data-box-id="{{ box.box_id }}">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="updatePrice{{ box.box_id }}" class="form-label">Price</label>
-                            <input type="number" class="form-control" id="updatePrice{{ box.box_id }}" value="{{ box.price }}" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-
-    <!-- Update Quantity Modal -->
-    {% for box_type, box in boxes.items() %}
-    <div class="modal fade" id="updateQuantityModal{{ box.box_id }}" tabindex="-1" aria-labelledby="updateQuantityModalLabel{{ box.box_id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="updateQuantityModalLabel{{ box.box_id }}">Update Quantity for {{ box_type }} Box</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="update-quantity-form" data-box-id="{{ box.box_id }}">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="updateQuantity{{ box.box_id }}" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="updateQuantity{{ box.box_id }}" value="{{ box.quantity }}" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
 
     <!-- Update Success Message -->
     <div class="p-3">
@@ -338,6 +283,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!productId || productId === 'undefined') {
                 alert('Please select a product');
+                return;
+            }
+
+            if (quantity <= 0) {
+                alert('Quantity must be greater than zero');
                 return;
             }
 
@@ -393,6 +343,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const boxId = form.getAttribute('data-box-id');
             const price = document.getElementById(`updatePrice${boxId}`).value;
 
+            if (price < 0) {
+                alert('Price must be greater than or equal to zero');
+                return;
+            }
+
             fetch('/employee/update-box-price', {
                 method: 'POST',
                 headers: {
@@ -419,6 +374,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const boxId = form.getAttribute('data-box-id');
             const quantity = document.getElementById(`updateQuantity${boxId}`).value;
 
+            if (quantity < 0) {
+                alert('Quantity must be greater than or equal to zero');
+                return;
+            }
+
             fetch('/employee/update-box-quantity', {
                 method: 'POST',
                 headers: {
@@ -438,8 +398,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    const updateProductForms = document.querySelectorAll('.update-box-product-form');
+    updateProductForms.forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const boxId = form.getAttribute('data-box-id');
+            const productId = form.getAttribute('data-product-id');
+            const quantity = document.getElementById(`updateBoxQuantity${productId}`).value;
+
+            if (quantity < 0) {
+                alert('Quantity must be greater than or equal to zero');
+                return;
+            }
+
+            fetch('/employee/update-box-product', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ box_id: boxId, product_id: productId, quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    if (quantity == 0) {
+                        document.querySelector(`#productList${boxId} tr[data-product-id="${productId}"]`).remove();
+                    }
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                } else {
+                    alert('Failed to update product');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
     window.updateProduct = function(boxId, productId) {
         const quantity = document.getElementById(`quantity${productId}`).value;
+
+        if (quantity < 0) {
+            alert('Quantity must be greater than or equal to zero');
+            return;
+        }
 
         fetch('/employee/update-box-product', {
             method: 'POST',
@@ -451,6 +451,9 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.status === true) {
+                if (quantity == 0) {
+                    document.querySelector(`#productList${boxId} tr[data-product-id="${productId}"]`).remove();
+                }
                 new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
             } else {
                 alert('Failed to update product');
@@ -471,6 +474,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.status === true) {
+                    document.querySelector(`#productList${boxId} tr[data-product-id="${productId}"]`).remove();
                     new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
                 } else {
                     alert('Failed to remove product');
