@@ -58,23 +58,26 @@ def profileSearch():
     
     # if click manage consumer in the sidebar
     if profile_type == "Consumer":
-        if depot_id == 'all' or 6:
+        if depot_id == 'all' or depot_id == 6:
+            print(222111111111111)
             result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
                 JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',),True)
         else:
+            print(111111111111111)
             result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
                 JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%', depot_id,),True)
     # if click manage employee in the sidebar
     else:
         if session.get('type') in ['Local_Manager']:
-            if depot_id == 'all' or 6:
+            if depot_id == 'all' or depot_id ==  6:
                 result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
                     JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
             else:
+                print(89898989898)
                 result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
                     JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
         else:
-            if depot_id == 'all' or 6:
+            if depot_id == 'all' or depot_id ==  6:
                 print(787878787878787)
                 result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
                     JOIN Users ON Employees.user_id = Users.user_id \
