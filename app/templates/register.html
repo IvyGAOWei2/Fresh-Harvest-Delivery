@@ -1,0 +1,307 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block navbar %}
+  {% with is_login='1' %}
+    {% include "components/layout/header/Nav1.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Register' %}
+    {% include "components/layout/Breadcrumb1.html" %}
+  {% endwith %}
+{% endblock %}
+        
+<!-- Content Start -->
+{% block content %}
+<div id="register" class="container-fluid py-5">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-md-8 col-lg-6 col-xl-7 my-lg-5 py-lg-5">
+      <form id="registerForm" method="POST" class="needs-validation" novalidate>
+
+        <div class="input-group">
+          <div id="registerError" class="d-none alert pt-2 pb-2 mb-0 col-12 text-center bg-danger-subtle" style="color: #6a717a !important;" role="alert"></div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                  <div class="form-item w-100">
+                      <label class="form-label">First Name<sup>*</sup></label>
+                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerFirstname" name="given_name" pattern="^[a-zA-Z]+$" required>
+                      <div class="invalid-feedback">The name cannot be more than 35 letters</div>
+                      <div class="valid-feedback">Looks good!</div>      
+                  </div>
+              </div>
+              <div class="col-md-12 col-lg-6">
+                  <div class="form-item w-100">
+                      <label class="form-label">Last Name<sup>*</sup></label>
+                      <input type="text" minlength="1" maxlength="35" class="form-control" id="registerLastname" name="family_name" pattern="^[a-zA-Z]+$" required>
+                      <div class="invalid-feedback">The name cannot be more than 35 letters</div>
+                      <div class="valid-feedback">Looks good!</div>      
+                  </div>
+              </div>
+            </div>                 
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-city fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+          <div class="row">
+
+            <div class="col-md-12 col-lg-6">
+              <label class="form-label">Address<sup>*</sup></label>
+              <input type="text" minlength="5" maxlength="50"  class="form-control" id="registerStreet" name="address" placeholder="House Number Street Name" required>
+              <div class="invalid-feedback">The address cannot exceed 50 characters</div>
+              <div class="valid-feedback">Looks good!</div>      
+            </div>  
+            
+            <div class="col-md-12 col-lg-2">
+                <label class="form-label">Postcode<sup>*</sup></label>
+                <input type="text" class="form-control" minlength="4" maxlength="4" id="registerZip" name="postcode" pattern="^[0-9]+$" required>
+                <div class="invalid-feedback">Please enter a valid four-digit postal code</div>
+                <div class="valid-feedback">Looks good!</div>      
+            </div>
+
+            <div class="col-md-12 col-lg-4">
+              <label class="form-label">City<sup>*</sup></label>
+              <div class="d-flex align-items-center">
+                <select class="form-control"name="depot_id" id="depot_id" required>
+                  <option selected value="">Please select your city</option>
+                  <option value="1">Christchurch</option>
+                  <option value="2">Invercargill</option>
+                  <option value="3">Wellington</option>
+                  <option value="4">Hamilton</option>
+                  <option value="5">Auckland</option>
+                </select>
+                <div class="invalid-feedback">Please select a city from the list.</div>
+                <div class="valid-feedback">Looks good!</div>      
+              </div>
+          </div>
+
+          </div>
+          </div>  
+        </div> 
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                <label class="form-label" for="form3Example3c">Email <sup>*</sup></label>
+                <input type="email" maxlength="50" class="form-control" id="registerEmail" name="email" value="" placeholder="john.doe@example.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+                <div class="invalid-feedback">Please enter a valid email address</div>
+                <div class="valid-feedback">Looks good!</div>      
+              </div>
+            </div>           
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                <label class="form-label" for="form3Example3c">Phone <sup>*</sup></label>
+                <input type="text" minlength="7" maxlength="13" id="registerPhone" name="phone" class="form-control" pattern="^[0-9]+$" required/>           
+                <div class="invalid-feedback">Phone number cannot be less than 7 digits or more than 13 digits</div>
+                <div class="valid-feedback">Looks good!</div>     
+              </div>
+            </div>           
+          </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center mb-4">
+          <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+          <div data-mdb-input-init class="form-outline flex-fill mb-0">
+            <div class="row">
+              <div class="col-md-12 col-lg-6">
+                <label class="form-label">Password <sup>*</sup></label>
+                <div class="input-group">
+                  <input type="password" minlength="8" maxlength="20" class="form-control password-input" aria-describedby="togglePasswordBtn" id="registerPassword" value="" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$" required>
+                    <span class="input-group-btn">
+                      <button class="btn btn-outline-secondary rounded-0 rounded-end" type="button" id="togglePasswordBtn"><i class="fas fa-eye-slash"></i></button>
+                    </span>  
+                    <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
+                    <div class="valid-feedback">Looks good!</div>   
+                </div>         
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="input-group">
+          <input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="togglePasswordBtn">
+          <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn"><i class="fas fa-eye-slash"></i></button>
+        </div> -->
+
+        <div class="form-check d-flex justify-content-left mb-5">
+          <input class="form-check-input me-2" type="checkbox" value="" id="registerTerm" required/>
+          <label class="form-check-label" for="form2Example3">
+            I agree all statements in <a class="link" data-bs-toggle="modal" data-bs-target="#exampleModal_terms">Terms of service</a>
+          </label>
+        </div>
+
+        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+          <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary">Register</button>
+        </div>
+
+        <div class="text-center text-lg-start">
+          <p class="small fw-bold mb-0">Already have an account? <a class="link-danger" href="{{ url_for('login') }}">Login</a></p>
+        </div>
+
+      </form>
+    </div>
+    <div class="col-md-10 col-lg-6 col-xl-4 align-items-center order-1 order-lg-2">
+      <img src="/static/images/register.jpeg" class="img-fluid" alt="Sample image">
+    </div>
+  </div>
+</div>
+
+
+ <!-- Modal terms -->
+ <div class="modal fade" id="exampleModal_terms" tabindex="-1" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModal_termsTitle">Terms of service</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Fresh Harvest Delivery’s online shopping service is intended for use by people located in New Zealand.</p>
+          <p>1. REGISTRATION </p>
+          <p>1.1 Your use of Fresh Harvest Delivery’s online shopping service</p>
+          <p>By accessing, searching for and/or ordering your Groceries through Fresh Harvest Delivery’s online shopping service, you are deemed to have read and agreed to these terms and conditions. You are responsible for any data or telecommunications charges when you shop online with Fresh Harvest Delivery.</p>
+          <p>1.2 Registration and use of your details</p>
+          <p>You must register to use Fresh Harvest Delivery’s online shopping service and to search for and buy Groceries. You can complete this Fresh Harvest Delivery registration by registering as a Fresh Harvest Delivery customer where indicated on the Fresh Harvest Delivery website or mobile application and providing your nominated email address, password and other requested information.
+          <p>Any personal information you provide to us will be collected, held and used in accordance with the Fresh Harvest Delivery Privacy Policy
+          If you are a Fresh Harvest Delivery Clubcard member, you can provide your Fresh Harvest Delivery Clubcard number at registration so that we recognise you and can find your details. 
+          You agree that you are responsible for anyone using Fresh Harvest Delivery’s online shopping service using your nominated email address and password – please keep your nominated email address and password confidential. You will ensure that the information you provide to us is accurate, up-to-date and not misleading, and that we can rely on this information for the purposes of fulfilling your orders.</p>
+          <p>1.3 Termination/suspension of access to Fresh Harvest Delivery’s online shopping service</p>
+          <p>We may refuse any application to use Fresh Harvest Delivery’s online shopping service. We may also, at our discretion, suspend or terminate your access to Fresh Harvest Delivery’s online shopping service at any time for any reason.</p>
+          <p>2. PLACING AN ORDER FOR YOUR GROCERIES</p>
+          <p>2.1 General (Delivery or Click & Collect)</p>
+          <p>We offer two options for receiving your Groceries. We can deliver them direct to your nominated delivery address, or you can pick them up from your nominated store (using Click & Collect). We discuss these two options in more detail below.
+          Please note that some of our stores may only offer a Click & Collect service, while other stores may only offer a Delivery service. 
+          We reserve the right to refuse any order placed via the Fresh Harvest Delivery online shopping service at our sole discretion.
+          Where payment for a refused order has been charged to your credit or debit card or you are otherwise entitled to a refund for Groceries paid for using a credit or debit card, we will refund the value of that order to the credit or debit card that was used for payment provided the credit or debit card has not expired. If the payment card has expired and it is not possible to refund the card used for payment, you will be refunded the full value you are entitled to in Fresh Harvest Delivery Dollars.
+          Where payment for a refused order has been deducted from your Fresh Harvest Delivery Dollars balance or you are otherwise entitled to a refund for Groceries paid for using Fresh Harvest Delivery Dollars, we will refund the value of that order in Fresh Harvest Delivery Dollars.</p>
+          <p>2.2 Minimum order value</p>
+          <p>The total estimated value of your order shown on the “check-out” page must be at least $1 before your order for Groceries will be accepted.</p>
+          <p>2.3 Order cut-off times</p>
+          <p>Orders for Delivery and Click & Collect must be placed before the order cut-off times displayed on Fresh Harvest Delivery’s online shop or otherwise determined by us (the relevant cut-off time for your order being referred to as the Order Cut-Off Time(s) in these terms and conditions). Order Cut-Off Times may change from time to time as determined by us.</p>
+          <p>2.4 Click & Collect and Delivery Timeslots</p>
+          <p>We will offer Click & Collect and Delivery services between set hours, and these services will be allocated by scheduled timeslots that can be booked through the Fresh Harvest Delivery online shopping service.
+          There may be a limit to the number of orders that can be delivered or picked-up during each available timeslot. You can reserve a Click & Collect Timeslot or Delivery Timeslot for up to 30 minutes while you select your Groceries. After that time, we cannot guarantee that the Click & Collect Timeslot or Delivery Timeslot you reserved will still be available and you may be prompted by Fresh Harvest Delivery to select another timeslot.
+          We will do what we reasonably can to deliver or make your order available for pick-up within the timeslot selected by you. If it is not possible for us to deliver or make your order available for pickup within the timeslot you have selected we will try to contact you using the contact information. We reserve the right to amend timeslot schedules, including Click & Collect and Delivery times, at our sole discretion.</p>
+          <p>2.5 Estimated order value and final order value</p>
+          The order value at the time you place your order is an estimated total only. The final order value is the actual price you will pay for your Groceries (plus any service fees for Delivery and Click & Collect, as explained below) and may change from the estimated order value for the following reasons:
+          • Variable weight items – if you have ordered Grocery items that need to be weighed (such as produce, seafood, meat and deli items from our fresh food departments) or are pre-packed items that are of variable weight, you will be charged for the actual weight of the item picked by our Personal Shoppers (at the unit price displayed by Fresh Harvest Delivery at the time you placed your order). Our Personal Shoppers will do their best to ensure that the items you actually get and pay for weigh as close as possible to the weight you ordered.
+          • Substitutions – if you have agreed that substitutions are allowed, the final value of your order may reduce as a result of us substituting items that are not available for similar items. You will be charged the cheaper price of either the item ordered or the substituted item.
+          • No substitutions – if you have not agreed to allow for substitutions, the final value of your order may reduce from the estimated order value, as a result of us removing Groceries from your order that are not available.
+          You will be provided a final invoice at the time of pick up or delivery.
+          Please also note that if we allow you to change your Grocery order under clause 2.13, pricing for your order may change. See clause 2.13 below for detail.
+          Service fees if any will be calculated based on the final order value.
+          Guarantees Act 1993 and the Fair Trading Act 1986, it is your responsibility to satisfy yourself that Groceries you purchase through Fresh Harvest Delivery’s online shopping service are fit for the purpose you intend and to use all requisite care and skill when handling, using and/or consuming those Groceries. You warrant that you will not use Groceries purchased through Fresh Harvest Delivery’s online shopping service for any purpose for which they are not suitable. You acknowledge that you cannot rely on any representation or statement made by a representative of your nominated store or Foodstuffs either through Fresh Harvest Delivery’s online shopping service or otherwise, other than the express wording of these terms and conditions. No representative of your nominated store or Foodstuffs assumes any obligation or liability for any advice given to you and you accept Groceries purchased through Fresh Harvest Delivery’s online shopping service entirely at your own risk.
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
+  <script>
+  // Password toggle
+  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+  const passwordInput = document.querySelector('.password-input');
+
+  togglePasswordBtn.addEventListener('click', function() {
+    if (passwordInput.getAttribute('type') === 'password') {
+      passwordInput.setAttribute('type', 'text');
+      togglePasswordBtn.innerHTML = '<i class="fas fa-eye"></i>';
+    } else {
+      passwordInput.setAttribute('type', 'password');
+      togglePasswordBtn.innerHTML  = '<i class="fas fa-eye-slash"></i>';
+    }
+  });
+
+  document.getElementById('registerEmail').addEventListener('input', function() {
+        InputValidate('registerEmail');
+      });
+
+  document.getElementById('registerPassword').addEventListener('input', function() {
+    InputValidate('registerPassword');
+  });
+
+  document.getElementById('registerFirstname').addEventListener('input', function() {
+    InputValidate('registerFirstname');
+  });
+
+  document.getElementById('registerLastname').addEventListener('input', function() {
+    InputValidate('registerLastname');
+  });
+
+  document.getElementById('registerPhone').addEventListener('input', function() {
+    InputValidate('registerPhone');
+  });
+
+  document.getElementById('registerZip').addEventListener('input', function() {
+    InputValidate('registerZip');
+  });
+
+  document.getElementById('registerStreet').addEventListener('input', function() {
+    InputValidate('registerStreet');
+  });
+
+  // Get references to the register form and error message element
+  const registerForm = document.getElementById('registerForm');
+  const registerErrorElement = document.getElementById("registerError");
+
+  // Handle registerForm submission
+  registerForm.addEventListener('submit', function (event) {
+          if (!registerForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          event.stopPropagation();
+
+          const formData = new FormData(this); // Prepare form data
+
+          // Send register request to flask server
+          fetch('/register', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == true) { // Redirect user if register is successful
+                  // console.log(data.data)
+                  window.location.href = data.message;
+              }
+              else {
+                console.log(data)
+                // Remove the "d-none" class
+                registerErrorElement.classList.remove("d-none");
+                // Display error message if register fails
+                registerErrorElement.textContent = data.message;
+              }
+          })
+          .catch(error => console.error('Error:', error));
+      });
+
+  </script>
+
+{% endblock %}
+
+
+

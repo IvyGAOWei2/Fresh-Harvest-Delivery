@@ -1,0 +1,225 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+  {% with is_profile='1' %}
+    {% include "components/layout/Sidebar.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Profile' %}
+    {% include "components/layout/Breadcrumb2.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+<section class="main-content">
+    <!-- Employee Profile Section -->
+    <div id="employee-profile" class="card mb-4">
+        <div class="card-header profile-header">
+        <div class="profile-img-container">
+            <img src="{{ url_for('static', filename='images/' + profile.image) }}" alt="Profile Picture" class="profile-img">
+        </div>
+        <div class="profile-info">
+            <h2 class="profile-name">{{profile.given_name}} {{profile.family_name}}</h2>
+            <p class="profile-country">
+            {% if profile.depot_id == 1 %}
+                Christchurch
+            {% elif profile.depot_id == 2 %}
+                Invercargill
+            {% elif profile.depot_id == 3 %}
+                Wellington
+            {% elif profile.depot_id == 4 %}
+                Hamilton
+            {% elif profile.depot_id == 5 %}
+                Auckland
+            {% else %}
+                NZ
+            {% endif %}
+            </p>
+            <p class="profile-contact">
+            <i class="bi bi-telephone"></i>{{profile.phone}} | 
+            <i class="bi bi-envelope"></i>{{session.email}}
+            </p>
+        </div>
+        </div>
+        <div class="card-body">
+            <form id="updateProfileForm" class="row g-3 needs-validation" novalidate> 
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" id="mfirstName" class="form-control" name="given_name" value="{{ profile.given_name }}" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                    <div class="invalid-feedback">Please enter your first name.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" id="mlastName" class="form-control" name="family_name" value="{{ profile.family_name }}" maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                    <div class="invalid-feedback">Please enter your last name.</div>
+                </div>
+                <div class="col-12">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" id="maddress" class="form-control" name="address" value="{{ profile.address }}" maxlength="50" required>
+                    <div class="invalid-feedback">Please enter your address.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="tel" id="mphone" class="form-control" name="phone" value="{{ profile.phone }}" pattern="\d{10,14}" maxlength="13" required>
+                    <div class="invalid-feedback">Please enter a valid phone number (10-13 digits).</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="memail" class="form-control" name="email" value="{{ session.email }}" disabled required>
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="hireDate" class="form-label">Hire Date</label>
+                    <input type="date" id="mhireDate" class="form-control" name="hire_date" value="{{ profile.hire_date }}" required>
+                    <div class="invalid-feedback">Please select your hire date.</div>
+                </div>
+                <div class="col-md-6">
+                    <label for="depotName" class="form-label">Depot Name</label>
+                    <select name="depot_id" class="form-select">
+                        <option value="1" {% if profile.depot_id == 1 %}selected{% endif %}>Christchurch</option>
+                        <option value="2" {% if profile.depot_id == 2 %}selected{% endif %}>Invercargill</option>
+                        <option value="3" {% if profile.depot_id == 3 %}selected{% endif %}>Wellington</option>
+                        <option value="4" {% if profile.depot_id == 4 %}selected{% endif %}>Hamilton</option>
+                        <option value="5" {% if profile.depot_id == 5 %}selected{% endif %}>Auckland</option>
+                        <option value="6" {% if profile.depot_id == 6 %}selected{% endif %}>NZ</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a depot.</div>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="oldPassword" class="form-label">Old Password</label>
+                    <input type="password" class="form-control" id="moldPassword" name="old_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                </div>
+
+                <!-- New Password -->
+                <div class="col-md-6">
+                    <label for="newPassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="mnewPassword" name="new_password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$">
+                    <div class="invalid-feedback">Password must be at least 8 characters long and include at least one number and one special character.</div>
+                </div>       
+                <div class="col-12 text-center mt-5">
+                    <button type="submit" class="btn custom-btn disabled">Save Profile</button>
+                </div>
+            </form>
+
+        <!-- Update Success Message -->
+        <div class="p-3">
+            {% with
+              btn_show = 0,
+              bg_color = '#3399ff',
+              title = 'Profile Update Success',
+              msg = 'Your profile has been successfully updated'
+            %}
+                {% include "components/elements/updateSuccess.html" %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}
+
+{% block script %}
+    {% include "components/elements/InputValidate.html" %}
+
+  <script>
+    document.getElementById('mfirstName').addEventListener('input', function() {
+        InputValidate('mfirstName');
+    });    
+    document.getElementById('mlastName').addEventListener('input', function() {
+        InputValidate('mlastName');
+    });   
+    document.getElementById('maddress').addEventListener('input', function() {
+        InputValidate('maddress');
+    });   
+    document.getElementById('mphone').addEventListener('input', function() {
+        InputValidate('mphone');
+    });   
+    document.getElementById('mhireDate').addEventListener('input', function() {
+        InputValidate('mhireDate');
+    });   
+    document.getElementById('moldPassword').addEventListener('input', function() {
+        InputValidate('moldPassword');
+    });  
+    document.getElementById('mnewPassword').addEventListener('input', function() {
+        InputValidate('mnewPassword');
+    });  
+
+
+    let user_id = "{{ profile.user_id }}"
+    let newUpdateProfileData = {};
+    let differentUpdateStaffData = {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const updatePasswordForm = document.getElementById('updatePasswordForm');
+
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        const updateProfileForm = document.getElementById('updateProfileForm');
+        const formData = new FormData(updateProfileForm);
+        const formDataObject = Object.fromEntries(formData.entries());
+        const btn = updateProfileForm.querySelector('button[type="submit"]');
+        const enableSubmit = () => btn.classList.remove('disabled');
+        const disableSubmit = () => btn.classList.add('disabled');
+
+        updateProfileForm.reset();
+        disableSubmit();
+
+        updateProfileForm.addEventListener('input', event => {
+            // console.log(event.target.name)
+            // console.log(event.target.value)
+            const keyName = event.target.name;
+            const keyValue = event.target.value;
+
+            newUpdateProfileData[keyName] = keyValue;
+
+            for (const keyName in formDataObject) {
+                if (newUpdateProfileData.hasOwnProperty(keyName)) {
+                    if (formDataObject[keyName] !== newUpdateProfileData[keyName]) {
+                        enableSubmit();
+                        return
+                    }
+                    disableSubmit();
+                }
+            }
+        });
+
+        updateProfileForm.addEventListener('submit', event => {
+            if (!updateProfileForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
+
+            for (let key in newUpdateProfileData) {
+                if (formDataObject.hasOwnProperty(key) && newUpdateProfileData[key] !== formDataObject[key]) {
+                    differentUpdateStaffData[key] = newUpdateProfileData[key];
+                }
+            }
+
+            differentUpdateStaffData['user_id'] = user_id;
+            // console.log(differentUpdateStaffData)
+            fetch('/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(differentUpdateStaffData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 1) {
+                    // console.log(data)
+                    // Show updateStaffSuccess modal if update is successful
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                }
+                else {
+                    alert(data.message);
+                    location.reload(); // Reload the page on failure
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    })
+  </script>
+{% endblock %}

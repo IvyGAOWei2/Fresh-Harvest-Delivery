@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %}</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- JQuery Libraries Stylesheet -->
+        <link href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" rel="stylesheet">
+
+        <!-- Icon Font Stylesheet -->
+        <link href="{{ url_for('static', filename='icon/fontawesome/css/all.css') }}" rel="stylesheet">
+
+        <!-- Bootstrap Stylesheet -->
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+        <!-- Customized Stylesheet -->
+        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- BackToTop -->
+        {% include "components/elements/BackToTop.html" %}
+
+        <!-- Navbar -->
+        {% block navbar %}{% endblock %}
+
+        <!-- Breadcrumb -->
+        {% block breadcrumb %}{% endblock %}
+        
+        <!-- Content -->
+        {% block content %}{% endblock %}
+
+        <!-- Footer -->
+        {% include "components/layout/footer/Footer1.html" %}
+
+        <!-- JavaScript Libraries -->
+        <script src="{{ url_for('static', filename='js/jquery-3.6.4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+
+        <!-- Customized Javascript -->
+        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+        <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+              (() => {
+                'use strict'
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                const forms = document.querySelectorAll('.needs-validation')
+
+                // Loop over them and prevent submission
+                Array.from(forms).forEach(form => {
+                  form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                      event.preventDefault()
+                      event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                  }, false)
+                })
+              })()
+        </script>
+        {% block script %}{% endblock %}
+
+    </body>
+</html>
