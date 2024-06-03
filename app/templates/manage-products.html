@@ -102,13 +102,13 @@
                                 <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
 
                                 <!-- upload image -->
-                                 <div class="card shadow-sm" style="width: 8vw;">
+                                 <div class="card shadow-sm mx-auto" style="width: 8vw;">
                                     <label for="imgUpdate{{ product.product_id }}">
                                         <img src="{{ url_for('static', filename='images/product/' + product.image) }}"
                                             class="card-img-top" id="imagePreview{{ product.product_id }}">
                                     </label>
                                     <input class="form-control" name = "image" type="file" id="imgUpdate{{ product.product_id }}"
-                                        style="display: none;" accept="image/*">
+                                        style="display: none;" accept="image/*" onchange="previewImage(event, '{{ product.product_id }}')">
                                 </div> 
                                 <div class="mb-3">
                                     <label for="updateProductName" class="form-label">Product Name</label>
@@ -286,10 +286,13 @@
                             <div class="invalid-feedback">Please enter a valid description with at least 1 characters.
                             </div>
                         </div>
-                        <div class="mb-3 d-flex align-items-center">
-                            <button type="button" class="btn btn-primary text-center" id="uploadImageButton">Click to Upload Image</button>
+                        <div class="card shadow-sm mx-auto" style="width: 8vw;">
+                            <img src="" class="card-img-top" id="imagePreviewAdd">
                         </div>
-                        <input type="file" name="image" id="fileInput" class="hidden-file-input">
+                        <div class="mb-3 d-flex align-items-center">
+                            <button type="button" class="btn btn-primary text-center mx-auto" id="uploadImageButton">Click to Upload Image</button>
+                        </div>
+                        <input type="file" name="image" id="fileInput" class="hidden-file-input" accept="image/*" onchange="previewImage(event, 'Add')">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -532,5 +535,14 @@
 
     });
 </script>
-
+<script>
+    function previewImage(event, product_id) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('imagePreview' + product_id);
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
 {% endblock %}
