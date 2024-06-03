@@ -26,6 +26,7 @@ from app import index
 from app import shop
 from app import cart
 from app import consumer_points
+from app import consumer_box
 
 # Employees
 from app import admin
