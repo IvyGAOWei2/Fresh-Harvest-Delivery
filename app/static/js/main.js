@@ -135,114 +135,68 @@
 
 
     // Product Quantity
-    $('.quantity button').on('click', function() {
+    $('.quantity button').on('click', function () {
         var button = $(this);
-        var oldValue = button.closest('.quantity').find('input').val();
-        var unit = button.data('unit');
-        var increment;
-    
-        // 根据单位确定增量
-        if (unit === 'Weight_kg') {
-            increment = 0.25;
-        } else if (unit === 'Weight_g') {
-            increment = 0.1;
-        } else {
-            increment = 1;
-        }
-    
-        var newValue;
+        var oldValue = button.parent().parent().find('input').val();
         if (button.hasClass('btn-plus')) {
-            newValue = parseFloat(oldValue) + increment;
+            var newVal = parseFloat(oldValue) + 1;
         } else {
-            newValue = Math.max(increment, parseFloat(oldValue) - increment);
+            if (oldValue > 0) {
+                var newVal = parseFloat(oldValue) - 1;
+            } else {
+                newVal = 0;
+            }
         }
-    
-        // 格式化新值
-        var formattedValue = (newValue % 1 === 0) ? newValue.toFixed(0) : newValue.toFixed(2);
-    
-        button.closest('.quantity').find('input').val(formattedValue);
-        return false;
+        button.parent().parent().find('input').val(newVal);
     });
 
 })(jQuery);
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+    const cartCountElement = document.getElementById('cart-count');
+    
     // 初始化购物车计数
     updateCartCount();
 
-    document.querySelectorAll('.btn-add-to-cart').forEach(button => {
+    addToCartButtons.forEach(button => {
         button.addEventListener('click', (event) => {
-            event.stopPropagation(); // 停止事件冒泡
-            event.preventDefault();  // 阻止链接的默认行为
-            const productCard = button.closest('.product-detail');
-            const quantity = parseFloat(productCard.querySelector('.quantity-input').value);
-            // console.log(button, quantity)
-            addToCart(button, quantity);
+            event.preventDefault();
+            addToCart(button);
         });
     });
 
-    function addToCart(button, quantity) {
-        const id = button.dataset.id;
+    function addToCart(button) {
         const name = button.dataset.name;
         const price = parseFloat(button.dataset.price);
         const imgSrc = button.dataset.img;
-        let unit = button.dataset.unit;
+        const unit = button.dataset.unit;
+        const id = button.dataset.id
+        let increment = 1;
+        if (unit === 'kg') increment = 0.25;
+        else if (unit === 'g') increment = 10;
 
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let found = cart.find(item => item.id === id && item.unit === unit);
 
-
-        unit = (unit === 'Weight_kg') ? 'kg' : (unit === 'Weight_g') ? 'g' : unit;
-
-        // 计算qty
-        if (unit === 'kg' || unit === 'Weight_kg') {
-            qty = quantity / 0.25;
-        } else if (unit === 'g'|| unit === 'Weight_g') {
-            qty = quantity / 10;
+        if (found) {
+            found.quantity += increment;
         } else {
-            qty = quantity;
-        }
-        
-        const existingItemIndex = cart.findIndex(item => item.id === id && item.unit === unit);
-        if(existingItemIndex !== -1) {
-            cart[existingItemIndex] = { ...cart[existingItemIndex], quantity, qty };
-        } else {
-            cart.push({ id, name, price, imgSrc, quantity, unit, qty});
+            cart.push({ id, name, price, imgSrc, quantity: increment, unit});
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-        cartAnime('cartIcon');
-        fetch('/cart/update', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cart)
-        })
-    }
-
-    function cartAnime(className){
-        const cartIcon = document.getElementById(className);
-        const scale = 1.4;
-    
-        setTimeout(() => {
-          cartIcon.style.transform = `scale(${scale})`;
-    
-          setTimeout(() => {
-            cartIcon.style.transform = `scale(1)`;
-            updateCartCount();
-          }, 500);
-        }, 500);
+        updateCartCount(); // 更新购物车计数显示
     }
 
     function updateCartCount() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        document.getElementById('cart-count').textContent = cart.length; // 使用购物车列表长度来计数
+        let totalItems = 0;
+        cart.forEach(item => {
+            totalItems += 1; // 每有一个商品项，总数就加1
+        });
+        cartCountElement.textContent = totalItems; // 显示的是商品项的数量，而非商品的总量
     }
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('cart');
-    });
+    
 });
-
-

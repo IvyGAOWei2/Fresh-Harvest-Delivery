@@ -1,8 +1,9 @@
 from app import app
-from flask import render_template
+from flask import render_template, request, session, jsonify
 
 # User-defined function
-from common import roleRequired
+from dbFile.config import updateSQL, fetchAll, fetchOne
+from common import roleRequired, getUserProfile, validateEmployeeProfile, validateConsumerProfile
 
 
 @app.route("/admin")
@@ -14,3 +15,4 @@ def admin():
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminAction():
     return render_template('admin-action.html')
+

@@ -156,9 +156,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.status == true) { // Redirect user if login is successful
-                if (data.cart) {
-                  localStorage.setItem('cart', data.cart);
-                }
+                // console.log(data.data)
                 window.location.href = data.message;
             }
             else {
