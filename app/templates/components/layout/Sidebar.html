@@ -55,7 +55,7 @@
       <i class="fas fa-tools"></i> <span>Admin Actions</span>
     </a>
     <a href="{{ url_for('manageNews') }}" class="{% if is_news %}is_active{% endif %}">
-      <i class="fas fa-edit"></i> <span>Post news</span>
+      <i class="fas fa-newspaper"></i><span>Post news</span>
     </a>
     {% endif %}
     <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_consumerList %}is_active{% endif %}">
@@ -75,12 +75,13 @@
     <div class="d-flex flex-column align-items-center mt-auto mb-4">
       <div class="d-flex align-items-center" style="color: #fff;">
         <i class="fas fa-location-arrow me-2"></i>
-        <span class="m-0" style="margin-top: -.1rem;">
+        <span class="m-0">
         {% if session.depot_id == 1 %}Christchurch{% endif %}
         {% if session.depot_id == 2 %}Invercargill{% endif %}
         {% if session.depot_id == 3 %}Wellington{% endif %}
         {% if session.depot_id == 4 %}Hamilton{% endif %}
         {% if session.depot_id == 5 %}Auckland{% endif %}
+        {% if session.depot_id == 6 %}New Zealand{% endif %}
       </span>
       </div>
     </div>

@@ -291,6 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.status == 1) {
                     // console.log(data)
                     new bootstrap.Modal(document.getElementById('checkoutSuccessModal')).show();
+                    localStorage.setItem('cart', JSON.stringify([]));
                     document.getElementById('checkoutSuccessModal').addEventListener('hidden.bs.modal', () => window.location.href = data.message);
                 }
                 else {
