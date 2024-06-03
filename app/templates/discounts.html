@@ -22,11 +22,11 @@
                 <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
             </div>
             {% if user_role == 'National_Manager' %}
-            <div class="ms-3">  
+            <div class="ms-3">
                 <select id="depotFilter" class="form-select">
                     <option value="">All Depots</option>
                     {% for depot in depots %}
-                    <option value="{{ depot[0] }}">{{ depot[1]}}</option>
+                    <option value="{{ depot[0] }}">{{ depot[1] }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -204,309 +204,293 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-const nzDateCells = document.querySelectorAll('.nz-date');
+        const nzDateCells = document.querySelectorAll('.nz-date');
 
-nzDateCells.forEach(cell => {
-    const dateText = cell.textContent;
-    const dateParts = dateText.split('-'); // Assuming the date is in yyyy-mm-dd format
+        nzDateCells.forEach(cell => {
+            const dateText = cell.textContent;
+            const dateParts = dateText.split('-'); // Assuming the date is in yyyy-mm-dd format
 
-    if (dateParts.length === 3) {
-        const [year, month, day] = dateParts;
-        const nzFormattedDate = `${day}/${month}/${year}`;
-        cell.textContent = nzFormattedDate;
-    }
-});
+            if (dateParts.length === 3) {
+                const [year, month, day] = dateParts;
+                const nzFormattedDate = `${day}/${month}/${year}`;
+                cell.textContent = nzFormattedDate;
+            }
+        });
 
-const addDiscountForm = document.getElementById('addDiscountForm');
-const updateDiscountForms = document.querySelectorAll('.update-discount-form');
-const discountStartDate = document.getElementById('discountStartDate');
-const discountEndDate = document.getElementById('discountEndDate');
-const today = new Date().toISOString().split('T')[0];
+        const addDiscountForm = document.getElementById('addDiscountForm');
+        const updateDiscountForms = document.querySelectorAll('.update-discount-form');
+        const discountStartDate = document.getElementById('discountStartDate');
+        const discountEndDate = document.getElementById('discountEndDate');
+        const today = new Date().toISOString().split('T')[0];
 
-// Set the min attribute of start date to today
-if (discountStartDate) {
-    discountStartDate.setAttribute('min', today);
-    // Update the min attribute of end date based on the selected start date
-    discountStartDate.addEventListener('change', function () {
-        discountEndDate.value = ''; // Clear the end date value
-        discountEndDate.setAttribute('min', discountStartDate.value);
-    });
-}
-
-// Initialize Bootstrap tooltips
-const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-});
-
-// Add new discount
-addDiscountForm.addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    const title = document.getElementById('discountTitle').value;
-    const description = document.getElementById('discountDescription').value;
-    const discountRate = document.getElementById('selectDiscountRate').value;
-    const startDate = discountStartDate.value;
-    const endDate = discountEndDate.value;
-    const depotId = document.getElementById('discountDepot') ? document.getElementById('discountDepot').value : null;
-
-    if (startDate < today) {
-        alert('Start date cannot be earlier than today.');
-        return;
-    }
-
-    if (endDate < startDate) {
-        alert('End date cannot be earlier than start date.');
-        return;
-    }
-
-    const discountData = {
-        title: title,
-        description: description,
-        discount_rate: discountRate,
-        start_date: startDate,
-        end_date: endDate
-    };
-
-    if (depotId) {
-        discountData.depot_id = depotId;
-    }
-
-    fetch('/employee/add-discount', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(discountData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
+        // Set the min attribute of start date to today
+        if (discountStartDate) {
+            discountStartDate.setAttribute('min', today);
+            // Update the min attribute of end date based on the selected start date
+            discountStartDate.addEventListener('change', function () {
+                discountEndDate.value = ''; // Clear the end date value
+                discountEndDate.setAttribute('min', discountStartDate.value);
+            });
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === true) {
-            new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
-        } else {
-            alert("Invalid request");
-        }
-    })
-    .catch(error => console.error('Error:', error));
-});
 
-// Function to update discount
-const updateDiscount = (event) => {
-    event.preventDefault();
+        // Initialize Bootstrap tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
-    const form = event.target;
-    const discountId = form.getAttribute('data-discount-id');
-    const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
-    const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
-    const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
-    const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
-    const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
+        // Add new discount
+        addDiscountForm.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-    const today = new Date().toISOString().split('T')[0];
+            const title = document.getElementById('discountTitle').value;
+            const description = document.getElementById('discountDescription').value;
+            const discountRate = document.getElementById('selectDiscountRate').value;
+            const startDate = discountStartDate.value;
+            const endDate = discountEndDate.value;
+            const depotId = document.getElementById('discountDepot') ? document.getElementById('discountDepot').value : null;
 
-    // Set the min attribute for the start date and end date inputs
-    startDateInput.setAttribute('min', today);
-    endDateInput.setAttribute('min', startDateInput.value);
+            if (startDate < today) {
+                alert('Start date cannot be earlier than today.');
+                return;
+            }
 
-    // Update the min attribute for end date when start date changes
-    startDateInput.addEventListener('change', function () {
-        endDateInput.value = ''; // Clear the end date value
-        endDateInput.setAttribute('min', startDateInput.value);
-    });
+            if (endDate < startDate) {
+                alert('End date cannot be earlier than start date.');
+                return;
+            }
 
-    const discountData = {
-        title: titleInput.value,
-        description: descriptionInput.value,
-        discount_rate: rateInput.value,
-        start_date: startDateInput.value,
-        end_date: endDateInput.value
-    };
+            const discountData = {
+                title: title,
+                description: description,
+                discount_rate: discountRate,
+                start_date: startDate,
+                end_date: endDate
+            };
 
-    if (startDateInput.value < today) {
-        alert('Start date cannot be earlier than today.');
-        return;
-    }
+            if (depotId) {
+                discountData.depot_id = depotId;
+            }
 
-    if (endDateInput.value < startDateInput.value) {
-        alert('End date cannot be earlier than start date.');
-        return;
-    }
+            fetch('/employee/add-discount', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(discountData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === true) {
+                    new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                } else {
+                    alert("Invalid request");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
 
-    fetch(`/employee/update-discount/${discountId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(discountData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === true) {
-            new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-        } else {
-            alert("Invalid request");
-        }
-    })
-    .catch(error => console.error('Error:', error));
-};
+        // Function to update discount
+        const updateDiscount = (event) => {
+            event.preventDefault();
 
-// Function to enable/disable the update button based on changes
-const handleInputChange = (event) => {
-    const form = event.target.form;
-    const discountId = form.getAttribute('data-discount-id');
-    const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
-    const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
-    const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
-    const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
-    const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
-    const updateButton = form.querySelector('button[type="submit"]');
+            const form = event.target;
+            const discountId = form.getAttribute('data-discount-id');
+            const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
+            const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
+            const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
+            const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
+            const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
 
-    const initialValues = {
-        title: titleInput.defaultValue,
-        description: descriptionInput.defaultValue,
-        discount_rate: rateInput.defaultValue,
-        start_date: startDateInput.defaultValue,
-        end_date: endDateInput.defaultValue
-    };
+            const today = new Date().toISOString().split('T')[0];
 
-    const currentValues = {
-        title: titleInput.value,
-        description: descriptionInput.value,
-        discount_rate: rateInput.value,
-        start_date: startDateInput.value,
-        end_date: endDateInput.value
-    };
+            // Set the min attribute for the start date and end date inputs
+            startDateInput.setAttribute('min', today);
+            endDateInput.setAttribute('min', startDateInput.value);
 
-    const isChanged = Object.keys(initialValues).some(key => initialValues[key] !== currentValues[key]);
-    updateButton.disabled = !isChanged;
-};
+            // Update the min attribute for end date when start date changes
+            startDateInput.addEventListener('change', function () {
+                endDateInput.value = ''; // Clear the end date value
+                endDateInput.setAttribute('min', startDateInput.value);
+            });
 
-updateDiscountForms.forEach(form => {
-    form.addEventListener('submit', updateDiscount);
+            const discountData = {
+                title: titleInput.value,
+                description: descriptionInput.value,
+                discount_rate: rateInput.value,
+                start_date: startDateInput.value,
+                end_date: endDateInput.value
+            };
 
-    const discountId = form.getAttribute('data-discount-id');
-    const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
-    const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
-    const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
-    const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
-    const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
+            if (endDateInput.value < startDateInput.value) {
+                alert('End date cannot be earlier than start date.');
+                return;
+            }
 
-    // Set the min attribute for the start date and end date inputs
-    startDateInput.setAttribute('min', today);
-    endDateInput.setAttribute('min', startDateInput.value);
+            fetch(`/employee/update-discount/${discountId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(discountData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === true) {
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                } else {
+                    alert("Invalid request");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
 
-    // Update the min attribute for end date when start date changes
-    startDateInput.addEventListener('change', function () {
-        endDateInput.value = ''; // Clear the end date value
-        endDateInput.setAttribute('min', startDateInput.value);
-    });
+        // Function to enable/disable the update button based on changes
+        const handleInputChange = (event) => {
+            const form = event.target.form;
+            const discountId = form.getAttribute('data-discount-id');
+            const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
+            const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
+            const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
+            const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
+            const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
+            const updateButton = form.querySelector('button[type="submit"]');
 
-    titleInput.addEventListener('input', handleInputChange);
-    descriptionInput.addEventListener('input', handleInputChange);
-    rateInput.addEventListener('change', handleInputChange);
-    startDateInput.addEventListener('change', handleInputChange);
-    endDateInput.addEventListener('input', handleInputChange);
-});
+            const initialValues = {
+                title: titleInput.defaultValue,
+                description: descriptionInput.defaultValue,
+                discount_rate: rateInput.defaultValue,
+                start_date: startDateInput.defaultValue,
+                end_date: endDateInput.defaultValue
+            };
 
-const toggleDiscountStatus = (event) => {
-const button = event.currentTarget;
-const discountId = button.getAttribute('data-discount-id');
-const currentStatus = button.getAttribute('data-status');
-const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-const url = `/employee/${newStatus === 'Active' ? 'activate' : 'deactivate'}-discount/${discountId}`;
+            const currentValues = {
+                title: titleInput.value,
+                description: descriptionInput.value,
+                discount_rate: rateInput.value,
+                start_date: startDateInput.value,
+                end_date: endDateInput.value
+            };
 
-fetch(url, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-    }
-    return response.json();
-})
-.then(data => {
-    if (data.status === true) {
-        location.reload();
-    } else {
-        alert(`Failed to ${newStatus === 'Active' ? 'activate' : 'deactivate'} the discount.`);
-    }
-})
-.catch(error => console.error('Error:', error));
-};
+            const isChanged = Object.keys(initialValues).some(key => initialValues[key] !== currentValues[key]);
+            updateButton.disabled = !isChanged;
+        };
 
-const toggleButtons = document.querySelectorAll('.toggle-discount-btn');
-toggleButtons.forEach(button => {
-button.addEventListener('click', toggleDiscountStatus);
-});
+        updateDiscountForms.forEach(form => {
+            form.addEventListener('submit', updateDiscount);
 
-// Search by title functionality
-const searchKeywordInput = document.getElementById('searchKeyword');
-const discountTableBody = document.getElementById('discountTableBody');
+            const discountId = form.getAttribute('data-discount-id');
+            const titleInput = document.getElementById(`updateDiscountTitle${discountId}`);
+            const descriptionInput = document.getElementById(`updateDiscountDescription${discountId}`);
+            const rateInput = document.getElementById(`updateDiscountRate${discountId}`);
+            const startDateInput = document.getElementById(`updateDiscountStartDate${discountId}`);
+            const endDateInput = document.getElementById(`updateDiscountEndDate${discountId}`);
 
-searchKeywordInput.addEventListener('input', function () {
-const keyword = searchKeywordInput.value.toLowerCase();
-const rows = discountTableBody.getElementsByTagName('tr');
-let hasVisibleRows = false;
+            titleInput.addEventListener('input', handleInputChange);
+            descriptionInput.addEventListener('input', handleInputChange);
+            rateInput.addEventListener('change', handleInputChange);
+            startDateInput.addEventListener('change', handleInputChange);
+            endDateInput.addEventListener('input', handleInputChange);
+        });
 
-Array.from(rows).forEach(row => {
-    const titleCell = row.getElementsByTagName('td')[0]; // Title is in the first cell
-    const titleText = titleCell.textContent.toLowerCase();
+        const toggleDiscountStatus = (event) => {
+            const button = event.currentTarget;
+            const discountId = button.getAttribute('data-discount-id');
+            const currentStatus = button.getAttribute('data-status');
+            const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+            const url = `/employee/${newStatus === 'Active' ? 'activate' : 'deactivate'}-discount/${discountId}`;
 
-    if (titleText.includes(keyword)) {
-        row.style.display = '';
-        hasVisibleRows = true;
-    } else {
-        row.style.display = 'none';
-    }
-});
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === true) {
+                    location.reload();
+                } else {
+                    alert(`Failed to ${newStatus === 'Active' ? 'activate' : 'deactivate'} the discount.`);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
 
-document.getElementById('noDiscountsMessage').style.display = hasVisibleRows ? 'none' : '';
-});
+        const toggleButtons = document.querySelectorAll('.toggle-discount-btn');
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', toggleDiscountStatus);
+        });
 
-// Add event listener to close buttons of success modals to refresh page
-document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
-location.reload();
-});
+        // Search by title functionality
+        const searchKeywordInput = document.getElementById('searchKeyword');
+        const discountTableBody = document.getElementById('discountTableBody');
 
-document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
-location.reload();
-});
+        searchKeywordInput.addEventListener('input', function () {
+            const keyword = searchKeywordInput.value.toLowerCase();
+            const rows = discountTableBody.getElementsByTagName('tr');
+            let hasVisibleRows = false;
 
-const depotFilter = document.getElementById('depotFilter');
-if (depotFilter) {
-depotFilter.addEventListener('change', function () {
-    const selectedDepotId = depotFilter.value;
-    const rows = discountTableBody.getElementsByTagName('tr');
-    let hasVisibleRows = false;
+            Array.from(rows).forEach(row => {
+                const titleCell = row.getElementsByTagName('td')[0]; // Title is in the first cell
+                const titleText = titleCell.textContent.toLowerCase();
 
-    Array.from(rows).forEach(row => {
-        const depotId = row.getAttribute('data-depot-id');
+                if (titleText.includes(keyword)) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
 
-        if (selectedDepotId === '' || selectedDepotId === depotId) {
-            row.style.display = '';
-            hasVisibleRows = true;
-        } else {
-            row.style.display = 'none';
+            document.getElementById('noDiscountsMessage').style.display = hasVisibleRows ? 'none' : '';
+        });
+
+        // Add event listener to close buttons of success modals to refresh page
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => {
+            location.reload();
+        });
+
+        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => {
+            location.reload();
+        });
+
+        const depotFilter = document.getElementById('depotFilter');
+        if (depotFilter) {
+            depotFilter.addEventListener('change', function () {
+                const selectedDepotId = depotFilter.value;
+                const rows = discountTableBody.getElementsByTagName('tr');
+                let hasVisibleRows = false;
+
+                Array.from(rows).forEach(row => {
+                    const depotId = row.getAttribute('data-depot-id');
+
+                    if (selectedDepotId === '' || selectedDepotId === depotId) {
+                        row.style.display = '';
+                        hasVisibleRows = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                document.getElementById('noDiscountsMessage').style.display = hasVisibleRows ? 'none' : '';
+            });
         }
     });
-
-    document.getElementById('noDiscountsMessage').style.display = hasVisibleRows ? 'none' : '';
-});
-}
-});
 </script>
 {% endblock %}
-

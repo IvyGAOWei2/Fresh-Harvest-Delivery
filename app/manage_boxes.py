@@ -14,7 +14,7 @@ def manageWeeklyBoxes():
         
         if user_role == 'National_Manager':
             sql_packages = """
-                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name
+                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name, p.end_date >= CURRENT_DATE AS is_active
                 FROM Packages p
                 JOIN Depots d ON p.depot_id = d.depot_id
                 ORDER BY p.start_date DESC
@@ -22,7 +22,7 @@ def manageWeeklyBoxes():
             packages = fetchAll(sql_packages)
         else:
             sql_packages = """
-                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name
+                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name, p.end_date >= CURRENT_DATE AS is_active
                 FROM Packages p
                 JOIN Depots d ON p.depot_id = d.depot_id
                 WHERE p.depot_id = %s
@@ -34,9 +34,10 @@ def manageWeeklyBoxes():
             {
                 'package_id': package[0],
                 'title': package[1],
-                'start_date': package[2].strftime('%d/%m/%Y'),
-                'end_date': package[3].strftime('%d/%m/%Y'),
-                'depot_name': package[4]
+                'start_date': package[2].strftime('%Y-%m-%d'),
+                'end_date': package[3].strftime('%Y-%m-%d'),
+                'depot_name': package[4],
+                'is_active': bool(package[5])
             }
             for package in packages
         ]
@@ -46,7 +47,6 @@ def manageWeeklyBoxes():
         
         return render_template('boxes.html', user_role=user_role, packageList=formatted_packages, depots=depots)
     except Exception as err:
-        
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
 
 
@@ -59,7 +59,7 @@ def get_packages_by_depot():
         
         if user_role == 'National_Manager':
             sql_packages = """
-                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name
+                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name, p.end_date >= CURRENT_DATE AS is_active
                 FROM Packages p
                 JOIN Depots d ON p.depot_id = d.depot_id
                 {}
@@ -73,7 +73,7 @@ def get_packages_by_depot():
                 packages = fetchAll(sql_packages)
         else:
             sql_packages = """
-                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name
+                SELECT p.package_id, p.title, p.start_date, p.end_date, d.location as depot_name, p.end_date >= CURRENT_DATE AS is_active
                 FROM Packages p
                 JOIN Depots d ON p.depot_id = d.depot_id
                 WHERE p.depot_id = %s
@@ -85,17 +85,16 @@ def get_packages_by_depot():
             {
                 'package_id': package[0],
                 'title': package[1],
-                'start_date': package[2].strftime('%d/%m/%Y'),
-                'end_date': package[3].strftime('%d/%m/%Y'),
-                'depot_name': package[4]
+                'start_date': package[2].strftime('%Y-%m-%d'),
+                'end_date': package[3].strftime('%Y-%m-%d'),
+                'depot_name': package[4],
+                'is_active': bool(package[5])
             }
             for package in packages
         ]
         return jsonify({'packages': formatted_packages})
     except Exception as err:
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-
-
 
 
 @app.route('/employee/add-package', methods=['POST'])
@@ -128,6 +127,57 @@ def addPackage():
         return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
 
 
+@app.route('/employee/edit-package/<int:package_id>', methods=['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def editPackage(package_id):
+    try:
+        data = request.json
+        title = data.get('title')
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        user_role = session['type']
+
+        if user_role == 'National_Manager':
+            depot_id = data.get('depot_id')
+        else:
+            depot_id = session['depot_id']
+
+        if not all([title, start_date, end_date, depot_id]):
+            return jsonify({'status': False, 'message': 'All fields are required'}), 400
+
+        sql_update_package = """
+            UPDATE Packages
+            SET title = %s, start_date = %s, end_date = %s, depot_id = %s
+            WHERE package_id = %s
+        """
+        updateSQL(sql_update_package, (title, start_date, end_date, depot_id, package_id))
+
+        return jsonify({'status': True})
+    except Exception as err:
+        print(f"Error: {err}")
+        return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
+
+
+@app.route('/employee/toggle-package/<int:package_id>', methods=['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def togglePackage(package_id):
+    try:
+        data = request.json
+        current_status = data.get('status')
+        new_status = 'Active' if current_status == 'Inactive' else 'Inactive'
+        new_end_date = datetime.today().strftime('%Y-%m-%d')
+        
+        sql_toggle_package = """
+            UPDATE Packages
+            SET end_date = %s
+            WHERE package_id = %s
+        """
+        updateSQL(sql_toggle_package, (new_end_date, package_id))
+
+        return jsonify({'status': True, 'new_status': new_status})
+    except Exception as err:
+        print(f"Error: {err}")
+        return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
 @app.route('/employee/box-products/<int:package_id>')
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manage_box_products(package_id):

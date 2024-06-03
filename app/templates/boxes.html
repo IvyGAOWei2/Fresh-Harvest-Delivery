@@ -58,8 +58,61 @@
                                     <i class="fas fa-box-open fa-lg me-3 fa-fw"></i>
                                 </a>
                             </div>
+                            <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Package">
+                                <button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#editPackageModal{{ package.package_id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+                                </button>
+                            </div>
+                            <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'Deactivate Package' if package.is_active else 'Activate Package' }}">
+                                <button class="btn btn-icon ms-2 toggle-package-btn" data-package-id="{{ package.package_id }}" data-status="{{ 'Active' if package.is_active else 'Inactive' }}">
+                                    <i class="fas fa-toggle-{{ 'on' if package.is_active else 'off' }} fa-lg me-3 fa-fw"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
+
+                    <!-- Edit Package Modal -->
+                    <div class="modal fade" id="editPackageModal{{ package.package_id }}" tabindex="-1" aria-labelledby="editPackageModalLabel{{ package.package_id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title w-100 text-center text-black" id="editPackageModalLabel{{ package.package_id }}">Edit Package</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form class="edit-package-form" data-package-id="{{ package.package_id }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="editTitle{{ package.package_id }}" class="form-label text-black">Title</label>
+                                            <input type="text" class="form-control" id="editTitle{{ package.package_id }}" value="{{ package.title }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editStartDate{{ package.package_id }}" class="form-label text-black">Start Date</label>
+                                            <input type="date" class="form-control" id="editStartDate{{ package.package_id }}" value="{{ package.start_date }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="editEndDate{{ package.package_id }}" class="form-label text-black">End Date</label>
+                                            <input type="date" class="form-control" id="editEndDate{{ package.package_id }}" value="{{ package.end_date }}" required>
+                                        </div>
+                                        {% if user_role == 'National_Manager' %}
+                                        <div class="mb-3">
+                                            <label for="editDepot{{ package.package_id }}" class="form-label text-black">Depot</label>
+                                            <select class="form-select" id="editDepot{{ package.package_id }}" required>
+                                                <option value="">Select Depot</option>
+                                                {% for depot in depots %}
+                                                <option value="{{ depot[0] }}" {% if depot[1] == package.depot_name %}selected{% endif %}>{{ depot[1] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
                 </tbody>
             </table>
@@ -243,6 +296,16 @@
                                             <i class="fas fa-box-open fa-lg me-3 fa-fw"></i>
                                         </a>
                                     </div>
+                                    <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Package">
+                                        <button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#editPackageModal${package.package_id}">
+                                            <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+                                        </button>
+                                    </div>
+                                    <div class="d-inline" data-bs-toggle="tooltip" data-bs-placement="top" title="${package.is_active ? 'Deactivate Package' : 'Activate Package'}">
+                                        <button class="btn btn-icon ms-2 toggle-package-btn" data-package-id="${package.package_id}" data-status="${package.is_active ? 'Active' : 'Inactive'}">
+                                            <i class="fas fa-toggle-${package.is_active ? 'on' : 'off'} fa-lg me-3 fa-fw"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             `;
                             packageTableBody.appendChild(row);
@@ -271,6 +334,78 @@
             } else {
                 row.style.display = 'none';
             }
+        });
+    });
+
+    // Handle edit package form submission
+    const editPackageForms = document.querySelectorAll('.edit-package-form');
+    editPackageForms.forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const packageId = form.getAttribute('data-package-id');
+            const packageData = {
+                title: document.getElementById(`editTitle${packageId}`).value,
+                start_date: document.getElementById(`editStartDate${packageId}`).value,
+                end_date: document.getElementById(`editEndDate${packageId}`).value,
+            };
+
+            if (userRole === 'National_Manager') {
+                packageData.depot_id = document.getElementById(`editDepot${packageId}`).value;
+            } else {
+                packageData.depot_id = depotId;
+            }
+
+            if (packageData.start_date < today) {
+                alert('Start date cannot be earlier than today.');
+                return;
+            }
+
+            if (packageData.end_date < packageData.start_date) {
+                alert('End date cannot be earlier than start date.');
+                return;
+            }
+
+            fetch(`/employee/edit-package/${packageId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(packageData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    location.reload(); // Refresh the page on success
+                } else {
+                    alert("Failed to update package");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Handle toggle package button click
+    const toggleButtons = document.querySelectorAll('.toggle-package-btn');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const packageId = button.getAttribute('data-package-id');
+            const newStatus = button.getAttribute('data-status') === 'Active' ? 'Inactive' : 'Active';
+            fetch(`/employee/toggle-package/${packageId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    location.reload(); // Refresh the page on success
+                } else {
+                    alert("Failed to toggle package status");
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
     });
 
