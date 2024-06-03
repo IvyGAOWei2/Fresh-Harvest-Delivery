@@ -168,7 +168,13 @@ def viewReviewRequests():
             requests = fetchAll(sql_requests, (depot_id,))
             depots = []
 
-        formatted_requests = [
+        grouped_requests = defaultdict(list)
+        for req in requests:
+            grouped_requests[req[1]].append(req)
+
+        latest_requests = [max(group, key=lambda x: x[5]) for group in grouped_requests.values()]
+
+        formatted_latest_requests = [
             (
                 req[0],
                 req[1],
@@ -180,27 +186,10 @@ def viewReviewRequests():
                 req[7],
                 req[8]
             )
-            for req in requests
+            for req in latest_requests
         ]
 
-        return render_template('manage-credit-limit.html', requests=formatted_requests, depots=depots, user_role=user_role)
+        return render_template('manage-credit-limit.html', requests=formatted_latest_requests, grouped_requests=grouped_requests, depots=depots, user_role=user_role)
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-
-@app.route('/admin/decideReviewRequest', methods=['POST'])
-@roleRequired(['Local_Manager', 'National_Manager'])
-def decideReviewRequest():
-    data = request.get_json()
-    request_id = data['request_id']
-    decision = data['decision']
-    decision_date = datetime.now()
-
-    if decision == 'Approved':
-        query = "UPDATE Consumer c INNER JOIN AccountLimitReviewRequests r ON c.user_id = r.user_id SET c.account_limit = r.new_account_limit WHERE r.request_id = %s"
-        updateSQL(query, (request_id,))
-
-    query = "UPDATE AccountLimitReviewRequests SET status = %s, decision_date = %s WHERE request_id = %s"
-    updateSQL(query, (decision, decision_date, request_id))
-
-    return jsonify({"status": True})

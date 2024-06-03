@@ -60,6 +60,9 @@
         padding: 10px;
         border-radius: 4px;
     }
+    .table-secondary {
+        background-color: #f8f9fa;
+    }
 </style>
 
 <section class="main-content">
@@ -101,7 +104,11 @@
                     <tr data-depot-id="{{ request[8] }}">
                         <td class="align-middle">{{ request[0] }}</td>
                         <td class="align-middle">{{ request[5] | dateformat }}</td>
-                        <td class="align-middle">{{ request[2] }}</td>
+                        <td class="align-middle">
+                            <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapseUser{{ request[1] }}" aria-expanded="false" aria-controls="collapseUser{{ request[1] }}">
+                                {{ request[2] }}
+                            </button>
+                        </td>
                         <td class="align-middle">{{ request[3] }}</td>
                         <td class="align-middle">{{ request[4] }}</td>
                         <td class="align-middle">{{ request[6] }}</td>
@@ -117,6 +124,36 @@
                                 <i class="fas fa-times fa-lg me-3 fa-fw"></i>
                             </button>
                             {% endif %}
+                        </td>
+                    </tr>
+                    <tr class="collapse" id="collapseUser{{ request[1] }}">
+                        <td colspan="7">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-secondary">
+                                    <thead class="table-secondary">
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Request Date</th>
+                                            <th>Current Credit Limit</th>
+                                            <th>New Credit Limit</th>
+                                            <th>Status</th>
+                                            <th>Approve/Reject Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for history in grouped_requests[request[1]] %}
+                                        <tr>
+                                            <td>{{ history[0] }}</td>
+                                            <td>{{ history[5] | dateformat }}</td>
+                                            <td>{{ history[3] }}</td>
+                                            <td>{{ history[4] }}</td>
+                                            <td>{{ history[6] }}</td>
+                                            <td>{{ history[7] | dateformat if history[7] else 'N/A' }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
