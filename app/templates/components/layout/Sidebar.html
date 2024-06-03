@@ -44,9 +44,7 @@
     <a href="{{ url_for('manageProduct') }}" class="{% if is_manageProduct %}is_active{% endif %}">
       <i class="fas fa-boxes"></i> <span>Products</span>
     </a>
-    <a href="{{ url_for('staffOrderHistory') }}" class="{% if is_manage_order_history %}is_active{% endif %}">
-      <i class="fas fa-history"></i> <span>Order History</span>
-    </a>
+    
     {% if session.type != 'Staff' %}
     <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
       <i class="fa fa-tags"></i> Manage Discounts
@@ -69,7 +67,16 @@
     <a href="{{ url_for('adminProfiles',profile_type='National_Manager') }}" class="{% if is_employeeList %}is_active{% endif %}">
       <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
     </a>
-    {% endif %}
+    <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Discounts
+    </a>
+    <a href="{{ url_for('manage_applications') }}" class="{% if is_manageApplication %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Applications
+    </a>
+    <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
+      <i class="fa fa-tags"></i> Manage Account Credit
+    {% endif %} 
+   
 
 
     <div class="d-flex flex-column align-items-center mt-auto mb-4">
