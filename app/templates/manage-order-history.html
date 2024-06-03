@@ -194,7 +194,7 @@
                             <td>{{order.total}}</td>
                             <td>{{order.status}}</td>
                             <td>
-                                <a class="btn order-view" role="button" >
+                                <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}" class="btn order-view" role="button" >
                                     <i class="far fa-eye fa-lg me-3"></i>
                                 </a>
                             </td>

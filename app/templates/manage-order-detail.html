@@ -1,21 +1,21 @@
-{% extends "_consumer-base.html" %}
+{% extends "_employee-base.html" %}
 
-{% block title %}Order Detials{% endblock %}
-
-{% block navbar %}
-  {% with is_order_detail='1' %}
-    {% include "components/layout/header/Nav1.html" %}
-  {% endwith %}
+{% block sidebar %}
+{% with is_manage_order_detail='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block breadcrumb %}
-  {% with pageName='Order Detials' %}
-    {% include "components/layout/Breadcrumb1.html" %}
-  {% endwith %}
+{% with pageName='Order Detail' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}
-<section>
+
+
+<section class="main-content">
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -32,6 +32,9 @@
                 </div>
                 <div class="my-2">
                     <span class="text-600 text-90">Status: {{orderStatus}}</span>
+                </div>
+                <div class="my-2">
+                    <span class="text-600 text-90">Customer Name: {{orderStatus}}</span>
                 </div>
             </div>
         </div>
@@ -82,7 +85,7 @@
                                 </tbody>
                                 {% endfor %}    
                             </table>                 
-                           
+                            {% if orderGiftcards %}
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -108,7 +111,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            
+                            {% endif %}
                             <table class="table">
                                 <tfoot>
                                     <tr>
@@ -132,14 +135,13 @@
 {% endblock %}
 
 
-{% block script%}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+
+{% block script %}
+{% include "components/elements/InputValidate.html" %}
 
 <script>
+    // validation
+ 
+</script>
 
-
-
-    </script>
-    
-    
 {% endblock %}

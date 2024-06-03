@@ -33,3 +33,8 @@ from app import manage_product
 from app import manage_profile
 from app import manage_discount
 from app import manage_news
+
+
+
+# National_Manager
+from app import manage_system_settings

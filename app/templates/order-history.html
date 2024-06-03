@@ -74,7 +74,7 @@
                             <td>{{order.status}}</td>
                             <td>
 
-                                <a href="{{ url_for('orderDetail') }}"   role="button"   class="btn order-view" role="button" title="Order Details">
+                                <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}"   role="button"   class="btn order-view" role="button" title="Order Details">
                                     <i class="fas fa-eye fa-lg me-1"></i>
                                 </a>
                                 <a href="{{ url_for('cart') }}"  class="btn reorder" role="button" title="Empty Cart and Reorder">
