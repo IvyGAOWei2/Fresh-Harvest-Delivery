@@ -292,6 +292,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const userType = 'special'; // 模拟用户类型
+    const creditBalance = 400; // 模拟信用额度
+    const totalAmount = 350; // 模拟订单总额
+
+    const submitButton = document.getElementById('submitall'); // 获取提交按钮
+    const warningMessage = document.getElementById('warning-message'); // 获取警告消息元素
+
+    if (userType === 'special') {
+        // 显示特殊用户的信用额度信息和使用信用额度的选项
+        document.getElementById('credit-balance-option').style.display = 'block';
+        document.getElementById('credit-info').style.display = 'block';
+
+        // 隐藏普通支付选项
+        document.getElementById('credit-card-option').style.display = 'none';
+        document.getElementById('debit-card-option').style.display = 'none';
+        document.getElementById('point-option').style.display = 'none';
+
+        // 单独控制表单的隐藏而不隐藏按钮
+        document.getElementById('payment-form').style.display = 'none'; 
+
+        // 更新余额显示
+        document.getElementById('balance-amount').textContent = `$${creditBalance}`;
+
+        // 检查余额是否足够
+        if (totalAmount > creditBalance) {
+            warningMessage.textContent = 'Your credit balance is insufficient to place this order.';
+            warningMessage.style.display = 'block';
+            submitButton.disabled = true; // 禁用提交按钮
+        } else {
+            warningMessage.style.display = 'none';
+            submitButton.disabled = false; // 启用提交按钮
+        }
+    } else {
+        // 显示普通用户的支付选项和表单
+        document.getElementById('credit-card-option').style.display = 'block';
+        document.getElementById('debit-card-option').style.display = 'block';
+        document.getElementById('point-option').style.display = 'block';
+        document.getElementById('payment-form').style.display = 'block'; // 显示表单
+        submitButton.disabled = false; // 确保按钮可用
+    }
+});
+
 
 document.getElementById('deliveryfirstname').addEventListener('input', function() {
         InputValidate('deliveryfirstname');
