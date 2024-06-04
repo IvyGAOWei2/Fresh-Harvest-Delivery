@@ -35,7 +35,8 @@ def shop():
     total_pages = ceil(total_products[0]/9)
 
     sql_products = """
-        SELECT p.product_id, p.name, p.description, p.price, p.stock, c.category_name, u.unit_name, pi.image        FROM Products p 
+        SELECT p.product_id, p.name, p.description, p.price, p.stock, c.category_name, u.unit_name, pi.image
+        FROM Products p 
         JOIN Category c ON p.category_id = c.category_id 
         JOIN Unit u ON p.unit_id = u.unit_id 
         JOIN ProductImages pi ON p.product_id = pi.product_id 
