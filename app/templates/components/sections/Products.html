@@ -1,3 +1,4 @@
+{{products[0]}}
 {% for product in products %}
 <div id="productCard{{product.product_id}}"  class="product-detail col-md-6 col-lg-6 col-xl-4" data-product-id="{{product.product_id}}">
     <div class="position-relative fruite-item">
@@ -10,7 +11,7 @@
 
             <div class="d-flex justify-content-center align-items-center">
                 <h6 class="text-center text-secondary" style="margin-top:.8rem;font-size: 1.2rem;">
-                    {{product.price}}
+                {% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}
                 / 
                 {% if product.unit_name == 'Weight_kg' %}Kg{% endif %}
                 {% if product.unit_name == 'Weight_g' %}g{% endif %}

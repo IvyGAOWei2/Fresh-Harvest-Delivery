@@ -128,7 +128,10 @@ def update_discount(discount_id):
         updateSQL(sql_update_discount, (title, description, discount_rate, start_date, end_date, discount_id))
 
         for product_id in fetchAll("SELECT product_id FROM DiscountedProducts WHERE discount_id = %s;",(discount_id,)):
-            updateSQL("UPDATE Products SET discount_end_date = %s WHERE product_id = %s", (end_date,product_id[0]))
+            price = fetchOne("SELECT price FROM Products WHERE product_id = %s", (product_id[0],))[0]
+            discount_price = price - (price * int(discount_rate) / 100)
+            updateSQL("UPDATE Products SET discount_end_date = %s, discount_price = %s \
+                WHERE product_id = %s", (end_date, discount_price, product_id[0]))
 
         return jsonify({'status': True})
     except Exception as err:
