@@ -10,9 +10,9 @@
         <th class="text-secondary-emphasis" scope="col">Phone</th>
         <th class="text-secondary-emphasis" scope="col">Depot</th>
         <th class="text-secondary-emphasis" scope="col">Action</th>
-        {% if profile_type == "Consumer" %}
+        <!-- {% if profile_type == "Consumer" %}
         <th class="text-secondary-emphasis" scope="col">Payment history</th>
-        {% endif %}
+        {% endif %} -->
       </tr>
     </thead>
     
@@ -36,11 +36,11 @@
               <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
             </a>
           </td>          
-          <td>
+          <!-- <td>
             <a class="btn consumer_payment" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumerPayment{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="View payment history">
             <i class="fas fa-list fa-lg me-3 fa-fw"></i>
             </a>
-          </td>
+          </td> -->
         {% elif profile_type != 'Consumer' %}   
           <td>           
               <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Edit employee">
