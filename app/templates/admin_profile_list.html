@@ -31,14 +31,16 @@
   <div class="row justify-content-end">
     <div class="col-auto">
         <form id="searchForm" method="POST" action="/admin/profile/search" class="d-flex me-5 mb-4">
-          <!-- {% if profile_type == "Consumer" %}
-            <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">User type:</label>
-            <select class="form-select me-2" name="filterBy" aria-label="Filter by">
-                <option value="all">All</option>
-                <option value="Residential">Residential</option>
-                <option value="Business">Business</option>
-            </select>
-          {% endif %} -->
+          {% if type == "National_Manager" %}
+            <!-- <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">Depot:</label> -->
+            <select name="depot_id" class="form-select me-2">
+              <option value="all" selected>-- Select a depot --</option>
+              {% for depot in depotList %}
+              <option value="{{depot.depot_id}}">
+                  {{depot.location}}
+              </option>
+              {% endfor %}
+          {% endif %}
 
             {% if profile_type == "Consumer" %}
             <input type="text" class="form-control d-none" name="name_type" value="Consumer"/>     
