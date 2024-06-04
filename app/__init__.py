@@ -27,6 +27,7 @@ from app import index
 from app import shop
 from app import cart
 from app import consumer_points
+from app import consumer_box
 
 # Employees
 from app import admin
@@ -34,3 +35,5 @@ from app import manage_product
 from app import manage_profile
 from app import manage_discount
 from app import manage_news
+from app import manage_application
+from app import manage_boxes

@@ -193,3 +193,20 @@ def viewReviewRequests():
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
+    
+@app.route('/admin/decideReviewRequest', methods=['POST'])
+@roleRequired(['Local_Manager', 'National_Manager'])
+def decideReviewRequest():
+    data = request.get_json()
+    request_id = data['request_id']
+    decision = data['decision']
+    decision_date = datetime.now()
+
+    if decision == 'Approved':
+        query = "UPDATE Consumer c INNER JOIN AccountLimitReviewRequests r ON c.user_id = r.user_id SET c.account_limit = r.new_account_limit WHERE r.request_id = %s"
+        updateSQL(query, (request_id,))
+
+    query = "UPDATE AccountLimitReviewRequests SET status = %s, decision_date = %s WHERE request_id = %s"
+    updateSQL(query, (decision, decision_date, request_id))
+
+    return jsonify({"status": True})

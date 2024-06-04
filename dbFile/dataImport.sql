@@ -369,20 +369,3 @@ INSERT INTO Employees (user_id, given_name, family_name, address, phone, image, 
 (2, 'Jane', 'Smith', '654 Cedar St', '0298765432', 'user_default_image.png', '2023-06-15', 1),
 (3, 'Alex', 'Jones', '789 Oak St', '0223456789', 'user_default_image.png', '2022-12-01', 1),
 (4, 'Sarah', 'Wilson', '321 Pine St', '0208765432', 'user_default_image.png', '2024-02-20', 6);
-
-INSERT INTO Boxes (box_id, box_type, start_date, end_date, depot_id) VALUES
-(1, 'Small', '2024-04-06', '2024-04-12', 1),
-(2, 'Medium', '2024-04-06', '2024-04-12', 1),
-(3, 'Large', '2024-04-06', '2024-04-12', 1);
-
--- BoxItems table
-INSERT INTO BoxItems (box_id, product_id, quantity) VALUES
-(1, 1, 2),
-(1, 2, 2),
-(1, 3, 2),
-(2, 1, 4),
-(2, 2, 4),
-(2, 3, 4),
-(3, 1, 6),
-(3, 2, 6),
-(3, 3, 6);
