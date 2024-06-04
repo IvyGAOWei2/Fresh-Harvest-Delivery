@@ -3,7 +3,7 @@
 {% block title %}Order History{% endblock %}
 
 {% block navbar %}
-    {% with is_consumer_order_history='1' %}
+    {% with is_order_history='1' %}
         {% include "components/layout/header/Nav1.html" %}
     {% endwith %}
 {% endblock %}
@@ -66,13 +66,14 @@
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
+                        {% for order in orders %}
                         <!-- Example Order Row -->
                         <tr>
-                            <td>#1</td>
-                            <td>2024-05-20</td>
-                            <td>2024-05-22</td>
-                            <td>$99.99</td>
-                            <td>Pending</td>
+                            <td>{{order.order_id}}</td>
+                            <td>{{order.order_date}}</td>
+                            <td>{{order.delivery_date}}</td>
+                            <td>{{order.total}}</td>
+                            <td>{{order.status}}</td>
                             <td>
                                 <!-- <button class="btn btn-info btn-rounded" onclick="viewOrderDetails(12345)">View</button>
                                 <button class="btn btn-danger btn-rounded" data-toggle="modal" data-target="#cancelModal" onclick="setCancelOrderId(12345)">Cancel</button> -->
@@ -89,22 +90,7 @@
 
                             </td>
                         </tr>
-                        <!-- Delivered Order Row -->
-                        <tr>
-                            <td>#2</td>
-                            <td>2024-04-15</td>
-                            <td>2024-04-17</td>
-                            <td>$49.99</td>
-                            <td>Delivered</td>
-                            <td>
-                                <a class="btn order-view" role="button" >
-                                    <i class="far fa-eye fa-lg me-3"></i>
-                                </a>
-                                <a class="btn reorder" role="button" >
-                                    <i class="fas fa-cart-plus fa-lg me-1"></i>
-                                </a>                            
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

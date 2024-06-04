@@ -1,4 +1,4 @@
-import uuid, json, random
+import uuid, json, random, string, time
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, ValidationError
@@ -58,6 +58,7 @@ class employeeProfile(BaseModel):
     phone: Optional[str] = Field(None, min_length=1, max_length=13)
     hire_date: Optional[datetime] = Field(None)
     depot_id: Optional[int] = Field(None, ge=1, le=10)
+    type:Optional[str] = Field(None)
     new_password: Optional[str] = Field(None, min_length=1, max_length=50)
     old_password: Optional[str] = Field(None, min_length=1, max_length=50)
 
@@ -154,3 +155,28 @@ def fakeReview():
     {'user_name': 'Sarah', 'img': 'user_default_image.png', 'depot_location': 'Wellington', 'product_id': 999, 'review_date': 'May 03, 2024', 'review_text': "As a busy professional, Fresh Harvest has been a lifesaver. Their pre-made boxes are perfect for quick and healthy meals. The delivery service is reliable, and the quality of the produce is always top-notch."}]
 
     return random.sample(Reviews, 2)
+
+def toDay():
+    return datetime.now().strftime('%Y-%m-%d')
+
+def getImageExt(filename):
+    try:
+        ext_name = filename.rsplit('.', 1)[1].lower()
+        return ext_name if ext_name in ['png', 'jpg', 'jpeg', 'gif'] else None
+    except (IOError, SyntaxError) as e:
+        return None
+
+def generateImageId():
+    image_uuid = uuid.uuid4()
+    return str(image_uuid)
+
+def generateCode(length):
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.choices(characters, k=length))
+
+def getTimestamp(hours=0):
+    timestamp = int(time.time()) + (hours * 3600)
+    return timestamp
+
+def validateConsumerEmail(email):
+    return fetchOne('SELECT user_id FROM Users WHERE email = %s AND is_deleted = FALSE AND type = "Consumer"', (email,))

@@ -25,8 +25,8 @@ INSERT INTO Subscription (user_id, start_date, end_date, type) VALUES
 (5, '2024-05-01', '2024-05-15', 'Fortnightly');
 	
 -- Consumer table
-INSERT INTO Consumer (user_id, given_name, family_name, address, phone, postcode, image, credit_available, account_limit, account_available, last_login_date, user_type, depot_id, subscription_id) VALUES
-(1, 'John', 'Doe', '123 Main St', '0211234567', '8011', 'user_default_image.png', 100.00, null, null, '2024-05-05 18:30:00', 'Residential', 1, 1),
+INSERT INTO Consumer (user_id, given_name, family_name, address, phone, postcode, image, points, account_limit, account_available, last_login_date, user_type, depot_id, subscription_id) VALUES
+(1, 'John', 'Doe', '123 Main St', '0211234567', '8011', 'user_default_image.png', 82.41, null, null, '2024-05-05 18:30:00', 'Residential', 1, 1),
 (5, 'Mark', 'White', '456 Elm St', '0279876543', '9810', 'user_default_image.png', null, 300.00, 150.00, '2024-05-04 09:15:00', 'Business', 1, 2);
 
 -- Products table
@@ -134,7 +134,10 @@ INSERT INTO Products (name,description,price,stock,category_id,unit_id,depot_id)
 ("Pams Fresh Basil","Basil delivers the unmistakable aroma and flavour of basil,a versatile herb prized for its sweet,peppery taste. Whether used in pasta dishes,salads,sauces,or soups,chopped basil leaves add a burst of freshness and depth to your cooking.",3.99,100,3,3,1),
 ("Pams Fresh Rosemary","Rosemary offers the pine-like aroma and pungent flavour of rosemary,perfect for adding depth to roasted meats,potatoes,bread,and more. Whether used as whole sprigs or chopped leaves,rosemary infuses dishes with a bold,herbal taste and fragrance.",3.99,100,3,3,1),
 ("Pams Fresh Coriander","Coriander offers the citrusy,aromatic flavour of coriander,perfect for adding a zesty kick to curries,salsas,salads,and marinades. Whether used as a garnish or a seasoning,chopped coriander leaves add freshness and vibrancy to a variety of dishes.",3.99,100,3,3,1),
-("Ginger Imported","Imported ginger offers a pungent,spicy flavour and aromatic fragrance,making it a versatile ingredient in both sweet and savoury dishes. Whether used fresh,dried,or powdered,ginger adds warmth and depth to curries,stir-fries,marinades,teas,and baked goods.",12.99,100,3,6,1);
+("Ginger Imported","Imported ginger offers a pungent,spicy flavour and aromatic fragrance,making it a versatile ingredient in both sweet and savoury dishes. Whether used fresh,dried,or powdered,ginger adds warmth and depth to curries,stir-fries,marinades,teas,and baked goods.",12.99,100,3,6,1),
+-- gift card
+('Gift Card $25','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',25,20,6,3,1),
+('Gift Card $50','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',50,20,6,3,1);
 
 -- ProductImages table
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
@@ -236,19 +239,49 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (96, "Pams Fresh Basil.png", TRUE, FALSE),
 (97, "Pams Fresh Rosemary.png", TRUE, FALSE),
 (98, "Pams Fresh Coriander.png", TRUE, FALSE),
-(99, "Ginger Imported.png", TRUE, FALSE);
-
--- GiftCardcode table
-INSERT INTO GiftCardcode (product_id, user_id, code, balance, is_used) VALUES
-(6, 1, 'GC123ABC', 50.00, TRUE),
-(6, 1, 'GC456DEF', 50.00, TRUE),
-(6, 1, 'GC789GHI', 50.00, FALSE);
+(99, "Ginger Imported.png", TRUE, FALSE),
+(100, "GiftCard25.png", TRUE, FALSE),
+(101, "GiftCard50.png", TRUE, FALSE);
 
 -- Orders table
-INSERT INTO Orders (order_id, user_id, order_date, delivery_date, delivery_address, payment_status, status, total) VALUES
-(1, 1, '2024-05-03', '2024-05-10', '123 Main St, Christchurch', 'Completed', 'Delivered', 10.45),
-(2, 5, '2024-04-01', '2024-04-08', '456 Elm St, Christchurch', 'Completed', 'Delivered', 71.96),
-(3, 5, '2024-04-02', '2024-04-09', '456 Elm St, Christchurch', 'Completed', 'Delivered', 34.98);
+INSERT INTO Orders (user_id, order_date, delivery_date, billing_address, delivery_address, payment_method, payment_info, payment_status, status, total)
+VALUES 
+(
+    1, 
+    '2024-05-30', 
+    '2024-06-05', 
+    JSON_OBJECT('street', '123 Main St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    JSON_OBJECT('street', '456 Market St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    'Credit Card', 
+    '1111-2222-3333-4444', 
+    'Completed', 
+    'Delivered', 
+    10.45
+),
+(
+    1, 
+    '2024-05-29', 
+    '2024-06-04', 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    'Debit Card', 
+    '1111-2222-3333-4444', 
+    'Completed', 
+    'Delivered', 
+    71.96
+),
+(
+    3, 
+    '2024-04-02', 
+    '2024-04-09', 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
+    'Debit Card', 
+    '1111-2222-3333-4444', 
+    'Completed', 
+    'Delivered', 
+    34.98
+);
 
 -- OrderItems table
 INSERT INTO OrderItems (order_id, product_id, quantity, subtotal) VALUES
@@ -257,6 +290,75 @@ INSERT INTO OrderItems (order_id, product_id, quantity, subtotal) VALUES
 (2, 3, 1, 59.98),
 (2, 4, 2, 11.98),
 (3, 5, 10, 34.98);
+
+-- GiftCardcode table
+INSERT INTO GiftCards (product_id, order_id, code, balance, is_active) VALUES
+(100, 1, 'DKFQN2E0', '25', FALSE),
+(100, 2, 'UM9V51Y4', '25', FALSE);
+
+INSERT INTO GiftCards (product_id, code, balance, is_active) VALUES
+(100, 'R7U7T5D2', '25', FALSE),
+(100, 'V2F1U3W0', '25', FALSE),
+(100, 'E7K4M9A1', '25', FALSE),
+(100, 'X3Z9L2R6', '25', FALSE),
+(100, 'B1N5T4Y8', '25', FALSE),
+(100, 'P8O2Q6R4', '25', FALSE),
+(100, 'H6J8F3T0', '25', FALSE),
+(100, 'L2K1N8P9', '25', FALSE),
+(100, 'D7A2M5E3', '25', FALSE),
+(100, 'G5H2F6L8', '25', FALSE),
+(100, 'J1K8V4X0', '25', FALSE),
+(100, 'C4B9P6O2', '25', FALSE),
+(100, 'W9Z7U3Q1', '25', FALSE),
+(100, 'T3E0N9R5', '25', FALSE),
+(100, 'Q6X2G7B3', '25', FALSE),
+(100, 'F9R4J5H7', '25', FALSE),
+(100, 'S5V8W1Z3', '25', FALSE),
+(100, 'M8P9D1A2', '25', FALSE),
+(100, 'Y4U7K3E5', '25', FALSE),
+(100, 'N1L2X9V6', '25', FALSE),
+(100, 'U7T5W4Q8', '25', FALSE),
+(100, 'K3R6M7T2', '25', FALSE),
+(100, 'Z9S8C0B1', '25', FALSE),
+(100, 'O2H6U5V9', '25', FALSE),
+(100, 'E0X3Q4A7', '25', FALSE),
+(100, 'R4G5F2L1', '25', FALSE),
+(100, 'V6J9N8P0', '25', FALSE),
+(101, 'DWQ1R4E7', '50', FALSE),
+(101, 'TY2U8O5P', '50', FALSE),
+(101, 'LK3J9H6F', '50', FALSE),
+(101, 'ZX4V7M2N', '50', FALSE),
+(101, 'PO5Q8W3S', '50', FALSE),
+(101, 'UE6Y1I9K', '50', FALSE),
+(101, 'AM7D4G0C', '50', FALSE),
+(101, 'BN8T2F5H', '50', FALSE),
+(101, 'QW9Z3X6V', '50', FALSE),
+(101, 'RE0U7T1W', '50', FALSE),
+(101, 'CF2B5P8O', '50', FALSE),
+(101, 'VG3M6L9N', '50', FALSE),
+(101, 'UK4Y7I2E', '50', FALSE),
+(101, 'AD5G0C3H', '50', FALSE),
+(101, 'NB6T9F1S', '50', FALSE),
+(101, 'WE7Q2X5V', '50', FALSE),
+(101, 'RT8U3W6Z', '50', FALSE),
+(101, 'FG9H4J7K', '50', FALSE),
+(101, 'SM0N1L8X', '50', FALSE),
+(101, 'YI2E5K3R', '50', FALSE),
+(101, 'QW3R6M7T', '50', FALSE),
+(101, 'ZX4C9B2P', '50', FALSE),
+(101, 'OA5I8U0V', '50', FALSE),
+(101, 'EQ6W9Q4A', '50', FALSE),
+(101, 'RT7F2L5G', '50', FALSE),
+(101, 'VY8N3P9D', '50', FALSE),
+(101, 'UB1O6V2X', '50', FALSE),
+(101, 'AS4D7F0H', '50', FALSE),
+(101, 'BM9T2G5J', '50', FALSE);
+
+-- ConsumerPoints table
+INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date)
+VALUES
+(1, 1, 'Order Purchase', +10.45, 10.45, '2024-05-30'),
+(1, 2, 'Order Purchase', +71.96, 82.41, '2024-05-29');
 
 -- Invoices table
 INSERT INTO Invoices (user_id, invoice_date, due_date, total, gst_rate, order_list) VALUES
@@ -267,20 +369,3 @@ INSERT INTO Employees (user_id, given_name, family_name, address, phone, image, 
 (2, 'Jane', 'Smith', '654 Cedar St', '0298765432', 'user_default_image.png', '2023-06-15', 1),
 (3, 'Alex', 'Jones', '789 Oak St', '0223456789', 'user_default_image.png', '2022-12-01', 1),
 (4, 'Sarah', 'Wilson', '321 Pine St', '0208765432', 'user_default_image.png', '2024-02-20', 6);
-
-INSERT INTO Boxes (box_id, box_type, start_date, end_date, depot_id) VALUES
-(1, 'Small', '2024-04-06', '2024-04-12', 1),
-(2, 'Medium', '2024-04-06', '2024-04-12', 1),
-(3, 'Large', '2024-04-06', '2024-04-12', 1);
-
--- BoxItems table
-INSERT INTO BoxItems (box_id, product_id, quantity) VALUES
-(1, 1, 2),
-(1, 2, 2),
-(1, 3, 2),
-(2, 1, 4),
-(2, 2, 4),
-(2, 3, 4),
-(3, 1, 6),
-(3, 2, 6),
-(3, 3, 6);

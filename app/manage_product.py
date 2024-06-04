@@ -1,10 +1,31 @@
 from app import app
 from flask import render_template, request
 from dbFile.config import fetchAll, updateSQL
+import os
 
 # User-defined function
 from dbFile.config import updateSQL, insertSQL
-from common import roleRequired, validateProductProfile
+from common import roleRequired, validateProductProfile, getImageExt, generateImageId
+
+# Function to save uploaded images
+def saveImage(img):
+    # Get the file extension of the uploaded image
+    ext = getImageExt(img.filename)
+
+    # Check if the extension is valid
+    if not ext:
+        return ext
+
+    # Generate a unique image name using a custom function
+    image_name = generateImageId() + '.' + ext
+    # Construct the full path where the image will be saved
+    filename = os.path.join(app.config['PRODUCT_UPLOAD_FOLDER'], image_name)
+
+    # Save the uploaded image to the specified location
+    img.save(filename)
+    # Return the name of the saved image
+    return 'upload/' + image_name
+
 
 @app.route("/product/list", methods = ["GET"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -44,7 +65,9 @@ def addProduct():
     product_id = insertSQL("INSERT INTO Products (name, category_id, unit_id, depot_id, price, stock, description) VALUES (%s, %s, %s, %s, %s, %s, %s);", \
         (data['name'], data['category_id'], data['unit_id'], data['depot_id'], data['price'],data['stock'], data['description']))
 
-    img_id = insertSQL("INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES (%s, %s, %s, %s);", (product_id, 'image_coming_soon.jpg', True, False))
+    image_name = saveImage(request.files['image'])
+    img_id = insertSQL("INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES (%s, %s, %s, %s);", (product_id, image_name, True, False))
+
     if product_id:
         return {"status": True}, 200
     else:

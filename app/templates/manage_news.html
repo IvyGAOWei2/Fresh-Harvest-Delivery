@@ -1,0 +1,340 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+  {% with is_news='1' %}
+  {% include "components/layout/Sidebar.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+  {% with pageName='Post News' %}
+  {% include "components/layout/Breadcrumb2.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+
+<section class="main-content">
+  <!-- Post news-->
+  <div id="news_post" class="card">
+    <div class="card-header">
+      <h2>Post News</h2>
+    </div>
+    <div class="card-body">
+      <form id="addNewsForm" method="POST" action="/admin/post/news" class="needs-validation" novalidate>
+      <div class="container mt-5">
+        <div class="row">
+            <!-- Left side input fields -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" name="title" id="post_title" placeholder="Enter Title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="subtitle" class="form-label">Subtitle</label>
+                    <input type="number" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Post date</label>
+                    <input type="date" class="form-control" name="date" id="post_date" required>
+                </div>
+            </div>
+            <!-- Right side image display -->
+            <div class="col-md-6 d-flex justify-content-center">
+              <div class="col-md-4 d-flex align-items-center">
+                <div class="card shadow-sm img-container">
+                  <label for="post_img" class="d-block w-100 text-center">
+                    Cover image
+                    <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview1" alt="Cover Image" required>
+                  </label>
+                  <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*">
+                </div>
+              </div>
+            </div>
+            <!-- <div class="col-md-2 d-flex align-items-center">
+              <div class="card shadow-sm img-container">
+                  <label for="contentimg" class="d-block w-100 text-center">Content image
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview2" alt="Cover Image" required>
+                  </label>
+                  <input class="form-control" type="file" name="contentimg" id="contentimg" style="display: none;" accept="image/*">
+              </div>
+            </div> -->
+        </div>
+        <div class="row">
+            <label for="content" class="form-label">Content</label>
+            <textarea type="text" class="form-control form-textarea" name="content" id="content" placeholder="Enter Content" rows="6" required></textarea>
+        </div>
+      </div>
+      <p></p>
+      <div class="col-12 text-center">
+        <button type="submit" class="btn custom-btn news-add">Post</button>
+      </div>  
+      </form>
+    </div>
+  </div>
+
+  <!-- News history -->
+  <div id="news_history" class="card" >
+    <div class="card-header">
+      <h2>News History</h2>
+    </div>
+      <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Title</th>
+              <th scope="col">Subtitle</th>
+              <th scope="col">Post date</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Discount</td>
+              <td>June special</td>
+              <td>09-09-2023</td>
+              <td>
+              <a class="btn news-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateNews" data-news-id="1" data-bs-toggle="tooltip" title="Update news">
+                  <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn news-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteNews" data-news-id="1" data-bs-toggle="tooltip" title="Delete news">
+                <i class="fas fa-trash-alt fa-lg me-3 fa-fw"></i>
+              </a>   
+              </td>
+            </tr>
+          </tbody>
+      </table>
+  </div>
+</section>
+
+<!-- update news modal-->
+<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateNews" aria-labelledby="updateNewsLabel">
+  <div class="offcanvas-header">
+    <div class="col text-center">
+      <h5 class="offcanvas-title" id="updateNewsLabel">Update News</h5>
+    </div>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form id="updateNewsForm"  method="POST" action="/admin/update/news" class="needs-validation" novalidate>
+        <div class="col-md-12 mb-3">
+          <div class="card shadow-sm" style="width: 8vw;">
+            <label for="update_img">
+                <img src="{{ url_for('static', filename='images/user_default_image.png')}}" class="card-img-top" id="imagePreview3" data-bs-toggle="tooltip" title="Update image">
+            </label>
+            <input class="form-control" type="file" name="image" id="update_img" style="display: none;" accept="image/*" required> 
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="form3Example3c">Title <sup>*</sup></label>
+          <input type="email" maxlength="50" class="form-control" id="update_title" name="title" value="" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+          <div class="invalid-feedback">Please input a title.</div> 
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Subtitle</label>
+          <input type="text" class="form-control" value="" id="update_subtitle" name="update_subtitle" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
+          <div class="invalid-feedback">Please input a subtitle.</div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="post_date">Post date<sup>*</sup></label>
+          <input type="date" class="form-control" id="update_date" name="date" required>
+        </div>  
+        <div>
+          <label class="form-label">Content</label>
+          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="35" rows="6" pattern="^[a-zA-Z]+$" required></textarea>
+          <div class="invalid-feedback">Please input content.</div>
+        </div>
+        <p></p>
+      <div class="col text-center">
+      <button type="submit" class="btn btn-secondary news-update" data-profile-id="1">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- deleteNews-->
+{% with
+  btn_show = 0,
+  bg_color = '#dc3545',
+  bg_color2 = '#3399ff',
+  modal_id = 'deleteNews',
+  title = 'Delete Confirmation',
+  msg = 'Are you sure to delete this news?'
+  %}
+  {% include "components/elements/delConfirm.html" %}
+  {% endwith %}
+
+ <!-- updateNewsSuccessModal -->
+ {% with
+  btn_show = 0,
+  modal_id = 'updateNewsSuccessModal',
+  bg_color = '#3399ff',
+  title = 'Updated Successfully',
+  msg = 'News has been successfully updated'
+%}
+  {% include "components/elements/updateSuccess.html" %}
+{% endwith %}
+
+<!-- addNewsSuccessModal -->
+{% with
+  btn_show = 0,
+  modal_id = 'addNewsSuccessModal',
+  bg_color = '#3399ff',
+  title = 'Added Successfully',
+  msg = 'News has been successfully posted'
+%}
+  {% include "components/elements/updateSuccess.html" %}
+{% endwith %}
+
+ <!-- delNewsSuccessModal -->
+ {% with
+  btn_show = 0,
+  modal_id = 'delNewsSuccessModal',
+  bg_color = '#3399ff',
+  title = 'Deleted Successfully',
+  msg = 'News has been successfully deleted'
+%}
+  {% include "components/elements/updateSuccess.html" %}
+{% endwith %}
+
+{% endblock %}
+
+{% block script %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('updateNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+      document.getElementById('addNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+      document.getElementById('delNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+      
+      
+      document.querySelectorAll('.news-delete').forEach(function (del) {
+        const news_id = del.getAttribute('data-news-id');
+        const deleteNews = document.getElementById('deleteNews' + news_id);
+        const deleteNewsBtn = deleteNews.querySelector('button[type="submit"]');
+        const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+
+        deleteNewsBtn.addEventListener('click', event => {
+          event.preventDefault();
+          // event.stopPropagation();
+
+          fetch('/admin/news/delete', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ 'news_id': news_id })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  // Show delProfileSuccessModal modal if update is successful
+                  deleteNews.style.display = 'none';
+                  loadingModal.show();
+                  setTimeout(() => {
+                    loadingModal.hide();
+                    new bootstrap.Modal(document.getElementById('delNewsSuccessModal')).show();
+                }, 1000);
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+
+      document.querySelectorAll('.news-update').forEach(function (update) {
+        const news_id = update.getAttribute('data-news-id')
+        const updateNewsForm = document.getElementById('updateNewsForm' + news_id);
+
+        updateNewsForm.addEventListener('submit', event => {
+          if (!updateNewsForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          // event.stopPropagation();
+          const formData = new FormData(updateNewsForm);
+          // console.log(formData)
+          fetch('/admin/update/news', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  // console.log(data)
+                  new bootstrap.Modal(document.getElementById('updateNewsSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+
+      document.querySelectorAll('.news-add').forEach(function (add) {
+        const news_id = add.getAttribute('data-news-id')
+        const addNewsForm = document.getElementById('addNewsForm' + news_id);
+
+        addNewsForm.addEventListener('submit', event => {
+          if (!addNewsForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          // event.stopPropagation();
+          const formData = new FormData(addNewsForm);
+          console.log(formData)
+          fetch('/admin/post/news', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  // console.log(data)
+                  new bootstrap.Modal(document.getElementById('addNewsSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="offcanvas"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+  });
+</script>
+
+{% endblock %}

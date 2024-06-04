@@ -8,19 +8,16 @@ from common import roleRequired, validateProductProfile, getUserProfile
 
 
 
-@app.route("/consumer/order/history", methods = ["GET",'POST'])
+@app.route("/order/history")
 @roleRequired(['Consumer'])
-def consumerOrderHistory():
-    profile = getUserProfile(session['id'], session['type'])
-
-  
-    return render_template('consumer-order-history.html', profile=profile )
+def orderHistory():
+    orders = fetchAll("SELECT order_id, order_date, delivery_date, total, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
+    return render_template('order-history.html', orders=orders)
 
 
 
 @app.route("/admin/order/history", methods = ["GET", 'POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def staffOrderHistory():
-
-  
-    return render_template('manage-order-history.html' )
+    orders = fetchAll("SELECT order_id, order_date, delivery_date, total, status FROM Orders;", None, True)
+    return render_template('manage-order-history.html', orders=orders)

@@ -1,0 +1,147 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Box{% endblock %}
+
+{% block navbar %}
+    {% with is_consumer_box='1' %}
+        {% include "components/layout/header/Nav1.html" %}
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .custom-text {
+        color: #81c408;
+        font-weight: bold;
+    }
+
+
+    .search-bar {
+            border-radius: 25px;
+            margin-bottom: 20px;
+        }
+    .btn-rounded {
+        border-radius: 25px;
+    }
+
+</style>
+
+<section class="main-content">
+    <div class="container-fluid py-5 mt-5">
+        <div class="container py-5 text-center">
+            <div class="account-header d-flex justify-content-center align-items-center py-4 mb-4" style="background: none;">
+                <i class="fas fa-box-open fa-3x me-3"></i> 
+                <h1 class="mb-2">My subscription</h1>
+            </div>
+            <form method="POST" action="/consumer/box">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Subscription ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            {% for subscription in subscription_list %}
+                            <!-- Example Order Row -->
+                            <tr>
+                                <td>{{subscription.subscription_id}}</td>
+                                <td>{{subscription.start_date}}</td>
+                                <td>{{subscription.end_date}}</td>
+                                <td>{{subscription.type}}</td>
+                                <td>
+                                    <a class="btn order-view" role="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#consumer_view_box" aria-controls="offcanvasRight">
+                                        <i class="far fa-eye fa-lg me-1"></i>
+                                    </a>
+                                    {% if subscription.end_date <  current_date %}
+                                    <a class="btn order-del" role="button" >
+                                        <i class="fas fa-trash-alt fa-lg me-1 " style="color: gray;"></i>
+                                    </a>
+                                    {% else %}
+                                    <a class="btn order-del" role="button" >
+                                        <i class="fas fa-trash-alt fa-lg me-1"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>     
+                            {% endfor %}                      
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+
+
+<!-- View box detail modal-->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="consumer_view_box" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Box Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body text-start">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="form3Example3c">Box id: 1</label>
+        </div>
+        <div class="col-md-6 mb-3">
+        <label class="form-label">Box size: Small</label>
+        </div>
+        <div class="col-md-6 mb-3">
+        <label class="form-label">Contains:</label>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Products:</label>
+             </div>
+             <div class="col-md-6 mb-3">
+                <label class="form-label">Quantity:</label>
+             </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Update Success Message -->
+<div class="p-3">
+    {% with
+        btn_show = 0,
+        btn_text = 'Profile Update Success',
+        bg_color = '#81C408',
+        title = 'Profile Update Success',
+        msg = 'Your profile has been successfully updated'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+</div>
+</section>
+
+{% endblock %}
+
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+  <script>
+    let cancelOrderId = null;
+    function setCancelOrderId(orderId) {
+        cancelOrderId = orderId;
+    }
+
+    function confirmCancelOrder() {
+        if (cancelOrderId) {
+            // Perform the cancellation logic here
+            alert('Order ' + cancelOrderId + ' has been canceled.');
+            $('#cancelModal').modal('hide');
+        }
+    }
+
+    function viewOrderDetails(orderId) {
+        // Redirect to order details page or display order details
+        alert('Viewing details for order ' + orderId);
+    }
+</script>
+
+{% endblock %}
+
+

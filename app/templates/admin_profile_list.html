@@ -15,7 +15,7 @@
 
 
 {% block breadcrumb %}
-  {% with pageName=profile_type + ' List' %}
+  {% with pageName = "Consumer List" if profile_type == "Consumer" else "Employee List" %}
     {% include "components/layout/Breadcrumb2.html" %}
   {% endwith %}
 {% endblock %}
@@ -30,16 +30,24 @@
 
   <div class="row justify-content-end">
     <div class="col-auto">
-        <form id="searchForm" class="d-flex me-5 mb-4" role="search">
-          {% if profile_type == "Consumer" %}
-            <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">User type:</label>
-            <select class="form-select me-2" name="filterBy" aria-label="Filter by">
-                <option value="all">All</option>
-                <option value="Residential">Residential</option>
-                <option value="Business">Business</option>
-            </select>
+        <form id="searchForm" method="POST" action="/admin/profile/search" class="d-flex me-5 mb-4">
+          {% if type == "National_Manager" %}
+            <!-- <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">Depot:</label> -->
+            <select name="depot_id" class="form-select me-2">
+              <option value="all" selected>-- Select a depot --</option>
+              {% for depot in depotList %}
+              <option value="{{depot.depot_id}}">
+                  {{depot.location}}
+              </option>
+              {% endfor %}
           {% endif %}
-            <input class="form-control me-2" name="searchBy" type="search" placeholder="Search for name" style="width: 200px;" aria-label="Search" required>
+
+            {% if profile_type == "Consumer" %}
+            <input type="text" class="form-control d-none" name="name_type" value="Consumer"/>     
+            {% else %}
+            <input type="text" class="form-control d-none" name="name_type" value="Employees"/>     
+            {% endif %}
+            <input class="form-control me-2" name="searchBy" type="search" placeholder="Search for name" style="width: 250px;" aria-label="Search">
             <button class="btn" type="submit"><i class="fas fa-search fa-lg me-3 fa-fw"></i></button>
         </form>
     </div>

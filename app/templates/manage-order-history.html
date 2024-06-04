@@ -48,7 +48,7 @@
     <div class="container-fluid py-1">
         <div class="container py-1 text-center">
             <div class="d-flex justify-content-center align-items-center py-4" style="background: none;">
-                <i class="fas fa-user-shield fa-3x me-3"></i> 
+                <i class="fas fa-history fa-3x me-3"></i> 
                 <h1 class="mb-0">Order History</h1>
             </div>
 
@@ -172,7 +172,7 @@
 
             </div>
 
-            <div class="table-responsive">
+            <div class="table">
                 <table class="table table-bordered">
                     <thead class="thead-light">
                         <tr>
@@ -182,35 +182,39 @@
                             <th>Total Cost</th>
                             <th>Status</th>
                             <th>Actions</th>
+                            <th>Change Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Example Order Row -->
+                        {% for order in orders %}
                         <tr>
-                            <td>#1</td>
-                            <td>2024-05-20</td>
-                            <td>2024-05-22</td>
-                            <td>$99.99</td>
-                            <td>Pending</td>
+                            <td>{{order.order_id}}</td>
+                            <td>{{order.order_date}}</td>
+                            <td>{{order.delivery_date}}</td>
+                            <td>{{order.total}}</td>
+                            <td>{{order.status}}</td>
                             <td>
                                 <a class="btn order-view" role="button" >
                                     <i class="far fa-eye fa-lg me-3"></i>
                                 </a>
                             </td>
-                        </tr>
-                        <!-- Delivered Order Row -->
-                        <tr>
-                            <td>#2</td>
-                            <td>2024-04-15</td>
-                            <td>2024-04-17</td>
-                            <td>$49.99</td>
-                            <td>Delivered</td>
                             <td>
-                                <a class="btn order-view" role="button" >
-                                    <i class="far fa-eye fa-lg me-3"></i>
-                                </a>
+                            <div class="btn-group dropend">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Action
+                                </button>
+                                <ul class="dropdown-menu" name="payment_status" id="payment_status">                       
+                                    <li><a class="dropdown-item" value="Pending" href="#">Pending</a></li>
+                                    <li><a class="dropdown-item" value="Comfirmed" href="#">Comfirmed</a></li>
+                                    <li><a class="dropdown-item" value="Shipped" href="#">Shipped</a></li>
+                                    <li><a class="dropdown-item" value="Delivered" href="#">Delivered</a></li>
+                                    <li><a class="dropdown-item" value="Cancelled" href="#">Cancelled</a></li>
+                                </ul>
+                                </div>
                             </td>
                         </tr>
+                        {% endfor %}
                         <!-- Add more fixed data rows as needed -->
                     </tbody>
                 </table>

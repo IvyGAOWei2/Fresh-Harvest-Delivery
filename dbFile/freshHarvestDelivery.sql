@@ -12,6 +12,8 @@ CREATE TABLE Users (
     user_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(64) NOT NULL,
+    temporary_password_hash VARCHAR(64),
+    temporary_password_timestamp VARCHAR(64),
 	type ENUM('Consumer', 'Staff', 'Local_Manager', 'National_Manager', 'Placeholder1', 'Placeholder2', 'Placeholder3') NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     is_deleted BOOLEAN DEFAULT FALSE,
@@ -37,9 +39,9 @@ CREATE TABLE Consumer (
     phone VARCHAR(13) NOT NULL,
 	postcode VARCHAR(10),
 	image VARCHAR(80),
-	credit_available DECIMAL(10, 2),
-	account_limit DECIMAL(10, 2),
-	account_available DECIMAL(10, 2),
+	points DECIMAL(10, 2) DEFAULT 0,
+	account_limit DECIMAL(10, 2) DEFAULT NULL,
+	account_available DECIMAL(10, 2) DEFAULT NULL,
 	registration_date DATE DEFAULT (CURRENT_DATE),
 	last_login_date DATETIME,
 	user_type ENUM('Residential', 'Business', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
@@ -84,18 +86,6 @@ CREATE TABLE Products (
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
--- another product??
-CREATE TABLE GiftCardcode (
-    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-	product_id SMALLINT,
-	user_id SMALLINT,
-    code VARCHAR(20) UNIQUE NOT NULL,
-    balance DECIMAL(10, 2),
-    is_used BOOLEAN DEFAULT FALSE,
-	FOREIGN KEY (product_id) REFERENCES Products(product_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
-);
-
 CREATE TABLE ProductImages (
     product_image_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
 	product_id SMALLINT,
@@ -110,10 +100,12 @@ CREATE TABLE Orders (
     user_id SMALLINT,
     order_date DATE,
     delivery_date DATE,
-	delivery_address VARCHAR(150),
+    billing_address JSON,
+    delivery_address JSON,
+    payment_method ENUM('Credit Card', 'Debit Card', 'Account', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    payment_info VARCHAR(20) NOT NULL,
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	payment_method ENUM('Residential', 'Commercial', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Residential' NOT NULL,
-    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
     total DECIMAL(10, 2),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
@@ -126,6 +118,32 @@ CREATE TABLE OrderItems (
     subtotal DECIMAL(10, 2),
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+CREATE TABLE GiftCards (
+    gift_card_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	product_id SMALLINT,
+	order_id INT,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    is_active BOOLEAN DEFAULT FALSE,
+	FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id)
+);
+
+CREATE TABLE ConsumerPoints (
+    point_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT,
+    order_id INT,
+    gift_card_id SMALLINT,
+    point_type ENUM('Order Purchase ', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    point_variation DECIMAL(10, 2),
+    point_balance DECIMAL(10, 2),
+    point_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (gift_card_id) REFERENCES GiftCards(gift_card_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE Invoices (
@@ -153,13 +171,22 @@ CREATE TABLE Employees (
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
+CREATE TABLE Packages (
+    package_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+);
+
 CREATE TABLE Boxes (
     box_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-    box_type ENUM('Large', 'Medium', 'Small', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-	depot_id TINYINT,
-    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+    package_id SMALLINT,
+    box_type ENUM('Large', 'Medium', 'Small') NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    quantity TINYINT,
+    FOREIGN KEY (package_id) REFERENCES Packages(package_id)
 );
 
 CREATE TABLE BoxItems (
@@ -172,10 +199,10 @@ CREATE TABLE BoxItems (
 );
 
 CREATE TABLE Promotions (
-    promotion_id INT PRIMARY KEY,
+    promotion_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     description TEXT,
-	start_date DATE NOT NULL,
+    start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     discount_rate TINYINT
 );
@@ -210,7 +237,9 @@ CREATE TABLE Discounts (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     discount_rate DECIMAL(5, 2) NOT NULL,
-    status BOOLEAN DEFAULT TRUE
+    status BOOLEAN DEFAULT TRUE,
+	depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
 CREATE TABLE DiscountedProducts (
@@ -219,4 +248,33 @@ CREATE TABLE DiscountedProducts (
     product_id SMALLINT,
     FOREIGN KEY (discount_id) REFERENCES Discounts(discount_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+CREATE TABLE BusinessApplications (
+    application_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT NOT NULL,
+    business_name VARCHAR(100) NOT NULL,
+    contact_name VARCHAR(100) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postcode VARCHAR(10) NOT NULL,
+    documentation VARCHAR(255) NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    application_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    approved_by SMALLINT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (approved_by) REFERENCES Users(user_id)
+);
+
+CREATE TABLE AccountLimitReviewRequests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id SMALLINT,
+    current_account_limit DECIMAL(10, 2),
+    new_account_limit DECIMAL(10, 2),
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    decision_date DATETIME,
+    FOREIGN KEY (user_id) REFERENCES Consumer(user_id)
 );
