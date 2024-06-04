@@ -75,7 +75,8 @@ CREATE TABLE Products (
 	name VARCHAR(50),
 	description TEXT,
     price DECIMAL(10, 2),
-	discount_price DECIMAL(10, 2), -- record?
+	discount_price DECIMAL(10, 2),
+    discount_end_date DATE,
     stock SMALLINT,
     category_id TINYINT,
 	unit_id TINYINT,

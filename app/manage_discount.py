@@ -2,7 +2,7 @@ from jinja2 import TemplateNotFound
 from app import app
 from flask import render_template, request, session, jsonify
 from dbFile.config import fetchAll, fetchOne, updateSQL, insertSQL
-from common import roleRequired, getUserProfile, validateEmployeeProfile
+from common import roleRequired, getUserProfile, validateEmployeeProfile, yesterDay
 from datetime import datetime
 from decimal import Decimal
 
@@ -127,6 +127,9 @@ def update_discount(discount_id):
         """
         updateSQL(sql_update_discount, (title, description, discount_rate, start_date, end_date, discount_id))
 
+        for product_id in fetchAll("SELECT product_id FROM DiscountedProducts WHERE discount_id = %s;",(discount_id,)):
+            updateSQL("UPDATE Products SET discount_end_date = %s WHERE product_id = %s", (end_date,product_id[0]))
+
         return jsonify({'status': True})
     except Exception as err:
         print(f"Error: {err}")
@@ -139,6 +142,9 @@ def deactivate_discount(discount_id):
         sql_deactivate_discount = "UPDATE Discounts SET status = FALSE WHERE discount_id = %s"
         updateSQL(sql_deactivate_discount, (discount_id,))
 
+        for product_id in fetchAll("SELECT product_id FROM DiscountedProducts WHERE discount_id = %s;",(discount_id,)):
+            updateSQL("UPDATE Products SET discount_end_date = %s WHERE product_id = %s", (yesterDay(),product_id[0]))
+
         return jsonify({'status': True})
     except Exception as err:
         print(f"Error: {err}")
@@ -150,6 +156,11 @@ def activate_discount(discount_id):
     try:
         sql_activate_discount = "UPDATE Discounts SET status = TRUE WHERE discount_id = %s"
         updateSQL(sql_activate_discount, (discount_id,))
+
+        end_date = fetchOne("SELECT end_date FROM Discounts WHERE discount_id = %s", (discount_id,))
+
+        for product_id in fetchAll("SELECT product_id FROM DiscountedProducts WHERE discount_id = %s;",(discount_id,)):
+            updateSQL("UPDATE Products SET discount_end_date = %s WHERE product_id = %s", (end_date[0], product_id[0]))
 
         return jsonify({'status': True})
     except Exception as err:
@@ -221,12 +232,12 @@ def add_discount_product():
             return jsonify({'status': False, 'message': 'Discount ID and Product ID are required'}), 400
 
         # Fetch depot ID and discount rate from the discount
-        sql_discount_details = "SELECT depot_id, discount_rate FROM Discounts WHERE discount_id = %s"
+        sql_discount_details = "SELECT depot_id, discount_rate, end_date FROM Discounts WHERE discount_id = %s"
         discount_details = fetchOne(sql_discount_details, (discount_id,))
         if not discount_details:
             return jsonify({'status': False, 'message': 'Discount not found'}), 404
 
-        depot_id, discount_rate = discount_details
+        depot_id, discount_rate, end_date = discount_details
 
         # Check if the product belongs to the same depot
         sql_product_depot = "SELECT depot_id FROM Products WHERE product_id = %s"
@@ -244,10 +255,10 @@ def add_discount_product():
         # Update the product's discount price
         sql_update_product = """
             UPDATE Products
-            SET discount_price = price - (price * %s / 100)
+            SET discount_price = price - (price * %s / 100), discount_end_date = %s
             WHERE product_id = %s
         """
-        updateSQL(sql_update_product, (discount_rate, product_id))
+        updateSQL(sql_update_product, (discount_rate, end_date, product_id))
 
         if row_count > 0:
             return jsonify({'status': True, 'message': 'Discounted product added successfully'})

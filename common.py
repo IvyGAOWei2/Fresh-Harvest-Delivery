@@ -159,6 +159,10 @@ def fakeReview():
 def toDay():
     return datetime.now().strftime('%Y-%m-%d')
 
+def yesterDay():
+    yesterday = datetime.now() - timedelta(days=1)
+    return yesterday.strftime('%Y-%m-%d')
+
 def getImageExt(filename):
     try:
         ext_name = filename.rsplit('.', 1)[1].lower()

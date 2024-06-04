@@ -35,7 +35,12 @@ def shop():
     total_pages = ceil(total_products[0]/9)
 
     sql_products = """
-        SELECT p.product_id, p.name, p.description, p.price, p.stock, c.category_name, u.unit_name, pi.image
+        SELECT p.product_id, p.name, p.description, p.price, p.stock, 
+        CASE 
+            WHEN p.discount_end_date < CURDATE() THEN NULL 
+            ELSE p.discount_price 
+        END AS discount_price, 
+        c.category_name, u.unit_name, pi.image
         FROM Products p 
         JOIN Category c ON p.category_id = c.category_id 
         JOIN Unit u ON p.unit_id = u.unit_id 
@@ -62,10 +67,11 @@ def shop():
             LEFT JOIN 
                 ProductImages pi ON p.product_id = pi.product_id AND pi.is_primary = TRUE
             WHERE 
-                d.status = 1 AND p.is_active = TRUE
-            ORDER BY 
-                d.start_date DESC
+                d.status = 1 AND p.is_active = TRUE AND p.discount_end_date >= CURDATE()
         """
+
+    # sql_discounted_products += f"ORDER BY d.start_date DESC"
+    sql_discounted_products += f"ORDER BY RAND() LIMIT 4;"
     discounted_products = fetchAll(sql_discounted_products, [])
 
     discounted_items = [
@@ -74,7 +80,7 @@ def shop():
                 'name': product[1],
                 'price': product[2],
                 'discount_price': round(product[2] * (1 - product[4] / 100), 2),  # Calculate discounted price
-                'image': product[3] or 'default.jpg',  # Fallback image if no image found
+                'image': product[3] or 'image_coming_soon.jpg',  # Fallback image if no image found
                 'discount_rate': product[4]
             }
             for product in discounted_products
@@ -88,7 +94,7 @@ def shopDetail():
        
         sql_query = """
             SELECT 
-                P.product_id, P.name, P.description, P.price, P.stock, 
+                P.product_id, P.name, P.description, P.price, P.stock,
                 C.category_name, U.unit_name, D.location AS depot_location, 
                 PI.image AS primary_image, COALESCE(DS.discount_rate, 0) AS discount_rate 
             FROM 
