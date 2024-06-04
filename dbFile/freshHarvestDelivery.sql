@@ -171,13 +171,22 @@ CREATE TABLE Employees (
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
+CREATE TABLE Packages (
+    package_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+);
+
 CREATE TABLE Boxes (
     box_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
-    box_type ENUM('Large', 'Medium', 'Small', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-	start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-	depot_id TINYINT,
-    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+    package_id SMALLINT,
+    box_type ENUM('Large', 'Medium', 'Small') NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    quantity TINYINT,
+    FOREIGN KEY (package_id) REFERENCES Packages(package_id)
 );
 
 CREATE TABLE BoxItems (
@@ -190,10 +199,10 @@ CREATE TABLE BoxItems (
 );
 
 CREATE TABLE Promotions (
-    promotion_id INT PRIMARY KEY,
+    promotion_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     description TEXT,
-	start_date DATE NOT NULL,
+    start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     discount_rate TINYINT
 );
@@ -228,7 +237,9 @@ CREATE TABLE Discounts (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     discount_rate DECIMAL(5, 2) NOT NULL,
-    status BOOLEAN DEFAULT TRUE
+    status BOOLEAN DEFAULT TRUE,
+	depot_id TINYINT,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );
 
 CREATE TABLE DiscountedProducts (
@@ -237,4 +248,33 @@ CREATE TABLE DiscountedProducts (
     product_id SMALLINT,
     FOREIGN KEY (discount_id) REFERENCES Discounts(discount_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+CREATE TABLE BusinessApplications (
+    application_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id SMALLINT NOT NULL,
+    business_name VARCHAR(100) NOT NULL,
+    contact_name VARCHAR(100) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    postcode VARCHAR(10) NOT NULL,
+    documentation VARCHAR(255) NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    application_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    approved_by SMALLINT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (approved_by) REFERENCES Users(user_id)
+);
+
+CREATE TABLE AccountLimitReviewRequests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id SMALLINT,
+    current_account_limit DECIMAL(10, 2),
+    new_account_limit DECIMAL(10, 2),
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    decision_date DATETIME,
+    FOREIGN KEY (user_id) REFERENCES Consumer(user_id)
 );
