@@ -40,6 +40,8 @@
                   {{depot.location}}
               </option>
               {% endfor %}
+          {% else %}
+          <input type="text" class="form-control d-none" name="depot_id" value="all"/>     
           {% endif %}
 
             {% if profile_type == "Consumer" %}

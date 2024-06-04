@@ -50,12 +50,39 @@
                 
                 {% if product.category_name == 'Box' %}
                 <div class="w-100 text-center my-2">or</div>
-                <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary" data-name="{{product.name}}" data-price="{{product.price}}" data-img="{{ url_for('static', filename='images/product/' + product.image) }}" data-id="{{product.product_id}}" data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
-                    <i class="fa fa-calendar-plus me-2 text-primary"></i> Subscribe
-                </a>
+                <div class="btn-group dropend">
+                    <button class="btn border border-secondary rounded-pill px-3 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-name="{{product.name}}" data-price="{{product.price}}" data-img="{{ url_for('static', filename='images/product/' + product.image) }}" data-id="{{product.product_id}}" data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
+                        <i class="fa fa-calendar-plus me-2 text-primary"></i> Subscribe
+                    </button>
+                    <ul class="dropdown-menu" name="type" id="subscription_type">                       
+                        <li><a class="dropdown-item" value="Weekly" data-bs-toggle="modal" data-bs-target="#exampleModal">Weekly</a></li>
+                        <li><a class="dropdown-item" value="Fortnightly" href="#">Fortnightly</a></li>
+                        <li><a class="dropdown-item" value="Monthly" href="#">Monthly</a></li>
+                    </ul>
+                </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
+
 {% endfor %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>

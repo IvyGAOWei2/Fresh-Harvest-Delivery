@@ -56,9 +56,11 @@
                                     <td>{{point.point_balance}}</td>
                                     <td>{{point.point_date}}</td>
                                     <td>
+                                    {% if point.point_type == 'Order Purchase' %}
                                     <a href="{{ url_for('orderHistory') }}" class="btn view_order" role="button" title="Order details">
                                         <i class="fas fa-list fa-lg me-3 fa-fw"></i>
                                     </a>
+                                    {% endif %}
                                     </td>
                                   </tr>
                                   {% endfor %}
