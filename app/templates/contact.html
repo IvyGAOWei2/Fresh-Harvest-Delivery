@@ -22,26 +22,26 @@
         <div class="container py-5">
             <div class="p-5 bg-light rounded">
                 <div class="row g-4">
-                    <div class="col-12">
+                    <div class="col-12" >
                         <div class="text-center mx-auto" style="max-width: 700px;">
                             <h1 class="text-primary">Get in touch</h1>
                             <p class="mb-4">Whether you have questions, feedback, or want to collaborate, feel free to reach out. Our team is here to assist you and looks forward to connecting with you soon!</p>
                         </div>
                     </div>
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" id="contactUs">
                         <iframe class="rounded w-100" 
                         style="height: 400px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5784.090555461111!2d172.54419947565364!3d-43.54309807110761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6d31f55be19ec7eb%3A0x8d6a58cade90c4f9!2s233%20Main%20South%20Road%2C%20Hornby%2C%20Christchurch%208042!5e0!3m2!1sen!2snz!4v1715119409089!5m2!1sen!2snz" 
                         loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>                    </div>
                     <div class="col-lg-7">
-                        <form action="" class="">
-                            <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name">
-                            <input type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email">
-                            <select class="w-100 form-control border-0 py-3 mb-4">
+                        <form id="contactForm" action="/contact" method="POST" class="needs-validation" novalidate>
+                            <input id="contactName" type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" name="name" pattern="^[a-zA-Z\s]+$" required>
+                            <input id="contactEmail" type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
+                            <select class="w-100 form-control border-0 py-3 mb-4" name="type" >
                                 <option value="inquiry" selected>General Inquiry</option>
                                 <option value="refund">Refund</option>
                             </select>
-                            <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message"></textarea>
-                            <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
+                            <textarea id="contactMsg" class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message" name="msg" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required></textarea>
+                            <button class="w-100 btn border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
                         </form>
                     </div>
                     <div class="col-lg-5">
@@ -71,6 +71,58 @@
             </div>
         </div>
     </div>
+    <!-- contactSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'contactSuccessModal',
+        bg_color = '#81C408',
+        title = 'Help is on the way',
+        msg = 'We have received your contact information and our team will get in touch with you as soon as possible. Thank you!'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+  
     <!-- Contact End -->
 </section>
+{% endblock %}
+
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('contactName').oninput = () => InputValidate('contactName');
+        document.getElementById('contactEmail').oninput = () => InputValidate('contactEmail');
+        document.getElementById('contactMsg').oninput = () => InputValidate('contactMsg');
+
+        const loginForm = document.getElementById('contactForm');
+        document.getElementById('contactSuccessModal').addEventListener('hidden.bs.modal', () => window.location.href = '/');
+
+        // Handle loginForm submission
+        loginForm.addEventListener('submit', function (event) {
+            if (!loginForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
+
+            const formData = new FormData(this); // Prepare form data
+
+            fetch('/contact', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == true) { // Redirect user if login is successful
+                    console.log(data.status)
+                    new bootstrap.Modal(document.getElementById('contactSuccessModal')).show();
+                    // window.location.href = data.message;
+                }
+                else {
+                    alert("Invalid request");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    })
+</script>
 {% endblock %}

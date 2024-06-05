@@ -29,6 +29,8 @@ def saveImage(img):
 @app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfiles():
+    type = session['type']
+    print(type,88888888)
     profile_type = request.args.get('profile_type')
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
@@ -42,33 +44,50 @@ def adminProfiles():
                 JOIN Users ON Employees.user_id = Users.user_id \
                 WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
 
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type)
 
 
 @app.route('/admin/profile/search',methods = ["GET","POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def profileSearch():
-
+    type = session['type']
+    depot_id = request.form.get('depot_id')
     searchBy = request.form.get('searchBy')
     profile_type = request.form.get('name_type')
-    print(profile_type,9999999)
-
-    # result = fetchAll("SELECT * FROM " + profile_type + " WHERE given_name LIKE %s \
-    #     OR family_name LIKE %s ORDER BY user_id ASC", ('%' + searchBy + '%','%' + searchBy + '%'))
+    print(profile_type,depot_id,898989898898)
     
+    # if click manage consumer in the sidebar
     if profile_type == "Consumer":
-        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',),True)
+        if depot_id == 'all' or depot_id == 6:
+            print(222111111111111)
+            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',),True)
+        else:
+            print(111111111111111)
+            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%', depot_id,),True)
+    # if click manage employee in the sidebar
     else:
         if session.get('type') in ['Local_Manager']:
-            result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
+            if depot_id == 'all' or depot_id ==  6:
+                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
+                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
+            else:
+                print(89898989898)
+                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
+                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
         else:
-            result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                JOIN Users ON Employees.user_id = Users.user_id \
-                WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
+            if depot_id == 'all' or depot_id ==  6:
+                print(787878787878787)
+                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
+                    JOIN Users ON Employees.user_id = Users.user_id \
+                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
+            else:
+                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
+                    JOIN Users ON Employees.user_id = Users.user_id \
+                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
     
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list,type=type)
 
 
 @app.route("/admin/profile/update", methods = ["POST"])
@@ -104,9 +123,15 @@ def adminProfileUpdate():
         params.append(user_id)
 
         update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
-   
-    if 'image' in request.files:
-        image_name = saveImage(request.files['image'])
+        # if depot_id changed, update Users
+        depot_id = verified_data['depot_id'] 
+        original_depot_id = fetchOne("select depot_id from Users where user_id=%s",(user_id,),withDescription=False)[0]
+        if depot_id != original_depot_id:
+            updateSQL("UPDATE Users set depot_id = %s WHERE user_id = %s;", (depot_id, user_id))
+
+    image = request.files['image']
+    if image.filename:
+        image_name = saveImage(image)
         update_successful = updateSQL("UPDATE " + table_name + " SET image = %s WHERE user_id = %s;", (image_name, user_id))
 
     # if employee type change, update Users

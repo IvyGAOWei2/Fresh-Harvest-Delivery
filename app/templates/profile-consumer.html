@@ -67,16 +67,26 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {% if profile.user_type == 'Business' %}
                                         <div class="row mb-4">
                                             <label for="accountLimit" class="col-sm-4 col-form-label text-start">Account Limit</label>
                                             <div class="col-sm-7">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="500" disabled>
-                                                    <button type="button" class="btn btn-secondary">Review</button>
+                                                    <input type="text" class="form-control" style="color: #81C408;" id="accountLimit" name="accountLimit" value="{{ profile.account_limit | default(0) | float | round(2) }}" disabled>
+                                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reviewAccountLimitModal">Review</button>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+                                        {% endif %}
+                                        {% if profile.user_type == 'Residential' and not application_status %}
+                                        <div class="text-center mt-5">
+                                            <a href="{{ url_for('apply_business_account') }}" class="btn btn-primary">Apply for Business Account</a>
+                                        </div>
+                                        {% elif profile.user_type == 'Residential' and application_status %}
+                                        <div class="text-center mt-5">
+                                            <p>Account application status: <strong>{{ application_status }}</strong></p>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     <div class="col-md-6">
                                         <div class="row mb-4">
@@ -113,12 +123,13 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {% if profile.user_type == 'Business' %}
                                         <div class="row mb-4">
                                             <label for="creditBalance" class="col-sm-4 col-form-label text-start">Credit Balance</label>
                                             <div class="col-sm-7">
-                                                <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="300" disabled>
-                                            </div>
+                                                <input type="text" class="form-control" style="color: #FFB524;" id="creditBalance" name="creditBalance" value="{{ profile.account_available | default(0) | float | round(2) }}" disabled>                                            </div>
                                         </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="text-center">
@@ -225,6 +236,37 @@
         {% endwith %}
     </div>
 </section>
+<!-- Modal for Reviewing Account Limit -->
+<div class="modal fade" id="reviewAccountLimitModal" tabindex="-1" aria-labelledby="reviewAccountLimitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewAccountLimitModalLabel">Review Account Limit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewAccountLimitForm">
+                    <div class="mb-3">
+                        <label for="newAccountLimit" class="form-label">New Account Limit</label>
+                        <input type="number" class="form-control" id="newAccountLimit" name="newAccountLimit" required>
+                        <div class="invalid-feedback">Please provide a valid account limit.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="p-3">
+    {% with
+      btn_show = 0,
+      bg_color = '#28a745',
+      title = 'Review Request Submitted',
+      msg = 'Your review request has been successfully submitted'
+    %}
+        {% include "components/elements/addSuccess.html" %}
+    {% endwith %}
+</div>
 
 <style>
     .account-header {
@@ -283,6 +325,32 @@
   {% include "components/elements/InputValidate.html" %}
 
 <script>
+    document.getElementById('reviewAccountLimitForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var newAccountLimit = document.getElementById('newAccountLimit').value;
+
+    fetch('/profile/submitReviewRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: "{{ profile.user_id }}", newAccountLimit: newAccountLimit })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status) {
+            const successModal = new bootstrap.Modal(document.getElementById('addSuccessModal'));
+            successModal.show();
+
+            successModal._element.addEventListener('hidden.bs.modal', function () {
+                location.reload();
+            });
+        } else {
+            alert('Failed to submit review request.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
     document.getElementById('profileImage').addEventListener('click', function () {
         document.getElementById('profilePicture').click();
     });
@@ -320,8 +388,29 @@
             buttonIcon.classList.add('fa-eye');
         }
     }
-</script>
-<script>
+    // Review Account Limit Modal
+    document.getElementById('reviewAccountLimitForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var newAccountLimit = document.getElementById('newAccountLimit').value;
+
+        fetch('/profile/updateAccountLimit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: "{{ profile.user_id }}", newAccountLimit: newAccountLimit })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status) {
+                document.getElementById('accountLimit').value = newAccountLimit;
+                new bootstrap.Modal(document.getElementById('reviewAccountLimitModal')).hide();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
     (function () {
         'use strict';
         var inputs = [

@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.static_folder = 'static'
 # app.config['UPLOAD_FOLDER'] = '/home/COMP639S1GroupAZ/COMP639S1_Group_AZ/app/static/img'
 app.config['UPLOAD_FOLDER'] = 'app/static/images/upload'
+app.config['PRODUCT_UPLOAD_FOLDER'] = 'app/static/images/product/upload'
 app.secret_key = 'f5c6b877e9e8461192677370eab53b2d'
 app.salt = 'group_az'
 app.category_list = fetchAll("""SELECT * FROM Category;""", None, True)
@@ -26,6 +27,7 @@ from app import index
 from app import shop
 from app import cart
 from app import consumer_points
+from app import consumer_box
 
 # Employees
 from app import admin
@@ -39,3 +41,5 @@ from app import manage_news
 # National_Manager
 from app import manage_system_settings
 from app import manage_giftcards
+from app import manage_application
+from app import manage_boxes

@@ -4,6 +4,8 @@ test.py
 dbFile/config.cnf
 .DS_Store
 app/static/images/upload/*
+app/static/images/product/upload/*
+emailMethod/auth.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

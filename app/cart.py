@@ -5,6 +5,7 @@ import json
 # User-defined function
 from dbFile.config import insertSQL, updateSQL, fetchOne
 from common import roleRequired, toDay
+from emailMethod.method import sendOrderStatus
 
 
 @app.route("/cart")
@@ -44,6 +45,8 @@ def checkout():
         update_successful = updateSQL("UPDATE Orders SET total = %s WHERE order_id = %s;", (total_price, order_id))
 
         if update_successful:
+            updateSQL("UPDATE ConsumerCart SET cart = %s WHERE user_id = %s;", ('[]', session['id'],))
+            sendOrderStatus(order['billingform']['email'], order_id, order['billingform']['given_name'], toDay(), 'Pending')
             return {"status": True, 'message': '/order/history'}, 200
         else:
             return {"status": False}, 500
