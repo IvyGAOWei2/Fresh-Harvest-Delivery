@@ -59,7 +59,7 @@
                                 <!-- 显示运费 -->
                                 <tr>
                                     <td colspan="4" style="text-align:right;">Shipping</td>
-                                    <td class="shipping">$10.00</td> <!-- JavaScript 将根据购物车的总价更新此值 -->
+                                    <td class="shipping" name="shipping">$10.00</td> <!-- JavaScript 将根据购物车的总价更新此值 -->
                                 </tr>
                                 <!-- 显示使用的积分 -->
                                 <tr>
@@ -212,7 +212,7 @@ function loadCartDetails() {
     const pointsUsedElement = document.querySelector('.points-used');
 
     if (shippingElement) {
-        shippingElement.textContent = shippingCost === 0 ? 'Free' : `$${shippingCost}`;
+        shippingElement.textContent = `$${shippingCost.toFixed(2)}`;
     }
     if (gstElement) {
         gstElement.textContent = `$${gst.toFixed(2)}`;
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const userType = 'business'; // 假设从服务器获取用户类型
-    const creditBalance = 1050; // 假设信用余额
+    const creditBalance = 50; // 假设信用余额
     const totalAmount = 1000; // 购物车总额
     const invoicePaid = true; // 假设从服务器获取是否支付了之前的发票
 

@@ -58,6 +58,7 @@
                             <div class="form-group mb-4">
                                 <label for="points-input">Enter points to use (1000 points = $10, minimum 1000):</label>
                                 <input type="number" class="form-control" id="points-input" placeholder="1000" min="1000" step="1000">
+                                <div class="invalid-feedback"style="display: none;">Please enter a valid number of points. Points must be in multiples of 1000 and less than or equal to your current points.</div>
                                 <button class="btn btn-primary mt-2" id="apply-points">Apply Points</button>
                             </div>
                             
@@ -292,11 +293,16 @@ function updateShippingAndTotal(sumTotal, discount = 0, pointsUsed = 0) {
     displayCart(); // Initially display the cart contents
     const applyPointsButton = document.getElementById('apply-points');
 applyPointsButton.addEventListener('click', function() {
-    const pointsInput = parseInt(document.getElementById('points-input').value) || 0; // 添加了 || 0 来处理非数值输入
+    const pointsInput = parseInt(document.getElementById('points-input').value) || 0;
     const currentPoints = parseInt(document.getElementById('user-points').textContent.split(' ')[0]);
+    const errorMessage = document.querySelector('.invalid-feedback');
+
+    // 隐藏错误消息开始时
+    errorMessage.style.display = 'none';
 
     if (isNaN(pointsInput) || pointsInput <= 0) {
-        alert('Please enter a valid number of points.');
+        errorMessage.textContent = 'Please enter a valid number of points.';
+        errorMessage.style.display = 'block'; // 显示错误消息
         return; // 提前退出如果输入无效
     }
 
@@ -307,9 +313,11 @@ applyPointsButton.addEventListener('click', function() {
         const discount = (pointsInput / 1000) * 10; // 每1000积分抵扣10美元
         updateShippingAndTotal(sumTotal, discount, pointsInput);
     } else {
-        alert('Please enter a valid number of points. Points must be in multiples of 1000 and less than or equal to your current points.');
+        errorMessage.textContent = 'Points must be in multiples of 1000 and less than or equal to your current points.';
+        errorMessage.style.display = 'block'; // 显示错误消息
     }
 });
+
 
 
 });
