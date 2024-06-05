@@ -6,10 +6,11 @@
         </div>
         <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{product.category_name}}</div>
         <div class="p-4 border border-top-0">
-            <h5 class="m-0">{{product.name}}</h5>
-            <h6 class="text-center text-secondary" style="margin-top: -.8rem;font-size: 1.2rem;">
-                $
-                {{product.price}}
+            <h5 class="m-0" style="max-height: 1rem;">{{product.name}}</h5>
+
+            <div class="d-flex justify-content-center align-items-center">
+                <h6 class="text-center text-secondary" style="margin-top:.8rem;font-size: 1.2rem;">
+                {% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}
                 / 
                 {% if product.unit_name == 'Weight_kg' %}Kg{% endif %}
                 {% if product.unit_name == 'Weight_g' %}g{% endif %}
@@ -17,7 +18,12 @@
                 {% if product.unit_name == 'Each' %}ea{% endif %}
                 {% if product.unit_name == 'Bunch' %}ea{% endif %}
                 {% if product.unit_name == 'Punnet' %}ea{% endif %}
-            </h6>
+                </h6>
+                {% if product.discount_price %}
+                <h6 class="text-center text-danger text-decoration-line-through" style="margin-left:.5rem;font-size:.9rem;">Was ${{ product.price }}</h6>
+                {% endif %}
+            </div>
+
 
             <p>{{product.description}}</p>
             <div class="d-flex justify-content-center flex-lg-wrap">
@@ -44,7 +50,15 @@
                     </button>
                 </div>
                 
-                <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary" data-name="{{product.name}}" data-price="{{product.price}}" data-img="{{ url_for('static', filename='images/product/' + product.image) }}" data-id="{{product.product_id}}" data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
+                <a
+                    href="#"
+                    class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary"
+                    data-name="{{product.name}}"
+                    data-price="{% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}"
+                    data-img="{{ url_for('static', filename='images/product/' + product.image) }}"
+                    data-id="{{product.product_id}}"
+                    data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}"
+                >
                     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                 </a>
                 

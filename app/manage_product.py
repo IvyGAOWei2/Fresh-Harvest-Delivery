@@ -90,6 +90,12 @@ def updateProduct():
         params.append(product_id)
 
     update_successful = updateSQL("UPDATE Products SET " + ", ".join(updates) + " WHERE product_id = %s", params)
+
+    image = request.files['image']
+    if image.filename:
+        image_name = saveImage(image)
+        update_successful = updateSQL("UPDATE ProductImages SET image = %s WHERE product_id = %s", (image_name, product_id))
+
     if update_successful:
         return {"status": True}, 200
     else:

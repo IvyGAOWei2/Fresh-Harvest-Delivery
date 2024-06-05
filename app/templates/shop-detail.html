@@ -33,16 +33,21 @@
                         <div class="col-lg-6">
                             <h4 class="fw-bold mb-3">{{product.name}}</h4>
                             <p class="mb-3">Category: {{product.category_name}}</p>
-                            <h5 class="fw-bold mb-3">
-                                $ {{product.price}}
-                                /
-                                {% if product.unit_name == 'Weight_kg' %}kg{% endif %}
-                                {% if product.unit_name == 'Weight_g' %}g{% endif %}
-                                {% if product.unit_name == 'Tray' %}ty{% endif %}
-                                {% if product.unit_name == 'Each' %}ea{% endif %}
-                                {% if product.unit_name == 'Bunch' %}ea{% endif %}
-                                {% if product.unit_name == 'Punnet' %}ea{% endif %}
-                            </h5>
+                            <div class="d-flex justify-content-start align-items-center">
+                                <h5 class="fw-bold mb-3">
+                                    ${% if product.discounted_price %}{{product.discounted_price}}{% else %}{{product.price}}{% endif %}
+                                    /
+                                    {% if product.unit_name == 'Weight_kg' %}kg{% endif %}
+                                    {% if product.unit_name == 'Weight_g' %}g{% endif %}
+                                    {% if product.unit_name == 'Tray' %}ty{% endif %}
+                                    {% if product.unit_name == 'Each' %}ea{% endif %}
+                                    {% if product.unit_name == 'Bunch' %}ea{% endif %}
+                                    {% if product.unit_name == 'Punnet' %}ea{% endif %}
+                                </h5>
+                                {% if product.discounted_price %}
+                                <h6 class="text-center text-danger text-decoration-line-through fw-bold" style="margin-left:.5rem; margin-top:-.8rem;">Was ${{ product.price }}</h6>
+                                {% endif %}
+                            </div>
                             <div class="d-flex mb-4">
                                 <i class="fa fa-star text-secondary"></i>
                                 <i class="fa fa-star text-secondary"></i>

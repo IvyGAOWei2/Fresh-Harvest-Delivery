@@ -432,7 +432,7 @@
     transform: scale(1.15);
 }
 .fruite h5{
-    min-height: 3rem;
+    min-height: 1.5rem;
     text-align: center;
     margin-top: .5rem;
 }
