@@ -38,6 +38,22 @@
                     <label for="date" class="form-label">Post date</label>
                     <input type="date" class="form-control" name="date" id="post_date" required>
                 </div>
+                {% if type == 'National_Manager' %}
+                <div class="mb-3">
+                  <label class="form-label">Depot</label>
+                  <div class="d-flex align-items-center">
+                    <select class="form-control" name="depot_id" id="depot_id" required>
+                      <option selected value="">Please select your city</option>
+                      <option value="1">Christchurch</option>
+                      <option value="2">Invercargill</option>
+                      <option value="3">Wellington</option>
+                      <option value="4">Hamilton</option>
+                      <option value="5">Auckland</option>
+                      <option value="6">NZ</option>
+                    </select>
+                  </div>
+                </div>
+                {% endif %}
             </div>
             <!-- Right side image display -->
             <div class="col-md-6 d-flex justify-content-center">

@@ -35,3 +35,18 @@ def giftcardRedeem():
         return {"status": True}, 200
     else:
         return {"status": False, 'message': 'The gift card code is incorrect or has already been used'}, 500
+    
+
+@app.route("/manage/points", methods=['GET', 'POST'])
+@roleRequired(['Local_Manager', 'National_Manager'])
+def managePoints():
+    type = session['type']
+    points_list = fetchAll("""WITH LatestPoints AS 
+             (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
+            SELECT u.given_name,u.family_name, 
+                p.*  
+            FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
+            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id;""", val=None, withDescription=False)
+    print(points_list)
+
+    return render_template('manage_points.html', type=type, points_list=points_list)

@@ -58,6 +58,9 @@
     <a href="{{ url_for('manageNews') }}" class="{% if is_news %}is_active{% endif %}">
       <i class="fas fa-newspaper"></i><span>Post news</span>
     </a>
+    <a href="{{ url_for('managePoints') }}" class="{% if is_managePoints %}is_active{% endif %}">
+      <i class="fas fa-newspaper"></i><span>Manage points</span>
+    </a>
     {% endif %}
     <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_consumerList %}is_active{% endif %}">
       <i class="fas fa-users"></i> <span>Manage Consumer</span>
