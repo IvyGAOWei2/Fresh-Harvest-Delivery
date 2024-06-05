@@ -1,3 +1,5 @@
+
+
 {% extends "_consumer-base.html" %}
 
 {% block title %}Checkout{% endblock %}
@@ -49,15 +51,28 @@
                                 <!-- Dynamically filled by JavaScript -->
                             </tbody>
                             <tfoot>
+                                <!-- 显示 GST (已包含在价格中，仅展示用途) -->
+                                <tr>
+                                    <td colspan="4" style="text-align:right;">GST(included) </td>
+                                    <td class="gst">$0.00</td> <!-- 初始显示为 $0.00, JavaScript将更新此值 -->
+                                </tr>
+                                <!-- 显示运费 -->
                                 <tr>
                                     <td colspan="4" style="text-align:right;">Shipping</td>
-                                    <td class="shipping">$10.00</td>
+                                    <td class="shipping">$10.00</td> <!-- JavaScript 将根据购物车的总价更新此值 -->
                                 </tr>
+                                <!-- 显示使用的积分 -->
+                                <tr>
+                                    <td colspan="4" style="text-align:right;">Points Used</td>
+                                    <td class="points-used">0 Points</td> <!-- JavaScript 将更新使用的积分 -->
+                                </tr>
+                                <!-- 显示最终总计 -->
                                 <tr>
                                     <td colspan="4" style="text-align:right;"><strong>Total</strong></td>
-                                    <td class="total">$10.00</td>
+                                    <td class="total">$10.00</td> <!-- JavaScript 将计算并更新最终总计 -->
                                 </tr>
                             </tfoot>
+                            
                         </table>
                     </div>
                 </div>
@@ -159,19 +174,18 @@ function validateForm(formSelector) {
 
 function loadCartDetails() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartDetails = JSON.parse(localStorage.getItem('finalTotal')) || {subtotal: 0, total: 0, pointsUsed: 0};
     const cartBody = document.querySelector('.table-group-divider');
-    const orderForm = document.querySelector('#payment-form');
     cartBody.innerHTML = '';
 
     let subtotal = 0;
-    let shippingCost = 10;
-
     cartItems.forEach(item => {
         const price = parseFloat(item.price);
         const quantity = parseFloat(item.quantity);
         const total = price * quantity;
-        const productid= item.id;
-        subtotal += total;
+
+        subtotal += total;  // Recalculate subtotal based on items in the cart
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <th scope="row">
@@ -183,22 +197,36 @@ function loadCartDetails() {
             <td class="py-5">$${price.toFixed(2)}</td>
             <td class="py-5">${quantity} ${item.unit}</td>
             <td class="py-5">$${total.toFixed(2)}</td>
-            <input type="hidden" id=“orderproductid” name="product_id" value="${productid}">
-            <input type="hidden" id=“orderproductquantity”name="quantity" value="${quantity}">
         `;
         cartBody.appendChild(row);
-                // Append hidden inputs for product ID and quantity
- 
     });
 
-    if (subtotal >= 80) {
-        shippingCost = 0;
-    }
+    let shippingCost = subtotal >= 80 ? 0 : 10;
+    let gst = subtotal * 0.15;  // Calculate GST for display purposes only
+    let finalTotal = subtotal + shippingCost - ((cartDetails.pointsUsed / 1000) * 10);  // Apply points discount if any
 
-    let finalTotal = subtotal + shippingCost;
-    document.querySelector('.total').textContent = `$${finalTotal.toFixed(2)}`;
-    document.querySelector('.shipping').textContent = shippingCost ? `$${shippingCost}` : 'Free';
+    // Update existing elements in HTML
+    const shippingElement = document.querySelector('.shipping');
+    const gstElement = document.querySelector('.gst');
+    const totalElement = document.querySelector('.total');
+    const pointsUsedElement = document.querySelector('.points-used');
+
+    if (shippingElement) {
+        shippingElement.textContent = shippingCost === 0 ? 'Free' : `$${shippingCost}`;
+    }
+    if (gstElement) {
+        gstElement.textContent = `$${gst.toFixed(2)}`;
+    }
+    if (totalElement) {
+        totalElement.textContent = `$${finalTotal.toFixed(2)}`;
+    }
+    if (pointsUsedElement) {
+        pointsUsedElement.textContent = cartDetails.pointsUsed > 0 ? ` ${cartDetails.pointsUsed}` : 'No points used';
+    }
 }
+
+
+
 
 function saveDeliveryDetails() {
     const deliveryForm = document.querySelector('.delivery-form form');
@@ -341,47 +369,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    const userType = 'special'; // 模拟用户类型
-    const creditBalance = 400; // 模拟信用额度
-    const totalAmount = 350; // 模拟订单总额
+    const userType = 'business'; // 假设从服务器获取用户类型
+    const creditBalance = 1050; // 假设信用余额
+    const totalAmount = 1000; // 购物车总额
+    const invoicePaid = true; // 假设从服务器获取是否支付了之前的发票
 
-    const submitButton = document.getElementById('submitall'); // 获取提交按钮
-    const warningMessage = document.getElementById('warning-message'); // 获取警告消息元素
+    const creditBalanceOption = document.getElementById('credit-balance-option');
+    const balanceInfo = document.getElementById('balance-info');
+    const balanceDisplay = document.getElementById('credit-balance');
+    const submitButton = document.getElementById('submitall');
+    const creditCardOption = document.querySelector('input[value="Credit Card"]');
+    const debitCardOption = document.querySelector('input[value="Debit Card"]');
+    const cardDetails = document.querySelectorAll('.form-group'); // Assuming each input is wrapped in a 'form-group'
 
-    if (userType === 'special') {
-        // 显示特殊用户的信用额度信息和使用信用额度的选项
-        document.getElementById('credit-balance-option').style.display = 'block';
-        document.getElementById('credit-info').style.display = 'block';
+    if (userType === 'business') {
+        // 对商业用户
+        creditBalanceOption.style.display = 'block';
+        balanceInfo.style.display = 'flex';
+        balanceDisplay.textContent = `$${creditBalance}`;
 
-        // 隐藏普通支付选项
-        document.getElementById('credit-card-option').style.display = 'none';
-        document.getElementById('debit-card-option').style.display = 'none';
-        document.getElementById('point-option').style.display = 'none';
+        // 隐藏信用卡和借记卡选项
+        creditCardOption.parentElement.style.display = 'none';
+        debitCardOption.parentElement.style.display = 'none';
 
-        // 单独控制表单的隐藏而不隐藏按钮
-        document.getElementById('payment-form').style.display = 'none'; 
+        // 隐藏信用卡信息输入框
+        cardDetails.forEach(group => group.style.display = 'none');
 
-        // 更新余额显示
-        document.getElementById('balance-amount').textContent = `$${creditBalance}`;
-
-        // 检查余额是否足够
-        if (totalAmount > creditBalance) {
-            warningMessage.textContent = 'Your credit balance is insufficient to place this order.';
-            warningMessage.style.display = 'block';
-            submitButton.disabled = true; // 禁用提交按钮
+        // 检查余额是否足够以及之前的发票是否已支付
+        if (creditBalance < totalAmount || !invoicePaid) {
+            submitButton.disabled = true;
+            if (!invoicePaid) {
+                balanceDisplay.textContent += ' (Previous invoice unpaid)';
+            } else {
+                balanceDisplay.textContent += ' (Insufficient balance)';
+            }
         } else {
-            warningMessage.style.display = 'none';
-            submitButton.disabled = false; // 启用提交按钮
+            submitButton.disabled = false;
         }
     } else {
-        // 显示普通用户的支付选项和表单
-        document.getElementById('credit-card-option').style.display = 'block';
-        document.getElementById('debit-card-option').style.display = 'block';
-        document.getElementById('point-option').style.display = 'block';
-        document.getElementById('payment-form').style.display = 'block'; // 显示表单
-        submitButton.disabled = false; // 确保按钮可用
+        // 对住宅用户
+        creditBalanceOption.style.display = 'none';
+        balanceInfo.style.display = 'none';
+
+        // 显示信用卡和借记卡选项
+        creditCardOption.parentElement.style.display = 'block';
+        debitCardOption.parentElement.style.display = 'block';
+
+        // 显示信用卡信息输入框
+        cardDetails.forEach(group => group.style.display = 'block');
+
+        submitButton.disabled = false;
     }
 });
+
 
 
 document.getElementById('deliveryfirstname').addEventListener('input', function() {
