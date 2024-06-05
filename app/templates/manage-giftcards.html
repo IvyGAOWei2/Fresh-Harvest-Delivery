@@ -13,213 +13,121 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .vesitable-item:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+    .btn:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
+
+    .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5); /* optional: adds a semi-transparent overlay */
+}
+
+</style>
+
 
 
 <section class="main-content">
     <h1 class="text-center">Manage Giftcards</h1>
 
-
-
-    <!-- product units -->
-    <div class="accordion-item p-5">
-        <h2 class="accordion-header mb-3" id="headingUnits">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUnits" aria-expanded="true" aria-controls="collapseUnits">
-                <i class="fas fa-cube me-2"></i>Product Units
-            </button>
-        </h2>
-        <div id="collapseUnits" class="accordion-collapse collapse show" aria-labelledby="headingUnits">
-            <div class="accordion-body mx-3">
-                <table class="table table-striped text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="d-none">Unit ID</th>
-                            <th scope="col">Unit Name</th>
-                            <th scope="col">Unit Standard</th>
-                            <th scope="col">Unit Minimum</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for unit in units %}
-                        <tr>
-                            <td class="d-none">{{unit.unit_id}}</td>
-                            <td>{{ unit.unit_name }}</td> 
-                            <td>{{ unit.unit_std }}</td>
-                            <td>{{ unit.unit_min }}</td>
-                            <td>
-                                <a class="btn" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateCategory{{ unit.unit_id }}">
-                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
-                                </a>
-
-                                <!-- <a href="{{ url_for('orderHistory') }}" class="btn category-del" role="button">
-                                    <i class="fas fa-trash-alt fa-lg me-1" title="Delete Category"></i>
-                                </a> -->
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <form id="addUnitForm" method="POST" action="/add/units" class="needs-validation" novalidate>
-                    <div class="input-group mb-3 ">
-                        <div class="col-md-4"> 
-                            <input type="text" class="form-control" id="newUnit" name="new_unit" placeholder="Enter new unit" required>
+    <!-- Start-->
+    <div class="container-fluid vesitable py-2">
+        <div class="container py-2">
+            <h3 class="mb-2">Giftcard Choices</h3>
+            <div class="owl-carousel vegetable-carousel justify-content-center">     
+                {% for card in giftcards %}
+                <div class="border border-primary rounded position-relative vesitable-item">
+                    <div class="vesitable-img">
+                        <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="p-4 rounded-bottom">
+                        <h4>Details</h4>
+                        <p>{{ card.description }}</p>
+                        <div class="d-flex justify-content-between flex-lg-wrap">
+                            <a data-bs-toggle="modal" data-bs-target="#viewnewsModal" class="border border-secondary rounded-pill px-3 text-primary btn">
+                                <i class="fas fa-angle-double-right me-2 text-primary"></i> Find More
+                            </a>
                         </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary">Add</button>
-                        </div>  
-                        <div class="invalid-feedback">Please input the correct unit.</div>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- shipping price -->
-    <div class="accordion-item p-5">
-        <h2 class="accordion-header mb-3" id="headingShippingPrice">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingPrice" aria-expanded="false" aria-controls="collapseShippingPrice">
-                <i class="fas fa-shipping-fast me-2"></i>Shipping Prices Setting
-            </button>
-        </h2>
-        <div id="collapseShippingPrice" class="accordion-collapse collapse" aria-labelledby="headingShippingPrice">
-            <div class="accordion-body mx-3">
-                <table class="table table-striped text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">Depot</th>
-                            <th scope="col">Amount(NZD)</th>
-                            <th scope="col">Update</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Christchurch</td>
-                            <td>60</td>
-                            <td>
-                                <a class="btn" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateShipping">
-                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
-                                </a>
-
-                                <!-- <a href="{{ url_for('orderHistory') }}" class="btn category-del" role="button">
-                                    <i class="fas fa-trash-alt fa-lg me-1" title="Delete Category"></i>
-                                </a> -->
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Auckland</td>
-                            <td>20</td>
-                            <td>
-                                <a class="btn" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateShipping">
-                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
-                                </a>
-
-                                <!-- <a href="{{ url_for('orderHistory') }}" class="btn category-del" role="button">
-                                    <i class="fas fa-trash-alt fa-lg me-1" title="Delete Category"></i>
-                                </a> -->
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- category -->
-    <div class="accordion-item p-5">
-        <h2 class="accordion-header mb-3" id="headingCategories">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
-                <i class="fas fa-tags me-2"></i>Category Name
-            </button>
-        </h2>
-        <div id="collapseCategories" class="accordion-collapse collapse " aria-labelledby="headingCategories">
-            <div class="accordion-body mx-3">
-                <table class="table table-striped text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="d-none">Category ID</th>
-                            <th scope="col">Category Name</th>
-                            <th scope="col">Update</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for category in categories %}
-                        <tr>
-                            <td class="d-none">{{category.category_id}}</td>
-                            <td>{{ category.category_name }}</td>
-                            <td>
-                                <a class="btn" role="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#updateCategory{{ category.category_id }}">
-                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
-                                </a>
-                                <!-- <a href="{{ url_for('orderHistory') }}" class="btn category-del" role="button">
-                                    <i class="fas fa-trash-alt fa-lg me-1" title="Delete Category"></i>
-                                </a> -->
-
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <form id="addCategoryForm" method="POST" action="/add/category" class="needs-validation" novalidate>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="newCategory" name="new_category" placeholder="Enter new category" required>
-                        <button type="submit" class="btn btn-primary">Add</button>
-                        <div class="invalid-feedback">Please input the correct category.</div>
-                    </div>
-                </form>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 
 
-    <!-- Update Success btn code start here -->
-    {% with
-    btn_show = 0,
-    bg_color = '#81C408',
-    title = 'Update Success',
-    msg = 'Your {item} has been successfully added'
-    %}
-    {% include "components/elements/addSuccess.html" %}
-    {% endwith %}
+<!-- View Detail Modal -->
+<div class="modal fade" id="viewnewsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 900px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-primary fst-italic" id="exampleModalLabel"><i class="far fa-smile-wink"></i> Detail Info</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+            <div class="col-md-6 fst-italic">
+             How to use the giftcard
+            </div>
+            
+            <div class="col-md-6">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
 
-    <!-- deleteMemberModal -->
-    {% with
-        btn_show = 0,
-        bg_color = '#dc3545',
-        bg_color2 = '#3399ff',
-        modal_id = 'deleteMemberModal',
-        title = 'Delete Confirmation',
-        msg = 'Are you sure to delete this product?'
-      %}
-        {% include "components/elements/delConfirm.html" %}
-    {% endwith %}
 
-    <!-- delProfileSuccessModal -->
-    {% with
-        btn_show = 0,
-        modal_id = 'delProfileSuccessModal',
-        bg_color = '#3399ff',
-        title = 'Deleted Successfully',
-        msg = 'Product has been successfully deleted'
-    %}
-        {% include "components/elements/updateSuccess.html" %}
-    {% endwith %}
+  <h3 class="mb-2">Giftcard Redemption </h3>
+  <div id="orders-table" class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Giftcard ID</th>
+                <th>Code</th>
+                <th>Balance</th>
+                <th>Redemption Date</th>
+                <th>Consumer Name</th>
+                <th>User ID</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for card in giftcards %}
+            <!-- Example Order Row -->
+            <tr>
+                <td>{{card.gift_card_id}}</td>
+                <td>{{card.code}}</td>
+                <td>{{card.balance}}</td>
+                <td>{{card.order_date}}</td>
+                <td>{{card.full_name}}</td>
+                <td>{{card.user_id}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-    <!-- updateProductSuccessModal -->
-    {% with
-        btn_show = 0,
-        modal_id = 'updateProductSuccessModal',
-        bg_color = '#3399ff',
-        title = 'Update Successfully',
-        msg = 'Product has been successfully updated'
-    %}
-        {% include "components/elements/updateSuccess.html" %}
-    {% endwith %}
 
-    {% include "components/elements/loadingModal.html" %}
+
 </section>
 {% endblock %}
 
@@ -229,182 +137,98 @@
 {% include "components/elements/InputValidate.html" %}
 
 <script>
-    // validation
-    //  update product validation
-    document.getElementById('updateProductName').addEventListener('input', function () {
-        InputValidate('updateProductName');
-    });
-    document.getElementById('updateCategory').addEventListener('input', function () {
-        InputValidate('updateCategory');
-    });
-    document.getElementById('updateDescription').addEventListener('input', function () {
-        InputValidate('updateDescription');
-    });
-    document.getElementById('updateDepot').addEventListener('input', function () {
-        InputValidate('updateDepot');
-    });
-    document.getElementById('updateUnit').addEventListener('input', function () {
-        InputValidate('updateUnit');
-    });
-    document.getElementById('updatePrice').addEventListener('input', function () {
-        InputValidate('updatePrice');
-    });
-    document.getElementById('updateStock').addEventListener('input', function () {
-        InputValidate('updateStock');
+
+(function ($) {
+    $(".vegetable-carousel").owlCarousel({
+        autoplay: true,
+        smartSpeed: 1500,
+        center: false,
+        dots: true,
+        loop: true,
+        margin: 25,
+        nav : true,
+        navText : [
+            '<i class="fas fa-arrow-left"></i>',
+            '<i class="fas fa-arrow-right"></i>'
+        ],
+        responsiveClass: true,
+        responsive: {
+            0:{
+                items:1
+            },
+            576:{
+                items:1
+            },
+            768:{
+                items:2
+            },
+            992:{
+                items:3
+            },
+            1200:{
+                items:4
+            }
+        }
     });
 
-    //  New product validation
-    document.getElementById('addProductName').addEventListener('input', function () {
-        InputValidate('addProductName');
-    });
-    document.getElementById('addCategory').addEventListener('input', function () {
-        InputValidate('addCategory');
-    });
-    document.getElementById('addDescription').addEventListener('input', function () {
-        InputValidate('addDescription');
-    });
-    document.getElementById('addDepot').addEventListener('input', function () {
-        InputValidate('addDepot');
-    });
-    document.getElementById('addUnit').addEventListener('input', function () {
-        InputValidate('addUnit');
-    });
-    document.getElementById('addPrice').addEventListener('input', function () {
-        InputValidate('addPrice');
-    });
-    document.getElementById('addStock').addEventListener('input', function () {
-        InputValidate('addStock');
-    });
+    // Hover effect for zoom
+    $('.vesitable-item').hover(
+        function() {
+            $(this).css('transform', 'scale(1.05)');
+            $(this).css('transition', 'transform 0.3s ease');
+        },
+        function() {
+            $(this).css('transform', 'scale(1)');
+            $(this).css('transition', 'transform 0.3s ease');
+        }
+    );
 
-    document.getElementById('uploadImageButton').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
+     // Hover effect for button zoom
+    $('.btn').hover(
+            function() {
+                $(this).css('transform', 'scale(1.1)');
+                $(this).css('transition', 'transform 0.3s ease');
+            },
+            function() {
+                $(this).css('transform', 'scale(1)');
+                $(this).css('transition', 'transform 0.3s ease');
+            }
+        );
+    
+    // Modal Video
+    $(document).ready(function () {
+        var $videoSrc;
+        $('.btn-play').click(function () {
+            $videoSrc = $(this).data("src");
         });
+        console.log($videoSrc);
 
-    document.getElementById('fileInput').addEventListener('change', function() {
-        // Handle file selection here
-        var file = this.files[0];
-        console.log('Selected file:', file.name);
+        $('#videoModal').on('shown.bs.modal', function (e) {
+            $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");
+        })
+
+        $('#videoModal').on('hide.bs.modal', function (e) {
+            $("#video").attr('src', $videoSrc);
+        })
     });
 
+})(jQuery);
+
+// // Hover effect for zoom
+// document.addEventListener('DOMContentLoaded', () => {
+//     document.querySelectorAll('.vesitable-item').forEach(item => {
+//         item.addEventListener('mouseover', () => {
+//             item.style.transform = 'scale(1.05)';
+//             item.style.transition = 'transform 0.3s ease';
+//         });
+//         item.addEventListener('mouseout', () => {
+//             item.style.transform = 'scale(1)';
+//             item.style.transition = 'transform 0.3s ease';
+//         });
+//     });
+// });
 
 
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('updateProductSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
-        document.querySelectorAll('.product-update').forEach(function (update) {
-        const product_id = update.getAttribute('data-product-id')
-        const updateProductForm = document.getElementById('updateProductForm' + product_id);
-
-        updateProductForm.addEventListener('submit', event => {
-          if (!updateProductForm.checkValidity()) return // Stop further execution if form is invalid
-          event.preventDefault();
-          const formData = new FormData(updateProductForm);
-
-          fetch('/product/update', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.status == 1) {
-                  console.log(data.status)
-                  // Show updateNewsSuccess modal if update is successful
-                  new bootstrap.Modal(document.getElementById('updateProductSuccessModal')).show();
-              }
-              else {
-                  alert("Invalid request");
-                  // location.reload(); // Reload the page on failure
-              }
-          })
-          .catch(error => console.error('Error:', error));
-        });
-      })
-    });
-
-    // Add product
-    document.addEventListener('DOMContentLoaded', function () {
-        //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
-        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
-        const addProductForm = document.getElementById('addProductForm');
-
-        // Handle add form submission
-        addProductForm.addEventListener('submit', function (event) {
-            if (!addProductForm.checkValidity()) return // Stop further execution if form is invalid
-            event.preventDefault();
-            event.stopPropagation();
-
-            const formData = new FormData(this); // Prepare form data
-
-            // Send login request to flask server
-            fetch('/product/add', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status == true) { // Redirect user if login is successful
-                        // console.log(data)
-                        // Show updateStaffSuccess modal if update is successful
-                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
-                    }
-                    else {
-                        alert("Invalid request");
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        });
-
-        // del product
-        document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-        const productDel = document.querySelectorAll('.product-del');
-
-        // Iterate over all delete buttons
-        productDel.forEach(function (del) {
-            // Add click event listener to each delete button
-            del.addEventListener('click', function (event) {
-                event.preventDefault();
-                const product_id = del.getAttribute('data-product-id');
-
-                // Show delConfirm modal when delete button is clicked
-                const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-                const deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
-                const confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
-                deleteMemberModal.show();
-
-                // Add click event listener to the confirmButton
-                confirmButton.addEventListener('click', function () {
-                    // Send request to server
-                    fetch('/product/delist', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 'product_id': product_id })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status) {
-                                // Reload page if deletion is successful
-                                deleteMemberModal.hide();
-                                loadingModal.show();
-                                setTimeout(() => {
-                                    loadingModal.hide();
-                                    new bootstrap.Modal(document.getElementById('delProfileSuccessModal')).show();
-                                }, 1000);
-                            }
-                            else {
-                                alert("Invalid request");
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
-        });
-
-    });
 </script>
 
 {% endblock %}
