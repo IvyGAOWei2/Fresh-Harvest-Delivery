@@ -177,6 +177,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th>Order ID</th>
+                            <th>Name</th>
                             <th>Order Date</th>
                             <th>Delivery Date</th>
                             <th>Total Cost</th>
@@ -189,6 +190,7 @@
                         {% for order in orders %}
                         <tr>
                             <td>{{order.order_id}}</td>
+                            <td>{{order.full_name}}</td>
                             <td>{{order.order_date}}</td>
                             <td>{{order.delivery_date}}</td>
                             <td>{{order.total}}</td>

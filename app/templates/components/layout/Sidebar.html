@@ -72,5 +72,8 @@
     <a href="{{ url_for('manageSettings') }}" class="{% if is_manageSettings %}is_active{% endif %}">
       <i class="fas fa-users-cog"></i> <span>System Setting</span>
     </a>
+    <a href="{{ url_for('manageGiftcard') }}" class="{% if manageGiftcard %}is_active{% endif %}">
+      <i class="fas fa-users-cog"></i> <span>Giftcards</span>
+    </a>
     {% endif %}   
 </div>

@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, session
+from flask import render_template, request, session, redirect
 from dbFile.config import fetchAll, updateSQL,fetchOne
 # User-defined function
 from dbFile.config import updateSQL, insertSQL
@@ -36,6 +36,7 @@ def orderDetail(order_id):
         item['product_name'] = product['name']
         item['product_image'] = productImg['image']
         item['quantity'] = item['quantity']
+        item['order_item_id'] = item['order_item_id']
         item['price'] = product['price']
         item['total'] = item['price'] * item['quantity']
 
@@ -50,6 +51,7 @@ def orderDetail(order_id):
                     order_giftcards.append(card)
         else:
             order_products.append(item)
+    print(order_products)
     print(order_giftcards)  # 打印后为空，因为OrderItems里没有对应giftcard的订单记录,giftcard单方面有orderid
 
     if session['type'] == 'Consumer':
@@ -65,8 +67,31 @@ def orderDetail(order_id):
 @app.route("/admin/order/history", methods = ["GET", 'POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def staffOrderHistory():
-    orders = fetchAll("SELECT order_id, order_date, delivery_date, total, status FROM Orders;", None, True)
+    sql_orders = """
+        SELECT 
+            Orders.order_id, 
+            Orders.order_date, 
+            Orders.delivery_date, 
+            Orders.total, 
+            Orders.status,
+            CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name
+        FROM 
+            Orders
+        JOIN 
+            Consumer ON Orders.user_id = Consumer.user_id;
+"""
+    orders = fetchAll(sql_orders, None, True)
     return render_template('manage-order-history.html', orders=orders)
+
+
+@app.route("/admin/order/refund/", methods = ['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def staffRefund():
+    data = request.get_json()
+    order_item_id = data.get('order_item_id')
+    if order_item_id:
+        updateSQL("UPDATE OrderItems SET is_refunded = TRUE WHERE order_item_id = %s", (order_item_id,))
+    return render_template('manage-order-detail.html')
 
 
 

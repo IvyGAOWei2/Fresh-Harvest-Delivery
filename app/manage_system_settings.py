@@ -20,8 +20,23 @@ def updateCategories():
     #     categories.append(new_category)
     return redirect(url_for('manageSettings'))
 
+@app.route('/add/category', methods=['POST'])
+def addCategories():
+    new_category = request.form.get('new_category')
+    # if new_category:
+    #     categories.append(new_category)
+    return redirect(url_for('manageSettings'))
+
+
 @app.route('/update/units', methods=['POST'])
 def updateUnits():
+    new_unit = request.form.get('new_unit')
+    # if new_unit:
+    #     units.append(new_unit)
+    return redirect(url_for('manageSettings'))
+
+@app.route('/add/units', methods=['POST'])
+def addUnits():
     new_unit = request.form.get('new_unit')
     # if new_unit:
     #     units.append(new_unit)

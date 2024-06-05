@@ -73,16 +73,21 @@
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.total}}</p>
                                     </td>
                                     <td>
+                                    <!-- product.status 应为order item对应的status -->
+                                    {% if product.status != 'Refunded' %}
                                         <div class="d-flex mt-4">
                                             <a href="{{ url_for('contact') }}" class="btn order-refund" role="button" title="Apply Refund">
                                                 <i class="fas  fa-registered fa-lg"></i>
                                             </a>
                                         </div>
+                                    {% else %}
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Refunded</p>
+                                    {% endif%}
                                     </td>   
                                 </tbody>
                                 {% endfor %}    
                             </table>                 
-                           
+                           {% if orderGiftcards %}
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -108,7 +113,7 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            
+                            {% endif %}
                             <table class="table">
                                 <tfoot>
                                     <tr>

@@ -38,3 +38,4 @@ from app import manage_news
 
 # National_Manager
 from app import manage_system_settings
+from app import manage_giftcards
