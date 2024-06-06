@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, session, request
-from common import fetchOne
+from dbFile.config import fetchOne, fetchAll
 from emailMethod.method import sendFhdContact
 
 @app.route("/")
@@ -12,8 +12,11 @@ def index():
     # Ensure discount is not None and extract the description and discount rate
     discount_description = discount[0] if discount else 'New discounts available soon.'
     discount_rate = discount[1]if discount else '10'
+    discount = {'description': discount_description, 'rate': f'{discount_rate}% OFF'}
 
-    return render_template('index.html', discount={'description': discount_description, 'rate': f'{discount_rate}% OFF'})
+    news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
+
+    return render_template('index.html', discount=discount, news=news)
 
 @app.route("/404")
 def notFound():

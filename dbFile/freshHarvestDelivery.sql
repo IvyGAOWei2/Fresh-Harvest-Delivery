@@ -279,3 +279,15 @@ CREATE TABLE AccountLimitReviewRequests (
     decision_date DATETIME,
     FOREIGN KEY (user_id) REFERENCES Consumer(user_id)
 );
+
+CREATE TABLE News (
+    news_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(80),
+    subtitle VARCHAR(80),
+    content TEXT,
+    date DATE,
+    image VARCHAR(80),
+    depot_id TINYINT,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
+);

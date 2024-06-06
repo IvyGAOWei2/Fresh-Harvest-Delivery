@@ -1,4 +1,4 @@
-import uuid, json, random, string, time
+import uuid, os, random, string, time
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, ValidationError
@@ -184,3 +184,21 @@ def getTimestamp(hours=0):
 
 def validateConsumerEmail(email):
     return fetchOne('SELECT user_id FROM Users WHERE email = %s AND is_deleted = FALSE AND type = "Consumer"', (email,))
+
+def saveImage(upload_folder, img):
+    # Get the file extension of the uploaded image
+    ext = getImageExt(img.filename)
+
+    # Check if the extension is valid
+    if not ext:
+        return ext
+
+    # Generate a unique image name using a custom function
+    image_name = generateImageId() + '.' + ext
+    # Construct the full path where the image will be saved
+    filename = os.path.join(upload_folder, image_name)
+
+    # Save the uploaded image to the specified location
+    img.save(filename)
+    # Return the name of the saved image
+    return image_name

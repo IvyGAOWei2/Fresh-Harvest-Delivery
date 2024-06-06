@@ -38,7 +38,6 @@
     }
     </style>
 <section>
-    <!-- Hero Start -->
     <div class="container-fluid py-5 mb-5 hero-header">
         <div class="container py-5">
             <div class="row g-5 align-items-center">
@@ -87,30 +86,32 @@
             </div>
         </div>
     </div>
-    <!-- Hero End -->
 
      <!-- News Start-->
      <div class="container-fluid vesitable py-5">
         <div class="container py-5">
             <h1 class="mb-0">Latest News</h1>
-            <div class="owl-carousel vegetable-carousel justify-content-center">     
+            <div class="owl-carousel vegetable-carousel justify-content-center">
+            {% for newz in news %}
             <div class="border border-primary rounded position-relative vesitable-item">
                 <div class="vesitable-img">
-                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                    <img src="{{ url_for('static', filename='images/upload/' + newz.image) }}" class="img-fluid w-100 rounded-top" alt="">
                 </div>
-                <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">05/05/2024</div>
+                <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">{{newz.date}}</div>
                 <div class="p-4 rounded-bottom">
-                    <h4>Discount</h4>
-                    <p>Discount fruits products.</p>
+                    <h4>{{newz.title}}</h4>
+                    <p>{{newz.subtitle}}</p>
                     <div class="d-flex justify-content-between flex-lg-wrap">
-                        <a data-bs-toggle="modal" data-bs-target="#viewnewsModal" class="{% if is_home %}active{% endif %} border border-secondary rounded-pill px-3 text-primary btn"><i class="fas fa-angle-double-right me-2 text-primary"></i> Learn more</a>
+                        <a data-bs-toggle="modal" data-bs-target="#viewnewsModal{{newz.news_id}}" class="border border-secondary rounded-pill px-3 text-primary btn"><i class="fas fa-angle-double-right me-2 text-primary"></i> Learn more</a>
                     </div>
                 </div>
-            </div>       
+            </div>
+            {% endfor %}
             </div>
         </div>
     </div>
     <!-- News End -->
+
     <div class="container-fluid py-5 special-week-section">
         <div class="container py-5">
             <div class="row g-5 align-items-center">
@@ -1091,24 +1092,22 @@
     <!-- Tastimonial End -->
 </section>
 
-
+{% for newz in news %}
 <!-- View News Modal -->
-<div class="modal fade" id="viewnewsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="viewnewsModal{{newz.news_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 900px">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5 text-primary fst-italic" id="exampleModalLabel"><i class="far fa-smile-wink"></i> Discount</h1>
+          <h1 class="modal-title fs-5 text-primary fst-italic" id="exampleModalLabel"><i class="far fa-smile-wink"></i> {{newz.title}}</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="row">
-            <div class="col-md-6 fst-italic">
-                This week at Fresh Harvest Delivery, we’re offering fantastic discounts on a range of fresh produce and grocery items! Enjoy 20% off on juicy apples, crisp lettuce, and ripe tomatoes. Stock up on your favorite dairy products with 15% off on milk, cheese, and yogurt. Don't miss out on our special offer of buy one, get one free on selected cereals. Plus, grab a sweet deal with 25% off all bakery items. Visit our store or shop online to take advantage of these incredible savings and keep your pantry stocked with fresh, high-quality groceries!
-            </div>
+            <div class="col-md-6 fst-italic">{{newz.content}}</div>
             
             <div class="col-md-6">
                 <div class="vesitable-img">
-                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                    <img src="{{ url_for('static', filename='images/upload/' + newz.image) }}"  class="img-fluid w-100 rounded-top" alt="">
                 </div>
             </div>
         </div>
@@ -1119,5 +1118,5 @@
       </div>
     </div>
   </div>
-
+{% endfor %}
 {% endblock %}
