@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fresh Harvest Admin</title>
+    <!-- JQuery Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Font Awesome CSS -->
@@ -24,8 +26,9 @@
     {% block content %}{% endblock %}
 
     <!-- Bootstrap JS and dependencies -->
+    <script src="{{ url_for('static', filename='js/jquery-3.6.4.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
     <!-- Customized Javascript -->
     <script>
       // Example starter JavaScript for disabling form submissions if there are invalid fields
