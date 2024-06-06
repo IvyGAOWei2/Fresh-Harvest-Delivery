@@ -15,40 +15,45 @@ def manageSettings():
 
 @app.route('/shipping/update', methods=['POST'])
 def updateShipping():
-    # for depot in shipping_prices.keys():
-    #     new_price = request.form.get(f'price_{depot}')
-    #     if new_price:
-    #         shipping_prices[depot] = float(new_price)
-    return redirect(url_for('manageSettings'))
+    update_successful = True
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 @app.route('/units/update', methods=['POST'])
 def updateUnits():
-    new_unit = request.form.get('new_unit')
-    # if new_unit:
-    #     units.append(new_unit)
-    return redirect(url_for('manageSettings'))
+    update_successful = True
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 @app.route('/units/add', methods=['POST'])
 def addUnits():
     new_unit = request.form.get('new_unit')
-    # if new_unit:
-    #     units.append(new_unit)
-    return redirect(url_for('manageSettings'))
+    if new_unit:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 
 @app.route('/category/add', methods=['POST'])
 def addCategories():
     new_category = request.form.get('new_category')
-    # if new_category:
-    #     categories.append(new_category)
-    return redirect(url_for('manageSettings'))
+    if new_category:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
-@app.route('/update/categories', methods=['POST'])
+
+@app.route('/category/update', methods=['POST'])
 def updateCategories():
-    new_category = request.form.get('new_category')
-    # if new_category:
-    #     categories.append(new_category)
-    return redirect(url_for('manageSettings'))
+    update_successful = True
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 
 

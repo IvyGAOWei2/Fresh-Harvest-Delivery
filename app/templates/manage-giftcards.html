@@ -46,7 +46,7 @@
     <div class="container-fluid vesitable py-2">
         <div class="container py-2">
             <h3 class="mb-2">Giftcard Choices</h3>
-            <div class="owl-carousel vegetable-carousel justify-content-center">     
+            <div class="owl-carousel giftcard-carousel justify-content-center">     
                 {% for card in giftcards %}
                 <div class="border border-primary rounded position-relative vesitable-item">
                     <div class="vesitable-img">
@@ -139,7 +139,7 @@
 <script>
 
 (function ($) {
-    $(".vegetable-carousel").owlCarousel({
+    $(".giftcard-carousel").owlCarousel({
         autoplay: true,
         smartSpeed: 1500,
         center: false,

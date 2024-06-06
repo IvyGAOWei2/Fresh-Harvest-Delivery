@@ -61,13 +61,13 @@
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <form id="updateShippingPrice" class="update-shippingPrice-form"
+            <form id="updateShippingPriceForm" class="update-shippingPrice-form"
             action="/shipping/update" method="POST">
 
                 <!-- Shipping Price -->
                 <div class="mb-3">
                     <label for="updateShippingPrice" class="form-label">Enter New Shipping Price</label>
-                    <input type="number" class="form-control" value="newShippingPrice" id="updateShippingPrice" name="shipping_price" min="0" step="0.01" required>
+                    <input type="number" class="form-control"  id="updateShippingPrice" name="shipping_price" min="0" step="0.01" required>
                     <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
                 </div>
                 <button type="submit" class="btn btn-secondary shippingPrice-update" >Update</button>
@@ -151,7 +151,7 @@
                                         <div class="invalid-feedback">Please enter a valid Unit Minimum, only letters numbers or spaces.</div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-secondary unit-update" data-product-id="{{ unit.unit_id }}">Update</button>
+                                    <button type="submit" class="btn btn-secondary unit-update" data-unit-id="{{ unit.unit_id }}">Update</button>
                                 </form>
                             </div>
                         </div>
@@ -271,7 +271,7 @@
                                         <input type="text" minlength="1" maxlength="50" id="updateCategoryName" name="category_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ category.category_name }}" required>
                                         <div class="invalid-feedback">Please enter a valid Category name, only letters and spaces.</div>
                                     </div>
-                                    <button type="submit" class="btn btn-secondary category-update" data-product-id="{{ category.category_id }}">Update</button>
+                                    <button type="submit" class="btn btn-secondary category-update" data-category-id="{{ category.category_id }}">Update</button>
                                 </form>
                             </div>
                         </div>
@@ -312,46 +312,24 @@
  
 
 
-    <!-- Update Success btn code start here -->
+    <!-- add Success btn code start here -->
     {% with
     btn_show = 0,
     bg_color = '#81C408',
     title = 'Update Success',
-    msg = 'Your {item} has been successfully added'
+    msg = '{item} has been successfully added'
     %}
     {% include "components/elements/addSuccess.html" %}
     {% endwith %}
 
-    <!-- deleteMemberModal -->
-    {% with
-        btn_show = 0,
-        bg_color = '#dc3545',
-        bg_color2 = '#3399ff',
-        modal_id = 'deleteMemberModal',
-        title = 'Delete Confirmation',
-        msg = 'Are you sure to delete this product?'
-      %}
-        {% include "components/elements/delConfirm.html" %}
-    {% endwith %}
 
-    <!-- delProfileSuccessModal -->
+    <!-- updateSuccessModal -->
     {% with
         btn_show = 0,
-        modal_id = 'delProfileSuccessModal',
-        bg_color = '#3399ff',
-        title = 'Deleted Successfully',
-        msg = 'Product has been successfully deleted'
-    %}
-        {% include "components/elements/updateSuccess.html" %}
-    {% endwith %}
-
-    <!-- updateProductSuccessModal -->
-    {% with
-        btn_show = 0,
-        modal_id = 'updateProductSuccessModal',
+        modal_id = 'updateSuccessModal',
         bg_color = '#3399ff',
         title = 'Update Successfully',
-        msg = 'Product has been successfully updated'
+        msg = 'Information has been successfully updated'
     %}
         {% include "components/elements/updateSuccess.html" %}
     {% endwith %}
@@ -397,21 +375,58 @@
     });
 
 
+// Shipping Price
+// update
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+    const updateShippingPriceForm = document.getElementById('updateShippingPriceForm');
+
+    updateShippingPriceForm.addEventListener('submit', event => {
+        if (!updateShippingPriceForm.checkValidity()) return // Stop further execution if form is invalid
+        event.preventDefault();
+        const formData = new FormData(updateShippingPriceForm);
+
+        fetch('/shipping/update', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 1) {
+                    console.log(data.status)
+                    // Show updateNewsSuccess modal if update is successful
+                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                }
+                else {
+                    alert("Invalid request");
+                    // location.reload(); // Reload the page on failure
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('updateProductSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-        document.querySelectorAll('.product-update').forEach(function (update) {
-        const product_id = update.getAttribute('data-product-id')
-        const updateProductForm = document.getElementById('updateProductForm' + product_id);
 
-        updateProductForm.addEventListener('submit', event => {
-          if (!updateProductForm.checkValidity()) return // Stop further execution if form is invalid
+     
+    
+
+
+// Units
+ //update unit
+document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        document.querySelectorAll('.unit-update').forEach(function (update) {
+        const unit_id = update.getAttribute('data-unit-id')
+        const updateUnitForm = document.getElementById('updateUnitForm' + unit_id);
+
+        updateUnitForm.addEventListener('submit', event => {
+          if (!updateUnitForm.checkValidity()) return // Stop further execution if form is invalid
           event.preventDefault();
-          const formData = new FormData(updateProductForm);
+          const formData = new FormData(updateUnitForm);
 
-          fetch('/product/update', {
+          fetch('/units/update', {
               method: 'POST',
               body: formData
           })
@@ -420,7 +435,7 @@
               if (data.status == 1) {
                   console.log(data.status)
                   // Show updateNewsSuccess modal if update is successful
-                  new bootstrap.Modal(document.getElementById('updateProductSuccessModal')).show();
+                  new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
               }
               else {
                   alert("Invalid request");
@@ -431,24 +446,25 @@
         });
       })
     });
+});
 
-    // Add product
+
+    // Add Unit
     document.addEventListener('DOMContentLoaded', function () {
-        //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
         document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-        const addProductForm = document.getElementById('addProductForm');
+        const addUnitForm = document.getElementById('addUnitForm');
 
         // Handle add form submission
-        addProductForm.addEventListener('submit', function (event) {
-            if (!addProductForm.checkValidity()) return // Stop further execution if form is invalid
+        addUnitForm.addEventListener('submit', function (event) {
+            if (!addUnitForm.checkValidity()) return // Stop further execution if form is invalid
             event.preventDefault();
             event.stopPropagation();
 
             const formData = new FormData(this); // Prepare form data
 
             // Send login request to flask server
-            fetch('/product/add', {
+            fetch('/units/add', {
                 method: 'POST',
                 body: formData
             })
@@ -466,54 +482,80 @@
                 .catch(error => console.error('Error:', error));
         });
 
-        // del product
-        document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-        const productDel = document.querySelectorAll('.product-del');
+    });
 
-        // Iterate over all delete buttons
-        productDel.forEach(function (del) {
-            // Add click event listener to each delete button
-            del.addEventListener('click', function (event) {
-                event.preventDefault();
-                const product_id = del.getAttribute('data-product-id');
 
-                // Show delConfirm modal when delete button is clicked
-                const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-                const deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
-                const confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
-                deleteMemberModal.show();
+//  Category
+    // update Category
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
-                // Add click event listener to the confirmButton
-                confirmButton.addEventListener('click', function () {
-                    // Send request to server
-                    fetch('/product/delist', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 'product_id': product_id })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status) {
-                                // Reload page if deletion is successful
-                                deleteMemberModal.hide();
-                                loadingModal.show();
-                                setTimeout(() => {
-                                    loadingModal.hide();
-                                    new bootstrap.Modal(document.getElementById('delProfileSuccessModal')).show();
-                                }, 1000);
-                            }
-                            else {
-                                alert("Invalid request");
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
+        document.querySelectorAll('.category-update').forEach(function (update) {
+        const category_id = update.getAttribute('data-category-id')
+        const updateCategoryForm = document.getElementById('updateCategoryForm' + category_id);
+
+        updateCategoryForm.addEventListener('submit', event => {
+          if (!updateCategoryForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          const formData = new FormData(updateCategoryForm);
+
+          fetch('/category/update', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+    });
+
+    // Add category
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+        const addCategoriesForm = document.getElementById('addCategoriesForm');
+
+        // Handle add form submission
+        addCategoriesForm.addEventListener('submit', function (event) {
+            if (!addCategoriesForm.checkValidity()) return // Stop further execution if form is invalid
+            event.preventDefault();
+            event.stopPropagation();
+
+            const formData = new FormData(this); // Prepare form data
+
+            // Send login request to flask server
+            fetch('/category/add', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == true) { // Redirect user if login is successful
+                        // console.log(data)
+                        // Show updateStaffSuccess modal if update is successful
+                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
+                    }
+                    else {
+                        alert("Invalid request");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         });
 
     });
+
+
 </script>
 
 {% endblock %}

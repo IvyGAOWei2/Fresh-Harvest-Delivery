@@ -93,5 +93,23 @@ def staffRefund():
         updateSQL("UPDATE OrderItems SET is_refunded = TRUE WHERE order_item_id = %s", (order_item_id,))
     return render_template('manage-order-detail.html')
 
+@app.route("/admin/order/status/", methods = ['POST'])
+@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
+def updateOrderStatus():
+    data = request.get_json()
+    order_id = data.get('order_id')
+    new_status  = data.get('status')
+    print(order_id)
+    print(new_status)
+    if not order_id or not new_status:
+        return {"status": False, "error": "Missing order_id or status"}, 400
+    
+    update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (new_status, order_id))
+
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
+
 
 
