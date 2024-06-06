@@ -9,13 +9,12 @@
 {% endblock %}
 
 {% block breadcrumb %}
-{% with pageName='Manage Applications' %}
+{% with pageName='Manage Points' %}
 {% include "components/layout/Breadcrumb2.html" %}
 {% endwith %}
 {% endblock %}
 
 {% block content %}
-<section>
 
 <!-- Rewards points history -->
 <section class="main-content">
@@ -25,41 +24,45 @@
                 <i class="fas fa-history fa-3x me-3"></i> 
                 <h1 class="mb-0">Consumer Points</h1>
             </div>
-            <div class="table">
-                <table class="table table-bordered">
+                <table class="table">
                     <thead class="thead-light">
-                                <tr>
-                                <th scope="col">User ID</th>
-                                <th scope="col">Given name</th>
-                                <th scope="col">Family name</th>
-                                <th scope="col">Points balance</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for point in points_list %}
-                                <tr>
-                                <th scope="row">{{point[3]}}</th>
-                                <td>{{point[0]}}</td>
-                                <td>{{point[1]}}</td>
-                                <td>{{point[8]}}</td>
-                                <td>{{point[9]}}</td>
-                                <td>
+                        <tr>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Given name</th>
+                        <th scope="col">Family name</th>
+                        <th scope="col">Depot</th>
+                        <th scope="col">Points balance</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for point in points_list %}
+                        <tr>
+                        <th scope="row">{{point[5]}}</th>
+                        <td>{{point[0]}}</td>
+                        <td>{{point[1]}}</td>
+                        <td>{{point[3]}}</td>
+                        <td>{{point[10]}}</td>
+                        <td>{{point[11]}}</td>
+                        <form id="managePointsForm{{ point[5] }}"  method="POST" action="/manage/points" class="needs-validation" novalidate>
+                            <input type="text" class="form-control d-none" name="user_id" value="{{ point[2] }}"/>     
+                            <input type="text" class="form-control d-none" name="point_id" value="{{ point[4] }}"/>
+                        <td>
+                            <a class="btn manage-points" role="submit" data-bs-toggle="offcanvas" data-bs-target="#managePoints{{ point[5] }}" data-user-id="{{ point[5] }}" data-bs-toggle="tooltip" title="Points detail">
+                                <i class="fas fa-list fa-lg me-3 fa-fw"></i>
+                            </a>
+                        </td>
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                    </form>
+                </table>
+        </div>   
+    </div>    
+  
 
-                                <a href="{{ url_for('managePoints') }}" class="btn view_order" role="button" title="Order details">
-                                    <i class="fas fa-list fa-lg me-3 fa-fw"></i>
-                                </a>
-                    
-                                </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-            </div>
-        </div>
-    </div>                
-               
+    
     <!-- Update Success Message -->
     <div class="p-3">
         {% with
@@ -74,99 +77,10 @@
     </div>
 </section>
 
-<style>
-    .account-header {
-        padding: 10px 20px;
-        border-radius: 10px;
-        background: linear-gradient(to right, #e7f1ff, #f8f9fa);
-        display: inline-block;
-    }
-    .account-header h1 {
-        display: inline-block;
-        margin: 0;
-        padding-left: 10px;
-        font-size: 2rem;
-    }
-    .form-label {
-        font-weight: bold;
-    }
-    .accordion-button {
-        background-color: #f8f9fa;
-        color: #000;
-    }
-    .accordion-button:focus {
-        box-shadow: none;
-    }
-    .accordion-button:not(.collapsed) {
-        color: #007bff;
-        background-color: #e7f1ff;
-    }
-    #updateConsumerProfileForm .btn-primary {
-        background-color: #81C408 !important;
-        border-color: #81C408 !important;
-    }
-    #updateConsumerProfileForm .btn-primary:hover {
-        background-color: #ffb524 !important;
-        border-color: #ffb524 !important;
-    }
-    .form-control {
-        max-width: 400px;
-    }
-    .col-form-label {
-        padding-left: 2rem !important;
-    }
-    .row.mb-2 .col-sm-7 {
-        padding-left: 10px;
-    }
-    form .row .col-sm-4 {
-        padding-right: 5px;
-    }
-    form .row .col-sm-7 {
-        padding-left: 5px;
-    }
-</style>
 {% endblock %}
 
 {% block script %}
   {% include "components/elements/InputValidate.html" %}
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const giftcardRedeem = document.getElementById('giftcardRedeem');
-    document.getElementById('redemptionSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-    // const registerErrorElement = document.getElementById("registerError");
-
-  // Handle registerForm submission
-    giftcardRedeem.addEventListener('submit', function (event) {
-          if (!giftcardRedeem.checkValidity()) return // Stop further execution if form is invalid
-          event.preventDefault();
-          event.stopPropagation();
-
-          const formData = new FormData(this); // Prepare form data
-
-          // Send register request to flask server
-          fetch('/giftcard/redeem', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.status == true) { // Redirect user if register is successful
-                  console.log(data)
-                  new bootstrap.Modal(document.getElementById('redemptionSuccessModal')).show();
-                //   window.location.href = data.message;
-              }
-              else {
-                alert(data.message);
-                // console.log(data)
-                // Remove the "d-none" class
-                // registerErrorElement.classList.remove("d-none");
-                // Display error message if register fails
-                // registerErrorElement.textContent = data.message;
-              }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-    })
-  </script>
 {% endblock %}
+
+  

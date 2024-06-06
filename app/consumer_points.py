@@ -43,10 +43,21 @@ def managePoints():
     type = session['type']
     points_list = fetchAll("""WITH LatestPoints AS 
              (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-            SELECT u.given_name,u.family_name, 
+            SELECT u.given_name,u.family_name,u.depot_id,
+                Depots.location,           
                 p.*  
             FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id;""", val=None, withDescription=False)
+            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
+            JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
     print(points_list)
+
+    detail_list = fetchOne("select * from ConsumerPoints;",val=None, withDescription=False)
+    print(detail_list )
+    
+    if request.method == ['POST']:
+        user_id =  request.form.get('user_id') 
+        point_id = request.form.get('point_id') 
+       
+        print(user_id,1111111111111)
 
     return render_template('manage_points.html', type=type, points_list=points_list)
