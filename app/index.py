@@ -14,7 +14,8 @@ def index():
     discount_rate = discount[1]if discount else '10'
     discount = {'description': discount_description, 'rate': f'{discount_rate}% OFF'}
 
-    news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
+    depot_id = 1 if not session.get('depot_id') else session['depot_id']
+    news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (depot_id,), True)
 
     return render_template('index.html', discount=discount, news=news)
 
