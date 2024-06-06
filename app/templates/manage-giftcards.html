@@ -53,8 +53,8 @@
                         <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
                     </div>
                     <div class="p-4 rounded-bottom">
-                        <h4>Details</h4>
-                        <p>{{ card.description }}</p>
+                        <h4>Balance: {{card.balance}}</h4>
+                        <p>Detail</p>
                         <div class="d-flex justify-content-between flex-lg-wrap">
                             <a data-bs-toggle="modal" data-bs-target="#viewnewsModal" class="border border-secondary rounded-pill px-3 text-primary btn">
                                 <i class="fas fa-angle-double-right me-2 text-primary"></i> Find More
@@ -79,7 +79,7 @@
         <div class="modal-body">
             <div class="row">
             <div class="col-md-6 fst-italic">
-             How to use the giftcard
+         <p>description</p>
             </div>
             
             <div class="col-md-6">
@@ -111,7 +111,7 @@
             </tr>
         </thead>
         <tbody class="table-group-divider">
-            {% for card in giftcards %}
+            {% for card in giftcardsRedeem %}
             <!-- Example Order Row -->
             <tr>
                 <td>{{card.gift_card_id}}</td>
