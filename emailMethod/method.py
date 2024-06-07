@@ -7,8 +7,8 @@ config, auth = RawConfigParser(), RawConfigParser()
 config.read('emailMethod/config.ini')
 auth.read('emailMethod/auth.ini')
 
-def sendFhdContact(name, surname, email, message):
-    htmlData = fhdContactHTML(name, surname, email, message)
+def sendFhdContact(name, email, type, message):
+    htmlData = fhdContactHTML(name, email, type, message)
     sendEmail(htmlData, [config['contact']['contactEmail']], config['contact']['subject'], \
         config['contact']['header'], auth, True)
 
