@@ -371,7 +371,24 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', function() {
     const userType = 'business'; // 假设从服务器获取用户类型
     const creditBalance = 50; // 假设信用余额
-    const totalAmount = 1000; // 购物车总额
+// 使用立即执行函数表达式来初始化totalAmount
+    const totalAmount = (() => {
+    // 从localStorage获取数据
+        const storedData = localStorage.getItem('finalTotal');
+        if (storedData) {
+            try {
+            // 解析JSON并返回total值
+                return JSON.parse(storedData).total;
+            } catch (e) {
+                console.error('Error parsing data from localStorage:', e);
+                return 0; // 解析失败返回0
+            }
+        }
+        return 0; // 没有数据也返回0
+    })();
+
+// 使用total值
+    console.log('Total amount: $' + totalAmount.toFixed(2));
     const invoicePaid = true; // 假设从服务器获取是否支付了之前的发票
 
     const creditBalanceOption = document.getElementById('credit-balance-option');
