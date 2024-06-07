@@ -258,21 +258,6 @@ function autoFillBillingDetails() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-    const cardDetails = document.getElementById('cardDetails');
-
-    paymentOptions.forEach(option => {
-        option.addEventListener('change', function() {
-            if (this.value === 'Credit Card' || this.value === 'Debit Card') {
-                cardDetails.style.display = 'block';
-            } else {
-                cardDetails.style.display = 'none';
-            }
-        });
-    });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('paymentform');
     const expiration = document.getElementById('cc-expiration');
 
@@ -324,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else {
                     alert(data.message);
-                    location.reload(); // Reload the page on failure
+                    // location.reload(); // Reload the page on failure
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -369,32 +354,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    const userType = 'business'; // 假设从服务器获取用户类型
-    const creditBalance = 50; // 假设信用余额
-    const totalAmount = 1000; // 购物车总额
+    const userType = `{{checkoutProfile.user_type}}`; // 假设从服务器获取用户类型
+    const creditBalance = `{{checkoutProfile.account_available}}`; // 假设信用余额
+    const totalAmount = (() => {
+    // 从localStorage获取数据
+        const storedData = localStorage.getItem('finalTotal');
+        if (storedData) {
+            try {
+            // 解析JSON并返回total值
+                return JSON.parse(storedData).total;
+            } catch (e) {
+                console.error('Error parsing data from localStorage:', e);
+                return 0; // 解析失败返回0
+            }
+        }
+        return 0; // 没有数据也返回0
+    })();
     const invoicePaid = true; // 假设从服务器获取是否支付了之前的发票
-
-    const creditBalanceOption = document.getElementById('credit-balance-option');
-    const balanceInfo = document.getElementById('balance-info');
-    const balanceDisplay = document.getElementById('credit-balance');
     const submitButton = document.getElementById('submitall');
-    const creditCardOption = document.querySelector('input[value="Credit Card"]');
-    const debitCardOption = document.querySelector('input[value="Debit Card"]');
-    const cardDetails = document.querySelectorAll('.form-group'); // Assuming each input is wrapped in a 'form-group'
+    const balanceDisplay = document.getElementById('credit-balance');
 
-    if (userType === 'business') {
+    if (userType === 'Business') {
         // 对商业用户
-        creditBalanceOption.style.display = 'block';
-        balanceInfo.style.display = 'flex';
-        balanceDisplay.textContent = `$${creditBalance}`;
-
-        // 隐藏信用卡和借记卡选项
-        creditCardOption.parentElement.style.display = 'none';
-        debitCardOption.parentElement.style.display = 'none';
-
-        // 隐藏信用卡信息输入框
-        cardDetails.forEach(group => group.style.display = 'none');
-
         // 检查余额是否足够以及之前的发票是否已支付
         if (creditBalance < totalAmount || !invoicePaid) {
             submitButton.disabled = true;
@@ -403,22 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 balanceDisplay.textContent += ' (Insufficient balance)';
             }
-        } else {
-            submitButton.disabled = false;
         }
-    } else {
-        // 对住宅用户
-        creditBalanceOption.style.display = 'none';
-        balanceInfo.style.display = 'none';
-
-        // 显示信用卡和借记卡选项
-        creditCardOption.parentElement.style.display = 'block';
-        debitCardOption.parentElement.style.display = 'block';
-
-        // 显示信用卡信息输入框
-        cardDetails.forEach(group => group.style.display = 'block');
-
-        submitButton.disabled = false;
     }
 });
 

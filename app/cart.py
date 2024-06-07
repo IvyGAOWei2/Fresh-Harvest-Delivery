@@ -9,12 +9,12 @@ from emailMethod.method import sendOrderStatus
 
 
 @app.route("/cart")
-@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Consumer'])
 def cart():
     return render_template('cart.html')
 
 @app.route("/cart/update", methods = ["POST"])
-@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Consumer'])
 def cartUpdate():
     data = json.dumps(request.get_json())
     try:
@@ -26,7 +26,7 @@ def cartUpdate():
 
 
 @app.route("/checkout", methods=['GET','POST'])
-@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Consumer'])
 def checkout():
     if request.method == 'POST':
         order = (request.get_json())
@@ -51,5 +51,5 @@ def checkout():
         else:
             return {"status": False}, 500
 
-    checkout_profile = fetchOne('SELECT given_name, family_name, address, postcode, phone FROM Consumer WHERE user_id = %s', (session['id'],), True)
+    checkout_profile = fetchOne('SELECT given_name, family_name, address, postcode, phone, account_available, user_type FROM Consumer WHERE user_id = %s', (session['id'],), True)
     return render_template('chackout.html', checkoutProfile=checkout_profile)
