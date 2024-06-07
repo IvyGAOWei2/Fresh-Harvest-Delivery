@@ -257,20 +257,7 @@ function autoFillBillingDetails() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-    const cardDetails = document.getElementById('cardDetails');
 
-    paymentOptions.forEach(option => {
-        option.addEventListener('change', function() {
-            if (this.value === 'Credit Card' || this.value === 'Debit Card') {
-                cardDetails.style.display = 'block';
-            } else {
-                cardDetails.style.display = 'none';
-            }
-        });
-    });
-});
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('paymentform');
@@ -369,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    const userType = 'business'; // 假设从服务器获取用户类型
+    const userType = 'busines'; // 假设从服务器获取用户类型
     const creditBalance = 50; // 假设信用余额
 // 使用立即执行函数表达式来初始化totalAmount
     const totalAmount = (() => {
