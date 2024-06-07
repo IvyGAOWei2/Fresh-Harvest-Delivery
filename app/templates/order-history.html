@@ -21,6 +21,9 @@
   .gray-icon {
         color: gray !important;
     }
+    #orders-table a {
+        padding:.8rem 1rem !important
+    }
 
 </style>
 
@@ -73,20 +76,19 @@
                             <td>{{order.total}}</td>
                             <td>{{order.status}}</td>
                             <td>
+                                <a data-bs-toggle="oh"  href="{{ url_for('orderDetail', order_id = order.order_id ) }}"   role="button"   class="order-view" role="button" title="Order Details">
+                                    <i class="far fa-list-alt fa-lg me-1"></i>
 
-                                <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}"   role="button"   class="btn order-view" role="button" title="Order Details">
-                                    <i class="fas fa-eye fa-lg me-1"></i>
-                                </a>
-                                <a href="{{ url_for('cart') }}"  class="btn reorder" role="button" title="Empty Cart and Reorder">
-                                    <i class="fas fa-cart-plus fa-lg me-1"></i>
+                                <a data-bs-toggle="oh" href="{{ url_for('cart') }}"  class="reorder" role="button" title="Empty Cart and Reorder">
+                                    <i class="fas fa-redo fa-lg me-1"></i>
                                 </a>
                                 {% if order.status == 'Pending' %}
-                                    <a class="btn order-del" role="button" title="Cancel Order">
-                                        <i class="fas fa-trash-alt fa-lg me-1" ></i>
+                                    <a data-bs-toggle="oh" class="order-del" role="button" data-order-id="{{order.order_id}}" title="Cancel Order">
+                                        <i class="fas fa-ban fa-lg me-1" ></i>
                                     </a>
                                 {% else %}
-                                    <a class="btn order-del" href="#" role="button" title="Cancel Order">
-                                        <i class="fas fa-trash-alt fa-lg me-1 gray-icon"></i>
+                                    <a data-bs-toggle="oh" style="cursor: default" title="Cancel Order">
+                                        <i class="fas fa-ban fa-lg me-1 gray-icon"></i>
                                     </a>
                                 {% endif %}
 
@@ -105,54 +107,88 @@
 
 
 
+            {% with
+                btn_show = 0,
+                bg_color = '#dc3545',
+                bg_color2 = '#3399ff',
+                modal_id = 'deleteMemberModal',
+                title = 'Cancel Confirmation',
+                msg = 'Are you sure you want to cancel this order? Upon cancellation, the charges will be automatically refunded to your card.'
+              %}
+                {% include "components/elements/delConfirm.html" %}
+            {% endwith %}
 
 
-
-
-
-    <!-- Update Success Message -->
-    <div class="p-3">
+        <!-- delProfileSuccessModal -->
         {% with
             btn_show = 0,
-            btn_text = 'Profile Update Success',
-            bg_color = '#81C408',
-            title = 'Profile Update Success',
-            msg = 'Your profile has been successfully updated'
+            modal_id = 'delProfileSuccessModal',
+            bg_color = '#3399ff',
+            title = 'Canceled Successfully',
+            msg = 'Your order has been successfully canceled'
         %}
             {% include "components/elements/updateSuccess.html" %}
         {% endwith %}
-    </div>
+
+
+    {% include "components/elements/loadingModal.html" %}
 </section>
 
 {% endblock %}
 
 {% block script %}
   {% include "components/elements/InputValidate.html" %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const orderDel = document.querySelectorAll('.order-del');
+        document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
+        orderDel.forEach(function (del) {
+            // Add click event listener to each delete button
+            del.addEventListener('click', function (event) {
+                event.preventDefault();
+                const order_id = del.getAttribute('data-order-id');
 
- 
-  <script>
+                // Show delConfirm modal when delete button is clicked
+                const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                const deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
+                const confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
+                deleteMemberModal.show();
 
+                // Add click event listener to the confirmButton
+                confirmButton.addEventListener('click', function () {
+                    deleteMemberModal.hide();
+                    loadingModal.show();
 
-    let cancelOrderId = null;
-    function setCancelOrderId(orderId) {
-        cancelOrderId = orderId;
-    }
+                    fetch('/order/del', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 'order_id': order_id })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status) {
+                                loadingModal.hide();
+                                new bootstrap.Modal(document.getElementById('delProfileSuccessModal')).show();
+                            }
+                            else {
+                                loadingModal.hide();
+                                alert("Invalid request");
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+        });
 
-    function confirmCancelOrder() {
-        if (cancelOrderId) {
-            // Perform the cancellation logic here
-            alert('Order ' + cancelOrderId + ' has been canceled.');
-            $('#cancelModal').modal('hide');
-        }
-    }
-
-    function viewOrderDetails(orderId) {
-        // Redirect to order details page or display order details
-        alert('Viewing details for order ' + orderId);
-    }
-</script>
-
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="oh"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+  </script>
 {% endblock %}
 
 

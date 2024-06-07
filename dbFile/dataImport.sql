@@ -2,7 +2,7 @@ USE freshHarvestDelivery;
 
 
 INSERT INTO Depots (location) VALUES ('Christchurch'), ('Invercargill'), ('Wellington'), ('Hamilton'), ('Auckland'), ('NZ');
-INSERT INTO Category (category_name) VALUES ('Fruit'), ('Vegetable'), ('Herb'), ('Egg'), ('Honey'), ('GiftCard'), ("Salad");
+INSERT INTO Category (category_name) VALUES ('Fruit'), ('Vegetable'), ('Herb'), ('Egg'), ('Honey'), ('GiftCard'), ("Salad"), ("Box");
 INSERT INTO Unit (unit_name, unit_std, unit_min) VALUES
 ('Bunch', '1', '1'),
 ('Tray', '1', '1'),

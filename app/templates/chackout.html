@@ -90,6 +90,8 @@
     %}
         {% include "components/elements/updateSuccess.html" %}
     {% endwith %}
+
+    {% include "components/elements/loadingModal.html" %}
 </section>
 {% endblock %}
 
@@ -264,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     expiration.addEventListener('input', function() {
         validateExpirationDate(this); // 实时验证到期日期
     });
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
@@ -295,6 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (finalTotal) {
                 combinedData['finalTotal'] = JSON.parse(finalTotal);
             }
+
+            loadingModal.show();
+
             fetch('/checkout', {
                 method: 'POST',
                 headers: {
@@ -306,11 +312,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.status == 1) {
                     // console.log(data)
+                    loadingModal.hide();
                     new bootstrap.Modal(document.getElementById('checkoutSuccessModal')).show();
                     localStorage.setItem('cart', JSON.stringify([]));
                     document.getElementById('checkoutSuccessModal').addEventListener('hidden.bs.modal', () => window.location.href = data.message);
                 }
                 else {
+                    loadingModal.hide();
                     alert(data.message);
                     // location.reload(); // Reload the page on failure
                 }

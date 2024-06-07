@@ -56,7 +56,8 @@ def checkout():
 
         if update_successful:
             updateSQL("UPDATE ConsumerCart SET cart = %s WHERE user_id = %s;", ('[]', session['id'],))
-            # sendOrderStatus(order['billingform']['email'], order_id, order['billingform']['given_name'], toDay(), 'Pending')
+            if app.send_email:
+                sendOrderStatus(order['billingform']['email'], order_id, order['billingform']['given_name'], toDay(), 'Pending')
             return {"status": True, 'message': '/order/history'}, 200
         else:
             return {"status": False}, 500

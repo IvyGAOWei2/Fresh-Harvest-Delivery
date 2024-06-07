@@ -4,7 +4,7 @@ from dbFile.config import fetchAll, updateSQL,fetchOne
 # User-defined function
 from dbFile.config import updateSQL, insertSQL
 from common import roleRequired, validateProductProfile, getUserProfile
-
+from emailMethod.method import sendOrderCancelled
 
 
 @app.route("/order/history")
@@ -12,7 +12,6 @@ from common import roleRequired, validateProductProfile, getUserProfile
 def orderHistory():
     orders = fetchAll("SELECT order_id, order_date, delivery_date, total, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
     return render_template('order-history.html', orders=orders)
-
 
 
 @app.route("/order/detail/<int:order_id>")
@@ -35,8 +34,25 @@ def orderDetail(order_id):
         return render_template('manage-order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
 
 
+@app.route("/order/del", methods=['POST'])
+@roleRequired(['Consumer'])
+def orderDel():
+    data = request.get_json()
+    update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
 
+    if update_successful:
+        order = fetchOne("SELECT o.order_date, u.email, c.given_name \
+            FROM Orders o \
+            JOIN Users u ON o.user_id = u.user_id \
+            JOIN Consumer c ON u.user_id = c.user_id \
+            WHERE o.order_id = %s",  (data['order_id'],), True)
 
+        if app.send_email:
+            sendOrderCancelled(order['email'], data['order_id'], order['given_name'], order['order_date'], 'Cancelled')
+
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 
 @app.route("/admin/order/history", methods = ["GET", 'POST'])
