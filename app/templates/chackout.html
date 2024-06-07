@@ -190,7 +190,7 @@ function loadCartDetails() {
         row.innerHTML = `
             <th scope="row">
                 <div class="d-flex align-items-center">
-                    <img src="${item.imgSrc}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="${item.name}">
+                    <img src="${item.imgSrc}" class="img-fluid" style="max-width:6rem" alt="${item.name}">
                 </div>
             </th>
             <td class="py-5">${item.name}</td>
@@ -257,8 +257,6 @@ function autoFillBillingDetails() {
     }
 }
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('paymentform');
     const expiration = document.getElementById('cc-expiration');
@@ -293,7 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartData) {
                 combinedData['cart'] = JSON.parse(cartData);
             }
-
+            const finalTotal = localStorage.getItem('finalTotal');
+            if (finalTotal) {
+                combinedData['finalTotal'] = JSON.parse(finalTotal);
+            }
             fetch('/checkout', {
                 method: 'POST',
                 headers: {
@@ -311,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else {
                     alert(data.message);
-                    location.reload(); // Reload the page on failure
+                    // location.reload(); // Reload the page on failure
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -356,9 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    const userType = 'busines'; // 假设从服务器获取用户类型
-    const creditBalance = 50; // 假设信用余额
-// 使用立即执行函数表达式来初始化totalAmount
+    const userType = `{{checkoutProfile.user_type}}`; // 假设从服务器获取用户类型
+    const creditBalance = `{{checkoutProfile.account_available}}`; // 假设信用余额
     const totalAmount = (() => {
     // 从localStorage获取数据
         const storedData = localStorage.getItem('finalTotal');
@@ -373,32 +373,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return 0; // 没有数据也返回0
     })();
-
-// 使用total值
-    console.log('Total amount: $' + totalAmount.toFixed(2));
     const invoicePaid = true; // 假设从服务器获取是否支付了之前的发票
-
-    const creditBalanceOption = document.getElementById('credit-balance-option');
-    const balanceInfo = document.getElementById('balance-info');
-    const balanceDisplay = document.getElementById('credit-balance');
     const submitButton = document.getElementById('submitall');
-    const creditCardOption = document.querySelector('input[value="Credit Card"]');
-    const debitCardOption = document.querySelector('input[value="Debit Card"]');
-    const cardDetails = document.querySelectorAll('.form-group'); // Assuming each input is wrapped in a 'form-group'
+    const balanceDisplay = document.getElementById('credit-balance');
 
-    if (userType === 'business') {
+    if (userType === 'Business') {
         // 对商业用户
-        creditBalanceOption.style.display = 'block';
-        balanceInfo.style.display = 'flex';
-        balanceDisplay.textContent = `$${creditBalance}`;
-
-        // 隐藏信用卡和借记卡选项
-        creditCardOption.parentElement.style.display = 'none';
-        debitCardOption.parentElement.style.display = 'none';
-
-        // 隐藏信用卡信息输入框
-        cardDetails.forEach(group => group.style.display = 'none');
-
         // 检查余额是否足够以及之前的发票是否已支付
         if (creditBalance < totalAmount || !invoicePaid) {
             submitButton.disabled = true;
@@ -407,22 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 balanceDisplay.textContent += ' (Insufficient balance)';
             }
-        } else {
-            submitButton.disabled = false;
         }
-    } else {
-        // 对住宅用户
-        creditBalanceOption.style.display = 'none';
-        balanceInfo.style.display = 'none';
-
-        // 显示信用卡和借记卡选项
-        creditCardOption.parentElement.style.display = 'block';
-        debitCardOption.parentElement.style.display = 'block';
-
-        // 显示信用卡信息输入框
-        cardDetails.forEach(group => group.style.display = 'block');
-
-        submitButton.disabled = false;
     }
 });
 

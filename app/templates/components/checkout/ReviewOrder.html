@@ -2,6 +2,7 @@
   <div class="payment-method-form">
     <h1 class="mb-4">Choose Your Payment Method</h1>
     <div class="payment-options">
+        {% if checkoutProfile.user_type == 'Residential' %}
         <label class="payment-option">
             <input type="radio" name="paymentMethod" value="Credit Card" checked>
             <i class="fa-regular fa-credit-card"></i>
@@ -12,20 +13,16 @@
             <i class="fa-solid fa-credit-card"></i>
             <span>Debit Card</span>
         </label>
-
-
-        <!-- Hidden by default, shown only for business users -->
-        <label class="payment-option" id="credit-balance-option" style="display:none;">
+        {% else %}
+        <label class="payment-option" id="credit-balance-option">
           <input type="radio" name="paymentMethod" value="Credit Balance" checked>
           <i class="fa-solid fa-circle-dollar"></i>
           <span>Credit Balance</span>
       </label>
+      {% endif %}
     </div>
 
-    <!-- Balance Display -->
-    <div id="balance-info" style="display:none; justify-content: center;align-items: center;">
-      <p>Your Credit Balance: <span id="credit-balance" name="account_available">$0</span></p>
-  </div>
+    {% if checkoutProfile.user_type == 'Residential' %}
     <div class="form-group">
         <label for="cc-name">Name on card</label>
         <input type="text" id="cc-name" class="form-control" value="shawn" placeholder="Full name as displayed on card" minlength="2" maxlength="35" pattern="^[^\s]+[a-zA-Z\s]*[a-zA-Z]$"required>          <div class="invalid-feedback">Please enter letters only, with a maximum length of 35 characters.</div>   
@@ -44,6 +41,13 @@
         <input type="text" id="cc-cvv" class="form-control" value="233" placeholder="CVV" pattern="^\d{3,4}$" required>
         <div class="invalid-feedback">Invalid CVV. Must be 3 or 4 digits.</div>
     </div>
+    {% else %}
+    <div class="form-group">
+      <div style="display: flex; justify-content: center;align-items: center;">
+        <p>Your Credit Balance: <span id="credit-balance" name="account_available">$ {{checkoutProfile.account_available}}</span></p>
+      </div>
+    </div>
+    {% endif %}
 
     <div class="d-flex justify-content-between mt-4"> <!-- Button align right -->
       <button type="button" class="btn btn-secondary go-back">Go Back</button>

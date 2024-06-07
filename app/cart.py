@@ -3,18 +3,18 @@ from flask import render_template, session, request
 import json
 
 # User-defined function
-from dbFile.config import insertSQL, updateSQL, fetchOne
+from dbFile.config import insertSQL, updateSQL, fetchOne, fetchAll
 from common import roleRequired, toDay
 from emailMethod.method import sendOrderStatus
 
 
 @app.route("/cart")
-@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Consumer'])
 def cart():
     return render_template('cart.html')
 
 @app.route("/cart/update", methods = ["POST"])
-@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Consumer'])
 def cartUpdate():
     data = json.dumps(request.get_json())
     try:
@@ -24,9 +24,9 @@ def cartUpdate():
 
     return {"status": False}, 500
 
-
+from decimal import Decimal
 @app.route("/checkout", methods=['GET','POST'])
-@roleRequired(['Consumer', 'Staff', 'Local_Manager', 'National_Manager'])
+@roleRequired(['Consumer'])
 def checkout():
     if request.method == 'POST':
         order = (request.get_json())
@@ -36,13 +36,23 @@ def checkout():
 
         total_price = 0
         for product in order['cart']:
-            price = fetchOne("SELECT price FROM Products WHERE product_id = %s;", (product['id'],))
-            subtotal = price[0] * product['qty']
+            if int(product['id'] )in app.giftcard_list:
+                for i in range(int(product['qty'])):
+                    updateSQL("UPDATE GiftCards SET order_id = %s WHERE gift_card_id = ( SELECT gift_card_id FROM \
+                    (SELECT gift_card_id FROM GiftCards WHERE order_id IS NULL AND product_id = %s LIMIT 1) \
+                    AS subquery);", (order_id, product['id']))
+
+            price = fetchOne("SELECT price, unit_id FROM Products WHERE product_id = %s;", (product['id'],), True)
+            if price['unit_id'] == 5:
+                subtotal = price['price'] * (product['qty']*Decimal(0.25))
+            else:
+                subtotal = price['price'] * product['qty']
             insertSQL("INSERT INTO OrderItems (order_id, product_id, quantity, subtotal) VALUES \
                 (%s,%s,%s,%s);",(order_id, product['id'], product['qty'], subtotal))
             total_price += subtotal
-        
-        update_successful = updateSQL("UPDATE Orders SET total = %s WHERE order_id = %s;", (total_price, order_id))
+
+        update_successful = updateSQL("UPDATE Orders SET total = %s, is_freeshiping = %s WHERE order_id = %s;", \
+            (total_price, total_price > app.shipping, order_id))
 
         if update_successful:
             updateSQL("UPDATE ConsumerCart SET cart = %s WHERE user_id = %s;", ('[]', session['id'],))
@@ -51,5 +61,5 @@ def checkout():
         else:
             return {"status": False}, 500
 
-    checkout_profile = fetchOne('SELECT given_name, family_name, address, postcode, phone FROM Consumer WHERE user_id = %s', (session['id'],), True)
+    checkout_profile = fetchOne('SELECT given_name, family_name, address, postcode, phone, account_available, user_type FROM Consumer WHERE user_id = %s', (session['id'],), True)
     return render_template('chackout.html', checkoutProfile=checkout_profile)
