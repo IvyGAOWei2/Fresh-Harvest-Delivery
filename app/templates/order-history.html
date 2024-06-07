@@ -79,7 +79,7 @@
                                 <a data-bs-toggle="oh"  href="{{ url_for('orderDetail', order_id = order.order_id ) }}"   role="button"   class="order-view" role="button" title="Order Details">
                                     <i class="far fa-list-alt fa-lg me-1"></i>
 
-                                <a data-bs-toggle="oh" href="{{ url_for('cart') }}"  class="reorder" role="button" title="Empty Cart and Reorder">
+                                <a data-bs-toggle="oh" href="{{ url_for('cart') }}"  class="reorder" role="button" data-order-id="{{order.order_id}}" title="Empty Cart and Reorder">
                                     <i class="fas fa-redo fa-lg me-1"></i>
                                 </a>
                                 {% if order.status == 'Pending' %}
@@ -110,7 +110,7 @@
             {% with
                 btn_show = 0,
                 bg_color = '#dc3545',
-                bg_color2 = '#3399ff',
+                bg_color2 = '#dc3545',
                 modal_id = 'deleteMemberModal',
                 title = 'Cancel Confirmation',
                 msg = 'Are you sure you want to cancel this order? Upon cancellation, the charges will be automatically refunded to your card.'
@@ -118,6 +118,16 @@
                 {% include "components/elements/delConfirm.html" %}
             {% endwith %}
 
+            {% with
+                btn_show = 0,
+                bg_color = '#3399ff',
+                bg_color2 = '#3399ff',
+                modal_id = 'reorderModal',
+                title = 'Reorder Confirmation',
+                msg = 'Are you sure you want to place this order again?'
+              %}
+                {% include "components/elements/delConfirm.html" %}
+            {% endwith %}
 
         <!-- delProfileSuccessModal -->
         {% with
@@ -141,6 +151,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const orderDel = document.querySelectorAll('.order-del');
+        const reorder = document.querySelectorAll('.reorder');
+        const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
         document.getElementById('delProfileSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
         orderDel.forEach(function (del) {
@@ -150,7 +162,6 @@
                 const order_id = del.getAttribute('data-order-id');
 
                 // Show delConfirm modal when delete button is clicked
-                const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
                 const deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'));
                 const confirmButton = document.querySelector('#deleteMemberModal .modal-footer .btn-primary');
                 deleteMemberModal.show();
@@ -182,6 +193,50 @@
                 });
             });
         });
+
+        reorder.forEach(function (re) {
+            // Add click event listener to each delete button
+            re.addEventListener('click', function (event) {
+                event.preventDefault();
+                const order_id = re.getAttribute('data-order-id');
+                // console.log(order_id)
+
+                // Show delConfirm modal when delete button is clicked
+                const reorderModal = new bootstrap.Modal(document.getElementById('reorderModal'));
+                const confirmButton = document.querySelector('#reorderModal .modal-footer .btn-primary');
+                reorderModal.show();
+
+                // Add click event listener to the confirmButton
+                confirmButton.addEventListener('click', function () {
+                    reorderModal.hide();
+                    loadingModal.show();
+
+                    fetch('/order/reorder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 'order_id': order_id })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status) {
+                                loadingModal.hide();
+                                if (data.cart) {
+                                localStorage.setItem('cart', data.cart);
+                                }
+                                window.location.href = data.message;
+                            }
+                            else {
+                                loadingModal.hide();
+                                alert("Invalid request");
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+
 
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="oh"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

@@ -31,8 +31,8 @@ def checkout():
     if request.method == 'POST':
         order = (request.get_json())
 
-        order_id = insertSQL("INSERT INTO Orders (user_id, order_date, billing_address, delivery_address, payment_method, payment_info, payment_status) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s);",(session['id'], toDay(), json.dumps(order['billingform']), json.dumps(order['deliveryform']), order['paymentform']['paymentMethod'], order['paymentform']['payment_info'], 'Completed'))
+        order_id = insertSQL("INSERT INTO Orders (user_id, order_date, billing_address, delivery_address, cart, payment_method, payment_info, payment_status) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s);",(session['id'], toDay(), json.dumps(order['billingform']), json.dumps(order['deliveryform']), json.dumps(order['cart']), order['paymentform']['paymentMethod'], order['paymentform']['payment_info'], 'Completed'))
 
         total_price = 0
         for product in order['cart']:

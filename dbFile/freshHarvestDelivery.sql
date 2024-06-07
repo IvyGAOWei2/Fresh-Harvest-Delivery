@@ -103,6 +103,7 @@ CREATE TABLE Orders (
     delivery_date DATE,
     billing_address JSON,
     delivery_address JSON,
+    cart JSON,
     payment_method ENUM('Credit Card', 'Debit Card', 'Account', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     payment_info VARCHAR(20) NOT NULL,
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),

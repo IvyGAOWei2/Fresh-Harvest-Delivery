@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 else {
                     loadingModal.hide();
                     alert(data.message);
-                    // location.reload(); // Reload the page on failure
+                    location.reload(); // Reload the page on failure
                 }
             })
             .catch(error => console.error('Error:', error));

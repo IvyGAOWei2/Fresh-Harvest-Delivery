@@ -55,6 +55,15 @@ def orderDel():
         return {"status": False}, 500
 
 
+@app.route("/order/reorder", methods=['POST'])
+@roleRequired(['Consumer'])
+def reorder():
+    data = request.get_json()
+    consumerCart = fetchOne("SELECT cart FROM Orders WHERE order_id = %s;", (data['order_id'],))
+
+    return {"status": True, 'message': '/cart', 'cart': consumerCart}, 200
+
+
 @app.route("/admin/order/history", methods = ["GET", 'POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def staffOrderHistory():
