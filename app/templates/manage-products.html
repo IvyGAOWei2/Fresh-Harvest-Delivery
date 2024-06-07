@@ -173,6 +173,7 @@
                             </form>
                         </div>
                     </div>
+                    <!--end of offcanvas  -->
                     {% endfor %}
                 </tbody>
             </table>
@@ -296,7 +297,6 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <!-- 按钮增加边距 -->
                         <button type="submit" class="btn btn-primary"> Add </button>
                     </div>
                 </form>
@@ -304,7 +304,7 @@
             </div>
         </div>
     </div>
-    <!-- Update Success btn code start here -->
+    <!-- Add Success btn code start here -->
     {% with
     btn_show = 0,
     bg_color = '#81C408',
@@ -454,7 +454,7 @@
 
     // Add product
     document.addEventListener('DOMContentLoaded', function () {
-        //     // addSuccessModal 是boostrap自带的吗？html页面有自行再定义吗
+        //     // addSuccessModal 
         document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
 
         const addProductForm = document.getElementById('addProductForm');

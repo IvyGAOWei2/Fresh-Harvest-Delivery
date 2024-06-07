@@ -21,7 +21,7 @@
       <h2>Post News</h2>
     </div>
     <div class="card-body">
-      <form id="addNewsForm" method="POST" action="/admin/post/news" class="needs-validation" novalidate>
+      <form id="addNewsForm1" class="needs-validation" novalidate>
       <div class="container mt-5">
         <div class="row">
             <!-- Left side input fields -->
@@ -32,7 +32,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="subtitle" class="form-label">Subtitle</label>
-                    <input type="number" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
+                    <input type="text" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
                 </div>
                 <div class="mb-3">
                     <label for="date" class="form-label">Post date</label>
@@ -61,9 +61,9 @@
                 <div class="card shadow-sm img-container">
                   <label for="post_img" class="d-block w-100 text-center">
                     Cover image
-                    <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview1" alt="Cover Image" required>
+                    <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imageCoverPreview" alt="Cover Image">
                   </label>
-                  <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*">
+                  <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*" onchange="previewCoverImage(event)" required>
                 </div>
               </div>
             </div>
@@ -83,7 +83,7 @@
       </div>
       <p></p>
       <div class="col-12 text-center">
-        <button type="submit" class="btn custom-btn news-add">Post</button>
+        <button type="submit" class="btn custom-btn news-add"  data-news-id="1">Post</button>
       </div>  
       </form>
     </div>
@@ -105,27 +105,30 @@
             </tr>
           </thead>
           <tbody>
+            {% for newz in news %}
             <tr>
-              <th scope="row">1</th>
-              <td>Discount</td>
-              <td>June special</td>
-              <td>09-09-2023</td>
+              <th scope="row">{{newz.news_id}}</th>
+              <td>{{newz.title}}</td>
+              <td>{{newz.subtitle}}</td>
+              <td>{{newz.date}}</td>
               <td>
-              <a class="btn news-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateNews" data-news-id="1" data-bs-toggle="tooltip" title="Update news">
+              <a class="btn" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateNews{{newz.news_id}}" data-news-id="{{newz.news_id}}" data-bs-toggle="tooltip" title="Update news">
                   <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
               </a>
-              <a class="btn news-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteNews" data-news-id="1" data-bs-toggle="tooltip" title="Delete news">
+              <a class="btn news-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteNews{{ newz.news_id }}" data-news-id="{{newz.news_id}}" data-bs-toggle="tooltip" title="Delete news">
                 <i class="fas fa-trash-alt fa-lg me-3 fa-fw"></i>
               </a>   
               </td>
             </tr>
+            {% endfor %}
           </tbody>
       </table>
   </div>
 </section>
 
+{% for newz in news %}
 <!-- update news modal-->
-<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateNews" aria-labelledby="updateNewsLabel">
+<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="updateNews{{newz.news_id}}" aria-labelledby="updateNewsLabel">
   <div class="offcanvas-header">
     <div class="col text-center">
       <h5 class="offcanvas-title" id="updateNewsLabel">Update News</h5>
@@ -133,53 +136,59 @@
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <form id="updateNewsForm"  method="POST" action="/admin/update/news" class="needs-validation" novalidate>
+    <form id="updateNewsForm{{newz.news_id}}" class="needs-validation" novalidate>
+        <input type="text" class="form-control d-none" name="news_id" value="{{ newz.news_id }}"/>  
+
         <div class="col-md-12 mb-3">
           <div class="card shadow-sm" style="width: 8vw;">
-            <label for="update_img">
-                <img src="{{ url_for('static', filename='images/user_default_image.png')}}" class="card-img-top" id="imagePreview3" data-bs-toggle="tooltip" title="Update image">
+            <label for="update_img_{{ newz.news_id }}">
+                <img src="{{ url_for('static', filename='images/upload/' + newz.image) }}" class="card-img-top" id="imagePreview{{ newz.news_id }}" data-bs-toggle="tooltip" title="Update image">
             </label>
-            <input class="form-control" type="file" name="image" id="update_img" style="display: none;" accept="image/*" required> 
+            <input class="form-control" type="file" name="image" id="update_img_{{ newz.news_id }}"
+              style="display: none;" accept="image/*" onchange="previewImage(event, '{{ newz.news_id }}')"> 
           </div>
-        </div>
+        </div> `
         <div class="col-md-6 mb-3">
           <label class="form-label" for="form3Example3c">Title <sup>*</sup></label>
-          <input type="email" maxlength="50" class="form-control" id="update_title" name="title" value="" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required/>     
+          <input type="text" maxlength="50" class="form-control" id="update_title" name="title" value="{{newz.title}}" pattern="^[a-zA-Z]+$" required/>     
           <div class="invalid-feedback">Please input a title.</div> 
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Subtitle</label>
-          <input type="text" class="form-control" value="" id="update_subtitle" name="update_subtitle" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
+          <input type="text" class="form-control" value="{{newz.subtitle}}" id="subtitle" name="subtitle" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
           <div class="invalid-feedback">Please input a subtitle.</div>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="post_date">Post date<sup>*</sup></label>
-          <input type="date" class="form-control" id="update_date" name="date" required>
+          <input type="date" class="form-control" id="update_date" name="date" value="{{newz.date}}" required>
         </div>  
         <div>
           <label class="form-label">Content</label>
-          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="35" rows="6" pattern="^[a-zA-Z]+$" required></textarea>
+          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="35" rows="6" pattern="^[a-zA-Z]+$" required>{{newz.content}}</textarea>
           <div class="invalid-feedback">Please input content.</div>
         </div>
         <p></p>
       <div class="col text-center">
-      <button type="submit" class="btn btn-secondary news-update" data-profile-id="1">Update</button>
+      <button type="submit" class="btn btn-secondary news-update" data-news-id="{{newz.news_id}}">Update</button>
       </div>
     </form>
   </div>
 </div>
+{% endfor %}
 
-<!-- deleteNews-->
-{% with
-  btn_show = 0,
-  bg_color = '#dc3545',
-  bg_color2 = '#3399ff',
-  modal_id = 'deleteNews',
-  title = 'Delete Confirmation',
-  msg = 'Are you sure to delete this news?'
-  %}
-  {% include "components/elements/delConfirm.html" %}
-  {% endwith %}
+{% for newz in news %}
+    <!-- deleteEmployeeModal-->
+    {% with
+      btn_show = 0,
+      bg_color = '#dc3545',
+      bg_color2 = '#3399ff',
+      modal_id = 'deleteNews' + newz.news_id|string,
+      title = 'Delete Confirmation',
+      msg = 'Are you sure to delete this news?'
+    %}
+      {% include "components/elements/delConfirm.html" %}
+    {% endwith %}
+{% endfor %}
 
  <!-- updateNewsSuccessModal -->
  {% with
@@ -214,6 +223,8 @@
   {% include "components/elements/updateSuccess.html" %}
 {% endwith %}
 
+{% include "components/elements/loadingModal.html" %}
+
 {% endblock %}
 
 {% block script %}
@@ -223,18 +234,17 @@
       document.getElementById('addNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
       document.getElementById('delNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
       
-      
       document.querySelectorAll('.news-delete').forEach(function (del) {
         const news_id = del.getAttribute('data-news-id');
         const deleteNews = document.getElementById('deleteNews' + news_id);
-        const deleteNewsBtn = deleteNews.querySelector('button[type="submit"]');
+        const deleteEmployeeBtn = deleteNews.querySelector('button[type="submit"]');
         const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
-        deleteNewsBtn.addEventListener('click', event => {
+        deleteEmployeeBtn.addEventListener('click', event => {
           event.preventDefault();
           // event.stopPropagation();
 
-          fetch('/admin/news/delete', {
+          fetch('/news/del', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
@@ -260,7 +270,6 @@
           .catch(error => console.error('Error:', error));
         });
       })
-
       document.querySelectorAll('.news-update').forEach(function (update) {
         const news_id = update.getAttribute('data-news-id')
         const updateNewsForm = document.getElementById('updateNewsForm' + news_id);
@@ -270,8 +279,8 @@
           event.preventDefault();
           // event.stopPropagation();
           const formData = new FormData(updateNewsForm);
-          // console.log(formData)
-          fetch('/admin/update/news', {
+
+          fetch('/news/update', {
               method: 'POST',
               body: formData
           })
@@ -301,8 +310,8 @@
           event.preventDefault();
           // event.stopPropagation();
           const formData = new FormData(addNewsForm);
-          console.log(formData)
-          fetch('/admin/post/news', {
+          // console.log(formData)
+          fetch('/news/add', {
               method: 'POST',
               body: formData
           })
@@ -343,14 +352,24 @@
         })
     });
   </script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal"]'))
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl)
-      })
-  });
+  <script>
+    function previewImage(event, news_id) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('imagePreview' + news_id);
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
 </script>
-
+<script>
+  function previewCoverImage(event) {
+      var reader = new FileReader();
+      reader.onload = function() {
+          var output = document.getElementById('imageCoverPreview');
+          output.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
 {% endblock %}

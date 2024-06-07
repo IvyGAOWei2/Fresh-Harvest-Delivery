@@ -1,3 +1,5 @@
+
+
 {% extends "_consumer-base.html" %}
 
 {% block title %}Checkout{% endblock %}
@@ -49,15 +51,28 @@
                                 <!-- Dynamically filled by JavaScript -->
                             </tbody>
                             <tfoot>
+                                <!-- 显示 GST (已包含在价格中，仅展示用途) -->
+                                <tr>
+                                    <td colspan="4" style="text-align:right;">GST(included) </td>
+                                    <td class="gst">$0.00</td> <!-- 初始显示为 $0.00, JavaScript将更新此值 -->
+                                </tr>
+                                <!-- 显示运费 -->
                                 <tr>
                                     <td colspan="4" style="text-align:right;">Shipping</td>
-                                    <td class="shipping">$10.00</td>
+                                    <td class="shipping" name="shipping">$10.00</td> <!-- JavaScript 将根据购物车的总价更新此值 -->
                                 </tr>
+                                <!-- 显示使用的积分 -->
+                                <tr>
+                                    <td colspan="4" style="text-align:right;">Points Used</td>
+                                    <td class="points-used">0 Points</td> <!-- JavaScript 将更新使用的积分 -->
+                                </tr>
+                                <!-- 显示最终总计 -->
                                 <tr>
                                     <td colspan="4" style="text-align:right;"><strong>Total</strong></td>
-                                    <td class="total">$10.00</td>
+                                    <td class="total">$10.00</td> <!-- JavaScript 将计算并更新最终总计 -->
                                 </tr>
                             </tfoot>
+                            
                         </table>
                     </div>
                 </div>
@@ -159,46 +174,59 @@ function validateForm(formSelector) {
 
 function loadCartDetails() {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartDetails = JSON.parse(localStorage.getItem('finalTotal')) || {subtotal: 0, total: 0, pointsUsed: 0};
     const cartBody = document.querySelector('.table-group-divider');
-    const orderForm = document.querySelector('#payment-form');
     cartBody.innerHTML = '';
 
     let subtotal = 0;
-    let shippingCost = 10;
-
     cartItems.forEach(item => {
         const price = parseFloat(item.price);
         const quantity = parseFloat(item.quantity);
         const total = price * quantity;
-        const productid= item.id;
-        subtotal += total;
+
+        subtotal += total;  // Recalculate subtotal based on items in the cart
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <th scope="row">
                 <div class="d-flex align-items-center">
-                    <img src="${item.imgSrc}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="${item.name}">
+                    <img src="${item.imgSrc}" class="img-fluid" style="max-width:6rem" alt="${item.name}">
                 </div>
             </th>
             <td class="py-5">${item.name}</td>
             <td class="py-5">$${price.toFixed(2)}</td>
             <td class="py-5">${quantity} ${item.unit}</td>
             <td class="py-5">$${total.toFixed(2)}</td>
-            <input type="hidden" id=“orderproductid” name="product_id" value="${productid}">
-            <input type="hidden" id=“orderproductquantity”name="quantity" value="${quantity}">
         `;
         cartBody.appendChild(row);
-                // Append hidden inputs for product ID and quantity
- 
     });
 
-    if (subtotal >= 80) {
-        shippingCost = 0;
-    }
+    let shippingCost = subtotal >= 80 ? 0 : 10;
+    let gst = subtotal * 0.15;  // Calculate GST for display purposes only
+    let finalTotal = subtotal + shippingCost - ((cartDetails.pointsUsed / 1000) * 10);  // Apply points discount if any
 
-    let finalTotal = subtotal + shippingCost;
-    document.querySelector('.total').textContent = `$${finalTotal.toFixed(2)}`;
-    document.querySelector('.shipping').textContent = shippingCost ? `$${shippingCost}` : 'Free';
+    // Update existing elements in HTML
+    const shippingElement = document.querySelector('.shipping');
+    const gstElement = document.querySelector('.gst');
+    const totalElement = document.querySelector('.total');
+    const pointsUsedElement = document.querySelector('.points-used');
+
+    if (shippingElement) {
+        shippingElement.textContent = `$${shippingCost.toFixed(2)}`;
+    }
+    if (gstElement) {
+        gstElement.textContent = `$${gst.toFixed(2)}`;
+    }
+    if (totalElement) {
+        totalElement.textContent = `$${finalTotal.toFixed(2)}`;
+    }
+    if (pointsUsedElement) {
+        pointsUsedElement.textContent = cartDetails.pointsUsed > 0 ? ` ${cartDetails.pointsUsed}` : 'No points used';
+    }
 }
+
+
+
 
 function saveDeliveryDetails() {
     const deliveryForm = document.querySelector('.delivery-form form');
@@ -228,21 +256,6 @@ function autoFillBillingDetails() {
         billingForm.querySelector('#billingemail').value = deliveryData.email;
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-    const cardDetails = document.getElementById('cardDetails');
-
-    paymentOptions.forEach(option => {
-        option.addEventListener('change', function() {
-            if (this.value === 'Credit Card' || this.value === 'Debit Card') {
-                cardDetails.style.display = 'block';
-            } else {
-                cardDetails.style.display = 'none';
-            }
-        });
-    });
-});
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('paymentform');
@@ -278,7 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartData) {
                 combinedData['cart'] = JSON.parse(cartData);
             }
-
+            const finalTotal = localStorage.getItem('finalTotal');
+            if (finalTotal) {
+                combinedData['finalTotal'] = JSON.parse(finalTotal);
+            }
             fetch('/checkout', {
                 method: 'POST',
                 headers: {
@@ -296,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 else {
                     alert(data.message);
-                    location.reload(); // Reload the page on failure
+                    // location.reload(); // Reload the page on failure
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -340,6 +356,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const userType = `{{checkoutProfile.user_type}}`; // 假设从服务器获取用户类型
+    const creditBalance = `{{checkoutProfile.account_available}}`; // 假设信用余额
+    const totalAmount = (() => {
+    // 从localStorage获取数据
+        const storedData = localStorage.getItem('finalTotal');
+        if (storedData) {
+            try {
+            // 解析JSON并返回total值
+                return JSON.parse(storedData).total;
+            } catch (e) {
+                console.error('Error parsing data from localStorage:', e);
+                return 0; // 解析失败返回0
+            }
+        }
+        return 0; // 没有数据也返回0
+    })();
+    const invoicePaid = true; // 假设从服务器获取是否支付了之前的发票
+    const submitButton = document.getElementById('submitall');
+    const balanceDisplay = document.getElementById('credit-balance');
+
+    if (userType === 'Business') {
+        // 对商业用户
+        // 检查余额是否足够以及之前的发票是否已支付
+        if (creditBalance < totalAmount || !invoicePaid) {
+            submitButton.disabled = true;
+            if (!invoicePaid) {
+                balanceDisplay.textContent += ' (Previous invoice unpaid)';
+            } else {
+                balanceDisplay.textContent += ' (Insufficient balance)';
+            }
+        }
+    }
+});
+
+
 
 document.getElementById('deliveryfirstname').addEventListener('input', function() {
         InputValidate('deliveryfirstname');
