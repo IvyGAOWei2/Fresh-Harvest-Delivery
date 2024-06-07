@@ -21,48 +21,59 @@
     <div class="container-fluid py-1">
         <div class="container py-1 text-center">
             <div class="d-flex justify-content-center align-items-center py-4" style="background: none;">
-                <i class="fas fa-history fa-3x me-3"></i> 
+                <i class="fas fa-coins fa-3x me-3"></i> 
                 <h1 class="mb-0">Consumer Points</h1>
             </div>
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                        <th scope="col">User ID</th>
-                        <th scope="col">Given name</th>
-                        <th scope="col">Family name</th>
-                        <th scope="col">Depot</th>
-                        <th scope="col">Points balance</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for point in points_list %}
-                        <tr>
-                        <th scope="row">{{point[5]}}</th>
-                        <td>{{point[0]}}</td>
-                        <td>{{point[1]}}</td>
-                        <td>{{point[3]}}</td>
-                        <td>{{point[10]}}</td>
-                        <td>{{point[11]}}</td>
-                        <form id="managePointsForm{{ point[5] }}"  method="POST" action="/manage/points" class="needs-validation" novalidate>
-                            <input type="text" class="form-control d-none" name="user_id" value="{{ point[2] }}"/>     
-                            <input type="text" class="form-control d-none" name="point_id" value="{{ point[4] }}"/>
-                        <td>
-                            <a class="btn manage-points" role="submit" data-bs-toggle="offcanvas" data-bs-target="#managePoints{{ point[5] }}" data-user-id="{{ point[5] }}" data-bs-toggle="tooltip" title="Points detail">
-                                <i class="fas fa-list fa-lg me-3 fa-fw"></i>
-                            </a>
-                        </td>
-                        </tr>
-                        {% endfor %}  
-                    </tbody>
-                    </form>
-                </table>
+            <table class="text-center table table-striped table-bordered">
+            <thead>
+                <tr class="table-primary">
+                <th class="text-secondary-emphasis" scope="col">User ID</th>
+                <th class="text-secondary-emphasis" scope="col">Given name</th>
+                <th class="text-secondary-emphasis" scope="col">Family name</th>
+                <th class="text-secondary-emphasis" scope="col">Depot</th>
+                <th class="text-secondary-emphasis" scope="col">Points balance</th>
+                <th class="text-secondary-emphasis" scope="col">Date</th>
+                <th class="text-secondary-emphasis" scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for point in points_list %}
+                <tr>
+                <th scope="row">{{point[5]}}</th>
+                <td>{{point[0]}}</td>
+                <td>{{point[1]}}</td>
+                <td>{{point[3]}}</td>
+                <td>{{point[10]}}</td>
+                <td>{{point[11]}}</td>
+                <form id="managePointsForm{{ point[5] }}" method="POST" action="/manage/points/details" class="needs-validation" novalidate>
+                    <input type="text" class="form-control d-none" name="user_id" value="{{ point[5] }}"/>     
+                    <input type="text" class="form-control d-none" name="point_id" value="{{ point[4] }}"/>
+                    <td>
+                        <div class="row">
+                        <div class="col-md-4">
+                        <button type="submit" name="action" value="view_details" class="btn manage-points" data-bs-toggle="tooltip" title="Points detail">
+                            <i class="fas fa-eye fa-lg me-3 fa-fw"></i>
+                        </button>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="updatepoints" class="visually-hidden">Update points</label>
+                            <input type="number" class="form-control" name="updatepoints" id="updatepoints" placeholder="Update points balance">
+                            </div>
+                            <div class="col-md-4">
+                            <button type="submit" name="action" value="update_points" class="btn btn-primary mb-3">Confirm</button>
+                            </div>
+                        </div>
+                    </td>
+                </form>
+                </tr>
+                {% endfor %}  
+            </tbody>
+          
+            </table>
         </div>   
     </div>    
-  
 
-    
+
     <!-- Update Success Message -->
     <div class="p-3">
         {% with
@@ -77,10 +88,60 @@
     </div>
 </section>
 
+<!-- Modal Template for User Details -->
+<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="userDetailsOffcanvas" aria-labelledby="userDetailsOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="userDetailsOffcanvasLabel">Points Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if user_details %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Order/Giftcard ID</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Variation</th>
+                        <th scope="col">Balance</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in user_details %}
+                    <tr>
+                        {% if detail[2] != None %}
+                        <td>{{ detail[2]}}</td>
+                        {% elif detail[3] != None %}
+                        <td>{{ detail[3]}}</td>
+                        {% else %}
+                        <td>Manage action</td>
+                        {% endif %}
+                        <td>{{ detail[4] }}</td>
+                        <td>{{ detail[5] }}</td>
+                        <td>{{ detail[6]}}</td>
+                        <td>{{ detail[7] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No details available.</p>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}
 
 {% block script %}
   {% include "components/elements/InputValidate.html" %}
+  {% if show_modal %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var userDetailsOffcanvas = new bootstrap.Offcanvas(document.getElementById('userDetailsOffcanvas'));
+        userDetailsOffcanvas.show();
+    });
+    </script>
+ {% endif %}
 {% endblock %}
 
   
