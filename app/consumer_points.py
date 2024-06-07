@@ -6,6 +6,7 @@ from flask import render_template, request, session
 from dbFile.config import insertSQL, updateSQL,fetchAll, fetchOne
 from common import toDay, roleRequired
 
+
 @app.route("/consumer/points", methods=['GET', 'POST'])
 @roleRequired(['Consumer'])
 def consumer_points():
@@ -14,6 +15,7 @@ def consumer_points():
         FROM ConsumerPoints WHERE user_id = %s AND is_active = True", (session['id'],), True)
 
     return render_template('consumer_points.html', pointsBalance=points_balance[0], pointsHistory=points_history)
+
 
 @app.route("/giftcard/redeem", methods=['POST'])
 @roleRequired(['Consumer'])
@@ -51,59 +53,37 @@ def managePoints():
             JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
             JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
 
-
     return render_template('manage_points.html', type=type, points_list=points_list)
+
 
 @app.route("/manage/points/details", methods=['POST'])
 @roleRequired(['Local_Manager', 'National_Manager'])
 def managePointsDetails():
     type = session['type']
     user_id = request.form.get('user_id')
+    point_balance = request.form.get('point_balance')
     action = request.form.get('action')
-
+    points_list = fetchAll("""WITH LatestPoints AS 
+             (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
+            SELECT u.given_name,u.family_name,u.depot_id,
+                Depots.location,           
+                p.*  
+            FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
+            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
+            JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
+    
     if action == 'view_details':
-        # 根据user_id查询表A的详细信息
         user_details = fetchAll("SELECT * FROM ConsumerPoints WHERE user_id = %s", (user_id,), withDescription=False)
-        print(user_details)
-
-        points_list = fetchAll("""WITH LatestPoints AS 
-                (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-                SELECT u.given_name,u.family_name,u.depot_id,
-                    Depots.location,           
-                    p.*  
-                FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-                JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
-                JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
         
         return render_template('manage_points.html', type=type, user_details=user_details,show_modal=True, points_list=points_list)
     
     elif action == 'update_points':
-        updatepoints = request.form.get('updatepoints')
+        point_variation = float(request.form.get('point_variation'))
+        new_points = float(point_balance) + point_variation
         current_date = datetime.now().date()
-        insertSQL("insert into ConsumerPoints(point_id, user_id,point_type,point_balance,point_date) values(default,%s,'Placeholder1',%s,%s)", (user_id,updatepoints,current_date))
-
-        # 重新获取列表数据
-        points_list = fetchAll("""WITH LatestPoints AS 
-                 (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-                SELECT u.given_name,u.family_name,u.depot_id,
-                    Depots.location,           
-                    p.*  
-                FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-                JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
-                JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
+        insertSQL("insert into ConsumerPoints(point_id, user_id,point_type,point_variation,point_balance,point_date) values(default,%s,'Manager action',%s,%s,%s)", (user_id,point_variation,new_points,current_date))
         
         return render_template('manage_points.html', type=type, points_list=points_list)
-    else:
-        points_list = fetchAll("""WITH LatestPoints AS 
-                 (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-                SELECT u.given_name,u.family_name,u.depot_id,
-                    Depots.location,           
-                    p.*  
-                FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-                JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
-                JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
-        
-        return render_template('manage_points.html', points_list=points_list, error="Unknown action")
 
 
    

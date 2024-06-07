@@ -47,7 +47,7 @@
                 <td>{{point[11]}}</td>
                 <form id="managePointsForm{{ point[5] }}" method="POST" action="/manage/points/details" class="needs-validation" novalidate>
                     <input type="text" class="form-control d-none" name="user_id" value="{{ point[5] }}"/>     
-                    <input type="text" class="form-control d-none" name="point_id" value="{{ point[4] }}"/>
+                    <input type="text" class="form-control d-none" name="point_balance" value="{{ point[10] }}"/>
                     <td>
                         <div class="row">
                         <div class="col-md-4">
@@ -57,8 +57,11 @@
                         </div>
                         <div class="col-md-4">
                             <label for="updatepoints" class="visually-hidden">Update points</label>
-                            <input type="number" class="form-control" name="updatepoints" id="updatepoints" placeholder="Update points balance">
-                            </div>
+                            <input type="number" class="form-control" name="point_variation" id="point_variation{{point[5]}}" placeholder="Update points balance">
+                            <div class="invalid-feedback">
+                                Please enter a valid number.
+                            </div>    
+                        </div>
                             <div class="col-md-4">
                             <button type="submit" name="action" value="update_points" class="btn btn-primary mb-3">Confirm</button>
                             </div>
@@ -114,7 +117,7 @@
                         {% elif detail[3] != None %}
                         <td>{{ detail[3]}}</td>
                         {% else %}
-                        <td>Manage action</td>
+                        <td>-</td>
                         {% endif %}
                         <td>{{ detail[4] }}</td>
                         <td>{{ detail[5] }}</td>
@@ -130,10 +133,23 @@
     </div>
 </div>
 
+
+  <!-- updateProfileSuccessModal -->
+  {% with
+    btn_show = 0,
+    modal_id = 'updateProfileSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Updated Successfully',
+    msg = 'User profile has been successfully updated'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
+  
 {% endblock %}
 
 {% block script %}
   {% include "components/elements/InputValidate.html" %}
+
   {% if show_modal %}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -142,6 +158,7 @@
     });
     </script>
  {% endif %}
+
 {% endblock %}
 
   
