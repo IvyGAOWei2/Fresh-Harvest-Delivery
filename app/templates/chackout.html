@@ -190,7 +190,7 @@ function loadCartDetails() {
         row.innerHTML = `
             <th scope="row">
                 <div class="d-flex align-items-center">
-                    <img src="${item.imgSrc}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="${item.name}">
+                    <img src="${item.imgSrc}" class="img-fluid" style="max-width:6rem" alt="${item.name}">
                 </div>
             </th>
             <td class="py-5">${item.name}</td>
@@ -291,7 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cartData) {
                 combinedData['cart'] = JSON.parse(cartData);
             }
-
+            const finalTotal = localStorage.getItem('finalTotal');
+            if (finalTotal) {
+                combinedData['finalTotal'] = JSON.parse(finalTotal);
+            }
             fetch('/checkout', {
                 method: 'POST',
                 headers: {

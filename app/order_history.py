@@ -19,45 +19,20 @@ def orderHistory():
 @roleRequired(['Consumer','Staff', 'Local_Manager', 'National_Manager'])
 def orderDetail(order_id):
     
-    orders = fetchOne('SELECT * FROM Orders WHERE order_id = %s', (order_id,),True)
-    # print(orders)
-    order_items = fetchAll('SELECT * FROM OrderItems WHERE order_id = %s', (order_id,),True)
-    gift_cards = fetchAll('SELECT * FROM GiftCards WHERE order_id = %s', (order_id,),True)
-    # print(gift_cards) [{'gift_card_id': 1, 'product_id': 100, 'order_id': 1, 'code': 'DKFQN2E0', 'balance': '25', 'is_active': 0}]
+    order = fetchOne('SELECT * FROM Orders WHERE order_id = %s', (order_id,),True)
+    exclusion_list = ",".join(str(pid) for pid in app.giftcard_list)
     
-    # divide order items as giftcard & normal products for two tables
-    order_products = []
-    order_giftcards = []
-    
-    for item in order_items:
-        product = fetchOne('SELECT * FROM Products WHERE product_id = %s', (item['product_id'],),True)
-        productImg = fetchOne('SELECT * FROM ProductImages WHERE product_id = %s', (item['product_id'],),True)
-        # print(productImg)  {'product_image_id': 1, 'product_id': 1, 'image': 'Kiwifruit Green Fruit.png', 'is_primary': 1, 'is_deleted': 0}
-        item['product_name'] = product['name']
-        item['product_image'] = productImg['image']
-        item['quantity'] = item['quantity']
-        item['order_item_id'] = item['order_item_id']
-        item['price'] = product['price']
-        item['total'] = item['price'] * item['quantity']
+    products = fetchAll("SELECT o.*, p.name, p.price, pi.image  FROM OrderItems o JOIN Products p \
+        ON o.product_id = p.product_id JOIN ProductImages pi ON p.product_id = pi.product_id \
+        WHERE o.order_id = %s AND o.product_id NOT IN ("+ exclusion_list + ")", (order_id,), True)
 
-        if item['product_id'] in [gift_card['product_id'] for gift_card in gift_cards]:
-            # Append the gift card data to order_giftcards
-            for card in gift_cards:
-                if card['product_id'] == item['product_id']:
-                    card['product_image'] = productImg['image']
-                    card['code'] = card['code']
-                    card['balance'] = card['balance']
-                    card['is_active'] = card['is_active']
-                    order_giftcards.append(card)
-        else:
-            order_products.append(item)
-    print(order_products)
-    print(order_giftcards)  # 打印后为空，因为OrderItems里没有对应giftcard的订单记录,giftcard单方面有orderid
-
+    giftcards = fetchAll('SELECT gc.*, pi.image FROM GiftCards gc JOIN ProductImages pi ON \
+        gc.product_id = pi.product_id WHERE gc.order_id = %s;', (order_id,),True)
+    print(giftcards)
     if session['type'] == 'Consumer':
-        return render_template('order-detail.html', orderProducts=order_products, orderGiftcards=order_giftcards,orderDate= orders['order_date'], orderStatus= orders['status'], orderID= order_id)
+        return render_template('order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
     else:
-        return render_template('manage-order-detail.html', orderProducts=order_products, orderGiftcards=order_giftcards,orderDate= orders['order_date'], orderStatus= orders['status'], orderID= order_id)
+        return render_template('manage-order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
 
 
 
