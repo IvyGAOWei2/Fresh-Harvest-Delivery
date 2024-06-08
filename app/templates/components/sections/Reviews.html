@@ -1,6 +1,28 @@
 <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
     {% for review in reviews %}
-    <div class="d-flex">
+    <div class="d-flex mt-4">
+        <img src="{{ url_for('static', filename='images/' + review.image) }}" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
+        <div class="w-100">
+            <p class="mb-2" style="font-size: 14px;">{{review.review_date}}</p>
+            <div class="d-flex justify-content-between">
+                <h5>{{review.given_name}}</h5>
+                {% set rating_int = review.rating | int %}
+                <div class="d-flex mb-3">
+                    {% for i in range(rating_int) %}
+                        <i class="fa fa-star text-secondary"></i>
+                    {% endfor %}
+                    {% for i in range(5 - rating_int) %}
+                        <i class="fa fa-star"></i>
+                    {% endfor %}
+                </div>
+            </div>
+            <p class="mx-auto" >{{review.review_text}}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% for review in fakeReview %}
+    <div class="d-flex mt-4">
         <img src="{{ url_for('static', filename='images/' + review.img) }}" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
         <div class="">
             <p class="mb-2" style="font-size: 14px;">{{review.review_date}}</p>

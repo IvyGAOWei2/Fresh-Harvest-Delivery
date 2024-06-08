@@ -201,7 +201,7 @@
                             </td>
                             <td>
                                 <div class="btn-group dropstart" role="group" data-order-id="{{order.order_id}}">
-                                    {% if order.status == 'Refunded' %}
+                                    {% if order.status in ['Refunded', 'Cancelled'] %}
                                     <button type="button" class="btn btn-secondary dropdown-toggle" disabled>
                                         Change
                                     </button>
@@ -220,9 +220,8 @@
                                         <li><a class="dropdown-item" data-value="Refunded" href="#">Refunded</a></li>
                                     </ul>                     
                                     {% elif order.status == 'Cancelled' %}
-                                        <ul class="dropdown-menu payment_status">                       
-                                        </ul>
-                                        {% elif order.status == 'Comfirmed' %}
+                                        <ul class="dropdown-menu payment_status"></ul>
+                                    {% elif order.status == 'Comfirmed' %}
                                         <ul class="dropdown-menu payment_status">                       
                                             <li><a class="dropdown-item" data-value="Shipped" href="#">Shipped</a></li>
                                             <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
@@ -273,7 +272,7 @@
     {% with
         btn_show = 0,
         modal_id = 'updateStatusSuccessModal',
-        bg_color = '#81C408',
+        bg_color = '#3399ff',
         title = 'Update Successfully',
         msg = 'Order Status has been successfully updated'
     %}

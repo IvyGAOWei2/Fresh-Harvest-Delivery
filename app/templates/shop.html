@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const productId = productCard.getAttribute('data-product-id');
             
             // 构造跳转URL，替换其中的占位符为实际值
-            const url = `/product/detail?product_id=${productId}`;
+            const url = `/product/detail/${productId}`;
             
             // 跳转到指定页面
             window.location.href = url;

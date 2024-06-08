@@ -34,7 +34,7 @@
                 <i class="fas fa-history fa-3x me-3"></i> 
                 <h1 class="mb-2">Order History</h1>
             </div>
-            <form method="POST" action="/consumer/order/history">
+            <form id="orderHistorySearch" method="POST" action="/consumer/order/history">
                 <div class="row mb-3 d-flex align-items-center">
                     <div class="col-md-4 d-flex align-items-center">
                         <label for="searchOrder" class="form-label me-3 pb-2">SEARCH</label>
@@ -78,9 +78,8 @@
                             <td>
                                 <a data-bs-toggle="oh"  href="{{ url_for('orderDetail', order_id = order.order_id ) }}"   role="button"   class="order-view" role="button" title="Order Details">
                                     <i class="far fa-list-alt fa-lg me-1"></i>
-
                                 <a data-bs-toggle="oh" href="{{ url_for('cart') }}"  class="reorder" role="button" data-order-id="{{order.order_id}}" title="Empty Cart and Reorder">
-                                    <i class="fas fa-redo fa-lg me-1"></i>
+                                    <i class="fas s fa-sync-alt fa-lg me-1"></i>
                                 </a>
                                 {% if order.status == 'Pending' %}
                                     <a data-bs-toggle="oh" class="order-del" role="button" data-order-id="{{order.order_id}}" title="Cancel Order">

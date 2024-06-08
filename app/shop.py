@@ -1,9 +1,9 @@
 from app import app
-from flask import render_template, request
+from flask import render_template, request, session
 from math import ceil
 
-from dbFile.config import fetchAll, fetchOne
-from common import fakeReview
+from dbFile.config import fetchAll, fetchOne, insertSQL, updateSQL
+from common import fakeReview, roleRequired
 
 @app.route("/shop")
 def shop():
@@ -87,70 +87,58 @@ def shop():
         ]
 
     return render_template('shop.html', category=category, categories=categories, products=products, current_page=current_page, total_pages=total_pages, discounted_items=discounted_items)
-@app.route('/product/detail')
-def shopDetail():
+
+
+@app.route('/product/detail/<int:product_id>')
+def shopDetail(product_id):
+    sql_products = """
+        SELECT p.product_id, p.name, p.description, p.price, p.stock, p.depot_id, p.category_id, 
+        CASE 
+            WHEN p.discount_end_date < CURDATE() THEN NULL 
+            ELSE p.discount_price 
+        END AS discount_price, 
+         u.unit_name, u.unit_std, u.unit_min, pi.image
+        FROM Products p 
+        JOIN Unit u ON p.unit_id = u.unit_id 
+        JOIN ProductImages pi ON p.product_id = pi.product_id 
+        WHERE p.is_active = TRUE 
+        AND p.product_id = %s 
+    """
+
+    product = fetchOne(sql_products, (product_id,), True)
+
+    reviews = fetchAll("SELECT R.rating, DATE_FORMAT(R.review_date, '%b %d, %Y') AS review_date, R.review_text, C.given_name, C.image FROM Reviews R \
+        JOIN Consumer C ON R.user_id = C.user_id WHERE R.depot_id = %s AND R.product_id = %s;", \
+        (session['depot_id'], product_id), True)
+
+    fake_review = fakeReview()
+    for i in range(len(reviews)):
+        fake_review.pop()
+
+    categories = fetchAll("SELECT c.category_name, COUNT(p.product_id) AS item_count FROM Category c LEFT JOIN Products p ON c.category_id = p.category_id GROUP BY c.category_name;", None, True)
+
+    is_reviewed = fetchOne("SELECT review_id FROM Reviews WHERE user_id = %s AND depot_id = %s AND product_id = %s;", \
+        (session['id'], session['depot_id'], product_id))
+    
+    return render_template('shop-detail.html', product=product, categories=categories, depotList=app.depot_list, \
+        categoryList=app.category_list, reviews=reviews, fakeReview=fake_review, is_reviewed=is_reviewed)
+
+
+@app.route('/product/review', methods=['POST'])
+@roleRequired(['Consumer'])
+def productReview():
+    data = request.form.to_dict()
+
     try:
-        product_id = int(request.args.get('product_id'))
-       
-        sql_query = """
-            SELECT 
-                P.product_id, P.name, P.description, P.price, P.stock,
-                C.category_name, U.unit_name, D.location AS depot_location, 
-                PI.image AS primary_image, COALESCE(DS.discount_rate, 0) AS discount_rate 
-            FROM 
-                Products AS P 
-            LEFT JOIN 
-                Category AS C ON P.category_id = C.category_id 
-            LEFT JOIN 
-                Unit AS U ON P.unit_id = U.unit_id 
-            LEFT JOIN 
-                Depots AS D ON P.depot_id = D.depot_id 
-            LEFT JOIN 
-                (SELECT * FROM ProductImages WHERE is_deleted = FALSE AND is_primary = TRUE) AS PI ON P.product_id = PI.product_id 
-            LEFT JOIN 
-                DiscountedProducts DP ON P.product_id = DP.product_id 
-            LEFT JOIN 
-                Discounts DS ON DP.discount_id = DS.discount_id AND DS.status = TRUE 
-            WHERE 
-                P.product_id = %s
-        """
-
-        product = fetchOne(sql_query, (product_id,), True)
-
-        if product:
-            discounted_price = round(product['price'] * (1 - product['discount_rate'] / 100), 2)
-            product['discounted_price'] = discounted_price
-
-            categories = fetchAll("SELECT c.category_name, COUNT(p.product_id) AS item_count FROM Category c LEFT JOIN Products p ON c.category_id = p.category_id GROUP BY c.category_name;", None, True)
-
-            discounted_products = fetchAll("""
-                SELECT 
-                    P.product_id, P.name, P.description, P.price, P.stock, 
-                    C.category_name, U.unit_name, PI.image AS primary_image, 
-                    COALESCE(DS.discount_rate, 0) AS discount_rate 
-                FROM 
-                    Products AS P 
-                LEFT JOIN 
-                    Category AS C ON P.category_id = C.category_id 
-                LEFT JOIN 
-                    Unit AS U ON P.unit_id = U.unit_id 
-                LEFT JOIN 
-                    (SELECT * FROM ProductImages WHERE is_deleted = FALSE AND is_primary = TRUE) AS PI ON P.product_id = PI.product_id 
-                LEFT JOIN 
-                    DiscountedProducts DP ON P.product_id = DP.product_id 
-                LEFT JOIN 
-                    Discounts DS ON DP.discount_id = DS.discount_id AND DS.status = TRUE 
-                WHERE 
-                    DS.status = TRUE
-            """, None, True)
-
-            for dp in discounted_products:
-                dp['discounted_price'] = round(dp['price'] * (1 - dp['discount_rate'] / 100), 2)
-
-            return render_template('shop-detail.html', product=product, categories=categories, discounted_products=discounted_products, reviews=fakeReview())
-        else:
-            print("Product not found.")
-            return render_template('404.html')
+        user_id = fetchOne('SELECT user_id FROM Orders WHERE product_id = %s', (data['product_id'],),True)
+        update_successful = updateSQL("UPDATE Reviews SET rating = %s, review_text = %s WHERE user_id = %s AND product_id = %s AND depot_id = %s;", \
+        (data['rating'], data['review_text'], session['id'], data['product_id'],session['depot_id']))
     except Exception as e:
-        print(f"Error: {e}")
-        return render_template('404.html')
+        # print(e)
+        update_successful = insertSQL("INSERT INTO Reviews (user_id, depot_id, product_id, rating, review_text) VALUES (%s, %s, %s, %s, %s);", \
+        (session['id'], session['depot_id'], data['product_id'], data['rating'],data['review_text']))
+
+    if update_successful:
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
