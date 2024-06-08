@@ -13,6 +13,7 @@ def manageGiftcard():
         SELECT 
             gc.balance,
             p.description,
+            p.name,
             pi.image
         FROM 
             GiftCards gc
@@ -23,7 +24,7 @@ def manageGiftcard():
         WHERE 
             pi.is_primary = TRUE
         GROUP BY 
-            gc.balance, p.description, pi.image;
+            gc.balance, p.description, p.name, pi.image;
     """
     gift_cards = fetchAll(sql_giftcards, None, True)
 
@@ -43,6 +44,7 @@ def manageGiftcard():
         JOIN
             Consumer ON Orders.user_id = Consumer.user_id;
     """
+    print(gift_cards)
     gift_cards_redeem = fetchAll(sql_giftcards_redeem, None, True)
     return render_template('manage-giftcards.html',giftcards=gift_cards,  giftcardsRedeem=gift_cards_redeem)
 

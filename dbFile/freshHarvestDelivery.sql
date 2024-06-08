@@ -103,10 +103,11 @@ CREATE TABLE Orders (
     delivery_date DATE,
     billing_address JSON,
     delivery_address JSON,
+    cart JSON,
     payment_method ENUM('Credit Card', 'Debit Card', 'Account', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     payment_info VARCHAR(20) NOT NULL,
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
+    status ENUM('Pending', 'Cancelled', 'Comfirmed', 'Shipped', 'Delivered', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
     total DECIMAL(10, 2),
     is_freeshiping BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)

@@ -31,7 +31,9 @@ def about():
 def contact():
     if request.method == 'POST':
         data = request.form.to_dict()
-        sendFhdContact(data['name'], data['email'], data['type'], data['msg'])
+
+        if app.send_email:
+            sendFhdContact(data['name'], data['email'], data['type'], data['msg'])
         return {"status": True}, 200
     return render_template('contact.html')
 

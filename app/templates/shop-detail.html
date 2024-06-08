@@ -8,14 +8,16 @@
   {% endwith %}
 {% endblock %}
 
-{% block breadcrumb %}
-  {% with pageName='Shop Detail' %}
-    {% include "components/layout/Breadcrumb1.html" %}
-  {% endwith %}
-{% endblock %}
-
-
 {% block content %}
+<div id="breadcrumb" class="container-fluid page-header py-5">
+    <h1 class="text-center fw-bold text-white display-6">Order Detials</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item fw-bold"><a href="{{ url_for('index') }}">Home</a></li>
+        <li class="breadcrumb-item fw-bold"><a href="{{ url_for('shop') }}">Shop</a></li>
+        <li class="breadcrumb-item fw-bold active text-white">Order Detials</li>
+    </ol>
+</div>
+
 <section id="shop_detail">
     <!-- Single Product Start -->
     <div id="product" class="container-fluid py-5">

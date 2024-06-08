@@ -1,10 +1,10 @@
 from app import app
-from flask import render_template, request, session, redirect
-from dbFile.config import fetchAll, updateSQL,fetchOne
-# User-defined function
-from dbFile.config import updateSQL, insertSQL
-from common import roleRequired, validateProductProfile, getUserProfile
+from flask import render_template, request, session
 
+# User-defined function
+from dbFile.config import fetchAll, updateSQL,fetchOne
+from common import roleRequired, emailOrder
+from emailMethod.method import sendOrderStatus
 
 
 @app.route("/order/history")
@@ -12,7 +12,6 @@ from common import roleRequired, validateProductProfile, getUserProfile
 def orderHistory():
     orders = fetchAll("SELECT order_id, order_date, delivery_date, total, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
     return render_template('order-history.html', orders=orders)
-
 
 
 @app.route("/order/detail/<int:order_id>")
@@ -35,8 +34,29 @@ def orderDetail(order_id):
         return render_template('manage-order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
 
 
+@app.route("/order/del", methods=['POST'])
+@roleRequired(['Consumer'])
+def orderDel():
+    data = request.get_json()
+    update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
+
+    if update_successful:
+        order = emailOrder(data['order_id'])
+        if app.send_email:
+            sendOrderStatus(order['email'], data['order_id'], order['given_name'], order['order_date'], 'Cancelled')
+
+        return {"status": True}, 200
+    else:
+        return {"status": False}, 500
 
 
+@app.route("/order/reorder", methods=['POST'])
+@roleRequired(['Consumer'])
+def reorder():
+    data = request.get_json()
+    consumerCart = fetchOne("SELECT cart FROM Orders WHERE order_id = %s;", (data['order_id'],))
+
+    return {"status": True, 'message': '/cart', 'cart': consumerCart}, 200
 
 
 @app.route("/admin/order/history", methods = ["GET", 'POST'])
@@ -72,19 +92,13 @@ def staffRefund():
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def updateOrderStatus():
     data = request.get_json()
-    order_id = data.get('order_id')
-    new_status  = data.get('status')
-    print(order_id)
-    print(new_status)
-    if not order_id or not new_status:
-        return {"status": False, "error": "Missing order_id or status"}, 400
-    
-    update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (new_status, order_id))
+    order = emailOrder(data['order_id'])
+
+    update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (data['status'], data['order_id']))
 
     if update_successful:
+        if app.send_email:
+            sendOrderStatus(order['email'], data['order_id'], order['given_name'], order['order_date'], data['status'])
         return {"status": True}, 200
     else:
         return {"status": False}, 500
-
-
-
