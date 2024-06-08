@@ -202,3 +202,9 @@ def saveImage(upload_folder, img):
     img.save(filename)
     # Return the name of the saved image
     return image_name
+
+def emailOrder(order_id):
+    return fetchOne("SELECT o.order_date, u.email, c.given_name FROM Orders o \
+        JOIN Users u ON o.user_id = u.user_id \
+        JOIN Consumer c ON u.user_id = c.user_id \
+        WHERE o.order_id = %s",  (order_id,), True)

@@ -1,10 +1,10 @@
 from app import app
-from flask import render_template, request, session, redirect
-from dbFile.config import fetchAll, updateSQL,fetchOne
+from flask import render_template, request, session
+
 # User-defined function
-from dbFile.config import updateSQL, insertSQL
-from common import roleRequired, validateProductProfile, getUserProfile
-from emailMethod.method import sendOrderCancelled
+from dbFile.config import fetchAll, updateSQL,fetchOne
+from common import roleRequired, emailOrder
+from emailMethod.method import sendOrderStatus
 
 
 @app.route("/order/history")
@@ -41,14 +41,9 @@ def orderDel():
     update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
 
     if update_successful:
-        order = fetchOne("SELECT o.order_date, u.email, c.given_name \
-            FROM Orders o \
-            JOIN Users u ON o.user_id = u.user_id \
-            JOIN Consumer c ON u.user_id = c.user_id \
-            WHERE o.order_id = %s",  (data['order_id'],), True)
-
+        order = emailOrder(data['order_id'])
         if app.send_email:
-            sendOrderCancelled(order['email'], data['order_id'], order['given_name'], order['order_date'], 'Cancelled')
+            sendOrderStatus(order['email'], data['order_id'], order['given_name'], order['order_date'], 'Cancelled')
 
         return {"status": True}, 200
     else:
@@ -97,19 +92,13 @@ def staffRefund():
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def updateOrderStatus():
     data = request.get_json()
-    order_id = data.get('order_id')
-    new_status  = data.get('status')
-    print(order_id)
-    print(new_status)
-    if not order_id or not new_status:
-        return {"status": False, "error": "Missing order_id or status"}, 400
-    
-    update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (new_status, order_id))
+    order = emailOrder(data['order_id'])
+
+    update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (data['status'], data['order_id']))
 
     if update_successful:
+        if app.send_email:
+            sendOrderStatus(order['email'], data['order_id'], order['given_name'], order['order_date'], data['status'])
         return {"status": True}, 200
     else:
         return {"status": False}, 500
-
-
-

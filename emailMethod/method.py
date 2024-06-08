@@ -18,8 +18,4 @@ def sendResetPassword(email, temporary_password):
     
 def sendOrderStatus(email, order_id, name, order_date, order_status):
     htmlData = orderStatususHTML(order_id, name, order_date, order_status)
-    sendEmail(htmlData, email, config['order_status']['subject1'], config['order_status']['header'], auth, True)
-
-def sendOrderCancelled(email, order_id, name, order_date, order_status):
-    htmlData = orderStatususHTML(order_id, name, order_date, order_status)
-    sendEmail(htmlData, email, config['order_canceled']['subject'], config['order_canceled']['header'], auth, True)
+    sendEmail(htmlData, email, config['order_status']['subject1'] + ' ' + order_status, config['order_status']['header'], auth, True)

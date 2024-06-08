@@ -180,7 +180,7 @@
                             <th>Delivery Date</th>
                             <th>Total Cost</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th>View</th>
                             <th>Change Status</th>
                         </tr>
                     </thead>
@@ -196,38 +196,48 @@
                             <td>{{order.status}}</td>
                             <td>
                                 <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}" class="btn order-view" role="button" >
-                                    <i class="far fa-eye fa-lg me-3"></i>
+                                    <i class="far fa-list-alt fa-lg"></i>
                                 </a>
                             </td>
                             <td>
-                            <div class="btn-group dropend" data-order-id="{{order.order_id}}">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"  aria-expanded="false">
-                                    Action
-                                </button>
-                                {% if order.status == 'Pending' %}
-                                    <ul class="dropdown-menu" name="payment_status" id="payment_status">                       
-                                        <li><a class="dropdown-item" data-value="Pending" href="#">Pending</a></li>
+                                <div class="btn-group dropstart" role="group" data-order-id="{{order.order_id}}">
+                                    {% if order.status == 'Refunded' %}
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" disabled>
+                                        Change
+                                    </button>
+                                    {% else %}
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Change
+                                    </button>
+                                    {% endif %}
+
+                                    {% if order.status == 'Pending' %}
+                                    <ul class="dropdown-menu payment_status">
+                                        <li><a class="dropdown-item" data-value="Cancelled" href="#">Cancelled</a></li>
                                         <li><a class="dropdown-item" data-value="Comfirmed" href="#">Comfirmed</a></li>
                                         <li><a class="dropdown-item" data-value="Shipped" href="#">Shipped</a></li>
                                         <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
-                                        <li><a class="dropdown-item" data-value="Cancelled" href="#">Cancelled</a></li>
-                                    </ul>
-                                {% elif order.status == 'Comfirmed' %}
-                                    <ul class="dropdown-menu" name="payment_status" id="payment_status">                       
-                                        <li><a class="dropdown-item" data-value="Shipped" href="#">Shipped</a></li>
-                                        <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
-                                        <li><a class="dropdown-item" data-value="Cancelled" href="#">Cancelled</a></li>
-                                    </ul>
-                                {% elif order.status == 'Shipped' %}
-                                    <ul class="dropdown-menu" name="payment_status" id="payment_status">                       
-                                        <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
-                                        <li><a class="dropdown-item" data-value="Cancelled" href="#">Cancelled</a></li>
-                                    </ul>
-                                {% elif order.status == 'Delivered' %}
-                                    <ul class="dropdown-menu" name="payment_status" id="payment_status">                       
-                                        <li><a class="dropdown-item" data-value="Cancelled" href="#">Cancelled</a></li>
-                                    </ul>
-                                {% endif %}
+                                        <li><a class="dropdown-item" data-value="Refunded" href="#">Refunded</a></li>
+                                    </ul>                     
+                                    {% elif order.status == 'Cancelled' %}
+                                        <ul class="dropdown-menu payment_status">                       
+                                        </ul>
+                                        {% elif order.status == 'Comfirmed' %}
+                                        <ul class="dropdown-menu payment_status">                       
+                                            <li><a class="dropdown-item" data-value="Shipped" href="#">Shipped</a></li>
+                                            <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
+                                            <li><a class="dropdown-item" data-value="Refunded" href="#">Refunded</a></li>
+                                        </ul>
+                                    {% elif order.status == 'Shipped' %}
+                                        <ul class="dropdown-menu payment_status">                       
+                                            <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
+                                            <li><a class="dropdown-item" data-value="Refunded" href="#">Refunded</a></li>
+                                        </ul>
+                                    {% elif order.status == 'Delivered' %}
+                                        <ul class="dropdown-menu payment_status">                       
+                                            <li><a class="dropdown-item" data-value="Refunded" href="#">Refunded</a></li>
+                                        </ul>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
@@ -238,28 +248,6 @@
             </div>
         </div>
     </div>
-
-<!-- updateStatusSuccessModal -->
-<div class="modal fade" id="updateStatusSuccessModal" tabindex="-1" aria-labelledby="updateStatusSuccessModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title mx-auto" id="updateStatusSuccessModalLabel">
-                    <i class="fas fa-check" style="color: #fff;padding-right:.4rem;"></i>
-                    Update Successfully
-                </h5>
-                <i data-bs-dismiss="modal" class="success-close fas fa-times fa-lg"></i>
-            </div>
-            <div class="modal-body text-body-secondary">
-                Order Status has been successfully updated
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
     <!-- pagination -->
     <nav aria-label="manageProduct">
@@ -281,7 +269,18 @@
         </ul>
     </nav>
 
+    <!-- updateProductSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'updateStatusSuccessModal',
+        bg_color = '#81C408',
+        title = 'Update Successfully',
+        msg = 'Order Status has been successfully updated'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
 
+    {% include "components/elements/loadingModal.html" %}
 </section>
 {% endblock %}
 
@@ -331,15 +330,19 @@
 
   });
 
+  document.getElementById('updateStatusSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
 // update status modal
 document.addEventListener('DOMContentLoaded', function () {
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     // Event listener for status update dropdown items
-    document.querySelectorAll('#payment_status .dropdown-item').forEach(function (item) {
+    document.querySelectorAll('.payment_status .dropdown-item').forEach(function (item) {
         item.addEventListener('click', function (event) {
             event.preventDefault();
             const orderId = this.closest('.btn-group').getAttribute('data-order-id'); 
             const newStatus = this.getAttribute('data-value');
 
+            loadingModal.show();
             fetch('/admin/order/status/', {
                 method: 'POST',
                 headers: {
@@ -354,10 +357,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-                if (data.status === 'success') {
+                if (data.status == 1) {
+                    loadingModal.hide();
                     // Show updateStatusSuccess modal if update is successful
                     new bootstrap.Modal(document.getElementById('updateStatusSuccessModal')).show();
                 } else {
+                    loadingModal.hide();
                     alert("Failed to update status");
                 }
             })
