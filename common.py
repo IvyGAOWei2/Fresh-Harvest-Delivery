@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr, Field, ValidationError
 from dbFile.config import fetchOne
 from functools import wraps
 from flask import session, redirect, url_for, abort
-
+from configparser import RawConfigParser
 
 # Model for user login
 class Login(BaseModel):
@@ -208,3 +208,16 @@ def emailOrder(order_id):
         JOIN Users u ON o.user_id = u.user_id \
         JOIN Consumer c ON u.user_id = c.user_id \
         WHERE o.order_id = %s",  (order_id,), True)
+
+def newShipping(new):
+    try:
+        config = RawConfigParser()
+        config.read('app/config.ini')
+        config.set('base', 'shipping', new)
+
+        with open('app/config.ini', 'w') as configfile:
+            config.write(configfile)
+    except:
+        return False
+    else:
+        return True
