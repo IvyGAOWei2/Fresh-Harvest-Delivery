@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, session
+from flask import jsonify, render_template, request, session
 import os
 
 # User-defined function
@@ -26,7 +26,6 @@ def saveImage(img):
     # Return the name of the saved image
     return 'upload/' + image_name
 
-invoice = fetchAll("SELECT * from Invoices;",None ,True)
 
 @app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
@@ -37,8 +36,6 @@ def adminProfiles():
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
             JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
-
-        print(111) 
     else:
         if session.get('type') in ['Local_Manager']:
             result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
@@ -48,7 +45,7 @@ def adminProfiles():
                 JOIN Users ON Employees.user_id = Users.user_id \
                 WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
             
-    
+    invoice = fetchAll("SELECT * from Invoices;",None ,True)
 
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type,invoice=invoice )
 
@@ -65,11 +62,9 @@ def profileSearch():
     # if click manage consumer in the sidebar
     if profile_type == "Consumer":
         if depot_id == 'all' or depot_id == 6:
-            print(222111111111111)
             result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
                 JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',),True)
         else:
-            print(111111111111111)
             result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
                 JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%', depot_id,),True)
     # if click manage employee in the sidebar
@@ -79,12 +74,10 @@ def profileSearch():
                 result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
                     JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
             else:
-                print(89898989898)
                 result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
                     JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
         else:
             if depot_id == 'all' or depot_id ==  6:
-                print(787878787878787)
                 result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
                     JOIN Users ON Employees.user_id = Users.user_id \
                     WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
@@ -93,15 +86,13 @@ def profileSearch():
                     JOIN Users ON Employees.user_id = Users.user_id \
                     WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
     
+    invoice = fetchAll("SELECT * from Invoices;",None ,True)
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list,type=type,invoice=invoice)
 
 
 @app.route("/admin/profile/update", methods = ["POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfileUpdate():
-    # need password futcion
-
-
     if request.form.get('profile_type') == 'Consumer':
         table_name = "Consumer"
         verified_data = validateConsumerProfile({key: value for key, value in dict(request.form).items() if value})
@@ -162,7 +153,6 @@ def adminProfileUpdate():
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminProfileDel():
     data = request.get_json()
-    print(data)
     update_successful = updateSQL("UPDATE Users SET is_deleted = TRUE WHERE user_id = %s;", (data['user_id'],))
 
     if update_successful:
@@ -201,18 +191,18 @@ def adminProfileAdd():
 @app.route("/admin/invoice",methods = ["POST"])
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminInvoice():
-    type = session['type']
     invoice_id = request.form.get("invoice_id")
     is_paid = request.form.get("is_paid")
-    print(is_paid,invoice_id,8888888888888)
+   
     if is_paid == "0":
-        print(89898989899898)
-        updateSQL("update Invoices set is_paid=1 where invoice_id=%s;",(invoice_id,))
+        success = updateSQL("update Invoices set is_paid=1 where invoice_id=%s;",(invoice_id,))
+        success = 1
     elif is_paid == "1":
-        print(86767)
-        updateSQL("update Invoices set is_paid=0 where invoice_id=%s;",(invoice_id,))
+        success = updateSQL("update Invoices set is_paid=0 where invoice_id=%s;",(invoice_id,))
+        success = 1
 
-    result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
-    invoice = fetchAll("SELECT * from Invoices;",None ,True)
-    return render_template('admin_profile_list.html',member_list=result,profile_type="Consumer",invoice=invoice,depotList=app.depot_list,type=type)
+    if success:
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'fail'})
+    

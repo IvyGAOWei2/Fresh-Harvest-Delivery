@@ -420,6 +420,17 @@
     {% include "components/elements/updateSuccess.html" %}
   {% endwith %}
 
+  <!-- updateInvoiceSuccessModal -->
+  {% with
+    btn_show = 0,
+    modal_id = 'updateInvoiceSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Updated Successfully',
+    msg = 'Invoice status has been successfully updated'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
+
   <!-- addProfileSuccessModal -->
   {% with
     btn_show = 0,

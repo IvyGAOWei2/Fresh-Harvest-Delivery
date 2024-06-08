@@ -187,4 +187,35 @@
         })
     });
   </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.invoice-status').forEach(function (button) {
+      const formId = button.getAttribute('form');
+      const form = document.getElementById(formId);
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止默认表单提交
+
+        const formData = new FormData(form);
+        fetch(form.action, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            // 显示成功弹窗
+            new bootstrap.Modal(document.getElementById('updateInvoiceSuccessModal')).show();
+            setTimeout(() => {
+              location.reload(); // 延迟刷新页面以确保用户看到弹窗
+            }, 2000); // 2秒后刷新页面
+          } else {
+            alert('Failed to update. Please try again.');
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+  });
+</script>
 {% endblock %}
