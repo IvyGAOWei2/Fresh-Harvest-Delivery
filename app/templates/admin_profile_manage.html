@@ -10,9 +10,9 @@
         <th class="text-secondary-emphasis" scope="col">Phone</th>
         <th class="text-secondary-emphasis" scope="col">Depot</th>
         <th class="text-secondary-emphasis" scope="col">Action</th>
-        <!-- {% if profile_type == "Consumer" %}
-        <th class="text-secondary-emphasis" scope="col">Payment history</th>
-        {% endif %} -->
+        {% if profile_type == "Consumer" %}
+        <th class="text-secondary-emphasis" scope="col">Invoice</th>
+        {% endif %}
       </tr>
     </thead>
     
@@ -35,12 +35,17 @@
             <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
               <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
             </a>
-          </td>          
-          <!-- <td>
-            <a class="btn consumer_payment" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumerPayment{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="View payment history">
+          </td>   
+          {% if member.user_type == "Business" %}      
+          <form id="viewPointsForm{{  member.user_id  }}" method="POST" action="/admin/invoice" class="needs-validation" novalidate>
+            <input type="text" class="form-control d-none" name="user_id" value="{{ member.user_id  }}"/>     
+          <td>
+            <a class="btn consumer_invoice" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumerInvoice{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Invoice">
             <i class="fas fa-list fa-lg me-3 fa-fw"></i>
             </a>
-          </td> -->
+          </td>
+         </form>
+          {% endif %}
         {% elif profile_type != 'Consumer' %}   
           <td>           
               <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Edit employee">
@@ -215,20 +220,73 @@
     </div>
 
 
-    <!-- consumer payment history-->
-    <!-- <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerPayment{{ member.user_id }}" aria-labelledby="consumerPaymentLabel">
+    <!-- consumer invoice-->
+    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerInvoice{{ member.user_id }}" aria-labelledby="consumerInvoceLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="consumerPaymentLabel">Consumer Payment History</h5>
+          <h5 class="offcanvas-title" id="consumerPaymentLabel">Consumer Invoice</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <form id="consumerPaymentForm{{ member.user_id }}" method="POST" action="/admin/payment" class="needs-validation" novalidate>
+        <form id="consumerInvoiceForm{{ member.user_id }}" method="POST" action="/admin/invoice">
+          <div class="row">
+            <div class="col-md-2 mb-3">
+              <label class="form-label" >Invoice ID</label>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label" >Due date</label>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label" >Toal</label>
+            </div>
+            <div class="col-md-2 mb-3">
+              <label class="form-label" >Status</label>
+            </div>
+            <div class="col-md-2 mb-3">
+              <label class="form-label" >Action</label>
+            </div>
+          </div>
+          {% for item in invoice %}
+          {% if item.user_id == member.user_id %}
+                <div class="row">
+                <div class="col-md-2 mb-3">
+                  <input type="text" class="form-control" value="{{item.invoice_id}}" disabled>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <input type="text" class="form-control" value="{{item.due_date}}" disabled>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <input type="text" class="form-control" value="{{item.total}}" disabled>
+                </div>
+                
+                <!-- <div class="col-md-2 mb-3">
+                  <input type="text" class="form-control" value={% if item.is_paid == 0 %}"unpaid" {% else %}"paid" {% endif %} disabled>
+                </div> -->
 
+                {% if item.is_paid == 0 %}
+                <div class="col-md-2 mb-3">
+                  <input type="text" class="form-control" value="unpaid" disabled>
+                </div>
+                {% else %}
+                <div class="col-md-2 mb-3">
+                  <input type="text" class="form-control" value="paid" disabled>
+                </div>
+                {% endif %} 
+            
+                
+                <div class="col-md-2 mb-3text-center">
+                  <input type="hidden" class="form-control" name="invoice_id" value="{{item.invoice_id}}">
+                  <input type="hidden" class="form-control" name="is_paid" value="{{item.is_paid}}">
+                  <button type="submit" class="btn btn-primary invoice-status" form="consumerInvoiceForm{{ member.user_id }}">{% if item.is_paid == 0 %}Paid{% else %} Unpaid{%endif%} </button>
+                </div>
+               
+              </div>
+          {% endif %}
+          {% endfor %}
         </form>
       </div>
-    </div> -->
+    </div>
 
 
     <!-- add employee modal-->

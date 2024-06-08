@@ -26,6 +26,8 @@ def saveImage(img):
     # Return the name of the saved image
     return 'upload/' + image_name
 
+invoice = fetchAll("SELECT * from Invoices;",None ,True)
+
 @app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfiles():
@@ -35,6 +37,8 @@ def adminProfiles():
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
             JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
+
+        print(111) 
     else:
         if session.get('type') in ['Local_Manager']:
             result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
@@ -43,8 +47,10 @@ def adminProfiles():
             result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
                 JOIN Users ON Employees.user_id = Users.user_id \
                 WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
+            
+    
 
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type,invoice=invoice )
 
 
 @app.route('/admin/profile/search',methods = ["GET","POST"])
@@ -87,7 +93,7 @@ def profileSearch():
                     JOIN Users ON Employees.user_id = Users.user_id \
                     WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
     
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list,type=type)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list,type=type,invoice=invoice)
 
 
 @app.route("/admin/profile/update", methods = ["POST"])
@@ -190,3 +196,23 @@ def adminProfileAdd():
             return {"status": False}, 500
         else:
             return {"status": True}, 200
+        
+
+@app.route("/admin/invoice",methods = ["POST"])
+@roleRequired(['Local_Manager', 'National_Manager'])
+def adminInvoice():
+    type = session['type']
+    invoice_id = request.form.get("invoice_id")
+    is_paid = request.form.get("is_paid")
+    print(is_paid,invoice_id,8888888888888)
+    if is_paid == "0":
+        print(89898989899898)
+        updateSQL("update Invoices set is_paid=1 where invoice_id=%s;",(invoice_id,))
+    elif is_paid == "1":
+        print(86767)
+        updateSQL("update Invoices set is_paid=0 where invoice_id=%s;",(invoice_id,))
+
+    result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
+    invoice = fetchAll("SELECT * from Invoices;",None ,True)
+    return render_template('admin_profile_list.html',member_list=result,profile_type="Consumer",invoice=invoice,depotList=app.depot_list,type=type)
