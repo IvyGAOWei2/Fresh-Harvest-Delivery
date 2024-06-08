@@ -317,7 +317,7 @@
 
 .page-header {
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../images/bg2.jpg);
+    background: linear-gradient(rgba(126, 126, 126, 0.4), rgba(126, 126, 126, 0.4)), url(../images/bg2.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
