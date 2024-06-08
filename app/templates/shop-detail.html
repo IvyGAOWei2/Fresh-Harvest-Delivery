@@ -93,11 +93,8 @@
                                 <div class="d-flex justify-content-center" style="margin-left: -1.8rem;">or</div>
                                 <div class="d-flex justify-content-center" style="margin-left: -1.8rem; margin-top: 2rem;">
                                
-                                <a href="#" class="btn-add-to-cart btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
-                                data-id="{{ product.product_id }}"
-                                data-name="{{ product.name }}"
-                                data-price="{{ product.price }}"
-                                data-img="{{ url_for('static', filename='images/product/' + product.primary_image) }}" data-unit="{% if product.unit_name == 'Weight_kg' %}kg{% elif product.unit_name == 'Weight_g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}">
+                                <a href="/consumer/box" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+                                >
                                     <i class="fa fa-calendar-plus me-2 text-primary"></i> Subscribe
                                 </a>
                             </div>

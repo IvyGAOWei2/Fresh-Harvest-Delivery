@@ -229,7 +229,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <form id="consumerInvoiceForm{{ member.user_id }}" method="POST" action="/admin/invoice">
+        
           <div class="row">
             <div class="col-md-2 mb-3">
               <label class="form-label" >Invoice ID</label>
@@ -247,8 +247,10 @@
               <label class="form-label" >Action</label>
             </div>
           </div>
+          
           {% for item in invoice %}
           {% if item.user_id == member.user_id %}
+          <form id="consumerInvoiceForm{{ item.invoice_id }}" method="POST" action="/admin/invoice">
                 <div class="row">
                 <div class="col-md-2 mb-3">
                   <input type="text" class="form-control" value="{{item.invoice_id}}" disabled>
@@ -259,10 +261,6 @@
                 <div class="col-md-3 mb-3">
                   <input type="text" class="form-control" value="{{item.total}}" disabled>
                 </div>
-                
-                <!-- <div class="col-md-2 mb-3">
-                  <input type="text" class="form-control" value={% if item.is_paid == 0 %}"unpaid" {% else %}"paid" {% endif %} disabled>
-                </div> -->
 
                 {% if item.is_paid == 0 %}
                 <div class="col-md-2 mb-3">
@@ -273,18 +271,20 @@
                   <input type="text" class="form-control" value="paid" disabled>
                 </div>
                 {% endif %} 
-            
                 
+               
                 <div class="col-md-2 mb-3text-center">
                   <input type="hidden" class="form-control" name="invoice_id" value="{{item.invoice_id}}">
                   <input type="hidden" class="form-control" name="is_paid" value="{{item.is_paid}}">
-                  <button type="submit" class="btn btn-primary invoice-status" form="consumerInvoiceForm{{ member.user_id }}">{% if item.is_paid == 0 %}Paid{% else %} Unpaid{%endif%} </button>
+                  
+                  <button type="submit" class="btn btn-primary invoice-status" data-user-id="{{member.user_id }}" form="consumerInvoiceForm{{ item.invoice_id }}"> {% if item.is_paid == 0 %}Paid{% else %} Unpaid{%endif%} </button>
                 </div>
                
               </div>
+          </form>
           {% endif %}
           {% endfor %}
-        </form>
+
       </div>
     </div>
 
