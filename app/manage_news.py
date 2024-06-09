@@ -9,17 +9,11 @@ from common import roleRequired, saveImage
 @app.route("/admin/post/news")
 @roleRequired(['Local_Manager', 'National_Manager'])
 def manageNews():
-<<<<<<< HEAD
-    type=session['type']
-    news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
-    return render_template('manage_news.html', news=news,type=type)
-=======
     if session['depot_id'] == 6:
         news = fetchAll("SELECT * FROM News WHERE is_deleted = False;", None, True)
     else:
         news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
     return render_template('manage_news.html', news=news, depotList=app.depot_list,)
->>>>>>> shawn
 
 @app.route("/news/add", methods=['POST'])
 @roleRequired(['Local_Manager', 'National_Manager'])
