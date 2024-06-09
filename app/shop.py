@@ -107,17 +107,24 @@ def shopDetail(product_id):
     product = fetchOne(sql_product, (product_id,), True)
     related_products = ordinaryProducts(app.category_list[product['category_id']-1]['category_name'], '0')
 
+    if 'depot_id' not in session or session['depot_id'] == 6:
+        depot_id = 1
+    else:
+        depot_id = session['depot_id']
+
     reviews = fetchAll("SELECT R.rating, DATE_FORMAT(R.review_date, '%b %d, %Y') AS review_date, R.review_text, C.given_name, C.image FROM Reviews R \
         JOIN Consumer C ON R.user_id = C.user_id WHERE R.depot_id = %s AND R.product_id = %s;", \
-        (session['depot_id'], product_id), True)
+        (depot_id, product_id), True)
 
     fake_review = fakeReview()
     for i in range(len(reviews)):
         fake_review.pop()
 
-    is_reviewed = fetchOne("SELECT review_id FROM Reviews WHERE user_id = %s AND depot_id = %s AND product_id = %s;", \
-        (session['id'], session['depot_id'], product_id))
-    
+    if 'id' in session:
+        is_reviewed = fetchOne("SELECT review_id FROM Reviews WHERE user_id = %s AND depot_id = %s AND product_id = %s;", (session['id'], depot_id, product_id))
+    else:
+        is_reviewed = False
+
     return render_template('shop-detail.html', product=product, categories=categoriesByCount(), depotList=app.depot_list, \
         categoryList=app.category_list, reviews=reviews, fakeReview=fake_review, is_reviewed=is_reviewed, \
         discounted_items=discountedProducts(), relatedProducts=related_products)
