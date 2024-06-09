@@ -20,7 +20,7 @@ def manageNews():
 def addNews():
     try:
         data = dict(request.form)
-        image_name = saveImage(app.config['UPLOAD_FOLDER'], request.files['image'])
+        image_name = '/upload/' + saveImage(app.config['UPLOAD_FOLDER'], request.files['image'])
 
         add_successful = insertSQL("INSERT INTO News (title, subtitle, content, date, image, depot_id) VALUES (%s,%s,%s,%s,%s,%s);", \
             (data['title'], data['subtitle'], data['content'], data['date'], image_name, data['depot_id']))
@@ -48,7 +48,7 @@ def updateNews():
 
         image = request.files['image']
         if image.filename:
-            image_name = saveImage(app.config['UPLOAD_FOLDER'], image)
+            image_name = '/upload/' + saveImage(app.config['UPLOAD_FOLDER'], image)
             update_successful = updateSQL("UPDATE News SET image = %s WHERE news_id = %s", (image_name, news_id))
 
         return {"status": bool(update_successful)}, 200 if update_successful else 500

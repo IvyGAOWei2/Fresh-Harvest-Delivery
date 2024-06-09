@@ -77,7 +77,7 @@
       </div>
       <p></p>
       <div class="col-12 text-center">
-        <button type="submit" class="btn custom-btn news-add">Post</button>
+        <button type="submit" class="btn custom-btn news-add">Post News</button>
       </div>  
       </form>
     </div>
@@ -132,18 +132,18 @@
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <form id="updateNewsForm{{newz.news_id}}" class="needs-validation" novalidate>
+    <form id="updateNewsForm{{newz.news_id}}" class="row needs-validation" novalidate>
         <input type="text" class="form-control d-none" name="news_id" value="{{ newz.news_id }}"/>
 
         <div class="col-md-12 mb-3">
-          <div class="card shadow-sm" style="width: 8vw;">
+          <div class="card shadow-sm mx-auto" style="width: 16vw;">
             <label for="update_img_{{ newz.news_id }}">
-                <img src="{{ url_for('static', filename='images/upload/' + newz.image) }}" class="card-img-top" id="imagePreview{{ newz.news_id }}" data-bs-toggle="tooltip" title="Update image">
+                <img src="{{ url_for('static', filename='images/' + newz.image) }}" class="card-img-top" id="imagePreview{{ newz.news_id }}" data-bs-toggle="tooltip" title="Update image">
             </label>
             <input class="form-control" type="file" name="image" id="update_img_{{ newz.news_id }}"
               style="display: none;" accept="image/*" onchange="previewImage(event, '{{ newz.news_id }}')"> 
           </div>
-        </div> `
+        </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="form3Example3c">Title <sup>*</sup></label>
           <input type="text" maxlength="50" class="form-control" id="update_title" name="title" value="{{newz.title}}" pattern="^[a-zA-Z]+$" required/>     
@@ -183,7 +183,7 @@
         </div>
         <p></p>
       <div class="col text-center">
-      <button type="submit" class="btn btn-secondary news-update" data-news-id="{{newz.news_id}}">Update</button>
+      <button type="submit" class="btn custom-btn news-update" data-news-id="{{newz.news_id}}">Update</button>
       </div>
     </form>
   </div>
