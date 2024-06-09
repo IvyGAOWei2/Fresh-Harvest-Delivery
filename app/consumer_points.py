@@ -40,51 +40,6 @@ def giftcardRedeem():
         return {"status": False, 'message': 'The gift card code is incorrect or has already been used'}, 500
     
 
-@app.route("/manage/points", methods=['GET', 'POST'])
-@roleRequired(['Local_Manager', 'National_Manager'])
-def managePoints():
-    type = session['type']
-    points_list = fetchAll("""WITH LatestPoints AS 
-             (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-            SELECT u.given_name,u.family_name,u.depot_id,
-                Depots.location,           
-                p.*  
-            FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
-            JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
-
-    return render_template('manage_points.html', type=type, points_list=points_list)
 
 
-@app.route("/manage/points/details", methods=['POST'])
-@roleRequired(['Local_Manager', 'National_Manager'])
-def managePointsDetails():
-    type = session['type']
-    user_id = request.form.get('user_id')
-    point_balance = request.form.get('point_balance')
-    action = request.form.get('action')
-    points_list = fetchAll("""WITH LatestPoints AS 
-             (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-            SELECT u.given_name,u.family_name,u.depot_id,
-                Depots.location,           
-                p.*  
-            FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
-            JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
-    
-    if action == 'view_details':
-        user_details = fetchAll("SELECT * FROM ConsumerPoints WHERE user_id = %s", (user_id,), withDescription=False)
-        
-        return render_template('manage_points.html', type=type, user_details=user_details,show_modal=True, points_list=points_list)
-    
-    elif action == 'update_points':
-        point_variation = float(request.form.get('point_variation'))
-        new_points = float(point_balance) + point_variation
-        current_date = datetime.now().date()
-        insertSQL("insert into ConsumerPoints(point_id, user_id,point_type,point_variation,point_balance,point_date) values(default,%s,'Manager action',%s,%s,%s)", (user_id,point_variation,new_points,current_date))
-        
-        return render_template('manage_points.html', type=type, points_list=points_list)
 
-
-   
-    
