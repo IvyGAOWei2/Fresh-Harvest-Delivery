@@ -9,8 +9,11 @@ from common import roleRequired, saveImage
 @app.route("/admin/post/news")
 @roleRequired(['Local_Manager', 'National_Manager'])
 def manageNews():
-    news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
-    return render_template('manage_news.html', news=news)
+    if session['depot_id'] == 6:
+        news = fetchAll("SELECT * FROM News WHERE is_deleted = False;", None, True)
+    else:
+        news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
+    return render_template('manage_news.html', news=news, depotList=app.depot_list,)
 
 @app.route("/news/add", methods=['POST'])
 @roleRequired(['Local_Manager', 'National_Manager'])
@@ -20,7 +23,7 @@ def addNews():
         image_name = saveImage(app.config['UPLOAD_FOLDER'], request.files['image'])
 
         add_successful = insertSQL("INSERT INTO News (title, subtitle, content, date, image, depot_id) VALUES (%s,%s,%s,%s,%s,%s);", \
-            (data['title'], data['subtitle'], data['content'], data['date'], image_name, session['depot_id']))
+            (data['title'], data['subtitle'], data['content'], data['date'], image_name, data['depot_id']))
         return {"status": bool(add_successful)}, 200 if add_successful else 500
     except:
         return {"status": False}, 500
