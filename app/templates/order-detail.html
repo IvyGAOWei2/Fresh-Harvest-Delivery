@@ -118,17 +118,19 @@
                                 </tbody>
                             </table>
                             {% endif %}
-                            <table class="table">
-                                <tfoot>
+                            <table class="table row" style="padding-left: 50rem;">
                                     <tr>
-                                        <td colspan="5" class="text-end">Shipping</td>
-                                        <td class="shipping">${{shipping}}</td>
+                                        <td colspan="5">Products Cost</td>
+                                        <td class="shipping">${{ order.total }}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5" class="text-end"><strong>Total</strong></td>
-                                        <td class="total">${{order.total + shipping}}</td>
+                                        <td colspan="5">Shipping</td>
+                                        <td class="shipping">${{ shipping }}</td>
                                     </tr>
-                                </tfoot>
+                                    <tr>
+                                        <td colspan="5"><strong>Total Cost</strong></td>
+                                        <td class="total">${{ order.total + shipping }}</td>
+                                    </tr>
                             </table>
 
                         </div>

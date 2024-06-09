@@ -10,7 +10,7 @@ from emailMethod.method import sendOrderStatus
 @app.route("/order/history")
 @roleRequired(['Consumer'])
 def orderHistory():
-    orders = fetchAll("SELECT order_id, order_date, delivery_date, total, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
+    orders = fetchAll("SELECT order_id, order_date, delivery_date, total, shipping_fee, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
     return render_template('order-history.html', orders=orders)
 
 
@@ -27,7 +27,7 @@ def orderDetail(order_id):
 
     giftcards = fetchAll('SELECT gc.*, pi.image FROM GiftCards gc JOIN ProductImages pi ON \
         gc.product_id = pi.product_id WHERE gc.order_id = %s;', (order_id,),True)
-    print(giftcards)
+    # print(giftcards)
     if session['type'] == 'Consumer':
         return render_template('order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
     else:
@@ -67,14 +67,15 @@ def staffOrderHistory():
             Orders.order_id, 
             Orders.order_date, 
             Orders.delivery_date, 
-            Orders.total, 
+            Orders.total,
+            Orders.shipping_fee,
             Orders.status,
             CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name
         FROM 
             Orders
         JOIN 
             Consumer ON Orders.user_id = Consumer.user_id;
-"""
+    """
     orders = fetchAll(sql_orders, None, True)
     return render_template('manage-order-history.html', orders=orders)
 

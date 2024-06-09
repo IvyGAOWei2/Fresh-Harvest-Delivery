@@ -73,7 +73,7 @@
                             <td>{{order.order_id}}</td>
                             <td>{{order.order_date}}</td>
                             <td>{{order.delivery_date}}</td>
-                            <td>{{order.total}}</td>
+                            <td>{{order.total + order.shipping_fee}}</td>
                             <td>{{order.status}}</td>
                             <td>
                                 <a data-bs-toggle="oh"  href="{{ url_for('orderDetail', order_id = order.order_id ) }}"   role="button"   class="order-view" role="button" title="Order Details">

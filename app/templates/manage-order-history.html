@@ -192,7 +192,7 @@
                             <td>{{order.full_name}}</td>
                             <td>{{order.order_date}}</td>
                             <td>{{order.delivery_date}}</td>
-                            <td>{{order.total}}</td>
+                            <td>{{order.total + order.shipping_fee}}</td>
                             <td>{{order.status}}</td>
                             <td>
                                 <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}" class="btn order-view" role="button" >

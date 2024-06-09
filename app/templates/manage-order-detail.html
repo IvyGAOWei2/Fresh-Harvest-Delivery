@@ -129,20 +129,20 @@
                     <div class="px-4 py-1">
                         <div class="d-flex justify-content-between mb-2">
                             <p class="my-0 me-4"> <span>Subtotal:</span></p>
-                            <p class="my-0" id="subtotal">$0.00</p>
+                            <p class="my-0" id="subtotal">${{ order.total }}</p>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <p class="mb-0 me-4"><span> Shipping:</span></p>
-                            <p class="mb-0" id="shippingCost">$0.00</p>
+                            <p class="mb-0" id="shippingCost">${{ shipping }}</p>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <p class="mb-0 me-4"><span>GST:</span></p>
-                            <p class="mb-0" id="GST">$0.00</p>
+                            <p class="mb-0" id="GST">${{ (order.total|float) * 0.15 }}</p>
                         </div>
                     </div>
                     <div class="py-3 mb-4 border-top border-bottom d-flex justify-content-between">
                         <h6 class="mb-0 ps-4 me-4">Total</h6>
-                        <p class="mb-0 pe-4" id="final-total">$10.00</p> 
+                        <p class="mb-0 pe-4" id="final-total">${{ order.total + shipping }}</p> 
                 </div>
                     
             </div>

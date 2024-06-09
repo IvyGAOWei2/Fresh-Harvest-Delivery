@@ -21,7 +21,7 @@
       <h2>Post News</h2>
     </div>
     <div class="card-body">
-      <form id="addNewsForm1" class="needs-validation" novalidate>
+      <form id="addNewsForm" class="needs-validation" novalidate>
       <div class="container mt-5">
         <div class="row">
             <!-- Left side input fields -->
@@ -40,22 +40,24 @@
                     <label for="date" class="form-label">Post date</label>
                     <input type="date" class="form-control" name="date" id="post_date" required>
                 </div>
-                {% if type == 'National_Manager' %}
+
                 <div class="mb-3">
-                  <label class="form-label">Depot</label>
-                  <div class="d-flex align-items-center">
-                    <select class="form-control" name="depot_id" id="depot_id" required>
-                      <option selected value="">Please select your city</option>
-                      <option value="1">Christchurch</option>
-                      <option value="2">Invercargill</option>
-                      <option value="3">Wellington</option>
-                      <option value="4">Hamilton</option>
-                      <option value="5">Auckland</option>
-                      <option value="6">NZ</option>
-                    </select>
-                  </div>
+                  <label class="form-label" for="depot_id">Depot<sup>*</sup></label>
+                  <select class="form-control" id="updateDepot" name="depot_id" required>
+                    {% if session.depot_id != 6 %}
+                      <option value="{{session.depot_id}}" selected>
+                        {{depotList[session.depot_id -1].location}}
+                      </option>
+                    {% else %}
+                      {% for depot in depotList %}
+                      <option value="{{depot.depot_id}}" {% if session.depot_id  == depot.depot_id %}selected{% endif %} required>
+                        {{depot.location}}
+                      </option>
+                      {% endfor %}
+                    {% endif %}
+                  </select>
                 </div>
-                {% endif %}
+
             </div>
             <!-- Right side image display -->
             <div class="col-md-6 d-flex justify-content-center">
@@ -70,14 +72,6 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="col-md-2 d-flex align-items-center">
-              <div class="card shadow-sm img-container">
-                  <label for="contentimg" class="d-block w-100 text-center">Content image
-                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview2" alt="Cover Image" required>
-                  </label>
-                  <input class="form-control" type="file" name="contentimg" id="contentimg" style="display: none;" accept="image/*">
-              </div>
-            </div> -->
         </div>
         <div class="row">
             <label for="content" class="form-label">Content</label>
@@ -86,7 +80,7 @@
       </div>
       <p></p>
       <div class="col-12 text-center">
-        <button type="submit" class="btn custom-btn news-add"  data-news-id="1">Post</button>
+        <button type="submit" class="btn custom-btn news-add">Post News</button>
       </div>  
       </form>
     </div>
@@ -104,6 +98,7 @@
               <th scope="col">Title</th>
               <th scope="col">Subtitle</th>
               <th scope="col">Post date</th>
+              <th scope="col">Depot</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
@@ -114,6 +109,7 @@
               <td>{{newz.title}}</td>
               <td>{{newz.subtitle}}</td>
               <td>{{newz.date}}</td>
+              <td>{{depotList[newz.depot_id -1].location}}</td>
               <td>
               <a class="btn" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateNews{{newz.news_id}}" data-news-id="{{newz.news_id}}" data-bs-toggle="tooltip" title="Update news">
                   <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
@@ -127,7 +123,7 @@
           </tbody>
       </table>
   </div>
-</section>
+
 
 {% for newz in news %}
 <!-- update news modal-->
@@ -139,18 +135,18 @@
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <form id="updateNewsForm{{newz.news_id}}" class="needs-validation" novalidate>
-        <input type="text" class="form-control d-none" name="news_id" value="{{ newz.news_id }}"/>  
+    <form id="updateNewsForm{{newz.news_id}}" class="row needs-validation" novalidate>
+        <input type="text" class="form-control d-none" name="news_id" value="{{ newz.news_id }}"/>
 
         <div class="col-md-12 mb-3">
-          <div class="card shadow-sm" style="width: 8vw;">
+          <div class="card shadow-sm mx-auto" style="width: 16vw;">
             <label for="update_img_{{ newz.news_id }}">
-                <img src="{{ url_for('static', filename='images/upload/' + newz.image) }}" class="card-img-top" id="imagePreview{{ newz.news_id }}" data-bs-toggle="tooltip" title="Update image">
+                <img src="{{ url_for('static', filename='images/' + newz.image) }}" class="card-img-top" id="imagePreview{{ newz.news_id }}" data-bs-toggle="tooltip" title="Update image">
             </label>
             <input class="form-control" type="file" name="image" id="update_img_{{ newz.news_id }}"
               style="display: none;" accept="image/*" onchange="previewImage(event, '{{ newz.news_id }}')"> 
           </div>
-        </div> `
+        </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="form3Example3c">Title <sup>*</sup></label>
           <input type="text" maxlength="50" class="form-control" id="update_title" name="title" value="{{newz.title}}" pattern="^[a-zA-Z]+$" required/>     
@@ -164,7 +160,25 @@
         <div class="col-md-6 mb-3">
           <label class="form-label" for="post_date">Post date<sup>*</sup></label>
           <input type="date" class="form-control" id="update_date" name="date" value="{{newz.date}}" required>
-        </div>  
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="depot_id">Depot<sup>*</sup></label>
+          <select class="form-control" id="updateDepot" name="depot_id" required>
+            {% if session.depot_id != 6 %}
+              <option value="{{session.depot_id}}" selected>
+                {{depotList[session.depot_id -1].location}}
+              </option>
+            {% else %}
+              {% for depot in depotList %}
+              <option value="{{depot.depot_id}}" {% if newz.depot_id  == depot.depot_id %}selected{% endif %} required>
+                {{depot.location}}
+              </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+      </div>
+
         <div>
           <label class="form-label">Content</label>
           <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="35" rows="6" pattern="^[a-zA-Z]+$" required>{{newz.content}}</textarea>
@@ -172,7 +186,7 @@
         </div>
         <p></p>
       <div class="col text-center">
-      <button type="submit" class="btn btn-secondary news-update" data-news-id="{{newz.news_id}}">Update</button>
+      <button type="submit" class="btn custom-btn news-update" data-news-id="{{newz.news_id}}">Update</button>
       </div>
     </form>
   </div>
@@ -184,7 +198,7 @@
     {% with
       btn_show = 0,
       bg_color = '#dc3545',
-      bg_color2 = '#3399ff',
+      bg_color2 = '#dc3545',
       modal_id = 'deleteNews' + newz.news_id|string,
       title = 'Delete Confirmation',
       msg = 'Are you sure to delete this news?'
@@ -227,7 +241,7 @@
 {% endwith %}
 
 {% include "components/elements/loadingModal.html" %}
-
+</section>
 {% endblock %}
 
 {% block script %}
@@ -329,8 +343,7 @@
       })
 
       document.querySelectorAll('.news-add').forEach(function (add) {
-        const news_id = add.getAttribute('data-news-id')
-        const addNewsForm = document.getElementById('addNewsForm' + news_id);
+        const addNewsForm = document.getElementById('addNewsForm');
 
         addNewsForm.addEventListener('submit', event => {
           if (!addNewsForm.checkValidity()) return // Stop further execution if form is invalid
