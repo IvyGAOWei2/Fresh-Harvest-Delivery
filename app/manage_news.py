@@ -9,8 +9,9 @@ from common import roleRequired, saveImage
 @app.route("/admin/post/news")
 @roleRequired(['Local_Manager', 'National_Manager'])
 def manageNews():
+    type=session['type']
     news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (session['depot_id'],), True)
-    return render_template('manage_news.html', news=news)
+    return render_template('manage_news.html', news=news,type=type)
 
 @app.route("/news/add", methods=['POST'])
 @roleRequired(['Local_Manager', 'National_Manager'])
