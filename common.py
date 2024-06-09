@@ -154,7 +154,7 @@ def fakeReview():
     {'user_name': 'Michael', 'img': 'user_default_image.png', 'depot_location': 'Auckland', 'product_id': 999, 'review_date': 'Sep 26, 2023', 'review_text': "I’ve been ordering from Fresh Harvest for over a year, and the quality of the produce always impresses me. The vegetables are fresh, and the delivery is always on time. Being able to order a mixed box on a subscription has made my grocery shopping so much easier. Plus, the staff is always helpful whenever I have a query"},
     {'user_name': 'Sarah', 'img': 'user_default_image.png', 'depot_location': 'Wellington', 'product_id': 999, 'review_date': 'May 03, 2024', 'review_text': "As a busy professional, Fresh Harvest has been a lifesaver. Their pre-made boxes are perfect for quick and healthy meals. The delivery service is reliable, and the quality of the produce is always top-notch."}]
 
-    return random.sample(Reviews, 2)
+    return random.sample(Reviews, 3)
 
 def toDay():
     return datetime.now().strftime('%Y-%m-%d')
