@@ -103,11 +103,13 @@ CREATE TABLE Orders (
     delivery_date DATE,
     billing_address JSON,
     delivery_address JSON,
+    cart JSON,
     payment_method ENUM('Credit Card', 'Debit Card', 'Account', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     payment_info VARCHAR(20) NOT NULL,
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
-    status ENUM('Pending', 'Comfirmed', 'Shipped', 'Delivered', 'Cancelled', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
+    status ENUM('Pending', 'Cancelled', 'Comfirmed', 'Shipped', 'Delivered', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
     total DECIMAL(10, 2),
+    is_freeshiping BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
@@ -224,7 +226,8 @@ CREATE TABLE Reviews (
     user_id SMALLINT NOT NULL,
     depot_id TINYINT NOT NULL,
     product_id SMALLINT NOT NULL,
-    review_date DATE NOT NULL,
+    rating CHAR(1),
+    review_date DATE DEFAULT (CURRENT_DATE),
     review_text TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
 	FOREIGN KEY (depot_id) REFERENCES Depots(depot_id),
@@ -278,4 +281,16 @@ CREATE TABLE AccountLimitReviewRequests (
     request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     decision_date DATETIME,
     FOREIGN KEY (user_id) REFERENCES Consumer(user_id)
+);
+
+CREATE TABLE News (
+    news_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(80),
+    subtitle VARCHAR(80),
+    content TEXT,
+    date DATE,
+    image VARCHAR(80),
+    depot_id TINYINT,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (depot_id) REFERENCES Depots(depot_id)
 );

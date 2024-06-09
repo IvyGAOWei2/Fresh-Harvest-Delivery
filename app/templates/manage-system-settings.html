@@ -25,6 +25,27 @@
 <section class="main-content">
     <h1 class="text-center">Admin Action</h1>
 
+    <!-- updateSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'updateSuccessModal',
+        bg_color = '#3399ff',
+        title = 'Update Successfully',
+        msg = 'Information has been successfully updated'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+
+    <!-- add Success btn code start here -->
+  {% with
+    btn_show = 0,
+    modal_id = 'addItemSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Added Successfully',
+    msg = 'Item has been successfully added'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
 
 
 <!-- shipping price -->
@@ -39,7 +60,7 @@
                 <div class="d-flex align-items-center px-5 py-2">
                     <i class="fas fa-shipping-fast fa-2x me-2"></i>
                     <h5 class="me-2">Current Shipping Price:</h5>
-                    <p class="me-2 mb-1">60</p>
+                    <p class="me-2 mb-1">{{shipping}}</p>
                     <p class="mb-1">NZD</p>
 
                     <a class="btn btn-primary m-4" role="button" data-bs-toggle="offcanvas"
@@ -61,13 +82,12 @@
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
-            <form id="updateShippingPriceForm" class="update-shippingPrice-form"
-            action="/shipping/update" method="POST">
+            <form id="updateShippingPriceForm" class="update-shippingPrice-form" novalidate>
 
                 <!-- Shipping Price -->
                 <div class="mb-3">
                     <label for="updateShippingPrice" class="form-label">Enter New Shipping Price</label>
-                    <input type="number" class="form-control"  id="updateShippingPrice" name="shipping_price" min="0" step="0.01" required>
+                    <input type="number" class="form-control"  id="updateShippingPrice" value="" name="shipping" step="1" required>
                     <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
                 </div>
                 <button type="submit" class="btn btn-secondary shippingPrice-update" >Update</button>
@@ -103,6 +123,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
                         {% for unit in units %}
                         <tr>
                             <td class="d-none">{{unit.unit_id}}</td>
@@ -128,8 +149,7 @@
                               <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body">
-                                <form id="updateUnitForm{{ unit.unit_id }}" class="update-unit-form"
-                                action="/units/add" method="POST">
+                                <form id="updateUnitForm{{ unit.unit_id }}" class="needs-validation" novalidate>
                                     <input type="text" class="form-control d-none" name="unit_id" value="{{ unit.unit_id }}"/>  
 
                                     <!-- unit name -->
@@ -172,7 +192,7 @@
           <h5 class="modal-title mx-auto" id="addUnitsModalLabel">Add New Units</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-            <form id="addUnitForm" method="POST" action="/add/units" class="needs-validation" novalidate>
+            <form id="addUnitForm" class="needs-validation" novalidate>
                 <div class="modal-body">
                     <!-- unit name -->
                     <div class="mb-3">
@@ -261,8 +281,7 @@
                               <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body">
-                                <form id="updateCategoryForm{{ category.category_id }}" class="update-category-form"
-                                action="/category/update" method="POST">
+                                <form id="updateCategoryForm{{ category.category_id }}" class="update-category-form" novalidate>
                                     <input type="text" class="form-control d-none" name="category_id" value="{{ category.category_id }}"/>  
 
                                     <!-- category name -->
@@ -291,7 +310,7 @@
           <h5 class="modal-title mx-auto" id="addCategoriesModalLabel">Add New Categories</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-            <form id="addCategoriesForm" method="POST" action="/category/add" class="needs-validation" novalidate>
+            <form id="addCategoriesForm" class="needs-validation" novalidate>
                 <div class="modal-body">
                     <!-- category name -->
                     <div class="mb-3">
@@ -312,27 +331,7 @@
  
 
 
-    <!-- add Success btn code start here -->
-    {% with
-    btn_show = 0,
-    bg_color = '#81C408',
-    title = 'Update Success',
-    msg = '{item} has been successfully added'
-    %}
-    {% include "components/elements/addSuccess.html" %}
-    {% endwith %}
 
-
-    <!-- updateSuccessModal -->
-    {% with
-        btn_show = 0,
-        modal_id = 'updateSuccessModal',
-        bg_color = '#3399ff',
-        title = 'Update Successfully',
-        msg = 'Information has been successfully updated'
-    %}
-        {% include "components/elements/updateSuccess.html" %}
-    {% endwith %}
 
     {% include "components/elements/loadingModal.html" %}
 </section>
@@ -344,8 +343,7 @@
 {% include "components/elements/InputValidate.html" %}
 
 <script>
-    // validation
-    //  update validation
+    // Validation
     document.getElementById('updateUnitName').addEventListener('input', function () {
         InputValidate('updateUnitName');
     });
@@ -375,187 +373,161 @@
     });
 
 
-// Shipping Price
-// update
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-    const updateShippingPriceForm = document.getElementById('updateShippingPriceForm');
 
-    updateShippingPriceForm.addEventListener('submit', event => {
-        if (!updateShippingPriceForm.checkValidity()) return // Stop further execution if form is invalid
-        event.preventDefault();
-        const formData = new FormData(updateShippingPriceForm);
-
-        fetch('/shipping/update', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == 1) {
-                    console.log(data.status)
-                    // Show updateNewsSuccess modal if update is successful
-                    new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-                }
-                else {
-                    alert("Invalid request");
-                    // location.reload(); // Reload the page on failure
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    });
-
-
-
-
-     
-    
-
-
-// Units
- //update unit
-document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
-        document.querySelectorAll('.unit-update').forEach(function (update) {
-        const unit_id = update.getAttribute('data-unit-id')
-        const updateUnitForm = document.getElementById('updateUnitForm' + unit_id);
-
-        updateUnitForm.addEventListener('submit', event => {
-          if (!updateUnitForm.checkValidity()) return // Stop further execution if form is invalid
-          event.preventDefault();
-          const formData = new FormData(updateUnitForm);
-
-          fetch('/units/update', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.status == 1) {
-                  console.log(data.status)
-                  // Show updateNewsSuccess modal if update is successful
-                  new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-              }
-              else {
-                  alert("Invalid request");
-                  // location.reload(); // Reload the page on failure
-              }
-          })
-          .catch(error => console.error('Error:', error));
-        });
-      })
-    });
-});
-
-
-    // Add Unit
+    // Shipping Price Update
     document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+        const updateSuccessModal = document.getElementById('updateSuccessModal');
+        const updateShippingPriceForm = document.getElementById('updateShippingPriceForm');
 
+        updateSuccessModal.addEventListener('hidden.bs.modal', () => location.reload());
+
+        updateShippingPriceForm.addEventListener('submit', event => {
+            if (!updateShippingPriceForm.checkValidity()) return; // Stop further execution if form is invalid
+            event.preventDefault();
+
+            const formData = new FormData(updateShippingPriceForm);
+
+            fetch('/shipping/update', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        new bootstrap.Modal(updateSuccessModal).show();
+                    } else {
+                        alert("Invalid request");
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Units
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.unit-update').forEach(function (update) {
+            const unit_id = update.getAttribute('data-unit-id');
+            const updateUnitForm = document.getElementById('updateUnitForm' + unit_id);
+
+            updateUnitForm.addEventListener('submit', event => {
+                if (!updateUnitForm.checkValidity()) return; // Stop further execution if form is invalid
+                event.preventDefault();
+
+                const formData = new FormData(updateUnitForm);
+
+                fetch('/units/update', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status == 1) {
+                            new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                        } else {
+                            alert("Invalid request");
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
+    document.getElementById('addItemSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+    // Add Unitdes
+    document.addEventListener('DOMContentLoaded', function () {
         const addUnitForm = document.getElementById('addUnitForm');
 
-        // Handle add form submission
         addUnitForm.addEventListener('submit', function (event) {
-            if (!addUnitForm.checkValidity()) return // Stop further execution if form is invalid
+            if (!addUnitForm.checkValidity()) return; // Stop further execution if form is invalid
             event.preventDefault();
-            event.stopPropagation();
 
-            const formData = new FormData(this); // Prepare form data
+            const formData = new FormData(addUnitForm);
 
-            // Send login request to flask server
             fetch('/units/add', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status == true) { // Redirect user if login is successful
-                        // console.log(data)
-                        // Show updateStaffSuccess modal if update is successful
-                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
-                    }
-                    else {
+                    if (data.status == 1) {
+                        // console.log(data.status)
+                        const modalElement = document.getElementById('addUnitsModal');
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        modalInstance.hide();
+                        new bootstrap.Modal(document.getElementById('addItemSuccessModal')).show();
+                    } else {
                         alert("Invalid request");
+                        location.reload();
                     }
                 })
                 .catch(error => console.error('Error:', error));
         });
-
     });
 
-
-//  Category
-    // update Category
+    // Categories
+    // Update Category
     document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('updateSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
         document.querySelectorAll('.category-update').forEach(function (update) {
-        const category_id = update.getAttribute('data-category-id')
-        const updateCategoryForm = document.getElementById('updateCategoryForm' + category_id);
+            const category_id = update.getAttribute('data-category-id');
+            const updateCategoryForm = document.getElementById('updateCategoryForm' + category_id);
 
-        updateCategoryForm.addEventListener('submit', event => {
-          if (!updateCategoryForm.checkValidity()) return // Stop further execution if form is invalid
-          event.preventDefault();
-          const formData = new FormData(updateCategoryForm);
+            updateCategoryForm.addEventListener('submit', event => {
+                if (!updateCategoryForm.checkValidity()) return; // Stop further execution if form is invalid
+                event.preventDefault();
 
-          fetch('/category/update', {
-              method: 'POST',
-              body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.status == 1) {
-                  console.log(data.status)
-                  // Show updateNewsSuccess modal if update is successful
-                  new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
-              }
-              else {
-                  alert("Invalid request");
-                  // location.reload(); // Reload the page on failure
-              }
-          })
-          .catch(error => console.error('Error:', error));
+                const formData = new FormData(updateCategoryForm);
+
+                fetch('/category/update', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status == 1) {
+                            new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                        } else {
+                            alert("Invalid request");
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
         });
-      })
     });
 
-    // Add category
+    // Add Category
     document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('addSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
-
         const addCategoriesForm = document.getElementById('addCategoriesForm');
 
-        // Handle add form submission
         addCategoriesForm.addEventListener('submit', function (event) {
-            if (!addCategoriesForm.checkValidity()) return // Stop further execution if form is invalid
+            if (!addCategoriesForm.checkValidity()) return; // Stop further execution if form is invalid
             event.preventDefault();
-            event.stopPropagation();
 
-            const formData = new FormData(this); // Prepare form data
+            const formData = new FormData(addCategoriesForm);
 
-            // Send login request to flask server
             fetch('/category/add', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status == true) { // Redirect user if login is successful
-                        // console.log(data)
-                        // Show updateStaffSuccess modal if update is successful
-                        new bootstrap.Modal(document.getElementById('addSuccessModal')).show();
-                    }
-                    else {
+                    if (data.status == 1) {
+                        const modalElement = document.getElementById('addCategoriesModal');
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        modalInstance.hide();
+                        new bootstrap.Modal(document.getElementById('addItemSuccessModal')).show();
+                    } else {
                         alert("Invalid request");
+                        location.reload();
                     }
                 })
                 .catch(error => console.error('Error:', error));
         });
-
     });
-
-
 </script>
+
 
 {% endblock %}

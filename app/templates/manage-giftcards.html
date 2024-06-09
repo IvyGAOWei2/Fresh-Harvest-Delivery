@@ -50,11 +50,11 @@
                 {% for card in giftcards %}
                 <div class="border border-primary rounded position-relative vesitable-item">
                     <div class="vesitable-img">
-                        <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                        <img src="{{ url_for('static', filename='images/product/' + card.image) }}" class="img-fluid w-100 rounded-top" alt="">
                     </div>
                     <div class="p-4 rounded-bottom">
                         <h4>Balance: {{card.balance}}</h4>
-                        <p>Detail</p>
+                        <p>{{card.name}}</p>
                         <div class="d-flex justify-content-between flex-lg-wrap">
                             <a data-bs-toggle="modal" data-bs-target="#viewnewsModal" class="border border-secondary rounded-pill px-3 text-primary btn">
                                 <i class="fas fa-angle-double-right me-2 text-primary"></i> Find More

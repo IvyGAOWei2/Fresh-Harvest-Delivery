@@ -2,7 +2,7 @@ USE freshHarvestDelivery;
 
 
 INSERT INTO Depots (location) VALUES ('Christchurch'), ('Invercargill'), ('Wellington'), ('Hamilton'), ('Auckland'), ('NZ');
-INSERT INTO Category (category_name) VALUES ('Fruit'), ('Vegetable'), ('Herb'), ('Egg'), ('Honey'), ('GiftCard'), ("Salad");
+INSERT INTO Category (category_name) VALUES ('Fruit'), ('Vegetable'), ('Herb'), ('Egg'), ('Honey'), ('GiftCard'), ("Salad"), ("Box");
 INSERT INTO Unit (unit_name, unit_std, unit_min) VALUES
 ('Bunch', '1', '1'),
 ('Tray', '1', '1'),
@@ -137,7 +137,10 @@ INSERT INTO Products (name,description,price,stock,category_id,unit_id,depot_id)
 ("Ginger Imported","Imported ginger offers a pungent,spicy flavour and aromatic fragrance,making it a versatile ingredient in both sweet and savoury dishes. Whether used fresh,dried,or powdered,ginger adds warmth and depth to curries,stir-fries,marinades,teas,and baked goods.",12.99,100,3,6,1),
 -- gift card
 ('Gift Card $25','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',25,20,6,3,1),
-('Gift Card $50','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',50,20,6,3,1);
+('Gift Card $50','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',50,20,6,3,1),
+('Gift Card $75','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',74,20,6,3,1),
+('Gift Card $100','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',100,20,6,3,1);
+
 
 -- ProductImages table
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
@@ -240,8 +243,10 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (97, "Pams Fresh Rosemary.png", TRUE, FALSE),
 (98, "Pams Fresh Coriander.png", TRUE, FALSE),
 (99, "Ginger Imported.png", TRUE, FALSE),
-(100, "GiftCard25.png", TRUE, FALSE),
-(101, "GiftCard50.png", TRUE, FALSE);
+(100, "GiftCard25.jpg", TRUE, FALSE),
+(101, "GiftCard50.jpg", TRUE, FALSE),
+(102, "GiftCard75.jpg", TRUE, FALSE),
+(103, "GiftCard100.jpg", TRUE, FALSE);
 
 -- Orders table
 INSERT INTO Orders (user_id, order_date, delivery_date, billing_address, delivery_address, payment_method, payment_info, payment_status, status, total)
@@ -271,7 +276,7 @@ VALUES
     71.96
 ),
 (
-    3, 
+    5, 
     '2024-04-02', 
     '2024-04-09', 
     JSON_OBJECT('street', '456 Elm St', 'city', 'Christchurch', 'postcode', '8011', 'phone', '0211234567', 'email', 'john.doe@example.com'), 
@@ -352,7 +357,47 @@ INSERT INTO GiftCards (product_id, code, balance, is_active) VALUES
 (101, 'VY8N3P9D', '50', FALSE),
 (101, 'UB1O6V2X', '50', FALSE),
 (101, 'AS4D7F0H', '50', FALSE),
-(101, 'BM9T2G5J', '50', FALSE);
+(101, 'BM9T2G5J', '50', FALSE),
+(102, 'ZK8P3H6R', '50', FALSE),
+(102, 'XS7N4F9L', '50', FALSE),
+(102, 'QW6M1T8E', '50', FALSE),
+(102, 'HD5K2J7G', '50', FALSE),
+(102, 'LP4H9R3V', '50', FALSE),
+(102, 'YT3E6S2N', '50', FALSE),
+(102, 'RF2V7L1P', '50', FALSE),
+(102, 'UH1Q8W4M', '50', FALSE),
+(102, 'JG9X5K3D', '50', FALSE),
+(102, 'BN6Z1C8Q', '50', FALSE),
+(102, 'VA5F2R7L', '50', FALSE),
+(102, 'OI4U9E3W', '50', FALSE),
+(102, 'CJ3Y8H6T', '50', FALSE),
+(102, 'PL2K7J1G', '50', FALSE),
+(102, 'MN1B8Z4C', '50', FALSE),
+(102, 'SX9A5F2R', '50', FALSE),
+(102, 'DW8V3L6P', '50', FALSE),
+(102, 'GR7N2M9T', '50', FALSE),
+(102, 'QJ6H1R5V', '50', FALSE),
+(102, 'EK5T8W3M', '50', FALSE),
+(103, 'EG4U9W2R', '100', FALSE),
+(103, 'LZ6P1H8T', '100', FALSE),
+(103, 'BD7Z2M9X', '100', FALSE),
+(103, 'QF5S8J3N', '100', FALSE),
+(103, 'KV3C6G1W', '100', FALSE),
+(103, 'YH9R2T7F', '100', FALSE),
+(103, 'WU1M6E3K', '100', FALSE),
+(103, 'PN8V4L5D', '100', FALSE),
+(103, 'AX2F7R1S', '100', FALSE),
+(103, 'TJ6N9Z8Q', '100', FALSE),
+(103, 'CG3H1P5V', '100', FALSE),
+(103, 'MI4W7K2B', '100', FALSE),
+(103, 'RL5E8T3J', '100', FALSE),
+(103, 'VZ9Q2M6X', '100', FALSE),
+(103, 'HN1F4G7C', '100', FALSE),
+(103, 'WY8U3R2S', '100', FALSE),
+(103, 'KP7N5Z1D', '100', FALSE),
+(103, 'DB6H9T4J', '100', FALSE),
+(103, 'QL3P2M8W', '100', FALSE),
+(103, 'VG5R1F9S', '100', FALSE);
 
 -- ConsumerPoints table
 INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date)

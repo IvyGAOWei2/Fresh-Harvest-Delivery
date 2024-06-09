@@ -37,8 +37,8 @@
                             <input id="contactName" type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" name="name" pattern="^[a-zA-Z\s]+$" required>
                             <input id="contactEmail" type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
                             <select class="w-100 form-control border-0 py-3 mb-4" name="type" >
-                                <option value="inquiry" selected>General Inquiry</option>
-                                <option value="refund">Refund</option>
+                                <option value="General Request" selected>General Inquiry</option>
+                                <option value="Refund Request">Refund</option>
                             </select>
                             <textarea id="contactMsg" class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message" name="msg" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required></textarea>
                             <button class="w-100 btn border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
@@ -82,7 +82,7 @@
         {% include "components/elements/updateSuccess.html" %}
     {% endwith %}
   
-    <!-- Contact End -->
+    {% include "components/elements/loadingModal.html" %}
 </section>
 {% endblock %}
 
@@ -97,6 +97,7 @@
 
         const loginForm = document.getElementById('contactForm');
         document.getElementById('contactSuccessModal').addEventListener('hidden.bs.modal', () => window.location.href = '/');
+        const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
         // Handle loginForm submission
         loginForm.addEventListener('submit', function (event) {
@@ -105,6 +106,7 @@
             event.stopPropagation();
 
             const formData = new FormData(this); // Prepare form data
+            loadingModal.show();
 
             fetch('/contact', {
                 method: 'POST',
@@ -114,10 +116,12 @@
             .then(data => {
                 if (data.status == true) { // Redirect user if login is successful
                     console.log(data.status)
+                    loadingModal.hide();
                     new bootstrap.Modal(document.getElementById('contactSuccessModal')).show();
                     // window.location.href = data.message;
                 }
                 else {
+                    loadingModal.hide();
                     alert("Invalid request");
                 }
             })

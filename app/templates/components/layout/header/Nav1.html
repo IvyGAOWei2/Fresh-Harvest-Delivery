@@ -36,7 +36,6 @@
           <div class="navbar-nav mx-auto">
             <a href="{{ url_for('index') }}" class="nav-item nav-link {% if is_home %}active{% endif %}">Home</a>
             <a href="{{ url_for('shop') }}" class="nav-item nav-link {% if is_shop %}active{% endif %}">Shop</a>
-            <!-- <a href="{{ url_for('shopDetail') }}" class="nav-item nav-link {% if is_shop_detail %}active{% endif %}">Shop Detail</a> -->
             <div class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle {% if is_cart %}active{% endif %}" data-bs-toggle="dropdown">Pages</a>
               <div class="dropdown-menu m-0 bg-secondary rounded-0">
@@ -63,11 +62,15 @@
           </div>
           <div class="d-flex m-3 me-0">
             <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-            <a href="/cart" class="position-relative me-4 my-auto">
-              <i id="cartIcon" class="fas fa-shopping-cart fa-2x cart-anime"></i>
-              <span id="cart-count" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
-            </a>
+            <a href="/notifications" class="position-relative me-4 my-auto">
+              <i class="fas fa-bell fa-2x" ></i> <!-- Set the color to a green shade -->
+              <span id="notification-count" class="position-absolute bg-green rounded-circle d-flex align-items-center justify-content-center text-white px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
+          </a>
             {% if session.loggedin and session.type == 'Consumer' %}
+              <a href="/cart" class="position-relative me-4 my-auto">
+                <i id="cartIcon" class="fas fa-shopping-cart fa-2x cart-anime"></i>
+                <span id="cart-count" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
+              </a>
               <a href="{{ url_for('profileConsumer') }}" class="nav-item nav-link">
                 <i class="fas fa-user fa-2x" style="margin-top: .25rem;"></i>
               </a>

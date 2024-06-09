@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="account-header d-flex justify-content-center align-items-center py-4">
-                    <h2>Order Reference No. {{orderID}}</h2>
+                    <h2>Order Reference No. {{order.order_id}}</h2>
                 </div>
             </div>
         </div>
@@ -28,13 +28,13 @@
         <div class="row mb-3 ps-4">
             <div class="col-6">
                 <div class="my-2">
-                    <span class="text-600 text-90">Order Date: {{orderDate}}</span> 
+                    <span class="text-600 text-90">Order Date: {{order.order_date}}</span> 
                 </div>
                 <div class="my-2">
-                    <span class="text-600 text-90">Status: {{orderStatus}}</span>
+                    <span class="text-600 text-90">Status: {{order.status}}</span>
                 </div>
                 <div class="my-2">
-                    <span class="text-600 text-90">Customer Name: {{orderStatus}}</span>
+                    <span class="text-600 text-90">Customer Name: {{order.full_name}}</span>
                 </div>
             </div>
         </div>
@@ -60,11 +60,11 @@
                                 <tbody>
                                     <th scope="row">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ url_for('static', filename='images/product/' + product.product_image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ product.product_name }}">
+                                            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ product.product_name }}">
                                         </div>
                                     </th>
                                     <td>
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.product_name}}</p>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.name}}</p>
                                     </td>
                                     <td>
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.price}}</p>
@@ -73,7 +73,7 @@
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.quantity}}</p>
                                     </td>
                                     <td>
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.total}}</p>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.subtotal}}</p>
                                     </td>
                                     <td>
                                     <!-- product.status 应为order item对应的status -->
