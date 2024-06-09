@@ -41,7 +41,7 @@
                             <table class="table">
                                 <thead>
                                   <tr>
-                                    <th scope="col">Points categories</th>
+                                    <th scope="col">Points type</th>
                                     <th scope="col">Points change amount</th>
                                     <th scope="col">Balance</th>
                                     <th scope="col">Date</th>
@@ -51,7 +51,7 @@
                                 <tbody>
                                   {% for point in pointsHistory %}
                                   <tr>
-                                    <th scope="row">{{point.point_type}}</th>
+                                    <th style="font-weight: 400;" scope="row">{{point.point_type}}</th>
                                     <td><i class="fas fa-plus fa-lg me-3 fa-fw"></i>{{point.point_variation}}</td>
                                     <td>{{point.point_balance}}</td>
                                     <td>{{point.point_date}}</td>

@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, request, session
 
 # User-defined function
-from dbFile.config import fetchAll, updateSQL,fetchOne
+from dbFile.config import fetchAll, updateSQL, fetchOne, insertSQL
 from common import roleRequired, emailOrder
 from emailMethod.method import sendOrderStatus
 
@@ -94,6 +94,16 @@ def staffRefund():
 def updateOrderStatus():
     data = request.get_json()
     order = emailOrder(data['order_id'])
+
+    if data['status'] == 'Comfirmed':
+        target_order = fetchOne('SELECT total, user_id, order_date FROM Orders WHERE order_id = %s', (data['order_id'],), True)
+        current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (target_order['user_id'],))
+        variation = target_order['total']
+        new_points = current_points[0] + variation
+
+        insertSQL("INSERT INTO ConsumerPoints (user_id, point_type, point_variation, point_balance, point_date) \
+            VALUES(%s,%s,%s,%s,%s);", (target_order['user_id'], 'Order Purchase', variation, new_points, target_order['order_date']))
+        updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, target_order['user_id']))
 
     update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (data['status'], data['order_id']))
 
