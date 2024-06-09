@@ -60,7 +60,7 @@
                                 <tbody>
                                     <th scope="row">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ product.product_name }}">
+                                            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid me-3 rounded-circle" style="max-width:6rem" alt="{{ product.product_name }}">
                                         </div>
                                     </th>
                                     <td>
@@ -79,7 +79,7 @@
                                     <!-- product.status 应为order item对应的status -->
                                     {% if product.status != 'Refunded' %}
                                         <div class="d-flex mt-4">
-                                            <a href="{{ url_for('contact') + '#contactUs' }}" class="btn" role="button" data-bs-toggle="refund" title="Apply Refund">
+                                            <a href="{{ url_for('contact') + '#contactUs' }}" class="btn" role="button" data-bs-toggle="refund" title="Contact Us">
                                                 <i class="fas  fa-registered fa-lg"></i>
                                             </a>
                                         </div>
@@ -93,8 +93,9 @@
                            {% if Giftcards %}
                             <table class="table">
                                 <thead>
+                                    <br>
                                     <tr>
-                                        <th scope="col">Gift Cards</th>
+                                        <th scope="col">Giftcard</th>
                                         <th scope="col">Code</th>
                                         <th scope="col">Balance</th>
                                         <th scope="col">Active</th>
@@ -102,17 +103,22 @@
                                 </thead>
 
                                 <tbody>
-
                                     {% for giftcard in Giftcards %}
                                     <tr>
                                         <th scope="row">
                                             <div class="d-flex align-items-center">
-                                                <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ giftcard.gift_card_id}}">
+                                                <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="max-width:6rem " alt="{{ giftcard.gift_card_id}}">
                                             </div>
                                         </th>
-                                        <td colspan="5" >{{ giftcard.code }}</td>
-                                        <td colspan="5" >${{ giftcard.balance }}</td>
-                                        <td colspan="5" >{{ 'Yes' if giftcard.is_active else 'No' }}</td>
+                                        <td colspan="row" >
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{ giftcard.code }}</p> 
+                                        </td>
+                                        <td colspan="row" >
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">${{ giftcard.balance }}</p> 
+                                        </td>
+                                        <td colspan="row" >
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{ 'Yes' if giftcard.is_active else 'No' }}</p> 
+                                        </td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -123,6 +129,10 @@
                                     <tr>
                                         <td colspan="5" class="text-end">Shipping</td>
                                         <td class="shipping">${{shipping}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end">GST</td>
+                                        <td class="shipping">${{order.total}}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="5" class="text-end"><strong>Total</strong></td>

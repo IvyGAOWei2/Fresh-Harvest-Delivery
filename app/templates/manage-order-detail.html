@@ -7,9 +7,32 @@
 {% endblock %}
 
 {% block breadcrumb %}
-{% with pageName='Order Detail' %}
-{% include "components/layout/Breadcrumb2.html" %}
-{% endwith %}
+<nav class="navbar fixed-top border-bottom">
+    <div class="container-fluid">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb my-0">
+          <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a>
+          </li>
+          <li class="breadcrumb-item" > <a href="{{ url_for('staffOrderHistory') }}">Order History</a> 
+          </li>
+          <li class="breadcrumb-item active" aria-current="page"><span>Order Detail</span>
+          </li>
+        </ol>
+      </nav>
+      <div class="d-flex">
+        <img src="{{ url_for('static', filename='images/user_default_image.png') }}" alt="John Doe" class="rounded-circle" style="width:2.2rem;height:2.2rem;margin-right:1.2rem;">
+        <a href="#" class="btn btn-outline-light me-2">
+          <i class="fas fa-bell fa-fw"></i>
+          <span class="badge bg-info" style="background: #3399ff !important">3</span>
+        </a>
+        <a href="#" class="btn btn-outline-light">
+          <i class="fas fa-envelope fa-fw"></i>
+          <span class="badge bg-info" style="background: #3399ff !important">5</span>
+        </a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+      </div>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}

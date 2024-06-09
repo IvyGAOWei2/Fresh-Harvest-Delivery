@@ -97,8 +97,24 @@
 </div>
 
 
-  <h3 class="mb-2">Giftcard Redemption </h3>
-  <div id="orders-table" class="table-responsive">
+  <h3 class="m-2">Giftcard Redemption </h3>
+
+  <form method="POST" action="/giftcards/list">
+    <div class="row m-3">
+        <div class="col-md-2">
+            <label for="customerName"  class="form-label p-2"> <strong>SEARCH BY: </strong></label>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control search-bar" id="customerName" maxlength="35" pattern="^[a-zA-Z\s]+$" placeholder="CUSTOMER NAME">
+            <div class="invalid-feedback">Only letters and spaces.</div>
+        </div>
+        <div class="col-md-2 ">
+            <button class="btn btn-primary border-0 btn-rounded justify-content-end " style="top: 2; right: 0;" id="searchButton">Search</button>
+        </div>
+    </div>
+  </form>
+
+  <div id="orders-table" class="table-responsive m-4">
     <table class="table">
         <thead>
             <tr>
@@ -137,7 +153,12 @@
 {% include "components/elements/InputValidate.html" %}
 
 <script>
+// validation
+document.getElementById('customerName').addEventListener('input', function () {
+        InputValidate('customerName');
+    });
 
+// carousel for gift card
 (function ($) {
     $(".giftcard-carousel").owlCarousel({
         autoplay: true,

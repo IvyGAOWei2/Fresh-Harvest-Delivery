@@ -320,6 +320,13 @@
         // Set the maximum end date to today
         setMaxEndDate();
 
+        // Prevent the user from selecting a future date for the start date
+        startDateInput.addEventListener('input', function () {
+        if (startDateInput.value > endDateInput.max) {
+            startDateInput.value = endDateInput.max; // Adjust to today's date if a future date is selected
+        }
+        });
+
         // Prevent the user from selecting a future date for the end date
         endDateInput.addEventListener('input', function () {
         if (endDateInput.value > endDateInput.max) {
