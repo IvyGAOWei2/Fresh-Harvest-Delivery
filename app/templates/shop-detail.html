@@ -37,7 +37,7 @@
                             <p class="mb-3">Category: {{categoryList[product.category_id -1].category_name}}</p>
                             <div class="d-flex justify-content-start align-items-center">
                                 <h5 class="fw-bold mb-3">
-                                    ${% if product.discounted_price %}{{product.discounted_price}}{% else %}{{product.price}}{% endif %}
+                                    ${% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}
                                     /
                                     {% if product.unit_name == 'Weight_kg' %}kg{% endif %}
                                     {% if product.unit_name == 'Weight_g' %}g{% endif %}
