@@ -10,7 +10,7 @@
 
             <div class="d-flex justify-content-center align-items-center">
                 <h6 class="text-center text-secondary" style="margin-top:.8rem;font-size: 1.2rem;">
-                {% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}
+                ${% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}
                 / 
                 {% if product.unit_name == 'Weight_kg' %}Kg{% endif %}
                 {% if product.unit_name == 'Weight_g' %}g{% endif %}
@@ -68,6 +68,78 @@
                     <i class="fa fa-calendar-plus me-2 text-primary"></i> Subscribe
                 </a>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+{% for product in allDiscounted %}
+<div id="productCard{{product.product_id}}"  class="product-detail col-md-6 col-lg-6 col-xl-4" data-product-id="{{product.product_id}}">
+    <div class="position-relative fruite-item">
+        <div class="fruite-img border border-bottom-0">
+            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid w-100 rounded-top" alt="{{ product.name }}">
+        </div>
+        <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 1rem; right: 1rem;">On Sale</div>
+
+        <!-- <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Discounted</div> -->
+        <div class="p-4 border border-top-0">
+            <h5 class="m-0" style="max-height: 1rem;">{{product.name}}</h5>
+
+            <div class="d-flex justify-content-center align-items-center">
+                <h6 class="text-center text-secondary" style="margin-top:.8rem;font-size: 1.2rem;">
+                {% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}
+                / 
+                {% if product.unit_name == 'Weight_kg' %}Kg{% endif %}
+                {% if product.unit_name == 'Weight_g' %}g{% endif %}
+                {% if product.unit_name == 'Tray' %}ty{% endif %}
+                {% if product.unit_name == 'Each' %}ea{% endif %}
+                {% if product.unit_name == 'Bunch' %}ea{% endif %}
+                {% if product.unit_name == 'Punnet' %}ea{% endif %}
+                </h6>
+                {% if product.discount_price %}
+                <h6 class="text-center text-danger text-decoration-line-through" style="margin-left:.5rem;font-size:.9rem;">Was ${{ product.price }}</h6>
+                {% endif %}
+            </div>
+
+
+            <p>{{product.description}}</p>
+            <div class="d-flex justify-content-center flex-lg-wrap">
+
+                <div class="quantity d-flex align-items-center mx-auto" style="width: 8rem;padding:.5rem 0 1rem 0;">
+                    <button class="btn btn-sm btn-minus rounded-circle bg-light border" data-unit="{{ product.unit_name }}">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    
+                    <input type="text" class="quantity-input fs-6 form-control-sm text-center border-0 p-0"
+                        value="{% if product.unit_name == 'Weight_kg' %}0.25{% elif product.unit_name == 'Weight_g' %}10{% elif product.unit_name == 'Each' %}1{% endif %}"
+                        style="background-color: #fff;max-width: 3rem;margin: auto;" disabled>
+                    
+                    <div class="input-group-text border-0 p-0" style="background-color: #fff;margin-left: -0.3rem;">
+                        {% if product.unit_name == 'Weight_kg' %}
+                            kg
+                        {% elif product.unit_name == 'Weight_g' %}
+                            g
+                        {% endif %}
+                    </div>
+                    
+                    <button class="btn btn-sm btn-plus rounded-circle bg-light border mx-1" data-unit="{{ product.unit_name }}">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                
+                <a
+                    href="#"
+                    class="btn-add-to-cart btn border border-secondary rounded-pill px-3 text-primary"
+                    data-name="{{product.name}}"
+                    data-price="{% if product.discount_price %}{{product.discount_price}}{% else %}{{product.price}}{% endif %}"
+                    data-img="{{ url_for('static', filename='images/product/' + product.image) }}"
+                    data-id="{{product.product_id}}"
+                    data-unit="{% if product.unit_name == 'Weight' %}kg{% elif product.unit_name == 'kg' %}kg{% elif product.unit_name == 'g' %}g{% elif product.unit_name == 'Each' %}ea{% else %}{{product.unit_name}}{% endif %}"
+                >
+                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                </a>
             </div>
         </div>
     </div>
