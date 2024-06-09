@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, session
+from flask import render_template, request, session,jsonify
 
 # User-defined function
 from dbFile.config import fetchAll, updateSQL,fetchOne
@@ -86,7 +86,8 @@ def staffRefund():
     order_item_id = data.get('order_item_id')
     if order_item_id:
         updateSQL("UPDATE OrderItems SET is_refunded = TRUE WHERE order_item_id = %s", (order_item_id,))
-    return render_template('manage-order-detail.html')
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': 'Order item ID not provided'})
 
 @app.route("/admin/order/status/", methods = ['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])

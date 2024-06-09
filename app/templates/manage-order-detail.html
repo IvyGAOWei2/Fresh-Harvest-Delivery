@@ -102,7 +102,7 @@
                                     <!-- product.status 应为order item对应的status -->
                                     {% if product.status != 'Refunded' %}
                                         <div class="d-flex mt-4">
-                                            <button type="button" class="btn order-refund" role="button" title="Create Refund" ata-product-name="{{ product.product_name }}" data-order-item-id ="{{product.order_item_id}} ">
+                                            <button type="button" class="btn order-refund" role="button" title="Create Refund" data-product-name="{{ product.product_name }}" data-order-item-id ="{{product.order_item_id}} ">
                                                 <i class="fas fa-registered fa-lg"></i>
                                             </button>
                                         </div>
@@ -182,7 +182,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to refund the item "<span id="productName"></span>" for the customer?
+                    Are you sure you want to refund this item <span id="productName"></span> for the customer?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

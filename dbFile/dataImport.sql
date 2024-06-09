@@ -289,12 +289,12 @@ VALUES
 );
 
 -- OrderItems table
-INSERT INTO OrderItems (order_id, product_id, quantity, subtotal) VALUES
-(1, 1, 2, 5.98),
-(1, 2, 3, 4.47),
-(2, 3, 1, 59.98),
-(2, 4, 2, 11.98),
-(3, 5, 10, 34.98);
+INSERT INTO OrderItems (order_id, product_id, quantity, subtotal, is_refunded) VALUES
+(1, 1, 2, 5.98,FALSE),
+(1, 2, 3, 4.47,FALSE),
+(2, 3, 1, 59.98,FALSE),
+(2, 4, 2, 11.98,FALSE),
+(3, 5, 10, 34.98,FALSE);
 
 -- GiftCardcode table
 INSERT INTO GiftCards (product_id, order_id, code, balance, is_active) VALUES

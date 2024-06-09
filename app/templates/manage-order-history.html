@@ -53,7 +53,7 @@
             </div>
 
             <div class="search-container p-2">
-                <form method="POST" action="/admin/order/history">
+                <form id="searchByReferenceForm" method="POST" action="/admin/order/history">
                     <div class="row">
                         <div class="col-md-2">
                             <label for="orderReferenceNumber"  class="form-label">SEARCH BY:</label>
@@ -62,15 +62,17 @@
                             <input type="number" class="form-control search-bar" id="orderReferenceNumber" placeholder="ORDER REFERENCE NUMBER">
                         </div>
                     </div>
-
-                    <div class="row m-0 text-divider">
-                        <div class="col-12 text-center">
-                            <hr class="d-inline-block" style="width: 46%;">
-                            <span class="mx-2">OR</span>
-                            <hr class="d-inline-block" style="width: 46%;">
-                        </div>
+                </form>
+                
+                <div class="row m-0 text-divider">
+                    <div class="col-12 text-center">
+                        <hr class="d-inline-block" style="width: 46%;">
+                        <span class="mx-2">OR</span>
+                        <hr class="d-inline-block" style="width: 46%;">
                     </div>
+                </div>
 
+                <form id="searchByDetailsForm" method="POST" action="/admin/order/history">
                     <div class="row">
                         <div class="col-md-2">
                             <label for="customerName" class="form-label">SEARCH BY:</label>
@@ -85,8 +87,8 @@
                         <div class="col-md-4">
                             <select class="form-control search-bar" id="account">
                                 <option value="all">All</option>
-                                <option value="business">Business Account</option>
-                                <option value="customer">Customer</option>
+                                <option value="Business">Business Account</option>
+                                <option value="Residential">Customer</option>
                             </select>
                         </div>
                     </div>
@@ -111,63 +113,7 @@
                             <button class="btn btn-primary btn-rounded" id="searchButton">Search</button>
                         </div>
                     </div>    
-
-                    <!-- <div class="row">
-                        <div class="col-md-2">
-                            <label for="account" class="form-label">ACCOUNT:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <select class="form-control search-bar" id="account">
-                                <option value="all">All</option>
-                                <option value="business">Business Account</option>
-                                <option value="customer">Customer</option>
-                            </select>
-                        </div>
-                    </div> -->
-
-    
-
-                    <!-- <div class="row">
-                        <div class="col-12 text-center">
-                            <hr class="d-inline-block" style="width: 45%;">
-                            <span class="mx-2 font-weight-bold">And</span>
-                            <hr class="d-inline-block" style="width: 45%;">
-                        </div>
-                    </div> -->
-
-                    
-
-                    <!-- <div class="row">
-                        <div class="col-md-4">
-                            <label for="beginningDate" class="form-label">BEGINNING DATE OF ORDER LIST:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input type="date" class="form-control search-bar" id="beginningDate">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="endDate" class="form-label">END DATE OF ORDER LIST:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input type="date" class="form-control search-bar" id="endDate">
-                        </div>
-                    </div> -->
-    <!-- option 2 date in one line -->
-                    <!-- <div class="row">
-                        <div class="col-md-6">
-                            <label for="beginningDate" class="form-label">BEGINNING DATE OF ORDER LIST:</label>
-                            <input type="date" class="form-control search-bar" id="beginningDate">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="endDate" class="form-label">END DATE OF ORDER LIST:</label>
-                            <input type="date" class="form-control search-bar" id="endDate">
-                        </div>
-                    </div>-->
                 </form>
-
- 
-
             </div>
 
             <div class="table">
@@ -184,8 +130,8 @@
                             <th>Change Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Example Order Row -->
+                    <tbody id="orderTableBody">
+                        <!-- Order Row -->
                         {% for order in orders %}
                         <tr>
                             <td>{{order.order_id}}</td>
@@ -378,6 +324,91 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// Search by order reference number 
+const orderReferenceInput = document.getElementById('orderReferenceNumber');
+const orderTableBody = document.getElementById('orderTableBody');
+
+orderReferenceInput.addEventListener('input', function () {
+    const reference = orderReferenceInput.value.toLowerCase();//不需要.toLowerCase吧，因为输入的只能是数字
+    const rows = orderTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
+
+    Array.from(rows).forEach(row => {
+        const referenceCell = row.getElementsByTagName('td')[0]; 
+        const referenceText = referenceCell.textContent.toLowerCase();
+
+        if (referenceText.includes(reference)) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Handle no results case
+    if (!hasVisibleRows) {
+        orderTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No matching orders found</td></tr>';
+    }
+});
+
+
+// Search by customer details info
+const customerNameInput = document.getElementById('customerName');
+const accountInput = document.getElementById('account');
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
+
+function filterRows() {
+    const customerName = customerNameInput.value.toLowerCase();
+    const account = accountInput.value.toLowerCase();//不需要.toLowerCase吧，因为输入的value被写死了
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const rows = orderTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
+
+    Array.from(rows).forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        const customerNameCell = cells[1].textContent.toLowerCase();
+        const accountCell = account; 
+        const orderDateCell = cells[2].textContent;
+        const orderDate = new Date(orderDateCell);
+
+        let matches = true;
+
+        if (customerName && !customerNameCell.includes(customerName)) {
+            matches = false;
+        }
+
+        if (account !== 'all' && accountCell !== account) { //修改数据库，新增一列？
+            matches = false;
+        }
+
+        if (startDate && orderDate < new Date(startDate)) {
+            matches = false;
+        }
+
+        if (endDate && orderDate > new Date(endDate)) {
+            matches = false;
+        }
+
+        if (matches) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Handle no results case
+    if (!hasVisibleRows) {
+        orderTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No matching orders found</td></tr>';
+    }
+}
+
+customerNameInput.addEventListener('input', filterRows);
+accountInput.addEventListener('change', filterRows);
+startDateInput.addEventListener('input', filterRows);
+endDateInput.addEventListener('input', filterRows);
 </script>
 
 {% endblock %}
