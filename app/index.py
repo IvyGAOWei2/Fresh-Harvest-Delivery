@@ -2,6 +2,7 @@ from app import app
 from flask import render_template, session, request
 from dbFile.config import fetchOne, fetchAll
 from emailMethod.method import sendFhdContact
+from common import fakeReview
 
 @app.route("/")
 def index():
@@ -17,6 +18,7 @@ def index():
     depot_id = 1 if not session.get('depot_id') else session['depot_id']
     news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (depot_id,), True)
 
+    session_id = 1 if not session.get('id') else session['id']
     sql = """
         SELECT 
             p.*, 
@@ -32,13 +34,15 @@ def index():
             RAND() 
         LIMIT 2;
     """
-    tablist1 = fetchAll(sql,(app.category_list[0]['category_id'], session['id']),True)
-    tablist2 = fetchAll(sql,(app.category_list[1]['category_id'], session['id']),True)
-    tablist3 = fetchAll(sql,(app.category_list[2]['category_id'], session['id']),True)
-    tablist4 = fetchAll(sql,(app.category_list[3]['category_id'], session['id']),True)
+    tablist1 = fetchAll(sql,(app.category_list[0]['category_id'], session_id),True)
+    tablist2 = fetchAll(sql,(app.category_list[1]['category_id'], session_id),True)
+    tablist3 = fetchAll(sql,(app.category_list[2]['category_id'], session_id),True)
+    tablist4 = fetchAll(sql,(app.category_list[3]['category_id'], session_id),True)
     combined_list = tablist1 + tablist2 + tablist3 + tablist4
+
+
     return render_template('index.html', discount=discount, news=news, shipping=app.shipping, \
-        categoryList=app.category_list,
+        categoryList=app.category_list,unitList=app.unit_list, reviews=fakeReview(),
         tablist1=tablist1,tablist2=tablist2,tablist3=tablist3,tablist4=tablist4, combined_list=combined_list)
 
 @app.route("/404")
