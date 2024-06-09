@@ -28,12 +28,14 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" name="title" id="post_title" placeholder="Enter Title" required>
-                </div>
+                    <input type="text" maxlength="80" class="form-control" name="title" id="post_title" placeholder="Enter Title" required>
+                    <div class="invalid-feedback">Please input a valid title, must not exceed 80 characters.</div>
+                  </div>
                 <div class="mb-3">
                     <label for="subtitle" class="form-label">Subtitle</label>
-                    <input type="text" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
-                </div>
+                    <input type="text" maxlength="80" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
+                    <div class="invalid-feedback">Please input a valid title, must not exceed 80 characters.</div>
+                  </div>
                 <div class="mb-3">
                     <label for="date" class="form-label">Post date</label>
                     <input type="date" class="form-control" name="date" id="post_date" required>
@@ -64,6 +66,7 @@
                     <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imageCoverPreview" alt="Cover Image">
                   </label>
                   <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*" onchange="previewCoverImage(event)" required>
+                  <div class="invalid-feedback">Please select an image.</div>
                 </div>
               </div>
             </div>
@@ -228,7 +231,31 @@
 {% endblock %}
 
 {% block script %}
+
+<!-- {% include "components/elements/InputValidate.html" %} -->
   <script>
+
+    // document.getElementById('post_img').addEventListener('input', function() {	
+    // InputValidate('post_img');	
+    // });	
+      
+    // document.getElementById('post_subtitle').addEventListener('input', function() {	
+    // InputValidate('post_subtitle}}');	
+    // });	
+      
+    // document.getElementById('post_title').addEventListener('input', function() {	
+    // InputValidate('post_title');	
+    // });	
+      
+    // document.getElementById('update_title').addEventListener('input', function() {	
+    // InputValidate('update_title');	
+    // });	
+      
+    // document.getElementById('subtitle').addEventListener('input', function() {	
+    // InputValidate('subtitle}}');	
+    // });	
+
+
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('updateNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
       document.getElementById('addNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
