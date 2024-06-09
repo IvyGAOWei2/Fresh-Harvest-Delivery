@@ -125,11 +125,19 @@
                                     </tr>
                                     <tr>
                                         <td colspan="5">Shipping</td>
-                                        <td class="shipping">${{ shipping }}</td>
+                                        {% if order.shipping_fee == 0 %}
+                                            <td class="shipping">Free</td>
+                                        {% else %}
+                                            <td class="shipping">${{ shipping }}</td>
+                                        {% endif %}
                                     </tr>
                                     <tr>
                                         <td colspan="5"><strong>Total Cost</strong></td>
-                                        <td class="total">${{ order.total + shipping }}</td>
+                                        {% if order.shipping_fee == 0 %}
+                                            <td class="shipping">${{ order.total }}</td>
+                                        {% else %}
+                                            <td class="total">${{ order.total + shipping }}</td>
+                                        {% endif %}
                                     </tr>
                             </table>
 
