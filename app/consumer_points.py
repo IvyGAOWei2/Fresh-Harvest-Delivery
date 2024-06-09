@@ -21,6 +21,8 @@ def giftcardRedeem():
 
     if len(code) == 8:
         update_successful = updateSQL("UPDATE GiftCards SET is_active = True WHERE code = %s;", (code,))
+    else:
+        update_successful = False
 
     if update_successful:
         current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (session['id'],))
