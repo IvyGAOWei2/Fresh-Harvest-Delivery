@@ -51,8 +51,9 @@ def checkout():
                 (%s,%s,%s,%s);",(order_id, product['id'], product['qty'], subtotal))
             total_price += subtotal
 
-        update_successful = updateSQL("UPDATE Orders SET total = %s, is_freeshiping = %s WHERE order_id = %s;", \
-            (total_price, total_price > app.shipping, order_id))
+        shipping_fee = 0 if total_price > app.shipping else app.shipping
+        update_successful = updateSQL("UPDATE Orders SET total = %s, shipping_fee = %s WHERE order_id = %s;", \
+            (total_price, shipping_fee, order_id))
 
         if update_successful:
             updateSQL("UPDATE ConsumerCart SET cart = %s WHERE user_id = %s;", ('[]', session['id'],))

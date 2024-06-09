@@ -109,7 +109,7 @@ CREATE TABLE Orders (
 	payment_status ENUM('Completed', 'Failed', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     status ENUM('Pending', 'Cancelled', 'Comfirmed', 'Shipped', 'Delivered', 'Refunded', 'Placeholder1', 'Placeholder2', 'Placeholder3') DEFAULT 'Pending' NOT NULL,
     total DECIMAL(10, 2),
-    is_freeshiping BOOLEAN DEFAULT FALSE,
+    shipping_fee DECIMAL(10, 2) DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
