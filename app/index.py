@@ -15,10 +15,13 @@ def index():
     discount_rate = discount[1]if discount else '10'
     discount = {'description': discount_description, 'rate': f'{discount_rate}% OFF'}
 
-    depot_id = 1 if not session.get('depot_id') else session['depot_id']
+    if 'depot_id' not in session or session['depot_id'] == 6:
+        depot_id = 1
+    else:
+        depot_id = session['depot_id']
+
     news = fetchAll("SELECT * FROM News WHERE depot_id = %s AND is_deleted = False;", (depot_id,), True)
 
-    session_id = 1 if not session.get('id') else session['id']
     sql = """
         SELECT 
             p.*, 
@@ -34,10 +37,10 @@ def index():
             RAND() 
         LIMIT 2;
     """
-    tablist1 = fetchAll(sql,(app.category_list[0]['category_id'], session_id),True)
-    tablist2 = fetchAll(sql,(app.category_list[1]['category_id'], session_id),True)
-    tablist3 = fetchAll(sql,(app.category_list[2]['category_id'], session_id),True)
-    tablist4 = fetchAll(sql,(app.category_list[3]['category_id'], session_id),True)
+    tablist1 = fetchAll(sql,(app.category_list[0]['category_id'], depot_id),True)
+    tablist2 = fetchAll(sql,(app.category_list[1]['category_id'], depot_id),True)
+    tablist3 = fetchAll(sql,(app.category_list[2]['category_id'], depot_id),True)
+    tablist4 = fetchAll(sql,(app.category_list[3]['category_id'], depot_id),True)
     combined_list = tablist1 + tablist2 + tablist3 + tablist4
 
 
