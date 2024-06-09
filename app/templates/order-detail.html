@@ -1,0 +1,155 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Order Detials{% endblock %}
+
+{% block navbar %}
+  {% with is_order_detail='1' %}
+    {% include "components/layout/header/Nav1.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+<div id="breadcrumb" class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Order Detials</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('orderHistory') }}">Order History</a></li>
+        <li class="breadcrumb-item active text-white">Order Detials</li>
+    </ol>
+</div>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="account-header d-flex justify-content-center align-items-center py-4">
+                    <h2>Order Reference No. {{order.order_id}}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3 ps-4">
+            <div class="col-6">
+                <div class="my-2">
+                    <span class="text-600 text-90">Order Date: {{order.order_date}}</span> 
+                </div>
+                <div class="my-2">
+                    <span class="text-600 text-90">Status: {{order.status}}</span>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-12">
+                <div id="cart" class="container-fluid ">
+                    <div class="container py-2">
+                            <table class="table">
+                                <!-- table for normal product -->
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Products</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Refund</th>
+                                    </tr>
+                                </thead>
+                                {% for product in orderProducts %}
+                                <tbody>
+                                    <th scope="row">
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ product.product_name }}">
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.name}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.price}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.quantity}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.subtotal}}</p>
+                                    </td>
+                                    <td>
+                                    <!-- product.status 应为order item对应的status -->
+                                    {% if product.status != 'Refunded' %}
+                                        <div class="d-flex mt-4">
+                                            <a href="{{ url_for('contact') + '#contactUs' }}" class="btn" role="button" data-bs-toggle="refund" title="Apply Refund">
+                                                <i class="fas  fa-registered fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    {% else %}
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Refunded</p>
+                                    {% endif%}
+                                    </td>   
+                                </tbody>
+                                {% endfor %}    
+                            </table>                 
+                           {% if Giftcards %}
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Gift Cards</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Balance</th>
+                                        <th scope="col">Active</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    {% for giftcard in Giftcards %}
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ giftcard.gift_card_id}}">
+                                            </div>
+                                        </th>
+                                        <td colspan="5" >{{ giftcard.code }}</td>
+                                        <td colspan="5" >${{ giftcard.balance }}</td>
+                                        <td colspan="5" >{{ 'Yes' if giftcard.is_active else 'No' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                            <table class="table">
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5" class="text-end">Shipping</td>
+                                        <td class="shipping">${{shipping}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="text-end"><strong>Total</strong></td>
+                                        <td class="total">${{order.total + shipping}}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block script%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="refund"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
+{% endblock %}

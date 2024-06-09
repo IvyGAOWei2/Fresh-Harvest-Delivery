@@ -4,7 +4,6 @@
     --bs-body-color: #6a717a !important;
     --bs-border-color: #c2c2c2 !important;
 }
-
 #checkout .form-check-input:checked{
     background-color: #81c408;
     border-color: #81c408;
@@ -23,11 +22,22 @@
     background: #E8E3E3EF !important;
 }
 
-#checkout .form-control {
+.form-control,
+#reviewForm .form-control,
+#contactForm .form-control,
+#updateConsumerProfileForm .form-control,
+#updateConsumerProfileForm .form-select,
+#orderHistorySearch .form-select
+{
     transition: .6s !important
 }
 
-#checkout .form-control:focus {
+#checkout .form-control:focus,
+#reviewForm .form-control:focus,
+#contactForm .form-control:focus,
+#updateConsumerProfileForm .form-control:focus,
+#orderHistorySearch .form-control:focus
+{
     border-color: #81C408;
     box-shadow: 0 0 1.5rem #81C408;
     color: #6a717a;
@@ -82,7 +92,7 @@
     background-color: #FFB524 !important
 }
 
-.navbar .fa, .fas{
+.navbar .fa, .fas, .far{
     color: #81c408;
 }
 
@@ -317,7 +327,7 @@
 
 .page-header {
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../images/bg2.jpg);
+    background: linear-gradient(rgba(126, 126, 126, 0.4), rgba(126, 126, 126, 0.4)), url(../images/bg2.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;

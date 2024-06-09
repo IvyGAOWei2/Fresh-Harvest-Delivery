@@ -1,0 +1,240 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with is_manage_order_detail='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Order Detail' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+
+
+<section class="main-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="account-header d-flex justify-content-center align-items-center py-4">
+                    <h2>Order Reference No. {{order.order_id}}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3 ps-4">
+            <div class="col-6">
+                <div class="my-2">
+                    <span class="text-600 text-90">Order Date: {{order.order_date}}</span> 
+                </div>
+                <div class="my-2">
+                    <span class="text-600 text-90">Status: {{order.status}}</span>
+                </div>
+                <div class="my-2">
+                    <span class="text-600 text-90">Customer Name: {{order.full_name}}</span>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="row">
+            <div class="col-12">
+                <div id="cart" class="container-fluid ">
+                    <div class="container py-2">
+                            <table class="table">
+                                <!-- table for normal product -->
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Products</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Refund</th>
+                                    </tr>
+                                </thead>
+                                {% for product in orderProducts %}
+                                <tbody>
+                                    <th scope="row">
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ product.product_name }}">
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.name}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.price}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.quantity}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.subtotal}}</p>
+                                    </td>
+                                    <td>
+                                    <!-- product.status 应为order item对应的status -->
+                                    {% if product.status != 'Refunded' %}
+                                        <div class="d-flex mt-4">
+                                            <button type="button" class="btn order-refund" role="button" title="Create Refund" ata-product-name="{{ product.product_name }}" data-order-item-id ="{{product.order_item_id}} ">
+                                                <i class="fas fa-registered fa-lg"></i>
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Refunded</p>
+                                    {% endif%}
+                                    </td>   
+                                </tbody>
+                                {% endfor %}    
+                            </table>                 
+                            {% if orderGiftcards %}
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Gift Cards</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Balance</th>
+                                        <th scope="col">Active</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for giftcard in orderGiftcards %}
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='images/product/' + giftcard.giftcard_image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ giftcard.gift_card_id}}">
+                                            </div>
+                                        </th>
+                                        <td colspan="5" >{{ giftcard.code }}</td>
+                                        <td colspan="5" >${{ giftcard.balance }}</td>
+                                        <td colspan="5" >{{ 'Yes' if giftcard.is_active else 'No' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-end">
+            <div class="col-4">
+                <div class="summary-box p-3" >
+                    <div class="px-4 py-1">
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="my-0 me-4"> <span>Subtotal:</span></p>
+                            <p class="my-0" id="subtotal">$0.00</p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="mb-0 me-4"><span> Shipping:</span></p>
+                            <p class="mb-0" id="shippingCost">$0.00</p>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="mb-0 me-4"><span>GST:</span></p>
+                            <p class="mb-0" id="GST">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="py-3 mb-4 border-top border-bottom d-flex justify-content-between">
+                        <h6 class="mb-0 ps-4 me-4">Total</h6>
+                        <p class="mb-0 pe-4" id="final-total">$10.00</p> 
+                </div>
+                    
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal 1 -->
+    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundModalLabel">Confirm Refund</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to refund the item "<span id="productName"></span>" for the customer?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="processRefund()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2 refund Success -->
+    <div class="modal fade" id="refundSuccessModal" tabindex="-1" aria-labelledby="refundSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundSuccessModalLabel">Refund Successful</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    The refund has been successfully processed.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+{% include "components/elements/InputValidate.html" %}
+
+<script>
+    // validation
+ 
+
+    // Modal & Data
+    let refundOrderItemId = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const refundButtons = document.querySelectorAll('.order-refund');
+        refundButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productName = button.getAttribute('data-product-name');
+                refundOrderItemId = button.getAttribute('data-order-item-id');
+                document.getElementById('productName').innerText = productName;
+                new bootstrap.Modal(document.getElementById('refundModal')).show();
+            });
+        });
+    });
+
+    function processRefund() {
+        fetch("{{ url_for('staffRefund') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ order_item_id: refundOrderItemId }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                new bootstrap.Modal(document.getElementById('refundModal')).hide();
+                new bootstrap.Modal(document.getElementById('refundSuccessModal')).show();
+                document.getElementById('refundSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+            } else {
+                alert("Refund failed.");
+            }
+        });
+    }
+
+</script>
+
+{% endblock %}

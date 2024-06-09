@@ -1,0 +1,234 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with manageGiftcard='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Manage Giftcards' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .vesitable-item:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+    }
+    .btn:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
+
+    .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5); /* optional: adds a semi-transparent overlay */
+}
+
+</style>
+
+
+
+<section class="main-content">
+    <h1 class="text-center">Manage Giftcards</h1>
+
+    <!-- Start-->
+    <div class="container-fluid vesitable py-2">
+        <div class="container py-2">
+            <h3 class="mb-2">Giftcard Choices</h3>
+            <div class="owl-carousel giftcard-carousel justify-content-center">     
+                {% for card in giftcards %}
+                <div class="border border-primary rounded position-relative vesitable-item">
+                    <div class="vesitable-img">
+                        <img src="{{ url_for('static', filename='images/product/' + card.image) }}" class="img-fluid w-100 rounded-top" alt="">
+                    </div>
+                    <div class="p-4 rounded-bottom">
+                        <h4>Balance: {{card.balance}}</h4>
+                        <p>{{card.name}}</p>
+                        <div class="d-flex justify-content-between flex-lg-wrap">
+                            <a data-bs-toggle="modal" data-bs-target="#viewnewsModal" class="border border-secondary rounded-pill px-3 text-primary btn">
+                                <i class="fas fa-angle-double-right me-2 text-primary"></i> Find More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+<!-- View Detail Modal -->
+<div class="modal fade" id="viewnewsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 900px">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5 text-primary fst-italic" id="exampleModalLabel"><i class="far fa-smile-wink"></i> Detail Info</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+            <div class="col-md-6 fst-italic">
+         <p>description</p>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="vesitable-img">
+                    <img src="{{ url_for('static', filename='images/vegetable6.jpg') }}" class="img-fluid w-100 rounded-top" alt="">
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+  <h3 class="mb-2">Giftcard Redemption </h3>
+  <div id="orders-table" class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Giftcard ID</th>
+                <th>Code</th>
+                <th>Balance</th>
+                <th>Redemption Date</th>
+                <th>Consumer Name</th>
+                <th>User ID</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider">
+            {% for card in giftcardsRedeem %}
+            <!-- Example Order Row -->
+            <tr>
+                <td>{{card.gift_card_id}}</td>
+                <td>{{card.code}}</td>
+                <td>{{card.balance}}</td>
+                <td>{{card.order_date}}</td>
+                <td>{{card.full_name}}</td>
+                <td>{{card.user_id}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+{% include "components/elements/InputValidate.html" %}
+
+<script>
+
+(function ($) {
+    $(".giftcard-carousel").owlCarousel({
+        autoplay: true,
+        smartSpeed: 1500,
+        center: false,
+        dots: true,
+        loop: true,
+        margin: 25,
+        nav : true,
+        navText : [
+            '<i class="fas fa-arrow-left"></i>',
+            '<i class="fas fa-arrow-right"></i>'
+        ],
+        responsiveClass: true,
+        responsive: {
+            0:{
+                items:1
+            },
+            576:{
+                items:1
+            },
+            768:{
+                items:2
+            },
+            992:{
+                items:3
+            },
+            1200:{
+                items:4
+            }
+        }
+    });
+
+    // Hover effect for zoom
+    $('.vesitable-item').hover(
+        function() {
+            $(this).css('transform', 'scale(1.05)');
+            $(this).css('transition', 'transform 0.3s ease');
+        },
+        function() {
+            $(this).css('transform', 'scale(1)');
+            $(this).css('transition', 'transform 0.3s ease');
+        }
+    );
+
+     // Hover effect for button zoom
+    $('.btn').hover(
+            function() {
+                $(this).css('transform', 'scale(1.1)');
+                $(this).css('transition', 'transform 0.3s ease');
+            },
+            function() {
+                $(this).css('transform', 'scale(1)');
+                $(this).css('transition', 'transform 0.3s ease');
+            }
+        );
+    
+    // Modal Video
+    $(document).ready(function () {
+        var $videoSrc;
+        $('.btn-play').click(function () {
+            $videoSrc = $(this).data("src");
+        });
+        console.log($videoSrc);
+
+        $('#videoModal').on('shown.bs.modal', function (e) {
+            $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");
+        })
+
+        $('#videoModal').on('hide.bs.modal', function (e) {
+            $("#video").attr('src', $videoSrc);
+        })
+    });
+
+})(jQuery);
+
+// // Hover effect for zoom
+// document.addEventListener('DOMContentLoaded', () => {
+//     document.querySelectorAll('.vesitable-item').forEach(item => {
+//         item.addEventListener('mouseover', () => {
+//             item.style.transform = 'scale(1.05)';
+//             item.style.transition = 'transform 0.3s ease';
+//         });
+//         item.addEventListener('mouseout', () => {
+//             item.style.transform = 'scale(1)';
+//             item.style.transition = 'transform 0.3s ease';
+//         });
+//     });
+// });
+
+
+</script>
+
+{% endblock %}

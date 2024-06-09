@@ -1,0 +1,533 @@
+{% extends "_employee-base.html" %}
+
+{% block sidebar %}
+{% with manageSettings='1' %}
+{% include "components/layout/Sidebar.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block breadcrumb %}
+{% with pageName='Manage System Settings' %}
+{% include "components/layout/Breadcrumb2.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    #addUnitsModal {
+    color: black;
+}
+
+</style>
+
+<section class="main-content">
+    <h1 class="text-center">Admin Action</h1>
+
+    <!-- updateSuccessModal -->
+    {% with
+        btn_show = 0,
+        modal_id = 'updateSuccessModal',
+        bg_color = '#3399ff',
+        title = 'Update Successfully',
+        msg = 'Information has been successfully updated'
+    %}
+        {% include "components/elements/updateSuccess.html" %}
+    {% endwith %}
+
+    <!-- add Success btn code start here -->
+  {% with
+    btn_show = 0,
+    modal_id = 'addItemSuccessModal',
+    bg_color = '#3399ff',
+    title = 'Added Successfully',
+    msg = 'Item has been successfully added'
+  %}
+    {% include "components/elements/updateSuccess.html" %}
+  {% endwith %}
+
+
+<!-- shipping price -->
+    <!-- <div class="accordion-item p-5">
+        <h2 class="accordion-header mb-3" id="headingShippingPrice">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShippingPrice" aria-expanded="false" aria-controls="collapseShippingPrice">
+                <i class="fas fa-shipping-fast fa-2x me-2"></i>Shipping Prices Setting
+            </button>
+        </h2>
+        <div id="collapseShippingPrice" class="accordion-collapse collapse" aria-labelledby="headingShippingPrice">
+            <div class="accordion-body mx-3"> -->
+                <div class="d-flex align-items-center px-5 py-2">
+                    <i class="fas fa-shipping-fast fa-2x me-2"></i>
+                    <h5 class="me-2">Current Shipping Price:</h5>
+                    <p class="me-2 mb-1">{{shipping}}</p>
+                    <p class="mb-1">NZD</p>
+
+                    <a class="btn btn-primary m-4" role="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#updateShippingPrice">Click to update 
+                        <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                    </a>
+                </div>
+
+                <!-- <p class="mt-3">Want to change Shipping Price Setting?</p> -->
+            <!-- </div>
+        </div>
+    </div> -->
+
+        
+<!-- Update shipping price offcanvas start-->
+    <div class="offcanvas offcanvas-end w-30" tabindex="-1" id="updateShippingPrice" aria-labelledby="updateShippingPriceCanvaLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title mx-auto" id="updateShippingPriceLabel">Update Shipping Price</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form id="updateShippingPriceForm" class="update-shippingPrice-form" novalidate>
+
+                <!-- Shipping Price -->
+                <div class="mb-3">
+                    <label for="updateShippingPrice" class="form-label">Enter New Shipping Price</label>
+                    <input type="number" class="form-control"  id="updateShippingPrice" value="" name="shipping" step="1" required>
+                    <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
+                </div>
+                <button type="submit" class="btn btn-secondary shippingPrice-update" >Update</button>
+            </form>
+        </div>
+    </div>
+    <!-- end of offcanvas -->
+
+
+<!-- product units -->
+    <div class="accordion-item px-5 pt-2">
+        <h2 class="accordion-header mb-0" id="headingUnits">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUnits" aria-expanded="true" aria-controls="collapseUnits">
+                <i class="fas fa-cube fa-2x me-2 "></i><h5>Product Units</h5>
+            </button>
+        </h2>
+
+        <div id="collapseUnits" class="accordion-collapse collapse show" aria-labelledby="headingUnits">
+            <div class="accordion-body mx-3">
+                <!-- Button trigger modal to add Units-->
+                <div class="d-flex mx-5 my-1">
+                    <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addUnitsModal">Add New Units</button>
+                </div>
+
+                <table class="table table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="d-none">Unit ID</th>
+                            <th scope="col">Unit Name</th>
+                            <th scope="col">Unit Standard</th>
+                            <th scope="col">Unit Minimum</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for unit in units %}
+                        <tr>
+                            <td class="d-none">{{unit.unit_id}}</td>
+                            <td>{{ unit.unit_name }}</td> 
+                            <td>{{ unit.unit_std }}</td>
+                            <td>{{ unit.unit_min }}</td>
+                            <td>
+                                <a class="btn" role="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#updateUnit{{ unit.unit_id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                                </a>
+
+                                <!-- <a href="{{ url_for('orderHistory') }}" class="btn unit-del" role="button">
+                                    <i class="fas fa-trash-alt fa-lg me-1" title="Delete unit"></i>
+                                </a> -->
+                            </td>
+                        </tr>
+
+                        <!-- Update Unit offcanvas start-->
+                        <div class="offcanvas offcanvas-end w-30" tabindex="-1" id="updateUnit{{ unit.unit_id }}" aria-labelledby="updateUnitCanvaLabel">
+                            <div class="offcanvas-header">
+                              <h5 class="offcanvas-title  mx-auto" id="updateUnitLabel">Update {{unit.unit_name }}</h5>
+                              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form id="updateUnitForm{{ unit.unit_id }}" class="needs-validation" novalidate>
+                                    <input type="text" class="form-control d-none" name="unit_id" value="{{ unit.unit_id }}"/>  
+
+                                    <!-- unit name -->
+                                    <div class="mb-3">
+                                        <label for="updateUnitName" class="form-label">Unit Name</label>
+                                        <input type="text" minlength="1" maxlength="50" id="updateUnitName" name="unit_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ unit.unit_name }}" required>
+                                        <div class="invalid-feedback">Please enter a valid Unit name, only letters and spaces.</div>
+                                    </div>
+                                    <!-- unit standard -->
+                                    <div class="mb-3">
+                                        <label for="updateUnitStd" class="form-label">Unit Standard</label>
+                                        <input type="text" minlength="1" maxlength="5" id="updateUnitStd" name="unit_std" pattern="^[a-zA-Z0-9\\s]+$" class="form-control" value="{{ unit.unit_std }}" required>
+                                        <div class="invalid-feedback">Please enter a valid Unit standard, only letters numbers or spaces.</div>
+                                    </div>
+                                    <!-- unit min -->
+                                    <div class="mb-3">
+                                        <label for="updateUnitMin" class="form-label">Unit Minimum</label>
+                                        <input type="text" minlength="1" maxlength="5" id="updateUnitMin" name="unit_min" pattern="^[a-zA-Z0-9\\s]+$" class="form-control" value="{{ unit.unit_min }}" required>
+                                        <div class="invalid-feedback">Please enter a valid Unit Minimum, only letters numbers or spaces.</div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-secondary unit-update" data-unit-id="{{ unit.unit_id }}">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- end of offcanvas -->
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal to add New Units -->
+<div class="modal fade" id="addUnitsModal" tabindex="-1" aria-labelledby="addUnitsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title mx-auto" id="addUnitsModalLabel">Add New Units</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+            <form id="addUnitForm" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <!-- unit name -->
+                    <div class="mb-3">
+                        <label for="addUnitName" class="form-label">Unit Name</label>
+                        <input type="text" class="form-control" id="addUnitName" name="unit_name" minlength="1"
+                            maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                        <div class="invalid-feedback">Please enter a valid unit name, only letters and spaces.
+                        </div>
+                    </div>
+                    <!-- unit std -->
+                    <div class="mb-3">
+                        <label for="addUnitStd" class="form-label">Unit Standard</label>
+                        <input type="text" class="form-control" id="addUnitStd" name="unit_std" minlength="1"
+                            maxlength="5" pattern="^[a-zA-Z0-9\\s]+$" required>
+                        <div class="invalid-feedback">Please enter a valid unit standard, only letters numbers or spaces.
+                        </div>
+                    </div>
+
+                    <!-- unit min -->
+                    <div class="mb-3">
+                        <label for="addUnitMim" class="form-label">Unit Minimum</label>
+                        <input type="text" class="form-control" id="addUnitMim" name="unit_min" minlength="1"
+                            maxlength="5" pattern="^[a-zA-Z0-9\\s]+$" required>
+                        <div class="invalid-feedback">Please enter a valid unit minimum, only letters numbers or spaces.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <!-- category -->
+    <div class="accordion-item p-5">
+        <h2 class="accordion-header mb-3" id="headingCategories">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
+                <i class="fas fa-tags me-2 fa-2x"></i><h5>Category Name</h5>
+            </button>
+        </h2>
+        <div id="collapseCategories" class="accordion-collapse collapse " aria-labelledby="headingCategories">
+            <div class="accordion-body  mx-3">
+                <!-- Button trigger modal to add Units-->
+                <div class="d-flex mx-5 my-1">
+                    <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addCategoriesModal">Add New Categories</button>
+                </div>
+                <table class="table table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="d-none">Category ID</th>
+                            <th scope="col">Category Name</th>
+                            <th scope="col">Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td class="d-none">{{category.category_id}}</td>
+                            <td>{{ category.category_name }}</td>
+                            <td>
+                                <a class="btn" role="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#updateCategory{{ category.category_id }}">
+                                    <i class="fas fa-edit fa-lg me-3 fa-fw" title="Update Info"></i>
+                                </a>
+                                <!-- <a href="{{ url_for('orderHistory') }}" class="btn category-del" role="button">
+                                    <i class="fas fa-trash-alt fa-lg me-1" title="Delete Category"></i>
+                                </a> -->
+
+                            </td>
+                        </tr>
+
+                        <!-- Update category offcanvas start-->
+                        <div class="offcanvas offcanvas-end w-30" tabindex="-1" id="updateCategory{{ category.category_id }}" aria-labelledby="updateCategoryCanvaLabel">
+                            <div class="offcanvas-header">
+                              <h5 class="offcanvas-title  mx-auto" id="updateCategoryLabel">Update {{category.category_name }}</h5>
+                              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <form id="updateCategoryForm{{ category.category_id }}" class="update-category-form" novalidate>
+                                    <input type="text" class="form-control d-none" name="category_id" value="{{ category.category_id }}"/>  
+
+                                    <!-- category name -->
+                                    <div class="mb-3">
+                                        <label for="updateCategoryName" class="form-label">Category Name</label>
+                                        <input type="text" minlength="1" maxlength="50" id="updateCategoryName" name="category_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ category.category_name }}" required>
+                                        <div class="invalid-feedback">Please enter a valid Category name, only letters and spaces.</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-secondary category-update" data-category-id="{{ category.category_id }}">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- end of offcanvas -->
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+       <!-- Modal to add New Categories -->
+<div class="modal fade" id="addCategoriesModal" tabindex="-1" aria-labelledby="addCategoriesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title mx-auto" id="addCategoriesModalLabel">Add New Categories</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+            <form id="addCategoriesForm" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <!-- category name -->
+                    <div class="mb-3">
+                        <label for="addCategoryName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="addCategoryName" name="category_name" minlength="1"
+                            maxlength="50" pattern="^[a-zA-Z\s]+$" required>
+                        <div class="invalid-feedback">Please enter a valid category name, only letters and spaces.
+                        </div>
+                    </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+      </div>
+    </div>
+</div>
+ 
+
+
+
+
+    {% include "components/elements/loadingModal.html" %}
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+{% include "components/elements/InputValidate.html" %}
+
+<script>
+    // Validation
+    document.getElementById('updateUnitName').addEventListener('input', function () {
+        InputValidate('updateUnitName');
+    });
+    document.getElementById('updateUnitStd').addEventListener('input', function () {
+        InputValidate('updateUnitStd');
+    });
+    document.getElementById('updateUnitMin').addEventListener('input', function () {
+        InputValidate('updateUnitMin');
+    });
+    document.getElementById('updateCategoryName').addEventListener('input', function () {
+        InputValidate('updateCategoryName');
+    });
+
+
+    //  Add validation
+    document.getElementById('addUnitName').addEventListener('input', function () {
+        InputValidate('addUnitName');
+    });
+    document.getElementById('addUnitStd').addEventListener('input', function () {
+        InputValidate('addUnitStd');
+    });
+    document.getElementById('addUnitMim').addEventListener('input', function () {
+        InputValidate('addUnitMim');
+    });
+    document.getElementById('addCategoryName').addEventListener('input', function () {
+        InputValidate('addCategoryName');
+    });
+
+
+
+    // Shipping Price Update
+    document.addEventListener('DOMContentLoaded', function () {
+        const updateSuccessModal = document.getElementById('updateSuccessModal');
+        const updateShippingPriceForm = document.getElementById('updateShippingPriceForm');
+
+        updateSuccessModal.addEventListener('hidden.bs.modal', () => location.reload());
+
+        updateShippingPriceForm.addEventListener('submit', event => {
+            if (!updateShippingPriceForm.checkValidity()) return; // Stop further execution if form is invalid
+            event.preventDefault();
+
+            const formData = new FormData(updateShippingPriceForm);
+
+            fetch('/shipping/update', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        new bootstrap.Modal(updateSuccessModal).show();
+                    } else {
+                        alert("Invalid request");
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Units
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.unit-update').forEach(function (update) {
+            const unit_id = update.getAttribute('data-unit-id');
+            const updateUnitForm = document.getElementById('updateUnitForm' + unit_id);
+
+            updateUnitForm.addEventListener('submit', event => {
+                if (!updateUnitForm.checkValidity()) return; // Stop further execution if form is invalid
+                event.preventDefault();
+
+                const formData = new FormData(updateUnitForm);
+
+                fetch('/units/update', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status == 1) {
+                            new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                        } else {
+                            alert("Invalid request");
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
+    document.getElementById('addItemSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+
+    // Add Unitdes
+    document.addEventListener('DOMContentLoaded', function () {
+        const addUnitForm = document.getElementById('addUnitForm');
+
+        addUnitForm.addEventListener('submit', function (event) {
+            if (!addUnitForm.checkValidity()) return; // Stop further execution if form is invalid
+            event.preventDefault();
+
+            const formData = new FormData(addUnitForm);
+
+            fetch('/units/add', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        // console.log(data.status)
+                        const modalElement = document.getElementById('addUnitsModal');
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        modalInstance.hide();
+                        new bootstrap.Modal(document.getElementById('addItemSuccessModal')).show();
+                    } else {
+                        alert("Invalid request");
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+
+    // Categories
+    // Update Category
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.category-update').forEach(function (update) {
+            const category_id = update.getAttribute('data-category-id');
+            const updateCategoryForm = document.getElementById('updateCategoryForm' + category_id);
+
+            updateCategoryForm.addEventListener('submit', event => {
+                if (!updateCategoryForm.checkValidity()) return; // Stop further execution if form is invalid
+                event.preventDefault();
+
+                const formData = new FormData(updateCategoryForm);
+
+                fetch('/category/update', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status == 1) {
+                            new bootstrap.Modal(document.getElementById('updateSuccessModal')).show();
+                        } else {
+                            alert("Invalid request");
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
+    // Add Category
+    document.addEventListener('DOMContentLoaded', function () {
+        const addCategoriesForm = document.getElementById('addCategoriesForm');
+
+        addCategoriesForm.addEventListener('submit', function (event) {
+            if (!addCategoriesForm.checkValidity()) return; // Stop further execution if form is invalid
+            event.preventDefault();
+
+            const formData = new FormData(addCategoriesForm);
+
+            fetch('/category/add', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == 1) {
+                        const modalElement = document.getElementById('addCategoriesModal');
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        modalInstance.hide();
+                        new bootstrap.Modal(document.getElementById('addItemSuccessModal')).show();
+                    } else {
+                        alert("Invalid request");
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+
+{% endblock %}

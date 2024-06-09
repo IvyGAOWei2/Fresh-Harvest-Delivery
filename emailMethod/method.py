@@ -7,8 +7,8 @@ config, auth = RawConfigParser(), RawConfigParser()
 config.read('emailMethod/config.ini')
 auth.read('emailMethod/auth.ini')
 
-def sendFhdContact(name, surname, email, message):
-    htmlData = fhdContactHTML(name, surname, email, message)
+def sendFhdContact(name, email, type, message):
+    htmlData = fhdContactHTML(name, email, type, message)
     sendEmail(htmlData, [config['contact']['contactEmail']], config['contact']['subject'], \
         config['contact']['header'], auth, True)
 
@@ -18,4 +18,4 @@ def sendResetPassword(email, temporary_password):
     
 def sendOrderStatus(email, order_id, name, order_date, order_status):
     htmlData = orderStatususHTML(order_id, name, order_date, order_status)
-    sendEmail(htmlData, email, config['order_status']['subject1'], config['order_status']['header'], auth, True)
+    sendEmail(htmlData, email, config['order_status']['subject1'] + ' ' + order_status, config['order_status']['header'], auth, True)

@@ -1,11 +1,11 @@
-import uuid, json, random, string, time
+import uuid, os, random, string, time
 from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, ValidationError
 from dbFile.config import fetchOne
 from functools import wraps
 from flask import session, redirect, url_for, abort
-
+from configparser import RawConfigParser
 
 # Model for user login
 class Login(BaseModel):
@@ -154,7 +154,7 @@ def fakeReview():
     {'user_name': 'Michael', 'img': 'user_default_image.png', 'depot_location': 'Auckland', 'product_id': 999, 'review_date': 'Sep 26, 2023', 'review_text': "I’ve been ordering from Fresh Harvest for over a year, and the quality of the produce always impresses me. The vegetables are fresh, and the delivery is always on time. Being able to order a mixed box on a subscription has made my grocery shopping so much easier. Plus, the staff is always helpful whenever I have a query"},
     {'user_name': 'Sarah', 'img': 'user_default_image.png', 'depot_location': 'Wellington', 'product_id': 999, 'review_date': 'May 03, 2024', 'review_text': "As a busy professional, Fresh Harvest has been a lifesaver. Their pre-made boxes are perfect for quick and healthy meals. The delivery service is reliable, and the quality of the produce is always top-notch."}]
 
-    return random.sample(Reviews, 2)
+    return random.sample(Reviews, 3)
 
 def toDay():
     return datetime.now().strftime('%Y-%m-%d')
@@ -184,3 +184,40 @@ def getTimestamp(hours=0):
 
 def validateConsumerEmail(email):
     return fetchOne('SELECT user_id FROM Users WHERE email = %s AND is_deleted = FALSE AND type = "Consumer"', (email,))
+
+def saveImage(upload_folder, img):
+    # Get the file extension of the uploaded image
+    ext = getImageExt(img.filename)
+
+    # Check if the extension is valid
+    if not ext:
+        return ext
+
+    # Generate a unique image name using a custom function
+    image_name = generateImageId() + '.' + ext
+    # Construct the full path where the image will be saved
+    filename = os.path.join(upload_folder, image_name)
+
+    # Save the uploaded image to the specified location
+    img.save(filename)
+    # Return the name of the saved image
+    return image_name
+
+def emailOrder(order_id):
+    return fetchOne("SELECT o.order_date, u.email, c.given_name FROM Orders o \
+        JOIN Users u ON o.user_id = u.user_id \
+        JOIN Consumer c ON u.user_id = c.user_id \
+        WHERE o.order_id = %s",  (order_id,), True)
+
+def newShipping(new):
+    try:
+        config = RawConfigParser()
+        config.read('app/config.ini')
+        config.set('base', 'shipping', new)
+
+        with open('app/config.ini', 'w') as configfile:
+            config.write(configfile)
+    except:
+        return False
+    else:
+        return True
