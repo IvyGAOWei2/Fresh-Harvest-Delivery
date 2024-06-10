@@ -202,8 +202,8 @@ function loadCartDetails() {
         `;
         cartBody.appendChild(row);
     });
-
-    let shippingCost = subtotal >= 80 ? 0 : 10;
+    let shipping= parseInt(`{{ shipping }}`);
+    let shippingCost = subtotal >= shipping ? 0 : shipping;
     let gst = subtotal * 0.15;  // Calculate GST for display purposes only
     let finalTotal = subtotal + shippingCost - ((cartDetails.pointsUsed / 1000) * 10);  // Apply points discount if any
 
