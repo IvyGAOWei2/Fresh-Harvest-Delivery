@@ -33,7 +33,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="HeadingpointsHistory">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="true" aria-controls="pointsHistory">
-                            <i class="fas fa-list me-2"></i>Points History
+                            <i class="fas fa-history me-2"></i>Points History
                         </button>
                     </h2>
                     <div id="pointsHistory" class="accordion-collapse show" aria-labelledby="pointsHistory">
@@ -64,9 +64,11 @@
                                     <td>{{point.point_balance}}</td>
                                     <td>{{point.point_date}}</td>
                                     <td>
-                                    <a href="{{ url_for('orderHistory') }}" class="btn view_order" role="button" title="Order details">
-                                        <i class="fas fa-list fa-lg me-3 fa-fw"></i>
-                                    </a>
+                                        {% if point.point_type != 'Gift Card' %}
+                                        <a href="{{ url_for('orderDetail', order_id = point.order_id ) }}" class="btn view_order" role="button" title="Order details">
+                                            <i class="fas fa-list-alt fa-lg me-3 fa-fw"></i>
+                                        </a>
+                                        {% endif %}
                                     </td>
                                   </tr>
                                   {% endfor %}

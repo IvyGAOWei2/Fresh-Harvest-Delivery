@@ -139,7 +139,7 @@ CREATE TABLE ConsumerPoints (
     user_id SMALLINT,
     order_id INT,
     gift_card_id SMALLINT,
-    point_type ENUM('Order Purchase', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    point_type ENUM('Order Purchase', 'Order Cancel', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     point_variation DECIMAL(10, 2),
     point_balance DECIMAL(10, 2),
     point_date DATE,

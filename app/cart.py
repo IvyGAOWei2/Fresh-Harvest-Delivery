@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, session, request
 import json
+from decimal import Decimal
 
 # User-defined function
 from dbFile.config import insertSQL, updateSQL, fetchOne, fetchAll
@@ -12,7 +13,7 @@ from emailMethod.method import sendOrderStatus
 @roleRequired(['Consumer'])
 def cart():
     points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (session['id'],))
-    print(points)
+    # print(points)
     return render_template('cart.html', shipping=app.shipping, points=points[0])
 
 @app.route("/cart/update", methods = ["POST"])
@@ -26,7 +27,7 @@ def cartUpdate():
 
     return {"status": False}, 500
 
-from decimal import Decimal
+
 @app.route("/checkout", methods=['GET','POST'])
 @roleRequired(['Consumer'])
 def checkout():
