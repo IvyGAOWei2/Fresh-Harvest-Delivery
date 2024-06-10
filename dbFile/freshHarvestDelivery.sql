@@ -186,10 +186,12 @@ CREATE TABLE Packages (
 CREATE TABLE Boxes (
     box_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     package_id SMALLINT,
+    product_id SMALLINT,
     box_type ENUM('Large', 'Medium', 'Small') NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     quantity TINYINT,
-    FOREIGN KEY (package_id) REFERENCES Packages(package_id)
+    FOREIGN KEY (package_id) REFERENCES Packages(package_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
 CREATE TABLE BoxItems (
