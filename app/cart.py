@@ -25,7 +25,7 @@ def cartUpdate():
     except:
         updateSQL("UPDATE ConsumerCart SET cart = %s WHERE user_id = %s;", (data, session['id']))
 
-    return {"status": False}, 500
+    return {"status": True}, 200
 
 
 @app.route("/checkout", methods=['GET','POST'])

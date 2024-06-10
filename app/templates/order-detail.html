@@ -91,32 +91,33 @@
                                 </tbody>
                                 {% endfor %}
 
-                                <!-- refund giftcard -->
-                                {% for giftcard in Giftcards %}
-                                <tbody>
-                                    <th scope="row">
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ giftcard.name }}">
-                                        </div>
-                                    </th>
-                                    <td>
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.name}}</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.price}}</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.quantity}}</p>
-                                    </td>
-                                    <td>
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.subtotal}}</p>
-                                    </td>
-                                    <td>
-                                    <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
-                                    </td>   
-                                </tbody>
-                                {% endfor %}  
-
+                                {% if Giftcards and order.status == 'Cancelled' %}
+                                    <!-- refund giftcard -->
+                                    {% for giftcard in Giftcards %}
+                                    <tbody>
+                                        <th scope="row">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ giftcard.name }}">
+                                            </div>
+                                        </th>
+                                        <td>
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.name}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.price}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.quantity}}</p>
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.subtotal}}</p>
+                                        </td>
+                                        <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
+                                        </td>   
+                                    </tbody>
+                                    {% endfor %}  
+                                {% endif %}
                             </table>
                             {% endif %}
 
