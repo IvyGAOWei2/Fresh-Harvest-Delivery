@@ -462,21 +462,65 @@
 
   {% include "components/elements/InputValidate.html" %}
 
-
+  {% for member in member_list %}
   <script>
-  document.getElementById('member_given_name'+ user_id).addEventListener('input', function() {
-    InputValidate('member_given_name'+ user_id);
+  document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_given_name{{ member.user_id }}');
   });
 
-
-
-  document.getElementById('add_given_name'+ user_id).addEventListener('input', function() {
-    InputValidate('add_given_name'+ user_id);
+  document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_family_name{{ member.user_id }}');
   });
 
+  document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('phone{{ member.user_id }}');
+  });
 
+  document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('address{{ member.user_id }}');
+  });
+
+  document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('consumer_postcode{{ member.user_id }}');
+  });
+
+  document.getElementById('member_new_password{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_new_password{{ member.user_id }}');
+  });
+
+  document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_email{{ member.user_id }}');
+  });
+
+  document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_given_name{{ member.user_id }}');
+  });
+
+  document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_family_name{{ member.user_id }}');
+  });
+
+  document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_phone{{ member.user_id }}');
+  });
+
+  document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_address{{ member.user_id }}');
+  });
+
+  document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_depot{{ member.user_id }}');
+  });
+
+  document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_password{{ member.user_id }}');
+  });
+
+  document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('user_type{{ member.user_id }}');
+  });
   </script>
-
+{% endfor %}
 <script>
   function previewImage(event, userId) {
       var reader = new FileReader();
