@@ -167,13 +167,13 @@
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="form3Example3c">Title <sup>*</sup></label>
-          <input type="text" maxlength="50" class="form-control" id="update_title" name="title" value="{{newz.title}}" pattern="^[a-zA-Z]+$" required/>     
-          <div class="invalid-feedback">Please input a title.</div> 
+          <input type="text" maxlength="80" class="form-control" id="update_title" name="title" value="{{newz.title}}" required/>     
+          <div class="invalid-feedback">Please input a title,not exceed 80 characters.</div> 
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Subtitle</label>
-          <input type="text" class="form-control" value="{{newz.subtitle}}" id="subtitle" name="subtitle" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
-          <div class="invalid-feedback">Please input a subtitle.</div>
+          <input type="text" class="form-control" value="{{newz.subtitle}}" id="subtitle" name="subtitle" minlength="1" maxlength="80" required>
+          <div class="invalid-feedback">Please input a subtitle, not exceed 80 characters.</div>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="post_date">Post date<sup>*</sup></label>
@@ -199,8 +199,8 @@
 
         <div>
           <label class="form-label">Content</label>
-          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="35" rows="6" pattern="^[a-zA-Z]+$" required>{{newz.content}}</textarea>
-          <div class="invalid-feedback">Please input content.</div>
+          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="500" rows="6" pattern="^[a-zA-Z]+$" required>{{newz.content}}</textarea>
+          <div class="invalid-feedback">Please input content, not exceed 500 characters..</div>
         </div>
         <p></p>
       <div class="col text-center">
