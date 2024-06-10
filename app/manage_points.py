@@ -48,18 +48,10 @@ def managePointsDetails():
 @app.route("/manage/points/update", methods=['POST'])
 @roleRequired(['Local_Manager', 'National_Manager'])
 def manageupdate():
-    type = session['type']
+  
     user_id = request.form.get('user_id')
     point_balance = request.form.get('point_balance')
     print(user_id,point_balance)
-    points_list = fetchAll("""WITH LatestPoints AS 
-             (SELECT user_id, MAX(point_id) AS latest_point_id FROM ConsumerPoints GROUP BY user_id)
-            SELECT u.given_name,u.family_name,u.depot_id,
-                Depots.location,           
-                p.*  
-            FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
-            JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
-            JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
     
     
     point_variation = float(request.form.get('point_variation'))

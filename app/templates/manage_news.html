@@ -91,6 +91,24 @@
     <div class="card-header">
       <h2>News History</h2>
     </div>
+    <div class="d-flex align-items-center mb-3">
+      <div class="col-xl-3">
+          <div class="input-group">
+              <input type="search" id="searchKeyword" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
+              <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+          </div>
+      </div>
+      {% if type == 'National_Manager' %}
+      <div class="ms-3">
+          <select id="depotFilter" class="form-select">
+              <option value="">All Depots</option>
+              {% for depot in depots %}
+              <option value="{{ depot[0] }}">{{ depot[1] }}</option>
+              {% endfor %}
+          </select>
+      </div>
+      {% endif %}
+  </div>
       <table class="table">
           <thead>
             <tr>
