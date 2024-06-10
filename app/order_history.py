@@ -17,17 +17,22 @@ def orderHistory():
 @app.route("/order/detail/<int:order_id>")
 @roleRequired(['Consumer','Staff', 'Local_Manager', 'National_Manager'])
 def orderDetail(order_id):
-    
-    order = fetchOne('SELECT * FROM Orders WHERE order_id = %s', (order_id,),True)
+    order = fetchOne('SELECT o.*, cp.point_variation FROM Orders o LEFT JOIN ConsumerPoints cp ON \
+        o.order_id = cp.order_id AND cp.point_type = "Points Redeem" WHERE o.order_id = %s;', (order_id,),True)
+    print(order)
     exclusion_list = ",".join(str(pid) for pid in app.giftcard_list)
     
-    products = fetchAll("SELECT o.*, p.name, p.price, pi.image  FROM OrderItems o JOIN Products p \
+    products = fetchAll("SELECT o.*, p.name, p.price, pi.image FROM OrderItems o JOIN Products p \
         ON o.product_id = p.product_id JOIN ProductImages pi ON p.product_id = pi.product_id \
         WHERE o.order_id = %s AND o.product_id NOT IN ("+ exclusion_list + ")", (order_id,), True)
 
-    giftcards = fetchAll('SELECT gc.*, pi.image FROM GiftCards gc JOIN ProductImages pi ON \
-        gc.product_id = pi.product_id WHERE gc.order_id = %s;', (order_id,),True)
-    # print(giftcards)
+    if order['status'] == 'Pending':
+        giftcards = fetchAll('SELECT gc.balance, gc.is_active, pi.image FROM GiftCards gc JOIN ProductImages pi ON \
+            gc.product_id = pi.product_id WHERE gc.order_id = %s;', (order_id,),True)
+    else:
+        giftcards = fetchAll('SELECT gc.*, pi.image FROM GiftCards gc JOIN ProductImages pi ON \
+            gc.product_id = pi.product_id WHERE gc.order_id = %s;', (order_id,),True)
+
     if session['type'] == 'Consumer':
         return render_template('order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
     else:
@@ -101,8 +106,8 @@ def updateOrderStatus():
         variation = target_order['total']
         new_points = current_points[0] + variation
 
-        insertSQL("INSERT INTO ConsumerPoints (user_id, point_type, point_variation, point_balance, point_date) \
-            VALUES(%s,%s,%s,%s,%s);", (target_order['user_id'], 'Order Purchase', variation, new_points, target_order['order_date']))
+        insertSQL("INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date) \
+            VALUES(%s,%s,%s,%s,%s,%s);", (target_order['user_id'], data['order_id'], 'Order Purchase', variation, new_points, target_order['order_date']))
         updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, target_order['user_id']))
 
     update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (data['status'], data['order_id']))

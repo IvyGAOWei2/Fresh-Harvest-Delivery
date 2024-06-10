@@ -62,8 +62,8 @@ def checkout():
                 # new ConsumerPoints
                 current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (session['id'],))
                 new_points =  -order['finalTotal']['pointsUsed'] + float(current_points[0])
-                insertSQL("INSERT INTO ConsumerPoints (user_id, point_type, point_variation, point_balance, point_date) \
-                    VALUES(%s,%s,%s,%s,%s);", (session['id'], 'Points Redeem', -order['finalTotal']['pointsUsed'], new_points, toDay()))     
+                insertSQL("INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date) \
+                    VALUES(%s,%s,%s,%s,%s,%s);", (session['id'], order_id,'Points Redeem', -order['finalTotal']['pointsUsed'], new_points, toDay()))     
                 # update Consumer points
                 updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, session['id']))
 
