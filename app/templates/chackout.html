@@ -260,11 +260,12 @@ function autoFillBillingDetails() {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('paymentform');
     if (userType === 'Residential') {
         const expiration = document.getElementById('cc-expiration');
-
+        // console.log(expiration)
 
         expiration.addEventListener('input', function() {
             validateExpirationDate(this); // 实时验证到期日期
@@ -274,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
+
         if (validateForm()) {
             console.log('Form is valid, process payment.');
             // 这里可以添加进一步处理付款的代码
@@ -336,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (userType === 'Residential') {
             // 验证到期日期 (格式MM/YY)
+            const expiration = document.getElementById('cc-expiration');
             if (!validateExpirationDate(expiration)) {
                 isValid = false;
             }
