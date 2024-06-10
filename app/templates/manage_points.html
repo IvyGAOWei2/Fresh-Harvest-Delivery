@@ -45,29 +45,36 @@
                 <td>{{point[3]}}</td>
                 <td>{{point[10]}}</td>
                 <td>{{point[11]}}</td>
-                <form id="managePointsForm{{ point[5] }}" method="POST" action="/manage/points/details" class="needs-validation" novalidate>
-                    <input type="text" class="form-control d-none" name="user_id" value="{{ point[5] }}"/>     
-                    <input type="text" class="form-control d-none" name="point_balance" value="{{ point[10] }}"/>
-                    <td>
-                        <div class="row">
-                        <div class="col-md-4">
-                        <button type="submit" name="action" value="view_details" class="btn manage-points" data-bs-toggle="tooltip" title="Points detail">
+               
+                <td>
+                <div class="row">
+                    <div class="col-md-4">
+                    <form id="managePointsForm{{ point[5] }}" method="POST" action="/manage/points/details">
+                        <input type="text" class="form-control d-none" name="user_id" value="{{ point[5] }}"/>     
+                        <input type="text" class="form-control d-none" name="point_balance" value="{{ point[10] }}"/>
+                        <button type="submit" class="btn" data-bs-toggle="tooltip" title="Points detail">
                             <i class="fas fa-eye fa-lg me-3 fa-fw"></i>
                         </button>
-                        </div>
+                    </form>
+                    </div>
+
+                    <div class="col-md-4">
+                    <form id="updatePointsForm{{ point[5] }}" method="POST" action="/manage/points/update" class="needs-validation" novalidate>
+                        <input type="text" class="form-control d-none" name="user_id" value="{{ point[5] }}"/>     
+                        <input type="text" class="form-control d-none" name="point_balance" value="{{ point[10] }}"/>
+                        <label for="point_variation{{point[5]}}" class="visually-hidden">Update points</label>
+                        <input type="number" class="form-control" name="point_variation" id="point_variation{{point[5]}}" placeholder="Update points balance" pattern="^(?!\s*$)\d{1,8}$">
+                        <div class="invalid-feedback">
+                            Please enter a valid number.
+                        </div>    
+                        </div>  
                         <div class="col-md-4">
-                            <label for="updatepoints" class="visually-hidden">Update points</label>
-                            <input type="number" class="form-control" name="point_variation" id="point_variation{{point[5]}}" placeholder="Update points balance">
-                            <div class="invalid-feedback">
-                                Please enter a valid number.
-                            </div>    
+                            <button type="submit" class="btn btn-primary mb-3 point-update" data-user-id = "{{ point[5] }}">Confirm</button>
                         </div>
-                            <div class="col-md-4">
-                            <button type="submit" name="action" value="update_points" class="btn btn-primary mb-3">Confirm</button>
-                            </div>
-                        </div>
-                    </td>
-                </form>
+                        </div>  
+                    </form>
+                </div>
+                </td>
                 </tr>
                 {% endfor %}  
             </tbody>
@@ -76,19 +83,6 @@
         </div>   
     </div>    
 
-
-    <!-- Update Success Message -->
-    <div class="p-3">
-        {% with
-            btn_show = 0,
-            modal_id = 'redemptionSuccessModal',
-            bg_color = '#81C408',
-            title = 'Redemption Success',
-            msg = 'Your gift card has been successfully redemption'
-        %}
-            {% include "components/elements/updateSuccess.html" %}
-        {% endwith %}
-    </div>
 </section>
 
 <!-- Modal Template for User Details -->
@@ -134,13 +128,13 @@
 </div>
 
 
-  <!-- updateProfileSuccessModal -->
+  <!-- updatePointsSuccessModal -->
   {% with
     btn_show = 0,
-    modal_id = 'updateProfileSuccessModal',
+    modal_id = 'updatePointsSuccessModal',
     bg_color = '#3399ff',
     title = 'Updated Successfully',
-    msg = 'User profile has been successfully updated'
+    msg = 'Points balance has been successfully updated'
   %}
     {% include "components/elements/updateSuccess.html" %}
   {% endwith %}
@@ -149,6 +143,48 @@
 
 {% block script %}
   {% include "components/elements/InputValidate.html" %}
+  
+  <script>
+    document.getElementById('point_variation'+ user_id).addEventListener('input', function() {
+        InputValidate('point_variation'+ user_id);
+    });
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('updatePointsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
+    document.querySelectorAll('.point-update').forEach(function (update) {
+        const user_id = update.getAttribute('data-user-id')
+        const updatePointsForm = document.getElementById('updatePointsForm' + user_id);
+
+        updatePointsForm.addEventListener('submit', event => {
+          if (!updatePointsForm.checkValidity()) return // Stop further execution if form is invalid
+          event.preventDefault();
+          // event.stopPropagation();
+          const formData = new FormData(updatePointsForm);
+          // console.log(formData)
+          fetch('/manage/points/update', {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status == 1) {
+                  console.log(data.status)
+                  // Show updateNewsSuccess modal if update is successful
+                  // console.log(data)
+                  new bootstrap.Modal(document.getElementById('updatePointsSuccessModal')).show();
+              }
+              else {
+                  alert("Invalid request");
+                  // location.reload(); // Reload the page on failure
+              }
+          })
+          .catch(error => console.error('Error:', error));
+        });
+      })
+    });
+  </script>
 
   {% if show_modal %}
   <script>
