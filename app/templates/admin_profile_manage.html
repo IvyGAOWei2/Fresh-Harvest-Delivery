@@ -121,7 +121,7 @@
                   </option>
                 {% else %}
                   {% for depot in depotList %}
-                  <option value="{{depot.depot_id}}" {% if newz.depot_id  == depot.depot_id %}selected{% endif %} required>
+                  <option value="{{depot.depot_id}}" {% if member.depot_id  == depot.depot_id %}selected{% endif %} required>
                     {{depot.location}}
                   </option>
                   {% endfor %}
@@ -181,17 +181,8 @@
                 <label class="form-label">Type</label>
                   <div class="d-flex align-items-center">
                     <select class="form-control" name="type" id="user_type">
-                      {% if session.depot_id != 6 %}
-                      <option value="{{session.depot_id}}" selected>
-                        {{depotList[session.depot_id -1].location}}
-                      </option>
-                    {% else %}
-                      {% for depot in depotList %}
-                      <option value="{{depot.depot_id}}" {% if newz.depot_id  == depot.depot_id %}selected{% endif %} required>
-                        {{depot.location}}
-                      </option>
-                      {% endfor %}
-                    {% endif %}
+                      <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
+                      <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
                     </select>
                     <div class="invalid-feedback">Please select a employee type from the list.</div>
                     <div class="valid-feedback">Looks good!</div>      
@@ -364,7 +355,7 @@
                       </option>
                     {% else %}
                       {% for depot in depotList %}
-                      <option value="{{depot.depot_id}}" {% if session.depot_id  == depot.depot_id %}selected{% endif %} required>
+                      <option value="{{depot.depot_id}}" {% if member.depot_id  == depot.depot_id %}selected{% endif %} required>
                         {{depot.location}}
                       </option>
                       {% endfor %}

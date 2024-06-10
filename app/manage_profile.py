@@ -31,37 +31,25 @@ def saveImage(img):
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfiles():
     type = session['type']
-    depot_id = session['depot_id']
+    
     profile_type = request.args.get('profile_type')
-    if depot_id == 6:
-        if profile_type == "Consumer":
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
-        else:
-            if session.get('type') in ['Local_Manager']:
-                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
-            else:
-                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                    JOIN Users ON Employees.user_id = Users.user_id \
-                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
+    
+    if profile_type == "Consumer":
+        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
     else:
-        if profile_type == "Consumer":
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.depot_id=%s AND Users.is_deleted = FALSE;",(depot_id,),True)
+        if session.get('type') in ['Local_Manager']:
+            result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
+                JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
         else:
-            if session.get('type') in ['Local_Manager']:
-                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.depot_id=%s AND Users.is_deleted = FALSE;""",(depot_id,),True)
-            else:
-                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                    JOIN Users ON Employees.user_id = Users.user_id \
-                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.depot_id=%s AND Users.is_deleted = FALSE;""",(depot_id,),True)
+            result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
+                JOIN Users ON Employees.user_id = Users.user_id \
+                WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
 
                 
     invoice = fetchAll("SELECT * from Invoices;",None ,True)
 
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type,invoice=invoice,depot_id=depot_id)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type,invoice=invoice)
 
 
 @app.route('/admin/profile/search',methods = ["GET","POST"])
@@ -132,7 +120,7 @@ def adminProfileUpdate():
             updates.append(f"{key} = %s")
             params.append(value)
         params.append(user_id)
-
+        print(updates,params,21212121212121)
         update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
         # if depot_id changed, update Users
         depot_id = verified_data['depot_id'] 
