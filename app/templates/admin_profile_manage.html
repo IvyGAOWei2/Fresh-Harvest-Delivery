@@ -115,11 +115,17 @@
               <label class="form-label">Depot</label>
               <div class="d-flex align-items-center">
                 <select name="depot_id" class="form-select">
+                  {% if session.depot_id != 6 %}
+                  <option value="{{session.depot_id}}" selected>
+                    {{depotList[session.depot_id -1].location}}
+                  </option>
+                {% else %}
                   {% for depot in depotList %}
-                  <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
-                      {{depot.location}}
+                  <option value="{{depot.depot_id}}" {% if newz.depot_id  == depot.depot_id %}selected{% endif %} required>
+                    {{depot.location}}
                   </option>
                   {% endfor %}
+                {% endif %}
               </select>
               </div>
             </div>
@@ -175,8 +181,17 @@
                 <label class="form-label">Type</label>
                   <div class="d-flex align-items-center">
                     <select class="form-control" name="type" id="user_type">
-                      <option value="Staff" {% if member.type == 'Staff'%} selected {%endif%}>Staff</option>
-                      <option value="Local_Manager" {% if member.type == 'Local_Manager'%} selected {%endif%}>Local manager</option>
+                      {% if session.depot_id != 6 %}
+                      <option value="{{session.depot_id}}" selected>
+                        {{depotList[session.depot_id -1].location}}
+                      </option>
+                    {% else %}
+                      {% for depot in depotList %}
+                      <option value="{{depot.depot_id}}" {% if newz.depot_id  == depot.depot_id %}selected{% endif %} required>
+                        {{depot.location}}
+                      </option>
+                      {% endfor %}
+                    {% endif %}
                     </select>
                     <div class="invalid-feedback">Please select a employee type from the list.</div>
                     <div class="valid-feedback">Looks good!</div>      
@@ -192,8 +207,8 @@
             {% endif %}
   
             <div class="col-md-6 mb-3">
-              <label class="form-label" for="member_new_password{{ member.user_id }}">New Password</label>
-              <input type="text" class="form-control" minlength="8" maxlength="20" value=""  name="new_password" id="member_new_password{{ member.user_id }}" >
+              <label class="form-label">New Password</label>
+              <input type="text" class="form-control" minlength="8" maxlength="20" value=""  name="new_password" id="member_new_pass{{ member.user_id }}" >
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -306,10 +321,11 @@
 
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
-                <label for="img_add{{ profile_type }}{{ member.user_id }}">
-                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}" required>
+                <label for="img_add{{ member.user_id }}">
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview1{{ member.user_id }}">
                 </label>
-                <input class="form-control" name="image" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
+                <input class="form-control" name="image" type="file" id="img_add{{ member.user_id }}" style="display: none;" accept="image/*" onchange="previewImage1(event, '{{ member.user_id }}')">
+                <div class="invalid-feedback">Please select an imange.</div> 
               </div>
             </div>
             
@@ -342,11 +358,17 @@
               <label class="form-label" for="add_depot">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
                   <select class="form-control" id="add_depot{{ member.user_id }}" name="depot_id">
-                    {% for depot in depotList %}
-                    <option value="{{depot.depot_id}}" {% if depot_id == depot.depot_id %}selected{% endif %} >
+                    {% if session.depot_id != 6 %}
+                      <option value="{{session.depot_id}}" selected>
+                        {{depotList[session.depot_id -1].location}}
+                      </option>
+                    {% else %}
+                      {% for depot in depotList %}
+                      <option value="{{depot.depot_id}}" {% if session.depot_id  == depot.depot_id %}selected{% endif %} required>
                         {{depot.location}}
-                    </option>
-                    {% endfor %}
+                      </option>
+                      {% endfor %}
+                    {% endif %}
                   </select>
                   <div class="invalid-feedback">Please select a depot.</div>
                 </div>
@@ -383,7 +405,7 @@
             </div>
           </div>
           <div class="col text-center">
-            <button type="submit" class="btn btn-secondary profile-add" data-profile-id="{{member.user_id}}">Submit</button>
+            <button type="submit" class="btn btn btn-primary profile-add" data-profile-id="{{member.user_id}}">Submit</button>
           </div>
         </form>
       </div>
@@ -460,67 +482,75 @@
 
 {% block script %}
 
-  {% include "components/elements/InputValidate.html" %}
+{% include "components/elements/InputValidate.html" %}
 
-  {% for member in member_list %}
-  <script>
-  document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('member_given_name{{ member.user_id }}');
-  });
+{% for member in member_list %}
+<script>
+document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('member_given_name{{ member.user_id }}');
+});
 
-  document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('member_family_name{{ member.user_id }}');
-  });
+document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('member_family_name{{ member.user_id }}');
+});
 
-  document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('phone{{ member.user_id }}');
-  });
+document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('phone{{ member.user_id }}');
+});
 
-  document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('address{{ member.user_id }}');
-  });
+document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('address{{ member.user_id }}');
+});
 
-  document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('consumer_postcode{{ member.user_id }}');
-  });
+document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('consumer_postcode{{ member.user_id }}');
+});
 
-  document.getElementById('member_new_password{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('member_new_password{{ member.user_id }}');
-  });
+document.getElementById('member_new_pass{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('member_new_pass{{ member.user_id }}');
+});
 
-  document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_email{{ member.user_id }}');
-  });
+</script>
 
-  document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_given_name{{ member.user_id }}');
-  });
+<script>
+    document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_email{{ member.user_id }}');
+});
 
-  document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_family_name{{ member.user_id }}');
-  });
+document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_given_name{{ member.user_id }}');
+});
 
-  document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_phone{{ member.user_id }}');
-  });
+document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_family_name{{ member.user_id }}');
+});
 
-  document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_address{{ member.user_id }}');
-  });
+document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_phone{{ member.user_id }}');
+});
 
-  document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_depot{{ member.user_id }}');
-  });
+document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_address{{ member.user_id }}');
+});
 
-  document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('add_password{{ member.user_id }}');
-  });
+document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_depot{{ member.user_id }}');
+});
 
-  document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
-    InputValidate('user_type{{ member.user_id }}');
-  });
-  </script>
-{% endfor %}
+document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('add_password{{ member.user_id }}');
+});
+
+document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('user_type{{ member.user_id }}');
+});
+
+document.getElementById('img_add{{ member.user_id }}').addEventListener('input', function() {
+  InputValidate('img_add{{ member.user_id }}');
+});
+</script>
+ {% endfor %}
+
 <script>
   function previewImage(event, userId) {
       var reader = new FileReader();
@@ -531,4 +561,16 @@
       reader.readAsDataURL(event.target.files[0]);
   }
 </script>
+
+<script>
+  function previewImage1(event, userId) {
+      var reader = new FileReader();
+      reader.onload = function() {
+          var output = document.getElementById('imagePreview1' + userId);
+          output.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+
 {% endblock %}

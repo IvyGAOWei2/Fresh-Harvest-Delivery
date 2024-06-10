@@ -194,8 +194,11 @@ def adminProfileAdd():
             elif employee_type == "Local_Manager":
                 user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id, type) VALUES(%s,%s,%s,%s);", (new_account.email, hashed, new_account.depot_id, 'Local_Manager'))
 
+            image = request.files['image']
+            if image.filename:
+                image_name = saveImage(image)
             insertSQL("INSERT INTO Employees (user_id, given_name, family_name, address, phone, hire_date, depot_id, image) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);", \
-            (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.hire_date, new_account.depot_id, 'user_default_image.png'))
+            (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.hire_date, new_account.depot_id,image_name))
         except:
             return {"status": False}, 500
         else:
