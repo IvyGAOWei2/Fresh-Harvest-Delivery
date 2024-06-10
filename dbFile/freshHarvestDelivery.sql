@@ -129,7 +129,7 @@ CREATE TABLE GiftCards (
 	product_id SMALLINT,
 	order_id INT,
     code VARCHAR(20) UNIQUE NOT NULL,
-    balance ENUM('25', '50', '100', '200', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    balance ENUM('25', '50', '75', '100', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     is_active BOOLEAN DEFAULT FALSE,
 	FOREIGN KEY (product_id) REFERENCES Products(product_id),
     FOREIGN KEY (order_id) REFERENCES Orders(order_id)
@@ -140,7 +140,7 @@ CREATE TABLE ConsumerPoints (
     user_id SMALLINT,
     order_id INT,
     gift_card_id SMALLINT,
-    point_type ENUM('Order Purchase ', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
+    point_type ENUM('Order Purchase', 'Order Cancel', 'Points Redeem', 'Gift Card', 'Placeholder1', 'Placeholder2', 'Placeholder3'),
     point_variation DECIMAL(10, 2),
     point_balance DECIMAL(10, 2),
     point_date DATE,

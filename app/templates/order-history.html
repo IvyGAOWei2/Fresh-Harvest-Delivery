@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Add click event listener to the confirmButton
                 confirmButton.addEventListener('click', function () {
                     deleteMemberModal.hide();
-                    loadingModal.show();
+                    // loadingModal.show();
 
                     fetch('/order/del', {
                         method: 'POST',

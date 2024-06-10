@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, session, request
 import json
+from decimal import Decimal
 
 # User-defined function
 from dbFile.config import insertSQL, updateSQL, fetchOne, fetchAll
@@ -11,7 +12,9 @@ from emailMethod.method import sendOrderStatus
 @app.route("/cart")
 @roleRequired(['Consumer'])
 def cart():
-    return render_template('cart.html')
+    points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (session['id'],))
+    # print(points)
+    return render_template('cart.html', shipping=app.shipping, points=points[0])
 
 @app.route("/cart/update", methods = ["POST"])
 @roleRequired(['Consumer'])
@@ -24,7 +27,7 @@ def cartUpdate():
 
     return {"status": False}, 500
 
-from decimal import Decimal
+
 @app.route("/checkout", methods=['GET','POST'])
 @roleRequired(['Consumer'])
 def checkout():
@@ -56,6 +59,15 @@ def checkout():
             (total_price, shipping_fee, order_id))
 
         if update_successful:
+            if order['finalTotal']['pointsUsed'] > 0:
+                # new ConsumerPoints
+                current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (session['id'],))
+                new_points =  -order['finalTotal']['pointsUsed'] + float(current_points[0])
+                insertSQL("INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date) \
+                    VALUES(%s,%s,%s,%s,%s,%s);", (session['id'], order_id,'Points Redeem', -order['finalTotal']['pointsUsed'], new_points, toDay()))     
+                # update Consumer points
+                updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, session['id']))
+
             updateSQL("UPDATE ConsumerCart SET cart = %s WHERE user_id = %s;", ('[]', session['id'],))
             if app.send_email:
                 sendOrderStatus(order['billingform']['email'], order_id, order['billingform']['given_name'], toDay(), 'Pending')
@@ -64,4 +76,4 @@ def checkout():
             return {"status": False}, 500
 
     checkout_profile = fetchOne('SELECT given_name, family_name, address, postcode, phone, account_available, user_type FROM Consumer WHERE user_id = %s', (session['id'],), True)
-    return render_template('chackout.html', checkoutProfile=checkout_profile)
+    return render_template('chackout.html', checkoutProfile=checkout_profile, shipping=app.shipping)

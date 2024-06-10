@@ -44,6 +44,7 @@
             <div class="col-12">
                 <div id="cart" class="container-fluid ">
                     <div class="container py-2">
+                            {% if orderProducts or order.status == 'Cancelled' %}
                             <table class="table">
                                 <!-- table for normal product -->
                                 <thead>
@@ -88,9 +89,38 @@
                                     {% endif%}
                                     </td>   
                                 </tbody>
-                                {% endfor %}    
-                            </table>                 
-                           {% if Giftcards %}
+                                {% endfor %}
+
+                                <!-- refund giftcard -->
+                                {% for giftcard in Giftcards %}
+                                <tbody>
+                                    <th scope="row">
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="width: 100px; height: 100px;" alt="{{ giftcard.name }}">
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.name}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.price}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.quantity}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{giftcard.subtotal}}</p>
+                                    </td>
+                                    <td>
+                                    <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
+                                    </td>   
+                                </tbody>
+                                {% endfor %}  
+
+                            </table>
+                            {% endif %}
+
+                           {% if Giftcards and order.status != 'Cancelled' %}
                             <table class="table">
                                 <thead>
                                     <br>
@@ -98,7 +128,7 @@
                                         <th scope="col">Giftcard</th>
                                         <th scope="col">Code</th>
                                         <th scope="col">Balance</th>
-                                        <th scope="col">Active</th>
+                                        <th scope="col">Used</th>
                                     </tr>
                                 </thead>
 
@@ -110,14 +140,20 @@
                                                 <img src="{{ url_for('static', filename='images/product/' + giftcard.image) }}" class="img-fluid me-3 rounded-circle" style="max-width:6rem " alt="{{ giftcard.gift_card_id}}">
                                             </div>
                                         </th>
-                                        <td colspan="row" >
-                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{ giftcard.code }}</p> 
+                                        {% if giftcard.code %}
+                                            <td colspan="row" >
+                                                <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{ giftcard.code }} </p>
+                                            </td>
+                                        {% else %}
+                                            <td colspan="row" >
+                                                <p class="mb-0 mt-4" style="font-size: 1.25rem;"> Awaiting Shipment</p> 
+                                            </td>
+                                        {% endif %}
+                                        <td colspan="5" >
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;"> ${{ giftcard.balance }}</p> 
                                         </td>
-                                        <td colspan="row" >
-                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">${{ giftcard.balance }}</p> 
-                                        </td>
-                                        <td colspan="row" >
-                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{ 'Yes' if giftcard.is_active else 'No' }}</p> 
+                                        <td colspan="5" >
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;"> {{ 'Yes' if giftcard.is_active else 'No' }}</p> 
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -126,15 +162,21 @@
                             {% endif %}
                             <table class="table row" style="padding-left: 50rem;">
                                     <tr>
-                                        <td colspan="5">Products Cost</td>
+                                        <td colspan="6">Products Cost</td>
                                         <td class="shipping">${{ order.total }}</td>
                                     </tr>
+                                    {% if order.point_variation %}
                                     <tr>
-                                        <td colspan="5">GST</td>
+                                        <td colspan="6">GST</td>
                                         <td class="shipping">${{ (order.total|float * 0.15 )|round(2) }}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5">Shipping</td>
+                                        <td colspan="6">Points Used</td>
+                                        <td class="shipping">{{ order.point_variation }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td colspan="6">Shipping</td>
                                         {% if order.shipping_fee == 0 %}
                                             <td class="shipping">Free</td>
                                         {% else %}
@@ -142,7 +184,7 @@
                                         {% endif %}
                                     </tr>
                                     <tr>
-                                        <td colspan="5"><strong>Total Cost</strong></td>
+                                        <td style="padding-left: 2rem;" colspan="5"><strong>Total Cost</strong></td>
                                         {% if order.shipping_fee == 0 %}
                                             <td class="shipping">${{ order.total }}</td>
                                         {% else %}

@@ -45,7 +45,7 @@
                 <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
                     <div class="bg-light rounded">
                         <div class="p-4">
-                            <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
+                            <h1 class="display-6 mb-4"><span class="fw-normal">Cart Total</span></h1>
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="mb-0 me-4">Subtotal:</h5>
                                 <p class="mb-0" id="cart-total">$0.00</p>
@@ -53,13 +53,15 @@
 
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="mb-0 me-4">Available Points:</h5>
-                                <p class="mb-0" id="user-points" name="points">5000 Points</p>
+                                <p class="mb-0" id="user-points" name="points">{{points}} Points</p>
                             </div>
                             <div class="form-group mb-4">
-                                <label for="points-input">Enter points to use (1000 points = $10, minimum 1000):</label>
-                                <input type="number" class="form-control" id="points-input" placeholder="1000" min="1000" step="1000">
+                                <label class="mb-3" for="points-input">Enter points to use (1000 points = NZD $10, minimum 1000):</label>
+                                <input type="number" class="form-control" id="points-input" placeholder="0" min="1000" step="1000">
                                 <div class="invalid-feedback"style="display: none;">Please enter a valid number of points. Points must be in multiples of 1000 and less than or equal to your current points.</div>
-                                <button class="btn btn-primary mt-2" id="apply-points">Apply Points</button>
+                                <div class="d-flex justify-content-center mt-2">
+                                    <button class="btn text-primary border-secondary mt-2" id="apply-points">Apply Points</button>
+                                </div>
                                 <p class="mt-2" id="points-message" style="color: red;"></p>
 
                             </div>
@@ -76,8 +78,9 @@
                             <p class="mb-0 pe-4" id="final-total">$10.00</p> <!-- Total including shipping -->
 
                         </div>
-
-                        <a href="/checkout" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4">Proceed to Checkout</a>
+                        <div class="d-flex justify-content-center mt-2">
+                            <a href="{{ url_for('checkout') }}" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4">Proceed to Checkout</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -239,7 +242,7 @@ function setupQuantityChangeListeners() {
     });
 }
 
-
+let shippingCost = parseFloat(`{{ shipping }}`);
 function updateShippingAndTotal(sumTotal, discount = 0, pointsInput = 0) {
     const shippingCostElement = document.getElementById('shipping-cost');
     const finalTotalElement = document.getElementById('final-total');
@@ -247,11 +250,9 @@ function updateShippingAndTotal(sumTotal, discount = 0, pointsInput = 0) {
     let currentPoints = parseInt(document.getElementById('user-points').textContent.split(' ')[0]);
 
     // Determine shipping cost based on the original sumTotal
-    let shippingCost = 10.00; // Default shipping cost
-    if (sumTotal >= 80) {
-        shippingCost = 0.00; // Free shipping for orders $80 or more
+    if (sumTotal >= shippingCost) {
+        shippingCost = 0; // Free shipping for orders $80 or more
     }
-
     // Calculate total before discount but after adding shipping
     let totalBeforeDiscount = sumTotal + shippingCost;
 
