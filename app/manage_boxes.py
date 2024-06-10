@@ -386,7 +386,7 @@ def sync_boxes_to_products():
 
             box_items_description = "This box contains the following items:\n"
             for item in box_items:
-                box_items_description += f"{item[2]}: {item[1]} units\n"
+                box_items_description += f" {item[2]}: {item[1]} units ;\n"
 
             sql_select_product_description = """
                 SELECT description
