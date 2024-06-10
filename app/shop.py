@@ -25,9 +25,9 @@ def discountedProducts(is_full=None):
     """
 
     if is_full:
-        sql += f"ORDER BY d.start_date DESC"
+        sql += " ORDER BY d.start_date DESC"
     else:
-        sql += f"ORDER BY RAND() LIMIT 4;"
+        sql += " ORDER BY RAND() LIMIT 4;"
     
     return fetchAll(sql, None, True)
 
@@ -49,7 +49,7 @@ def ordinaryProducts(category=None, page_offset=None):
     if category:
         sql += f"AND c.category_name = '{category}'"
 
-    sql += "ORDER BY p.product_id ASC LIMIT 9 OFFSET " + page_offset
+    sql += " ORDER BY p.product_id ASC LIMIT 9 OFFSET " + page_offset
 
     return fetchAll(sql, None, True)
 
@@ -81,7 +81,7 @@ def shop():
         sql_total_products += f" AND c.category_name = '{category}'"
 
     total_products = fetchOne(sql_total_products, ())
-    total_pages = ceil(total_products[0]/9)
+    total_pages = ceil(total_products[0] / 9)
 
     products = ordinaryProducts(category, str(page_offset))
 
@@ -96,7 +96,7 @@ def shopDetail(product_id):
             WHEN p.discount_end_date < CURDATE() THEN NULL 
             ELSE p.discount_price 
         END AS discount_price, 
-         u.unit_name, u.unit_std, u.unit_min, pi.image
+        u.unit_name, u.unit_std, u.unit_min, pi.image
         FROM Products p 
         JOIN Unit u ON p.unit_id = u.unit_id 
         JOIN ProductImages pi ON p.product_id = pi.product_id 
@@ -105,29 +105,46 @@ def shopDetail(product_id):
     """
 
     product = fetchOne(sql_product, (product_id,), True)
-    related_products = ordinaryProducts(app.category_list[product['category_id']-1]['category_name'], '0')
 
-    if 'depot_id' not in session or session['depot_id'] == 6:
-        depot_id = 1
+    if product:
+        discounted_price = round(product['price'] * (1 - product['discount_rate'] / 100), 2) if 'discount_rate' in product and product['discount_rate'] else None
+        product['discounted_price'] = discounted_price
+
+        # Fetch box items
+        boxitems_query = """
+            SELECT B.box_type, BI.quantity, P.name AS product_name
+            FROM BoxItems BI
+            JOIN Boxes B ON BI.box_id = B.box_id
+            JOIN Products P ON BI.product_id = P.product_id
+            WHERE B.product_id = %s
+        """
+        boxitems = fetchAll(boxitems_query, (product_id,), True)
+
+        categories = categoriesByCount()
+        discounted_products = discountedProducts()
+
+        for dp in discounted_products:
+            dp['discounted_price'] = round(dp['price'] * (1 - dp['discount_rate'] / 100), 2) if 'discount_rate' in dp and dp['discount_rate'] else None
+
+        related_products = ordinaryProducts(app.category_list[product['category_id'] - 1]['category_name'], '0')
+
+        depot_id = session.get('depot_id', 1 if 'depot_id' not in session or session['depot_id'] == 6 else session['depot_id'])
+
+        reviews = fetchAll("SELECT R.rating, DATE_FORMAT(R.review_date, '%b %d, %Y') AS review_date, R.review_text, C.given_name, C.image FROM Reviews R \
+            JOIN Consumer C ON R.user_id = C.user_id WHERE R.depot_id = %s AND R.product_id = %s;", \
+            (depot_id, product_id), True)
+
+        fake_review = fakeReview()
+        for i in range(len(reviews)):
+            fake_review.pop()
+
+        is_reviewed = fetchOne("SELECT review_id FROM Reviews WHERE user_id = %s AND depot_id = %s AND product_id = %s;", (session['id'], depot_id, product_id)) if 'id' in session else False
+
+        return render_template('shop-detail.html', product=product, categories=categories, depotList=app.depot_list, \
+            categoryList=app.category_list, reviews=reviews, fakeReview=fake_review, is_reviewed=is_reviewed, \
+            discounted_items=discounted_products, boxitems=boxitems, relatedProducts=related_products)
     else:
-        depot_id = session['depot_id']
-
-    reviews = fetchAll("SELECT R.rating, DATE_FORMAT(R.review_date, '%b %d, %Y') AS review_date, R.review_text, C.given_name, C.image FROM Reviews R \
-        JOIN Consumer C ON R.user_id = C.user_id WHERE R.depot_id = %s AND R.product_id = %s;", \
-        (depot_id, product_id), True)
-
-    fake_review = fakeReview()
-    for i in range(len(reviews)):
-        fake_review.pop()
-
-    if 'id' in session:
-        is_reviewed = fetchOne("SELECT review_id FROM Reviews WHERE user_id = %s AND depot_id = %s AND product_id = %s;", (session['id'], depot_id, product_id))
-    else:
-        is_reviewed = False
-
-    return render_template('shop-detail.html', product=product, categories=categoriesByCount(), depotList=app.depot_list, \
-        categoryList=app.category_list, reviews=reviews, fakeReview=fake_review, is_reviewed=is_reviewed, \
-        discounted_items=discountedProducts(), relatedProducts=related_products)
+        return render_template('404.html')
 
 
 @app.route('/product/review', methods=['POST'])
@@ -136,22 +153,20 @@ def productReview():
     data = request.form.to_dict()
 
     try:
-        user_id = fetchOne('SELECT user_id FROM Orders WHERE product_id = %s', (data['product_id'],),True)
+        user_id = fetchOne('SELECT user_id FROM Orders WHERE product_id = %s', (data['product_id'],), True)
         update_successful = updateSQL("UPDATE Reviews SET rating = %s, review_text = %s WHERE user_id = %s AND product_id = %s AND depot_id = %s;", \
-        (data['rating'], data['review_text'], session['id'], data['product_id'],session['depot_id']))
+        (data['rating'], data['review_text'], session['id'], data['product_id'], session['depot_id']))
     except Exception as e:
-        # print(e)
         update_successful = insertSQL("INSERT INTO Reviews (user_id, depot_id, product_id, rating, review_text) VALUES (%s, %s, %s, %s, %s);", \
-        (session['id'], session['depot_id'], data['product_id'], data['rating'],data['review_text']))
+        (session['id'], session['depot_id'], data['product_id'], data['rating'], data['review_text']))
 
     if update_successful:
         return {"status": True}, 200
     else:
         return {"status": False}, 500
 
+
 @app.route("/product/discounted")
 def productDiscounted():
     all_discounted = discountedProducts(True)
-    print(app.unit_list[1])
-
     return render_template('shop.html', allDiscounted=all_discounted, category=None, categories=categoriesByCount(), total_pages=1, current_page=1)
