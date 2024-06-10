@@ -7,7 +7,7 @@ from common import roleRequired, emailOrder
 from emailMethod.method import sendOrderStatus
 
 
-@app.route("/order/history")
+@app.route("/order/history",methods = ["GET", 'POST'])
 @roleRequired(['Consumer'])
 def orderHistory():
     orders = fetchAll("SELECT order_id, order_date, delivery_date, total, shipping_fee, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
@@ -17,8 +17,15 @@ def orderHistory():
 @app.route("/order/detail/<int:order_id>")
 @roleRequired(['Consumer','Staff', 'Local_Manager', 'National_Manager'])
 def orderDetail(order_id):
-    
-    order = fetchOne('SELECT * FROM Orders WHERE order_id = %s', (order_id,),True)
+    order_sql = """
+        SELECT Orders.*, 
+        CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name 
+        FROM Orders 
+        JOIN Consumer ON Orders.user_id = Consumer.user_id 
+        WHERE Orders.order_id = %s
+"""
+    order = fetchOne(order_sql, (order_id,),True)
+    print(order)
     exclusion_list = ",".join(str(pid) for pid in app.giftcard_list)
     
     products = fetchAll("SELECT o.*, p.name, p.price, pi.image  FROM OrderItems o JOIN Products p \
@@ -70,7 +77,8 @@ def staffOrderHistory():
             Orders.total,
             Orders.shipping_fee,
             Orders.status,
-            CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name
+            CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name,
+            Consumer.user_type
         FROM 
             Orders
         JOIN 

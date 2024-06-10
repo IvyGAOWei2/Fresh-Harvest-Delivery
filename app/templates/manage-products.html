@@ -99,7 +99,7 @@
                         </div>
                         <div class="offcanvas-body">
                             <form id="updateProductForm{{ product.product_id }}" class="update-product-form"
-                                action="/product/update" method="POST">
+                                action="/product/update" method="POST" data-product-id="{{product.product_id}}">
                                 <input type="text" class="form-control d-none" name="product_id" value="{{ product.product_id }}"/>  
 
                                 <!-- upload image -->
@@ -112,13 +112,13 @@
                                         style="display: none;" accept="image/*" onchange="previewImage(event, '{{ product.product_id }}')">
                                 </div> 
                                 <div class="mb-3">
-                                    <label for="updateProductName" class="form-label">Product Name</label>
-                                    <input type="text" minlength="1" maxlength="50" id="updateProductName" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product.name}}" required>
+                                    <label for="updateProductName{{ product.product_id }}" class="form-label">Product Name</label>
+                                    <input type="text" minlength="1" maxlength="50" id="updateProductName{{ product.product_id }}" name="name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{product.name}}" required>
                                     <div class="invalid-feedback">Please enter a valid product name, only letters and spaces.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updateCategory" class="form-label">Category</label>
-                                    <select class="form-control" id="updateCategory" name="category_id" required>
+                                    <label for="updateCategory{{ product.product_id }}" class="form-label">Category</label>
+                                    <select class="form-control" id="updateCategory{{ product.product_id }}" name="category_id" required>
                                         {% for category in categoryList %}
                                         <option value="{{category.category_id}}" {% if product.category_id == category.category_id %}selected{% endif %}>
                                             {{category.category_name}}
@@ -129,8 +129,8 @@
                                 </div>
                                 <!-- unit -->
                                 <div class="mb-3">
-                                    <label for="updateUnit" class="form-label">Unit</label>
-                                    <select class="form-control" id="updateUnit" name="unit_id" required>
+                                    <label for="updateUnit{{ product.product_id }}" class="form-label">Unit</label>
+                                    <select class="form-control" id="updateUnit{{ product.product_id }}" name="unit_id" required>
                                         {% for unit in unitList %}
                                         <option value="{{unit.unit_id}}" {% if product.unit_id == unit.unit_id %}selected{% endif %}>
                                             {{unit.unit_name}}
@@ -141,8 +141,8 @@
                                 </div>
                                 <!-- depot -->
                                 <div class="mb-3">
-                                    <label for="updateDepot" class="form-label">Depot</label>
-                                    <select class="form-control" name="depot_id" id="updateDepot" required>
+                                    <label for="updateDepot{{ product.product_id }}" class="form-label">Depot</label>
+                                    <select class="form-control" name="depot_id" id="updateDepot{{ product.product_id }}" required>
                                         {% if session.type == 'National_Manager' %}
                                             {% for depot in depotList %}
                                             <option value="{{depot.depot_id}}" {% if product.depot_id == depot.depot_id %}selected{% endif %}>
@@ -156,18 +156,18 @@
                                     <div class="invalid-feedback">Please select one depot from the list.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updatePrice" class="form-label">Price</label>
-                                    <input type="number" class="form-control" value="{{product.price}}" id="updatePrice" name="price" min="0" step="0.01" required>
+                                    <label for="updatePrice{{ product.product_id }}" class="form-label">Price</label>
+                                    <input type="number" class="form-control" value="{{product.price}}" id="updatePrice{{ product.product_id }}" name="price" min="0" step="0.01" required>
                                     <div class="invalid-feedback">Please enter a valid price amount, numbers only.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="updateStock" class="form-label">Stock</label>
-                                    <input type="number" class="form-control" value="{{product.stock}}" id="updateStock" name="stock" min="0" required>
+                                    <label for="updateStock{{ product.product_id }}" class="form-label">Stock</label>
+                                    <input type="number" class="form-control" value="{{product.stock}}" id="updateStock{{ product.product_id }}" name="stock" min="0" required>
                                     <div class="invalid-feedback">Please enter a valid stock amount, numbers only.</div>
                                 </div>
                                 <div>
-                                    <label for="updateDescription" class="form-label">Description</label>
-                                    <textarea rows="5" type="text" class="form-control form-textarea" id="updateDescription" name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product.description}}</textarea>
+                                    <label for="updateDescription{{ product.product_id }}" class="form-label">Description</label>
+                                    <textarea rows="5" type="text" class="form-control form-textarea" id="updateDescription{{ product.product_id }}" name="description" minlength="1" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>{{product.description}}</textarea>
                                     <div class="invalid-feedback">Please enter a valid description with at least 1 characters.</div>
                                 </div>
                                 <button type="submit" class="btn btn-secondary product-update" data-product-id="{{product.product_id}}">Update</button>
@@ -361,28 +361,53 @@
 <script>
     // validation
     //  update product validation
-    document.getElementById('updateProductName').addEventListener('input', function () {
-        InputValidate('updateProductName');
-    });
-    document.getElementById('updateCategory').addEventListener('input', function () {
-        InputValidate('updateCategory');
-    });
-    document.getElementById('updateDescription').addEventListener('input', function () {
-        InputValidate('updateDescription');
-    });
-    document.getElementById('updateDepot').addEventListener('input', function () {
-        InputValidate('updateDepot');
-    });
-    document.getElementById('updateUnit').addEventListener('input', function () {
-        InputValidate('updateUnit');
-    });
-    document.getElementById('updatePrice').addEventListener('input', function () {
-        InputValidate('updatePrice');
-    });
-    document.getElementById('updateStock').addEventListener('input', function () {
-        InputValidate('updateStock');
-    });
+//     document.addEventListener("DOMContentLoaded", function() {
+//     document.querySelectorAll('.update-product-form').forEach(form => {
+//         const productId = form.getAttribute('data-product-id');
+        
+//         if (!productId) {
+//             console.error('product_id not found in form', form);
+//             return;
+//         }
 
+//         console.log('Processing form for product ID:', productId);
+
+//         form.querySelectorAll(`input[id^="update"], select[id^="update"], textarea[id^="update"]`).forEach(input => {
+//             input.addEventListener('input', function () {
+//                 InputValidate(input.id);
+//             });
+//         });
+//     });
+// });
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.update-product-form').forEach(form => {
+        const productId = form.getAttribute('data-product-id');
+        console.log(productId);
+
+        // 定义需要验证的字段ID前缀
+        const fieldIds = [
+            `updateProductName${productId}`,
+            `updateCategory${productId}`,
+            `updateDescription${productId}`,
+            `updateDepot${productId}`,
+            `updateUnit${productId}`,
+            `updatePrice${productId}`,
+            `updateStock${productId}`
+        ];
+
+        // 遍历每个字段ID，并添加事件监听器
+        fieldIds.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', function () {
+                    InputValidate(fieldId);
+                });
+            } else {
+                console.warn(`Element with ID ${fieldId} not found`);
+            }
+        });
+    });
+});
     //  New product validation
     document.getElementById('addProductName').addEventListener('input', function () {
         InputValidate('addProductName');
@@ -406,6 +431,9 @@
         InputValidate('addStock');
     });
 
+
+
+
     document.getElementById('uploadImageButton').addEventListener('click', function() {
             document.getElementById('fileInput').click();
         });
@@ -425,14 +453,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function filterRows() {
         const keyword = searchKeywordInput.value.toLowerCase();
-        const selectedCategory = categorySelect.value.toLowerCase();
+        const selectedCategory = categorySelect.value;
         const rows = productTableBody.getElementsByTagName('tr');
         let hasVisibleRows = false;
 
+        // Remove any existing 'No matching products found' row
+        Array.from(rows).forEach(row => {
+            if (row.id === 'noResultsRow') {
+                row.remove();
+            }
+        });
+
         Array.from(rows).forEach(row => {
             const cells = row.getElementsByTagName('td');
+            if (cells.length === 0) return; // skip rows with no cells 
+
             const productName = cells[0].textContent.toLowerCase();
-            const productCategory = cells[1].textContent.toLowerCase();
+            const productCategory = cells[1].textContent;
 
             let matches = true;
 
@@ -454,7 +491,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Handle no results case
         if (!hasVisibleRows) {
-            productTableBody.innerHTML = '<tr><td colspan="5" class="text-center">No matching products found</td></tr>';
+            const noResultsRow = document.createElement('tr');
+            noResultsRow.id = 'noResultsRow';
+            const noResultsCell = document.createElement('td');
+            noResultsCell.colSpan = 5;
+            noResultsCell.className = 'text-center';
+            noResultsCell.textContent = 'No matching products found';
+            noResultsRow.appendChild(noResultsCell);
+            productTableBody.appendChild(noResultsRow);
         }
     }
 

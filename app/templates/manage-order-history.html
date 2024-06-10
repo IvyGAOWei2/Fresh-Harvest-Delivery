@@ -78,8 +78,8 @@
                             <label for="customerName" class="form-label">SEARCH BY:</label>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="form-control search-bar" id="customerName" maxlength="35" pattern="^[a-zA-Z\s]+$" placeholder="CUSTOMER NAME">
-                            <div class="invalid-feedback">Only letters and spaces.</div>
+                            <input type="text" class="form-control search-bar" id="customerName" minlength="2" maxlength="35" pattern="^[a-zA-Z\s]+$" placeholder="CUSTOMER NAME">
+                            <div class="invalid-feedback">Only letters and spaces,length must be between 2 and 35 characters.</div>
                         </div>
                         <div class="col-md-2">
                             <label for="account" class="form-label">ACCOUNT:</label>
@@ -87,8 +87,8 @@
                         <div class="col-md-4">
                             <select class="form-control search-bar" id="account">
                                 <option value="all">All</option>
-                                <option value="Business">Business Account</option>
-                                <option value="Residential">Customer</option>
+                                <option value="Business">Business</option>
+                                <option value="Residential">Residential</option>
                             </select>
                         </div>
                     </div>
@@ -110,7 +110,7 @@
                     <div class="row mb-3">
                         <div class="col-md-12 text-end">
                             <button class="btn btn-secondary btn-rounded me-2" id="clearButton">Clear</button>
-                            <button class="btn btn-primary btn-rounded" id="searchButton">Search</button>
+                            <button class="btn btn-primary btn-rounded" type="button" id="searchButton">Search</button>
                         </div>
                     </div>    
                 </form>
@@ -125,6 +125,7 @@
                             <th>Order Date</th>
                             <th>Delivery Date</th>
                             <th>Total Cost</th>
+                            <th>Account Type</th>
                             <th>Status</th>
                             <th>View</th>
                             <th>Change Status</th>
@@ -139,6 +140,7 @@
                             <td>{{order.order_date}}</td>
                             <td>{{order.delivery_date}}</td>
                             <td>{{order.total + order.shipping_fee}}</td>
+                            <td>{{order.user_type}}</td>
                             <td>{{order.status}}</td>
                             <td>
                                 <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}" class="btn order-view" role="button" >
@@ -187,7 +189,6 @@
                             </td>
                         </tr>
                         {% endfor %}
-                        <!-- Add more fixed data rows as needed -->
                     </tbody>
                 </table>
             </div>
@@ -329,13 +330,20 @@ const orderReferenceInput = document.getElementById('orderReferenceNumber');
 const orderTableBody = document.getElementById('orderTableBody');
 
 orderReferenceInput.addEventListener('input', function () {
-    const reference = orderReferenceInput.value.toLowerCase();//不需要.toLowerCase吧，因为输入的只能是数字
+    const reference = orderReferenceInput.value;
     const rows = orderTableBody.getElementsByTagName('tr');
     let hasVisibleRows = false;
 
+    // Remove any existing No matching row
+    Array.from(rows).forEach(row => {
+        if (row.id === 'noResultsRow') {
+            row.remove();
+        }
+    });
+
     Array.from(rows).forEach(row => {
         const referenceCell = row.getElementsByTagName('td')[0]; 
-        const referenceText = referenceCell.textContent.toLowerCase();
+        const referenceText = referenceCell.textContent;
 
         if (referenceText.includes(reference)) {
             row.style.display = '';
@@ -347,8 +355,17 @@ orderReferenceInput.addEventListener('input', function () {
 
     // Handle no results case
     if (!hasVisibleRows) {
-        orderTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No matching orders found</td></tr>';
-    }
+            const noResultsRow = document.createElement('tr');
+            noResultsRow.id = 'noResultsRow';
+            const noResultsCell = document.createElement('td');
+            noResultsCell.colSpan = 9;
+            noResultsCell.className = 'text-center';
+            noResultsCell.textContent = 'No matching orders found';
+            noResultsRow.appendChild(noResultsCell);
+            orderTableBody.appendChild(noResultsRow);
+        }
+
+
 });
 
 
@@ -360,16 +377,23 @@ const endDateInput = document.getElementById('endDate');
 
 function filterRows() {
     const customerName = customerNameInput.value.toLowerCase();
-    const account = accountInput.value.toLowerCase();//不需要.toLowerCase吧，因为输入的value被写死了
+    const account = accountInput.value;
     const startDate = startDateInput.value;
     const endDate = endDateInput.value;
     const rows = orderTableBody.getElementsByTagName('tr');
     let hasVisibleRows = false;
 
+    // Remove any existing No matching row
+    Array.from(rows).forEach(row => {
+        if (row.id === 'noResultsRow') {
+            row.remove();
+        }
+    });
+
     Array.from(rows).forEach(row => {
         const cells = row.getElementsByTagName('td');
         const customerNameCell = cells[1].textContent.toLowerCase();
-        const accountCell = account; 
+        const accountCell = cells[5].textContent;
         const orderDateCell = cells[2].textContent;
         const orderDate = new Date(orderDateCell);
 
@@ -379,7 +403,7 @@ function filterRows() {
             matches = false;
         }
 
-        if (account !== 'all' && accountCell !== account) { //修改数据库，新增一列？
+        if (account !== 'all' && accountCell !== account) { 
             matches = false;
         }
 
@@ -401,14 +425,24 @@ function filterRows() {
 
     // Handle no results case
     if (!hasVisibleRows) {
-        orderTableBody.innerHTML = '<tr><td colspan="8" class="text-center">No matching orders found</td></tr>';
+        const noResultsRow = document.createElement('tr');
+        noResultsRow.id = 'noResultsRow';
+        const noResultsCell = document.createElement('td');
+        noResultsCell.colSpan = 9;
+        noResultsCell.className = 'text-center';
+        noResultsCell.textContent = 'No matching orders found';
+        noResultsRow.appendChild(noResultsCell);
+        orderTableBody.appendChild(noResultsRow);
     }
 }
+// filter info while input
+// customerNameInput.addEventListener('input', filterRows);
+// accountInput.addEventListener('change', filterRows);
+// startDateInput.addEventListener('input', filterRows);
+// endDateInput.addEventListener('input', filterRows);
 
-customerNameInput.addEventListener('input', filterRows);
-accountInput.addEventListener('change', filterRows);
-startDateInput.addEventListener('input', filterRows);
-endDateInput.addEventListener('input', filterRows);
+// filter info after click button
+searchButton.addEventListener('click',filterRows);
 </script>
 
 {% endblock %}

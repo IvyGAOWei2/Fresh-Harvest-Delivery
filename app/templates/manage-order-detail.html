@@ -99,8 +99,7 @@
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.subtotal}}</p>
                                     </td>
                                     <td>
-                                    <!-- product.status 应为order item对应的status -->
-                                    {% if product.status != 'Refunded' %}
+                                    {% if not product.is_refunded  %}
                                         <div class="d-flex mt-4">
                                             <button type="button" class="btn order-refund" role="button" title="Create Refund" data-product-name="{{ product.product_name }}" data-order-item-id ="{{product.order_item_id}} ">
                                                 <i class="fas fa-registered fa-lg"></i>

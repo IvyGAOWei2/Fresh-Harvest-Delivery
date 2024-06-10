@@ -34,22 +34,26 @@
                 <i class="fas fa-history fa-3x me-3"></i> 
                 <h1 class="mb-2">Order History</h1>
             </div>
-            <form id="orderHistorySearch" method="POST" action="/consumer/order/history">
+            <form id="orderHistorySearch" method="POST" action="/order/history">
                 <div class="row mb-3 d-flex align-items-center">
-                    <div class="col-md-4 d-flex align-items-center">
+                    <div class="col-md-4 d-flex align-items-center py-2">
                         <label for="searchOrder" class="form-label me-3 pb-2">SEARCH</label>
                         <input type="number" class="form-control search-bar" id="searchOrder" placeholder="ORDER REFERENCE NUMBER">
                     </div>
-                    <div class="col-md-3 d-flex align-items-center">
+                    <div class="col-md-1 d-flex align-items-center pe-2">
+                        <p> OR&nbsp; SEARCH</p>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center py-2">
                         <label for="startDate" class="form-label me-3 pb-2">From</label>
                         <input type="date" class="form-control search-bar" id="startDate">
                     </div>
-                    <div class="col-md-3 d-flex align-items-center">
+                    <div class="col-md-2 d-flex align-items-center py-2">
                         <label for="endDate" class="form-label me-3 pb-2">To</label>
                         <input type="date" class="form-control search-bar" id="endDate">
                     </div>
-                    <div class="col-md-2 p-2">
-                        <button class="btn btn-primary border-0 btn-rounded justify-content-end " style="top: 2; right: 0;" id="searchButton">Search</button>
+                    <div class="col-md-3 m-0">
+                        <button class="btn btn-primary border-0 btn-rounded justify-content-end m-0" type="button" style="top: 2; right: 0;" id="searchButton">Search</button>
+                        <button class="btn btn-secondary btn-rounded mx-2" id="clearButton">Clear</button>
                     </div>
                 </div>
             </form>
@@ -66,9 +70,8 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="table-group-divider">
+                    <tbody id="orderTableBody" class="table-group-divider">
                         {% for order in orders %}
-                        <!-- Example Order Row -->
                         <tr>
                             <td>{{order.order_id}}</td>
                             <td>{{order.order_date}}</td>
@@ -90,8 +93,6 @@
                                         <i class="fas fa-ban fa-lg me-1 gray-icon"></i>
                                     </a>
                                 {% endif %}
-
-
                             </td>
                         </tr>
                         {% endfor %}
@@ -281,6 +282,105 @@ document.addEventListener('DOMContentLoaded', function () {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     });
+
+// Search by order reference number 
+const orderReferenceInput = document.getElementById('searchOrder');
+const orderTableBody = document.getElementById('orderTableBody');
+
+orderReferenceInput.addEventListener('input', function () {
+    const reference = orderReferenceInput.value;
+    const rows = orderTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
+
+    // Remove any existing No matching row
+    Array.from(rows).forEach(row => {
+        if (row.id === 'noResultsRow') {
+            row.remove();
+        }
+    });
+
+    Array.from(rows).forEach(row => {
+        const referenceCell = row.getElementsByTagName('td')[0]; 
+        const referenceText = referenceCell.textContent;
+
+        if (referenceText.includes(reference)) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Handle no results case
+    if (!hasVisibleRows) {
+            const noResultsRow = document.createElement('tr');
+            noResultsRow.id = 'noResultsRow';
+            const noResultsCell = document.createElement('td');
+            noResultsCell.colSpan = 5;
+            noResultsCell.className = 'text-center';
+            noResultsCell.textContent = 'No matching orders found';
+            noResultsRow.appendChild(noResultsCell);
+            orderTableBody.appendChild(noResultsRow);
+        }
+
+
+});
+
+
+// Search by time period
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
+
+function filterRows() {
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const rows = orderTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
+    
+    // Remove any existing No matching row
+    Array.from(rows).forEach(row => {
+        if (row.id === 'noResultsRow') {
+            row.remove();
+        }
+    });
+
+    Array.from(rows).forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        const orderDateCell = cells[1].textContent;
+        const orderDate = new Date(orderDateCell);
+
+        let matches = true;
+        if (startDate && orderDate < new Date(startDate)) {
+            matches = false;
+        }
+
+        if (endDate && orderDate > new Date(endDate)) {
+            matches = false;
+        }
+
+        if (matches) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Handle no results case
+    if (!hasVisibleRows) {
+        const noResultsRow = document.createElement('tr');
+        noResultsRow.id = 'noResultsRow';
+        const noResultsCell = document.createElement('td');
+        noResultsCell.colSpan = 5;
+        noResultsCell.className = 'text-center';
+        noResultsCell.textContent = 'No matching orders found';
+        noResultsRow.appendChild(noResultsCell);
+        orderTableBody.appendChild(noResultsRow);
+    }
+}
+// filter info after click button
+searchButton.addEventListener('click',filterRows);
+
   </script>
 {% endblock %}
 

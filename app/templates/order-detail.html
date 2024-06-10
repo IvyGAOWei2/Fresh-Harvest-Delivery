@@ -130,6 +130,10 @@
                                         <td class="shipping">${{ order.total }}</td>
                                     </tr>
                                     <tr>
+                                        <td colspan="5">GST</td>
+                                        <td class="shipping">${{ (order.total|float * 0.15 )|round(2) }}</td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="5">Shipping</td>
                                         {% if order.shipping_fee == 0 %}
                                             <td class="shipping">Free</td>
