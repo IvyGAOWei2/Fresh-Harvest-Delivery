@@ -55,7 +55,7 @@ def manageWeeklyBoxes():
 def get_packages_by_depot():
     try:
         user_role = session['type']
-        depot_id = request.args.get('depot_id')
+        depot_id = request.args.get('depot_id')  # Get the depot_id from query parameters
         
         if user_role == 'National_Manager':
             sql_packages = """
@@ -188,17 +188,16 @@ def manage_box_products(package_id):
         if not package:
             return "Package not found", 404
 
-        sql_boxes = "SELECT box_id, box_type, price, quantity, product_id FROM Boxes WHERE package_id = %s"
+        sql_boxes = "SELECT box_id, box_type, price, quantity FROM Boxes WHERE package_id = %s"
         existing_boxes = fetchAll(sql_boxes, (package_id,))
         box_types = ['Small', 'Medium', 'Large']
-        boxes = {box_type: {'box_id': None, 'price': 0.00, 'quantity': 0, 'products': [], 'product_id': None} for box_type in box_types}
+        boxes = {box_type: {'box_id': None, 'price': 0.00, 'quantity': 0, 'products': []} for box_type in box_types}
 
         for box in existing_boxes:
             box_data = {
                 'box_id': box[0],
                 'price': box[2],
                 'quantity': box[3],
-                'product_id': box[4],
                 'products': fetchAll("""
                     SELECT bi.product_id, p.name, bi.quantity
                     FROM BoxItems bi
@@ -210,18 +209,9 @@ def manage_box_products(package_id):
 
         for box_type in box_types:
             if boxes[box_type]['box_id'] is None:
-                product_name = f"{box_type} Box"
-                sql_insert_product = "INSERT INTO Products (name, depot_id, is_active) VALUES (%s, %s, TRUE)"
-                product_id = insertSQL(sql_insert_product, (product_name, package['depot_id']))
-
-                sql_insert_box = "INSERT INTO Boxes (package_id, box_type, price, quantity, product_id) VALUES (%s, %s, %s, %s, %s)"
-                box_id = insertSQL(sql_insert_box, (package_id, box_type, 0.00, 0, product_id))
+                sql_insert_box = "INSERT INTO Boxes (package_id, box_type, price, quantity) VALUES (%s, %s, %s, %s)"
+                box_id = insertSQL(sql_insert_box, (package_id, box_type, 0.00, 0))
                 boxes[box_type]['box_id'] = box_id
-                boxes[box_type]['product_id'] = product_id
-
-                fixed_image_url = 'app/static/images/upload/promotion.jpg'
-                sql_insert_image = "INSERT INTO ProductImages (product_id, image, is_primary) VALUES (%s, %s, TRUE)"
-                insertSQL(sql_insert_image, (product_id, fixed_image_url))
 
         categories = fetchAll("SELECT category_id, category_name FROM Category")
         products = fetchAll("SELECT product_id, name FROM Products WHERE depot_id = %s", (package['depot_id'],))
@@ -242,6 +232,7 @@ def manage_box_products(package_id):
         print(f"Error: {e}")
         return str(e), 500
 
+
 @app.route('/employee/update-box-price', methods=['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def update_box_price():
@@ -259,8 +250,6 @@ def update_box_price():
             WHERE box_id = %s
         """
         updateSQL(sql_update_price, (price, box_id))
-
-        sync_boxes_to_products()  
 
         return jsonify({'status': True})
     except Exception as err:
@@ -285,8 +274,6 @@ def update_box_quantity():
         """
         updateSQL(sql_update_quantity, (quantity, box_id))
 
-        sync_boxes_to_products() 
-
         return jsonify({'status': True})
     except Exception as err:
         print(f"Error: {err}")
@@ -307,6 +294,7 @@ def add_box_product():
         if product_id == 'undefined':
             return jsonify({'status': False, 'message': 'Invalid product selection'}), 400
 
+        # Insert product into the Small box
         sql_insert_box_item = """
             INSERT INTO BoxItems (box_id, product_id, quantity)
             VALUES (%s, %s, %s)
@@ -314,6 +302,7 @@ def add_box_product():
         """
         insertSQL(sql_insert_box_item, (box_id, product_id, quantity))
 
+        # Automatically add the product to Medium and Large boxes
         sql_get_box_ids = "SELECT box_id, box_type FROM Boxes WHERE package_id = (SELECT package_id FROM Boxes WHERE box_id = %s)"
         boxes = fetchAll(sql_get_box_ids, (box_id,))
         for box in boxes:
@@ -323,8 +312,6 @@ def add_box_product():
             elif box[1] == 'Large':
                 large_quantity = quantity + 2
                 insertSQL(sql_insert_box_item, (box[0], product_id, large_quantity))
-
-        sync_boxes_to_products()  
 
         return jsonify({'status': True})
     except Exception as err:
@@ -342,6 +329,7 @@ def update_box_product():
         if not all([box_id, product_id, quantity]):
             return jsonify({'status': False, 'message': 'All fields are required'}), 400
 
+        # Ensure quantity is a valid integer
         try:
             quantity = int(quantity)
         except ValueError:
@@ -358,64 +346,7 @@ def update_box_product():
             """
             updateSQL(sql_update_product, (quantity, box_id, product_id))
 
-        sync_boxes_to_products()  # 同步Products表中的数据
-
         return jsonify({'status': True})
     except Exception as err:
         print(f"Error: {err}")
         return jsonify({'status': False, 'message': 'Database error occurred'}), 500
-
-def sync_boxes_to_products():
-    try:
-        sql_select_boxes = """
-            SELECT box_id, product_id, price, quantity 
-            FROM Boxes
-        """
-        boxes = fetchAll(sql_select_boxes)
-
-        for box in boxes:
-            box_id, product_id, price, quantity = box
-
-            sql_select_box_items = """
-                SELECT bi.box_id, bi.quantity, p.name as product_name
-                FROM BoxItems bi
-                JOIN Products p ON bi.product_id = p.product_id
-                WHERE bi.box_id = %s
-            """
-            box_items = fetchAll(sql_select_box_items, (box_id,))
-
-            box_items_description = "This box contains the following items:\n"
-            for item in box_items:
-                box_items_description += f" {item[2]}: {item[1]} units ;\n"
-
-            sql_select_product_description = """
-                SELECT description
-                FROM Products
-                WHERE product_id = %s
-            """
-            current_description = fetchOne(sql_select_product_description, (product_id,))
-
-            if current_description and 'description' in current_description:
-                new_description = f"{current_description['description']} {box_items_description}"
-            else:
-                new_description = box_items_description
-
-            update_query = """
-                UPDATE Products
-                SET price = %s, 
-                    stock = %s, 
-                    category_id = 8, 
-                    unit_id = 3, 
-                    depot_id = 1, 
-                    is_active = TRUE,
-                    description = %s
-                WHERE product_id = %s
-            """
-            updateSQL(update_query, (price, quantity, new_description, product_id))
-
-        print("Products table successfully updated with Boxes data.")
-
-    except Exception as e:
-        print(f"Error: {e}")
-
-sync_boxes_to_products()
