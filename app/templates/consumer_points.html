@@ -33,12 +33,12 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="HeadingpointsHistory">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="true" aria-controls="pointsHistory">
-                            <i class="fas fa-list me-2"></i>Points History
+                            <i class="fas fa-history me-2"></i>Points History
                         </button>
                     </h2>
                     <div id="pointsHistory" class="accordion-collapse show" aria-labelledby="pointsHistory">
                         <div class="accordion-body">
-                            <table class="table">
+                            <table class="table table-striped text-center">
                                 <thead>
                                   <tr>
                                     <th scope="col">Points type</th>
@@ -52,15 +52,23 @@
                                   {% for point in pointsHistory %}
                                   <tr>
                                     <th style="font-weight: 400;" scope="row">{{point.point_type}}</th>
-                                    <td><i class="fas fa-plus fa-lg me-3 fa-fw"></i>{{point.point_variation}}</td>
+                                    {% if point.point_variation > 0 %}
+                                        <td>
+                                            +{{point.point_variation}}
+                                        </td>
+                                    {% else %}
+                                        <td style="max-width: 10rem;">
+                                            {{point.point_variation}}
+                                        </td>
+                                    {% endif %}
                                     <td>{{point.point_balance}}</td>
                                     <td>{{point.point_date}}</td>
                                     <td>
-                                    {% if point.point_type == 'Order Purchase' %}
-                                    <a href="{{ url_for('orderHistory') }}" class="btn view_order" role="button" title="Order details">
-                                        <i class="fas fa-list fa-lg me-3 fa-fw"></i>
-                                    </a>
-                                    {% endif %}
+                                        {% if point.point_type != 'Gift Card' %}
+                                        <a href="{{ url_for('orderDetail', order_id = point.order_id ) }}" class="btn view_order" role="button" title="Order details">
+                                            <i class="fas fa-list-alt fa-lg me-3 fa-fw"></i>
+                                        </a>
+                                        {% endif %}
                                     </td>
                                   </tr>
                                   {% endfor %}
@@ -113,29 +121,29 @@
 </section>
 
 <style>
-    .account-header {
+    #profile .account-header {
         padding: 10px 20px;
         border-radius: 10px;
         background: linear-gradient(to right, #e7f1ff, #f8f9fa);
         display: inline-block;
     }
-    .account-header h1 {
+    #profile .account-header h1 {
         display: inline-block;
         margin: 0;
         padding-left: 10px;
         font-size: 2rem;
     }
-    .form-label {
+    #profile .form-label {
         font-weight: bold;
     }
-    .accordion-button {
+    #profile .accordion-button {
         background-color: #f8f9fa;
         color: #000;
     }
-    .accordion-button:focus {
+    #profile .accordion-button:focus {
         box-shadow: none;
     }
-    .accordion-button:not(.collapsed) {
+    #profile .accordion-button:not(.collapsed) {
         color: #007bff;
         background-color: #e7f1ff;
     }
@@ -147,19 +155,19 @@
         background-color: #ffb524 !important;
         border-color: #ffb524 !important;
     }
-    .form-control {
+    #profile .form-control {
         max-width: 400px;
     }
-    .col-form-label {
+    #profile .col-form-label {
         padding-left: 2rem !important;
     }
-    .row.mb-2 .col-sm-7 {
+    #profile .row.mb-2 .col-sm-7 {
         padding-left: 10px;
     }
-    form .row .col-sm-4 {
+    #profile form .row .col-sm-4 {
         padding-right: 5px;
     }
-    form .row .col-sm-7 {
+    #profile form .row .col-sm-7 {
         padding-left: 5px;
     }
 </style>

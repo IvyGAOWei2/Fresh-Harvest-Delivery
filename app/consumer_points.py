@@ -30,7 +30,7 @@ def giftcardRedeem():
     if update_successful:
         current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (session['id'],))
         gift_card = fetchOne('SELECT balance, gift_card_id FROM GiftCards WHERE code = %s', (code,), True)
-        variation = float(gift_card['balance'])
+        variation = float(gift_card['balance'])*10
         new_points = float(current_points[0]) + variation
         # new ConsumerPoints 
         insertSQL("INSERT INTO ConsumerPoints (user_id, gift_card_id, point_type, point_variation, point_balance, point_date) \
