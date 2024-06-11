@@ -115,7 +115,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status == true) { // Redirect user if login is successful
-                    console.log(data.status)
+                    // console.log(data.status)
                     loadingModal.hide();
                     new bootstrap.Modal(document.getElementById('contactSuccessModal')).show();
                     // window.location.href = data.message;

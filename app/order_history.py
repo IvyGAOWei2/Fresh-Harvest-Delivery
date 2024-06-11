@@ -7,7 +7,7 @@ from common import roleRequired, emailOrder, toDay
 from emailMethod.method import sendOrderStatus
 
 
-@app.route("/order/history",methods = ["GET", 'POST'])
+@app.route("/order/history")
 @roleRequired(['Consumer'])
 def orderHistory():
     orders = fetchAll("SELECT order_id, order_date, delivery_date, total, shipping_fee, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
@@ -25,7 +25,7 @@ def orderDetail(order_id):
         WHERE Orders.order_id = %s
 """
     order = fetchOne(order_sql, (order_id,),True)
-    print(order)
+    # print(order)
     exclusion_list = ",".join(str(pid) for pid in app.giftcard_list)
 
     products = fetchAll("SELECT o.*, p.name, p.price, pi.image FROM OrderItems o JOIN Products p \
@@ -54,6 +54,18 @@ def orderDetail(order_id):
 def orderDel():
     data = request.get_json()
 
+    update_successful = updateSQL("UPDATE GiftCards SET order_id = NULL WHERE order_id = %s;", (data['order_id'],))
+    update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
+
+    # restore business account_available
+    is_business = fetchOne('SELECT payment_method,total,shipping_fee FROM Orders WHERE order_id = %s', (data['order_id'],), True)
+
+    if is_business['payment_method'] == 'Account':
+        account_available =  fetchOne("SELECT account_available FROM Consumer WHERE user_id = %s;", (session['id'],))
+        new_account_available = account_available[0] + is_business['total'] + is_business['shipping_fee']
+        updateSQL("UPDATE Consumer SET account_available = %s WHERE user_id = %s;", (new_account_available, session['id']))
+
+    # restore points
     isPointsRedeem = fetchOne('SELECT point_type, point_variation FROM ConsumerPoints WHERE order_id = %s', (data['order_id'],), True)
     if isPointsRedeem:
         point_variation = abs(isPointsRedeem['point_variation'])
@@ -63,9 +75,6 @@ def orderDel():
         insertSQL("INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date) \
                 VALUES(%s,%s,%s,%s,%s,%s);", (session['id'], data['order_id'], 'Order Cancel', point_variation, new_points, toDay()))
         updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, session['id']))
-
-    update_successful = updateSQL("UPDATE GiftCards SET order_id = NULL WHERE order_id = %s;", (data['order_id'],))
-    update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
 
     if update_successful:
         order = emailOrder(data['order_id'])
@@ -115,8 +124,8 @@ def staffRefund():
     order_item_id = data.get('order_item_id')
     if order_item_id:
         updateSQL("UPDATE OrderItems SET is_refunded = TRUE WHERE order_item_id = %s", (order_item_id,))
-        return jsonify({'success': True})
-    return jsonify({'success': False, 'message': 'Order item ID not provided'})
+        return {'success': True}
+    return {'success': False, 'message': 'Order item ID not provided'}
 
 @app.route("/admin/order/status/", methods = ['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])

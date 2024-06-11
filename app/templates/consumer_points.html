@@ -198,7 +198,7 @@
           .then(response => response.json())
           .then(data => {
               if (data.status == true) { // Redirect user if register is successful
-                  console.log(data)
+                //   console.log(data)
                   new bootstrap.Modal(document.getElementById('redemptionSuccessModal')).show();
                 //   window.location.href = data.message;
               }

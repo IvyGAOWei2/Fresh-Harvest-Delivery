@@ -78,14 +78,16 @@
                                     </td>
                                     <td>
                                     <!-- product.status 应为order item对应的status -->
-                                    {% if product.status != 'Refunded' %}
-                                        <div class="d-flex mt-4">
-                                            <a href="{{ url_for('contact') + '#contactUs' }}" class="btn" role="button" data-bs-toggle="refund" title="Contact Us">
-                                                <i class="fas  fa-registered fa-lg"></i>
-                                            </a>
-                                        </div>
+                                    {% if order.status == 'Pending' %}
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">N/A</p>
+                                    {% elif order.status in ['Cancelled', 'Refunded'] %}
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
                                     {% else %}
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Refunded</p>
+                                    <div class="d-flex mt-4">
+                                        <a href="{{ url_for('contact') + '#contactUs' }}" class="btn" role="button" data-bs-toggle="refund" title="Contact Us">
+                                            <i class="fas  fa-registered fa-lg"></i>
+                                        </a>
+                                    </div>
                                     {% endif%}
                                     </td>   
                                 </tbody>

@@ -138,7 +138,11 @@
                             <td>{{order.order_id}}</td>
                             <td>{{order.full_name}}</td>
                             <td>{{order.order_date}}</td>
-                            <td>{{order.delivery_date}}</td>
+                            {% if order.delivery_date %}
+                                <td>{{order.delivery_date}}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td>{{order.total + order.shipping_fee}}</td>
                             <td>{{order.user_type}}</td>
                             <td>{{order.status}}</td>

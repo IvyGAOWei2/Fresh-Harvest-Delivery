@@ -100,6 +100,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://kit.fontawesome.com/baa7f7aeb2.js" crossorigin="anonymous"></script>
 <script>
+const userType = `{{checkoutProfile.user_type}}`; // 假设从服务器获取用户类型
 document.addEventListener('DOMContentLoaded', function() {
     setupSteps();
     loadCartDetails();
@@ -259,17 +260,22 @@ function autoFillBillingDetails() {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('paymentform');
-    const expiration = document.getElementById('cc-expiration');
+    if (userType === 'Residential') {
+        const expiration = document.getElementById('cc-expiration');
+        // console.log(expiration)
 
-    expiration.addEventListener('input', function() {
-        validateExpirationDate(this); // 实时验证到期日期
-    });
+        expiration.addEventListener('input', function() {
+            validateExpirationDate(this); // 实时验证到期日期
+        });
+    }
     const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
+
         if (validateForm()) {
             console.log('Form is valid, process payment.');
             // 这里可以添加进一步处理付款的代码
@@ -330,11 +336,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function validateForm() {
         let isValid = true;
 
-        // 验证到期日期 (格式MM/YY)
-        if (!validateExpirationDate(expiration)) {
-            isValid = false;
+        if (userType === 'Residential') {
+            // 验证到期日期 (格式MM/YY)
+            const expiration = document.getElementById('cc-expiration');
+            if (!validateExpirationDate(expiration)) {
+                isValid = false;
+            }
         }
-
         return isValid;
     }
 
@@ -365,7 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
-    const userType = `{{checkoutProfile.user_type}}`; // 假设从服务器获取用户类型
     const creditBalance = `{{checkoutProfile.account_available}}`; // 假设信用余额
     const totalAmount = (() => {
     // 从localStorage获取数据
@@ -398,8 +405,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
-
 
 document.getElementById('deliveryfirstname').addEventListener('input', function() {
         InputValidate('deliveryfirstname');
@@ -442,7 +447,9 @@ document.getElementById('deliveryfirstname').addEventListener('input', function(
     });    
     document.getElementById('billingemail').addEventListener('input', function() {
         InputValidate('billingemail');
-    });    
+    });
+
+    if (userType === 'Residential') {
     document.getElementById('cc-name').addEventListener('input', function() {
         InputValidate('cc-name');
     });    
@@ -501,5 +508,6 @@ document.getElementById('deliveryfirstname').addEventListener('input', function(
       input.classList.remove('is-invalid');
     }
   }
+}
 </script>
 {% endblock %}

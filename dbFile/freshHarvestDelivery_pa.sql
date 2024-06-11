@@ -1,7 +1,34 @@
-DROP SCHEMA IF EXISTS freshHarvestDelivery;
-CREATE SCHEMA freshHarvestDelivery;
-USE freshHarvestDelivery;
+SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS 
+GiftCards, 
+ConsumerPoints, 
+Invoices, 
+Employees, 
+Packages, 
+Boxes, 
+BoxItems, 
+Promotions, 
+Messages, 
+Reviews, 
+DiscountedProducts, 
+Discounts, 
+BusinessApplications, 
+AccountLimitReviewRequests, 
+News, 
+OrderItems, 
+Orders, 
+ProductImages, 
+Products, 
+ConsumerCart, 
+Consumer, 
+Subscription, 
+Users, 
+Depots, 
+Category, 
+Unit;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE Depots (
     depot_id TINYINT PRIMARY KEY AUTO_INCREMENT,
@@ -119,7 +146,6 @@ CREATE TABLE OrderItems (
     product_id SMALLINT,
     quantity TINYINT,
     subtotal DECIMAL(10, 2),
-    is_refunded BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
@@ -187,12 +213,10 @@ CREATE TABLE Packages (
 CREATE TABLE Boxes (
     box_id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     package_id SMALLINT,
-    product_id SMALLINT,
     box_type ENUM('Large', 'Medium', 'Small') NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     quantity TINYINT,
-    FOREIGN KEY (package_id) REFERENCES Packages(package_id),
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+    FOREIGN KEY (package_id) REFERENCES Packages(package_id)
 );
 
 CREATE TABLE BoxItems (

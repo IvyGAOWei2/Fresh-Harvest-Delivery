@@ -27,7 +27,7 @@ INSERT INTO Subscription (user_id, start_date, end_date, type) VALUES
 -- Consumer table
 INSERT INTO Consumer (user_id, given_name, family_name, address, phone, postcode, image, points, account_limit, account_available, last_login_date, user_type, depot_id, subscription_id) VALUES
 (1, 'John', 'Doe', '123 Main St', '0211234567', '8011', 'user_default_image.png', 82.41, null, null, '2024-05-05 18:30:00', 'Residential', 1, 1),
-(5, 'Mark', 'White', '456 Elm St', '0279876543', '9810', 'user_default_image.png', null, 300.00, 150.00, '2024-05-04 09:15:00', 'Business', 1, 2);
+(5, 'Mark', 'White', '456 Elm St', '0279876543', '9810', 'user_default_image.png', 0, 300.00, 150.00, '2024-05-04 09:15:00', 'Business', 1, 2);
 
 -- Products table
 -- fruit
