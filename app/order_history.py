@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, session
+from flask import render_template, request, session,jsonify
 
 # User-defined function
 from dbFile.config import fetchAll, updateSQL, fetchOne, insertSQL
@@ -7,7 +7,7 @@ from common import roleRequired, emailOrder, toDay
 from emailMethod.method import sendOrderStatus
 
 
-@app.route("/order/history")
+@app.route("/order/history",methods = ["GET", 'POST'])
 @roleRequired(['Consumer'])
 def orderHistory():
     orders = fetchAll("SELECT order_id, order_date, delivery_date, total, shipping_fee, status FROM Orders WHERE user_id = %s;", (session['id'],), True)
@@ -17,9 +17,15 @@ def orderHistory():
 @app.route("/order/detail/<int:order_id>")
 @roleRequired(['Consumer','Staff', 'Local_Manager', 'National_Manager'])
 def orderDetail(order_id):
-    order = fetchOne('SELECT o.*, cp.point_variation FROM Orders o LEFT JOIN ConsumerPoints cp ON \
-        o.order_id = cp.order_id AND cp.point_type = "Points Redeem" WHERE o.order_id = %s;', (order_id,),True)
-
+    order_sql = """
+        SELECT Orders.*, 
+        CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name 
+        FROM Orders 
+        JOIN Consumer ON Orders.user_id = Consumer.user_id 
+        WHERE Orders.order_id = %s
+"""
+    order = fetchOne(order_sql, (order_id,),True)
+    print(order)
     exclusion_list = ",".join(str(pid) for pid in app.giftcard_list)
 
     products = fetchAll("SELECT o.*, p.name, p.price, pi.image FROM OrderItems o JOIN Products p \
@@ -100,7 +106,8 @@ def staffOrderHistory():
             Orders.total,
             Orders.shipping_fee,
             Orders.status,
-            CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name
+            CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name,
+            Consumer.user_type
         FROM 
             Orders
         JOIN 
@@ -117,7 +124,8 @@ def staffRefund():
     order_item_id = data.get('order_item_id')
     if order_item_id:
         updateSQL("UPDATE OrderItems SET is_refunded = TRUE WHERE order_item_id = %s", (order_item_id,))
-    return render_template('manage-order-detail.html')
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': 'Order item ID not provided'})
 
 @app.route("/admin/order/status/", methods = ['POST'])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])

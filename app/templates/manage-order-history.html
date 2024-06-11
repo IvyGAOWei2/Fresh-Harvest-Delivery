@@ -53,7 +53,7 @@
             </div>
 
             <div class="search-container p-2">
-                <form method="POST" action="/admin/order/history">
+                <form id="searchByReferenceForm" method="POST" action="/admin/order/history">
                     <div class="row">
                         <div class="col-md-2">
                             <label for="orderReferenceNumber"  class="form-label">SEARCH BY:</label>
@@ -62,22 +62,24 @@
                             <input type="number" class="form-control search-bar" id="orderReferenceNumber" placeholder="ORDER REFERENCE NUMBER">
                         </div>
                     </div>
-
-                    <div class="row m-0 text-divider">
-                        <div class="col-12 text-center">
-                            <hr class="d-inline-block" style="width: 46%;">
-                            <span class="mx-2">OR</span>
-                            <hr class="d-inline-block" style="width: 46%;">
-                        </div>
+                </form>
+                
+                <div class="row m-0 text-divider">
+                    <div class="col-12 text-center">
+                        <hr class="d-inline-block" style="width: 46%;">
+                        <span class="mx-2">OR</span>
+                        <hr class="d-inline-block" style="width: 46%;">
                     </div>
+                </div>
 
+                <form id="searchByDetailsForm" method="POST" action="/admin/order/history">
                     <div class="row">
                         <div class="col-md-2">
                             <label for="customerName" class="form-label">SEARCH BY:</label>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="form-control search-bar" id="customerName" maxlength="35" pattern="^[a-zA-Z\s]+$" placeholder="CUSTOMER NAME">
-                            <div class="invalid-feedback">Only letters and spaces.</div>
+                            <input type="text" class="form-control search-bar" id="customerName" minlength="2" maxlength="35" pattern="^[a-zA-Z\s]+$" placeholder="CUSTOMER NAME">
+                            <div class="invalid-feedback">Only letters and spaces,length must be between 2 and 35 characters.</div>
                         </div>
                         <div class="col-md-2">
                             <label for="account" class="form-label">ACCOUNT:</label>
@@ -85,8 +87,8 @@
                         <div class="col-md-4">
                             <select class="form-control search-bar" id="account">
                                 <option value="all">All</option>
-                                <option value="business">Business Account</option>
-                                <option value="customer">Customer</option>
+                                <option value="Business">Business</option>
+                                <option value="Residential">Residential</option>
                             </select>
                         </div>
                     </div>
@@ -108,66 +110,10 @@
                     <div class="row mb-3">
                         <div class="col-md-12 text-end">
                             <button class="btn btn-secondary btn-rounded me-2" id="clearButton">Clear</button>
-                            <button class="btn btn-primary btn-rounded" id="searchButton">Search</button>
+                            <button class="btn btn-primary btn-rounded" type="button" id="searchButton">Search</button>
                         </div>
                     </div>    
-
-                    <!-- <div class="row">
-                        <div class="col-md-2">
-                            <label for="account" class="form-label">ACCOUNT:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <select class="form-control search-bar" id="account">
-                                <option value="all">All</option>
-                                <option value="business">Business Account</option>
-                                <option value="customer">Customer</option>
-                            </select>
-                        </div>
-                    </div> -->
-
-    
-
-                    <!-- <div class="row">
-                        <div class="col-12 text-center">
-                            <hr class="d-inline-block" style="width: 45%;">
-                            <span class="mx-2 font-weight-bold">And</span>
-                            <hr class="d-inline-block" style="width: 45%;">
-                        </div>
-                    </div> -->
-
-                    
-
-                    <!-- <div class="row">
-                        <div class="col-md-4">
-                            <label for="beginningDate" class="form-label">BEGINNING DATE OF ORDER LIST:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input type="date" class="form-control search-bar" id="beginningDate">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="endDate" class="form-label">END DATE OF ORDER LIST:</label>
-                        </div>
-                        <div class="col-md-8">
-                            <input type="date" class="form-control search-bar" id="endDate">
-                        </div>
-                    </div> -->
-    <!-- option 2 date in one line -->
-                    <!-- <div class="row">
-                        <div class="col-md-6">
-                            <label for="beginningDate" class="form-label">BEGINNING DATE OF ORDER LIST:</label>
-                            <input type="date" class="form-control search-bar" id="beginningDate">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="endDate" class="form-label">END DATE OF ORDER LIST:</label>
-                            <input type="date" class="form-control search-bar" id="endDate">
-                        </div>
-                    </div>-->
                 </form>
-
- 
-
             </div>
 
             <div class="table">
@@ -179,13 +125,14 @@
                             <th>Order Date</th>
                             <th>Delivery Date</th>
                             <th>Total Cost</th>
+                            <th>Account Type</th>
                             <th>Status</th>
                             <th>View</th>
                             <th>Change Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Example Order Row -->
+                    <tbody id="orderTableBody">
+                        <!-- Order Row -->
                         {% for order in orders %}
                         <tr>
                             <td>{{order.order_id}}</td>
@@ -193,6 +140,7 @@
                             <td>{{order.order_date}}</td>
                             <td>{{order.delivery_date}}</td>
                             <td>{{order.total + order.shipping_fee}}</td>
+                            <td>{{order.user_type}}</td>
                             <td>{{order.status}}</td>
                             <td>
                                 <a href="{{ url_for('orderDetail', order_id = order.order_id ) }}" class="btn order-view" role="button" >
@@ -241,7 +189,6 @@
                             </td>
                         </tr>
                         {% endfor %}
-                        <!-- Add more fixed data rows as needed -->
                     </tbody>
                 </table>
             </div>
@@ -320,6 +267,13 @@
         // Set the maximum end date to today
         setMaxEndDate();
 
+        // Prevent the user from selecting a future date for the start date
+        startDateInput.addEventListener('input', function () {
+        if (startDateInput.value > endDateInput.max) {
+            startDateInput.value = endDateInput.max; // Adjust to today's date if a future date is selected
+        }
+        });
+
         // Prevent the user from selecting a future date for the end date
         endDateInput.addEventListener('input', function () {
         if (endDateInput.value > endDateInput.max) {
@@ -371,6 +325,124 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// Search by order reference number 
+const orderReferenceInput = document.getElementById('orderReferenceNumber');
+const orderTableBody = document.getElementById('orderTableBody');
+
+orderReferenceInput.addEventListener('input', function () {
+    const reference = orderReferenceInput.value;
+    const rows = orderTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
+
+    // Remove any existing No matching row
+    Array.from(rows).forEach(row => {
+        if (row.id === 'noResultsRow') {
+            row.remove();
+        }
+    });
+
+    Array.from(rows).forEach(row => {
+        const referenceCell = row.getElementsByTagName('td')[0]; 
+        const referenceText = referenceCell.textContent;
+
+        if (referenceText.includes(reference)) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Handle no results case
+    if (!hasVisibleRows) {
+            const noResultsRow = document.createElement('tr');
+            noResultsRow.id = 'noResultsRow';
+            const noResultsCell = document.createElement('td');
+            noResultsCell.colSpan = 9;
+            noResultsCell.className = 'text-center';
+            noResultsCell.textContent = 'No matching orders found';
+            noResultsRow.appendChild(noResultsCell);
+            orderTableBody.appendChild(noResultsRow);
+        }
+
+
+});
+
+
+// Search by customer details info
+const customerNameInput = document.getElementById('customerName');
+const accountInput = document.getElementById('account');
+const startDateInput = document.getElementById('startDate');
+const endDateInput = document.getElementById('endDate');
+
+function filterRows() {
+    const customerName = customerNameInput.value.toLowerCase();
+    const account = accountInput.value;
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const rows = orderTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
+
+    // Remove any existing No matching row
+    Array.from(rows).forEach(row => {
+        if (row.id === 'noResultsRow') {
+            row.remove();
+        }
+    });
+
+    Array.from(rows).forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        const customerNameCell = cells[1].textContent.toLowerCase();
+        const accountCell = cells[5].textContent;
+        const orderDateCell = cells[2].textContent;
+        const orderDate = new Date(orderDateCell);
+
+        let matches = true;
+
+        if (customerName && !customerNameCell.includes(customerName)) {
+            matches = false;
+        }
+
+        if (account !== 'all' && accountCell !== account) { 
+            matches = false;
+        }
+
+        if (startDate && orderDate < new Date(startDate)) {
+            matches = false;
+        }
+
+        if (endDate && orderDate > new Date(endDate)) {
+            matches = false;
+        }
+
+        if (matches) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Handle no results case
+    if (!hasVisibleRows) {
+        const noResultsRow = document.createElement('tr');
+        noResultsRow.id = 'noResultsRow';
+        const noResultsCell = document.createElement('td');
+        noResultsCell.colSpan = 9;
+        noResultsCell.className = 'text-center';
+        noResultsCell.textContent = 'No matching orders found';
+        noResultsRow.appendChild(noResultsCell);
+        orderTableBody.appendChild(noResultsRow);
+    }
+}
+// filter info while input
+// customerNameInput.addEventListener('input', filterRows);
+// accountInput.addEventListener('change', filterRows);
+// startDateInput.addEventListener('input', filterRows);
+// endDateInput.addEventListener('input', filterRows);
+
+// filter info after click button
+searchButton.addEventListener('click',filterRows);
 </script>
 
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends "_consumer-base.html" %}
+
+{% block title %}Order History{% endblock %}
+
+{% block navbar %}
+    {% with is_order_history='1' %}
+        {% include "components/layout/header/Nav1.html" %}
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+<style>
+    .search-bar {
+            border-radius: 25px;
+            margin-bottom: 20px;
+        }
+    .btn-rounded {
+        border-radius: 25px;
+    }
+
+  .gray-icon {
+        color: gray !important;
+    }
+
+</style>
+
+<section class="main-content">
+   
+</section>
+
+{% endblock %}
+
+{% block script %}
+  {% include "components/elements/InputValidate.html" %}
+
+
+ 
+  <script>
+
+</script>
+
+{% endblock %}
+
+

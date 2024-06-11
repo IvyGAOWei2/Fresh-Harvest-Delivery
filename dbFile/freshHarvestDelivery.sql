@@ -119,6 +119,7 @@ CREATE TABLE OrderItems (
     product_id SMALLINT,
     quantity TINYINT,
     subtotal DECIMAL(10, 2),
+    is_refunded BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
