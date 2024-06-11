@@ -154,7 +154,7 @@ def adminProfileAdd():
         
 
 @app.route("/admin/invoice",methods = ["POST"])
-@roleRequired(['Local_Manager', 'National_Manager'])
+@roleRequired(['Staff','Local_Manager', 'National_Manager'])
 def adminInvoice():
     invoice_id = request.form.get("invoice_id")
     is_paid = request.form.get("is_paid")
