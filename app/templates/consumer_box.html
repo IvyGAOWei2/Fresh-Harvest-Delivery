@@ -24,160 +24,55 @@
         border-radius: 25px;
     }
 
-    .narrow-container {
-        max-width: 600px; /* 设置容器的最大宽度 */
-        margin: 0 auto; /* 使容器居中 */
-    }
-
-    </style>
-
 </style>
 
-<section>
-<div class="container-fluid py-5 mt-5">
-    <div class="container py-5 text-center">
-        <div class="account-header d-flex justify-content-center align-items-center py-4 mb-4" style="background: none;">
-            <i class="fas fa-box-open fa-3x me-3"></i> 
-            <h1 class="mb-2">My subscription</h1>
-        </div>
-        <div class="accordion" id="consumerPoints">
-            <!-- subscribe-->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="HeadingpointsHistory">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="true" aria-controls="pointsHistory">
-                        <i class="fas fa-list me-2"></i>Subscribe
-                    </button>
-                </h2>
-                <div id="pointsHistory" class="accordion-collapse show" aria-labelledby="pointsHistory">
-                    <div class="accordion-body">
-                    <form method="POST" action="/consumer/box">
-                        <div class="container narrow-container">
-                            <div class="row">
-                                <div class="col"> 
-                                    <label class="form-check-label" for="flexRadioDefault1">Box Size：</label>
-                                </div>
-                                <div class="col"> 
-                                    <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Small($30)
-                                    </label>
-                                    </div>
-                                </div>
-                                <div class="col"> 
-                                    <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                                    <label class="form-check-label" for="flexRadioDefault2">
-                                        Medium($50)
-                                    </label>
-                                    </div>
-                                </div>
-                                <div class="col"> 
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                        Large($80)
-                                        </label>
-                                    </div>
-                                    </div>
-                            </div>
-                            <div class="row">
-                                <div class="col"> 
-                                    <label class="form-check-label" for="flexRadioDefault1">Delivery Period：</label>
-                                </div>
-                                <div class="col"> 
-                                    <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="flexRadioDefault1" id="flexRadioDefault1">
-                                    <label class="form-check-label" for="flexRadioDefault1">
-                                        Weekly
-                                    </label>
-                                    </div>
-                                </div>
-                                <div class="col"> 
-                                    <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="flexRadioDefault1" id="flexRadioDefault2">
-                                    <label class="form-check-label" for="flexRadioDefault2">
-                                        Fortnightly
-                                    </label>
-                                    </div>
-                                </div>
-                                <div class="col"> 
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault1" id="flexRadioDefault3">
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                        Monthly
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <p></p>
-                            <div>* If there are any updates to the box, you will be notified via email. Thank you.</div>
-                            
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary mt-3">Go to pay</button>
-                            </div>
-                        </div>
-                    </form>
-                    </div>
+<section class="main-content">
+    <div class="container-fluid py-5 mt-5">
+        <div class="container py-5 text-center">
+            <div class="account-header d-flex justify-content-center align-items-center py-4 mb-4" style="background: none;">
+                <i class="fas fa-box-open fa-3x me-3"></i> 
+                <h1 class="mb-2">My subscription</h1>
+            </div>
+            <form method="POST" action="/consumer/box">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Subscription ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            {% for subscription in subscription_list %}
+                            <!-- Example Order Row -->
+                            <tr>
+                                <td>{{subscription.subscription_id}}</td>
+                                <td>{{subscription.start_date}}</td>
+                                <td>{{subscription.end_date}}</td>
+                                <td>{{subscription.type}}</td>
+                                <td>
+                                    <a class="btn order-view" role="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#consumer_view_box" aria-controls="offcanvasRight">
+                                        <i class="far fa-eye fa-lg me-1"></i>
+                                    </a>
+                                    {% if subscription.end_date <  current_date %}
+                                    <a class="btn order-del" role="button" >
+                                        <i class="fas fa-trash-alt fa-lg me-1 " style="color: gray;"></i>
+                                    </a>
+                                    {% else %}
+                                    <a class="btn order-del" role="button" >
+                                        <i class="fas fa-trash-alt fa-lg me-1"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>     
+                            {% endfor %}                      
+                        </tbody>
+                    </table>
                 </div>
-            </div>               
-            
-            <!-- subscription history-->
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="HeadingpointsHistory">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#pointsHistory" aria-expanded="true" aria-controls="pointsHistory">
-                        <i class="fas fa-list me-2"></i>Subscription History
-                    </button>
-                </h2>
-                <div id="pointsHistory" class="accordion-collapse show" aria-labelledby="pointsHistory">
-                    <div class="accordion-body">
-                        <form method="POST" action="/consumer/box">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Subscription ID</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Type</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-group-divider">
-                                        {% for subscription in subscription_list %}
-                                        <!-- Example Order Row -->
-                                        <tr>
-                                            <td>{{subscription.subscription_id}}</td>
-                                            <td>{{subscription.start_date}}</td>
-                                            <td>{{subscription.end_date}}</td>
-                                            <td>{{subscription.type}}</td>
-                                            <td>
-                                                <a class="btn order-view" role="button" type="button" data-bs-toggle="offcanvas" data-bs-target="#consumer_view_box" aria-controls="offcanvasRight">
-                                                    <i class="far fa-eye fa-lg me-1"></i>
-                                                </a>
-                                                {% if subscription.end_date <  current_date %}
-                                                <a class="btn order-del" role="button" >
-                                                    <i class="fas fa-trash-alt fa-lg me-1 " style="color: gray;"></i>
-                                                </a>
-                                                {% else %}
-                                                <a class="btn order-del" role="button" >
-                                                    <i class="fas fa-trash-alt fa-lg me-1"></i>
-                                                </a>
-                                                {% endif %}
-                                            </td>
-                                        </tr>     
-                                        {% endfor %}                      
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div> 
-
-        </div>
-    </div>
-</div> 
+            </form>
 
 
 <!-- View box detail modal-->

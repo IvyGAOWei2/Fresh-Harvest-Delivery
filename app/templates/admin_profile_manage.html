@@ -11,57 +11,52 @@
         <th class="text-secondary-emphasis" scope="col">Depot</th>
         <th class="text-secondary-emphasis" scope="col">Action</th>
         {% if profile_type == "Consumer" %}
-        <th class="text-secondary-emphasis" scope="col">Invoice</th>
+        <th class="text-secondary-emphasis" scope="col">Payment history</th>
         {% endif %}
       </tr>
     </thead>
     
-    <tbody id="profileTableBody">
-      {% for member in member_list %}
-      <tr data-depot-id="{{ member.depot_id }}">
+    {% if member_list %}
+    {% for member in member_list %}
+    <tbody>
+      <tr>
         <td class="align-middle fw-bold">{{ member.user_id }}</td>
         {% if profile_type == "Consumer" %}
         <td class="align-middle">{{ member.user_type }}</td>
         {% else %}
         <td class="align-middle">{{ member.type }}</td>
         {% endif %}
-        <td class="align-middle">{{ member.family_name }}</td>
         <td class="align-middle">{{ member.given_name }}</td>
+        <td class="align-middle">{{ member.family_name }}</td>
         <td class="align-middle">{{ member.phone }}</td>
-        <td class="align-middle">{{ depotList[member.depot_id -1].location }}</td>
+        <td class="align-middle">{{depotList[member.depot_id -1].location}}</td>
         {% if profile_type == "Consumer" %}
-        <td>
-          <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
-            <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
-          </a>
-        </td>
-        {% if member.user_type == "Business" %}
-        <form id="viewPointsForm{{ member.user_id }}" method="POST" action="/admin/invoice" class="needs-validation" novalidate>
-          <input type="text" class="form-control d-none" name="user_id" value="{{ member.user_id }}" />
           <td>
-            <a class="btn consumer_invoice" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumerInvoice{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Invoice">
-              <i class="fas fa-list fa-lg me-3 fa-fw"></i>
+            <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Update profile">
+              <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+            </a>
+          </td>          
+          <td>
+            <a class="btn consumer_payment" role="button" data-bs-toggle="offcanvas" data-bs-target="#consumerPayment{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="View payment history">
+            <i class="fas fa-list fa-lg me-3 fa-fw"></i>
             </a>
           </td>
-        </form>
-        {% endif %}
-        {% elif profile_type != 'Consumer' %}
-        <td>
-          <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Edit employee">
-            <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
-          </a>
-          <a class="btn employee-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Add employee">
-            <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
-          </a>
-          <a class="btn employee-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Delete employee">
-            <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
-          </a>
-        </td>
-        {% endif %}
+        {% elif profile_type != 'Consumer' %}   
+          <td>           
+              <a class="btn member-update" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateMember{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Edit employee">
+                <i class="fas fa-edit fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn employee-add" role="button" data-bs-toggle="offcanvas" data-bs-target="#addEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Add employee">
+                <i class="fas fa-user-plus fa-lg me-3 fa-fw"></i>
+              </a>
+              <a class="btn employee-delete" role="button" data-bs-toggle="modal" data-bs-target="#deleteEmployee{{ member.user_id }}" data-user-id="{{ member.user_id }}" data-bs-toggle="tooltip" title="Delete employee">
+                <i class="fas fa-user-minus fa-lg me-3 fa-fw"></i>
+              </a>           
+          </td>     
+        {% endif %}         
       </tr>
-   
- 
-
+      
+    </tbody>
   
   
     <!-- update member profile modal-->
@@ -115,17 +110,11 @@
               <label class="form-label">Depot</label>
               <div class="d-flex align-items-center">
                 <select name="depot_id" class="form-select">
-                  {% if session.depot_id != 6 %}
-                  <option value="{{session.depot_id}}" selected>
-                    {{depotList[session.depot_id -1].location}}
-                  </option>
-                {% else %}
                   {% for depot in depotList %}
-                  <option value="{{depot.depot_id}}" {% if member.depot_id  == depot.depot_id %}selected{% endif %} required>
-                    {{depot.location}}
+                  <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
+                      {{depot.location}}
                   </option>
                   {% endfor %}
-                {% endif %}
               </select>
               </div>
             </div>
@@ -198,8 +187,8 @@
             {% endif %}
   
             <div class="col-md-6 mb-3">
-              <label class="form-label">New Password</label>
-              <input type="text" class="form-control" minlength="8" maxlength="20" value=""  name="new_password" id="member_new_pass{{ member.user_id }}" >
+              <label class="form-label" for="member_new_password{{ member.user_id }}">New Password</label>
+              <input type="text" class="form-control" minlength="8" maxlength="20" value=""  name="new_password" id="member_new_password{{ member.user_id }}" >
               <div class="invalid-feedback">Password must be at least 8 characters long and have at least one number and one special character</div>
             </div>
           </div>
@@ -226,73 +215,20 @@
     </div>
 
 
-    <!-- consumer invoice-->
-    <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerInvoice{{ member.user_id }}" aria-labelledby="consumerInvoceLabel">
+    <!-- consumer payment history-->
+    <!-- <div class="offcanvas offcanvas-end w-50" tabindex="-1" id="consumerPayment{{ member.user_id }}" aria-labelledby="consumerPaymentLabel">
       <div class="offcanvas-header">
         <div class="col text-center">
-          <h5 class="offcanvas-title" id="consumerPaymentLabel">Consumer Invoice</h5>
+          <h5 class="offcanvas-title" id="consumerPaymentLabel">Consumer Payment History</h5>
         </div>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        
-          <div class="row">
-            <div class="col-md-2 mb-3">
-              <label class="form-label" >Invoice ID</label>
-            </div>
-            <div class="col-md-3 mb-3">
-              <label class="form-label" >Due date</label>
-            </div>
-            <div class="col-md-3 mb-3">
-              <label class="form-label" >Toal</label>
-            </div>
-            <div class="col-md-2 mb-3">
-              <label class="form-label" >Status</label>
-            </div>
-            <div class="col-md-2 mb-3">
-              <label class="form-label" >Action</label>
-            </div>
-          </div>
-          
-          {% for item in invoice %}
-          {% if item.user_id == member.user_id %}
-          <form id="consumerInvoiceForm{{ item.invoice_id }}" method="POST" action="/admin/invoice">
-                <div class="row">
-                <div class="col-md-2 mb-3">
-                  <input type="text" class="form-control" value="{{item.invoice_id}}" disabled>
-                </div>
-                <div class="col-md-3 mb-3">
-                  <input type="text" class="form-control" value="{{item.due_date}}" disabled>
-                </div>
-                <div class="col-md-3 mb-3">
-                  <input type="text" class="form-control" value="{{item.total}}" disabled>
-                </div>
+        <form id="consumerPaymentForm{{ member.user_id }}" method="POST" action="/admin/payment" class="needs-validation" novalidate>
 
-                {% if item.is_paid == 0 %}
-                <div class="col-md-2 mb-3">
-                  <input type="text" class="form-control" value="unpaid" disabled>
-                </div>
-                {% else %}
-                <div class="col-md-2 mb-3">
-                  <input type="text" class="form-control" value="paid" disabled>
-                </div>
-                {% endif %} 
-                
-               
-                <div class="col-md-2 mb-3text-center">
-                  <input type="hidden" class="form-control" name="invoice_id" value="{{item.invoice_id}}">
-                  <input type="hidden" class="form-control" name="is_paid" value="{{item.is_paid}}">
-                  
-                  <button type="submit" class="btn btn-primary invoice-status" data-user-id="{{member.user_id }}" form="consumerInvoiceForm{{ item.invoice_id }}"> {% if item.is_paid == 0 %}Paid{% else %} Unpaid{%endif%} </button>
-                </div>
-               
-              </div>
-          </form>
-          {% endif %}
-          {% endfor %}
-
+        </form>
       </div>
-    </div>
+    </div> -->
 
 
     <!-- add employee modal-->
@@ -312,11 +248,10 @@
 
             <div class="col-md-12 mb-3 d-flex justify-content-center">
               <div class="card shadow-sm" style="width: 8vw;">
-                <label for="img_add{{ member.user_id }}">
-                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview1{{ member.user_id }}">
+                <label for="img_add{{ profile_type }}{{ member.user_id }}">
+                  <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imagePreview{{ profile_type }}{{ member.user_id }}" required>
                 </label>
-                <input class="form-control" name="image" type="file" id="img_add{{ member.user_id }}" style="display: none;" accept="image/*" onchange="previewImage1(event, '{{ member.user_id }}')">
-                <div class="invalid-feedback">Please select an imange.</div> 
+                <input class="form-control" name="image" type="file" id="img_add{{ profile_type }}{{ member.user_id }}" style="display: none;" accept="image/*">
               </div>
             </div>
             
@@ -349,17 +284,11 @@
               <label class="form-label" for="add_depot">Depot<sup>*</sup></label>
                 <div class="d-flex align-items-center">
                   <select class="form-control" id="add_depot{{ member.user_id }}" name="depot_id">
-                    {% if session.depot_id != 6 %}
-                      <option value="{{session.depot_id}}" selected>
-                        {{depotList[session.depot_id -1].location}}
-                      </option>
-                    {% else %}
-                      {% for depot in depotList %}
-                      <option value="{{depot.depot_id}}" {% if member.depot_id  == depot.depot_id %}selected{% endif %} required>
+                    {% for depot in depotList %}
+                    <option value="{{depot.depot_id}}" {% if member.depot_id == depot.depot_id %}selected{% endif %}>
                         {{depot.location}}
-                      </option>
-                      {% endfor %}
-                    {% endif %}
+                    </option>
+                    {% endfor %}
                   </select>
                   <div class="invalid-feedback">Please select a depot.</div>
                 </div>
@@ -396,7 +325,7 @@
             </div>
           </div>
           <div class="col text-center">
-            <button type="submit" class="btn btn btn-primary profile-add" data-profile-id="{{member.user_id}}">Submit</button>
+            <button type="submit" class="btn btn-secondary profile-add" data-profile-id="{{member.user_id}}">Submit</button>
           </div>
         </form>
       </div>
@@ -415,9 +344,12 @@
     {% endwith %}
 
   {% endfor %}
-  <tr id="noMessage" style="display: none;">
-    <td colspan="8" class="text-center">No found.</td>
+
+  {% else %}
+  <tr>
+    <td colspan="8" class="text-align-center">No found.</td>
   </tr>
+  {% endif %}
 
   <!-- updateProfileSuccessModal -->
   {% with
@@ -426,17 +358,6 @@
     bg_color = '#3399ff',
     title = 'Updated Successfully',
     msg = 'User profile has been successfully updated'
-  %}
-    {% include "components/elements/updateSuccess.html" %}
-  {% endwith %}
-
-  <!-- updateInvoiceSuccessModal -->
-  {% with
-    btn_show = 0,
-    modal_id = 'updateInvoiceSuccessModal',
-    bg_color = '#3399ff',
-    title = 'Updated Successfully',
-    msg = 'Invoice status has been successfully updated'
   %}
     {% include "components/elements/updateSuccess.html" %}
   {% endwith %}
@@ -462,7 +383,6 @@
   %}
     {% include "components/elements/updateSuccess.html" %}
   {% endwith %}
-</tbody>   
   </table>
  
   {% include "components/elements/loadingModal.html" %}
@@ -471,75 +391,67 @@
 
 {% block script %}
 
-{% include "components/elements/InputValidate.html" %}
+  {% include "components/elements/InputValidate.html" %}
 
-{% for member in member_list %}
-<script>
-document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('member_given_name{{ member.user_id }}');
-});
+  {% for member in member_list %}
+  <script>
+  document.getElementById('member_given_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_given_name{{ member.user_id }}');
+  });
 
-document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('member_family_name{{ member.user_id }}');
-});
+  document.getElementById('member_family_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_family_name{{ member.user_id }}');
+  });
 
-document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('phone{{ member.user_id }}');
-});
+  document.getElementById('phone{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('phone{{ member.user_id }}');
+  });
 
-document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('address{{ member.user_id }}');
-});
+  document.getElementById('address{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('address{{ member.user_id }}');
+  });
 
-document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('consumer_postcode{{ member.user_id }}');
-});
+  document.getElementById('consumer_postcode{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('consumer_postcode{{ member.user_id }}');
+  });
 
-document.getElementById('member_new_pass{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('member_new_pass{{ member.user_id }}');
-});
+  document.getElementById('member_new_password{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('member_new_password{{ member.user_id }}');
+  });
 
-</script>
+  document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_email{{ member.user_id }}');
+  });
 
-<script>
-    document.getElementById('add_email{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_email{{ member.user_id }}');
-});
+  document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_given_name{{ member.user_id }}');
+  });
 
-document.getElementById('add_given_name{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_given_name{{ member.user_id }}');
-});
+  document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_family_name{{ member.user_id }}');
+  });
 
-document.getElementById('add_family_name{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_family_name{{ member.user_id }}');
-});
+  document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_phone{{ member.user_id }}');
+  });
 
-document.getElementById('add_phone{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_phone{{ member.user_id }}');
-});
+  document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_address{{ member.user_id }}');
+  });
 
-document.getElementById('add_address{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_address{{ member.user_id }}');
-});
+  document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_depot{{ member.user_id }}');
+  });
 
-document.getElementById('add_depot{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_depot{{ member.user_id }}');
-});
+  document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('add_password{{ member.user_id }}');
+  });
 
-document.getElementById('add_password{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('add_password{{ member.user_id }}');
-});
-
-document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('user_type{{ member.user_id }}');
-});
-
-document.getElementById('img_add{{ member.user_id }}').addEventListener('input', function() {
-  InputValidate('img_add{{ member.user_id }}');
-});
-</script>
- {% endfor %}
-
+  document.getElementById('user_type{{ member.user_id }}').addEventListener('input', function() {
+    InputValidate('user_type{{ member.user_id }}');
+  });
+  </script>
+{% endfor %}
 <script>
   function previewImage(event, userId) {
       var reader = new FileReader();
@@ -550,16 +462,4 @@ document.getElementById('img_add{{ member.user_id }}').addEventListener('input',
       reader.readAsDataURL(event.target.files[0]);
   }
 </script>
-
-<script>
-  function previewImage1(event, userId) {
-      var reader = new FileReader();
-      reader.onload = function() {
-          var output = document.getElementById('imagePreview1' + userId);
-          output.src = reader.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-  }
-</script>
-
 {% endblock %}

@@ -1,11 +1,9 @@
-from datetime import datetime
 from app import app
 from flask import render_template, request, session
 
 # User-defined function
 from dbFile.config import insertSQL, updateSQL,fetchAll, fetchOne
 from common import toDay, roleRequired
-
 
 @app.route("/consumer/points", methods=['GET', 'POST'])
 @roleRequired(['Consumer'])
@@ -15,7 +13,6 @@ def consumer_points():
         FROM ConsumerPoints WHERE user_id = %s AND is_active = True", (session['id'],), True)
 
     return render_template('consumer_points.html', pointsBalance=points_balance[0], pointsHistory=points_history)
-
 
 @app.route("/giftcard/redeem", methods=['POST'])
 @roleRequired(['Consumer'])
@@ -40,8 +37,3 @@ def giftcardRedeem():
         return {"status": True}, 200
     else:
         return {"status": False, 'message': 'The gift card code is incorrect or has already been used'}, 500
-    
-
-
-
-
