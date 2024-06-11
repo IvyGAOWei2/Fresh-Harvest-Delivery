@@ -28,31 +28,26 @@
   <h1>{% if profile_type == "Consumer" %}Consumer{% else %}Employee{% endif %} List</h1>
   </div>
 
-  <div class="row justify-content-end">
     <div class="col-auto">
-        <form id="searchForm" method="POST" action="/admin/profile/search" class="d-flex me-5 mb-4">
-          {% if type == "National_Manager" %}
-            <!-- <label for="filterBy" class="form-label me-2" style="white-space: nowrap; vertical-align: middle; margin-top: 5px;">Depot:</label> -->
-            <select name="depot_id" class="form-select me-2">
-              <option value="all" selected>-- Select a depot --</option>
-              {% for depot in depotList %}
-              <option value="{{depot.depot_id}}">
-                  {{depot.location}}
-              </option>
-              {% endfor %}
-          {% else %}
-          <input type="text" class="form-control d-none" name="depot_id" value="all"/>     
-          {% endif %}
-
-            {% if profile_type == "Consumer" %}
-            <input type="text" class="form-control d-none" name="name_type" value="Consumer"/>     
-            {% else %}
-            <input type="text" class="form-control d-none" name="name_type" value="Employees"/>     
-            {% endif %}
-            <input class="form-control me-2" name="searchBy" type="search" placeholder="Search for name" style="width: 250px;" aria-label="Search">
-            <button class="btn" type="submit"><i class="fas fa-search fa-lg me-3 fa-fw"></i></button>
-        </form>
+      <div class="d-flex align-items-center mb-3">
+        <div class="col-xl-3">
+            <div class="input-group">
+                <input type="search" id="searchKeyword" class="form-control p-2" placeholder="search for name" aria-describedby="search-icon-1">
+                <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+            </div>
+        </div>
+        {% if type == 'National_Manager' %}
+        <div class="ms-3">
+            <select id="depotFilter" class="form-select">
+                <option value="">All Depots</option>
+                {% for depot in depotList %}
+                <option value="{{depot.depot_id}}">{{depot.location}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
     </div>
+
 </div>
 
 
@@ -218,4 +213,64 @@
     });
   });
 </script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchKeywordInput = document.getElementById('searchKeyword');
+    const depotFilter = document.getElementById('depotFilter');
+    const profileTableBody = document.getElementById('profileTableBody');
+    const noMessageRow = document.getElementById('noMessage');
+
+    function filterRows() {
+        const keyword = searchKeywordInput.value.toLowerCase();
+        const selectedDepotId = depotFilter ? depotFilter.value : '';
+        const rows = profileTableBody.getElementsByTagName('tr');
+        let hasVisibleRows = false;
+
+        Array.from(rows).forEach(row => {
+            if (row.id === 'noMessage') return; // Skip the noMessage row
+
+            const userTypeCell = row.getElementsByTagName('td')[1];
+            const lastNameCell = row.getElementsByTagName('td')[2];
+            const firstNameCell = row.getElementsByTagName('td')[3];
+            const lastNameText = lastNameCell.textContent.toLowerCase();
+            const firstNameText = firstNameCell.textContent.toLowerCase();
+            const depotId = row.getAttribute('data-depot-id');
+
+            const keywords = keyword.split(' ');
+            let match = false;
+
+            if (keywords.length > 1) {
+                const [firstKeyword, secondKeyword] = keywords;
+                match = (lastNameText.includes(firstKeyword) && firstNameText.includes(secondKeyword)) ||
+                        (lastNameText.includes(secondKeyword) && firstNameText.includes(firstKeyword));
+            } else {
+                match = lastNameText.includes(keyword) || firstNameText.includes(keyword);
+            }
+
+            if ((selectedDepotId === '' || selectedDepotId === depotId) && match) {
+                row.style.display = '';
+                hasVisibleRows = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        noMessageRow.style.display = hasVisibleRows ? 'none' : '';
+    }
+
+    searchKeywordInput.addEventListener('input', filterRows);
+
+    if (depotFilter) {
+        depotFilter.addEventListener('change', filterRows);
+    }
+
+    filterRows(); // Initial call to set the correct state
+});
+
+  
+  </script>
+
+
 {% endblock %}

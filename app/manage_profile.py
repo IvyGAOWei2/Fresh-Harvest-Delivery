@@ -52,46 +52,6 @@ def adminProfiles():
     return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type,invoice=invoice)
 
 
-@app.route('/admin/profile/search',methods = ["GET","POST"])
-@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def profileSearch():
-    type = session['type']
-    depot_id = request.form.get('depot_id')
-    searchBy = request.form.get('searchBy')
-    profile_type = request.form.get('name_type')
-    print(profile_type,depot_id,898989898898)
-    
-    # if click manage consumer in the sidebar
-    if profile_type == "Consumer":
-        if depot_id == 'all' or depot_id == 6:
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',),True)
-        else:
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%', depot_id,),True)
-    # if click manage employee in the sidebar
-    else:
-        if session.get('type') in ['Local_Manager']:
-            if depot_id == 'all' or depot_id ==  6:
-                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
-            else:
-                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
-        else:
-            if depot_id == 'all' or depot_id ==  6:
-                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                    JOIN Users ON Employees.user_id = Users.user_id \
-                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
-            else:
-                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                    JOIN Users ON Employees.user_id = Users.user_id \
-                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
-    
-    invoice = fetchAll("SELECT * from Invoices;",None ,True)
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list,type=type,invoice=invoice)
-
-
 @app.route("/admin/profile/update", methods = ["POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfileUpdate():
