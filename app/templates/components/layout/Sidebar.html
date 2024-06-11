@@ -1,21 +1,4 @@
-<style>
-  .sidebar {
-      width: 250px;
-  }
-  .sidebar .nav-item .nav-link {
-      padding-left: 20px; /* Adjust as needed */
-  }
-  .sidebar .nav-item .nav-link.nav-sub {
-      padding-left: 40px; /* Indent sub-menu items */
-  }
-  .sidebar .nav-link {
-      display: flex;
-      align-items: center;
-  }
-  .sidebar .nav-link i {
-      margin-right: 10px; /* Space between icon and text */
-  }
-</style>
+
 
 <!-- Sidebar -->
 <div class="sidebar border-end d-flex flex-column h-100">
@@ -47,42 +30,56 @@
     <a href="{{ url_for('staffOrderHistory') }}" class="{% if is_manage_order_history %}is_active{% endif %}">
       <i class="fas fa-history"></i> <span>Order History</span>
     </a>
-
-    {% if session.type != 'Staff' %}
-    <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Discounts
-    </a>
-    <a href="{{ url_for('manageNews') }}" class="{% if is_news %}is_active{% endif %}">
-      <i class="fas fa-newspaper"></i><span>Post news</span>
-    </a>
-    {% endif %}
     <a href="{{ url_for('adminProfiles',profile_type='Consumer') }}" class="{% if is_consumerList %}is_active{% endif %}">
-      <i class="fas fa-users"></i> <span>Manage Consumer</span>
+      <i class="fas fa-users"></i> <span>Consumer List</span>
     </a>
-    {% if session.type == 'Local_Manager' %}
-    <a href="{{ url_for('adminProfiles',profile_type='Local_Manager') }}" class="{% if is_employeeList %}is_active{% endif %}">
-      <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
-    </a>
-    {% elif session.type == 'National_Manager' %}
-    <a href="{{ url_for('adminProfiles',profile_type='National_Manager') }}" class="{% if is_employeeList %}is_active{% endif %}">
-      <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
-    </a>
-    <a href="{{ url_for('manageSettings') }}" class="{% if is_manageSettings %}is_active{% endif %}">
-      <i class="fas fa-tools"></i> <span>Admin Actions</span>
-    </a>
-    <a href="{{ url_for('manageGiftcard') }}" class="{% if manageGiftcard %}is_active{% endif %}">
-      <i class="fab fa-cc-diners-club"></i> <span>Giftcards</span>
-    </a>
-    <a href="{{ url_for('manageDiscount') }}" class="{% if is_manageDiscountProduct %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Discounts
-    </a>
-    <a href="{{ url_for('manageWeeklyBoxes') }}" class="{% if is_manageWeeklyBoxes %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Boxes
-    <a href="{{ url_for('manage_applications') }}" class="{% if is_manageApplication %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Applications
-    </a>
-    <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
-      <i class="fa fa-tags"></i> Manage Account Credit
+  
+    {% if session.type != 'Staff' %}
+    <div class="container">
+      <div class="dropdown">
+          <a class="btn btn-secondary dropdown-toggle border-0 test" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-users"></i>Local Manage
+          </a>
+          <ul class="dropdown-menu border-0" aria-labelledby="dropdownMenuButton">
+            <a href="{{ url_for('adminProfiles', profile_type='Local_Manager') }}" class="dropdown-item {% if is_employeeList %}is_active{% endif %}">
+              <i class="fas fa-users-cog"></i> <span>Manage Employee</span>
+            </a>
+            <a href="{{ url_for('manageDiscount') }}" class="dropdown-item {% if is_manageDiscountProduct %}is_active{% endif %}">
+              <i class="fa fa-tags"></i> Manage Discounts
+            </a>
+            <a href="{{ url_for('manageWeeklyBoxes') }}" class="dropdown-item {% if is_manageWeeklyBoxes %}is_active{% endif %}">
+              <i class="fa fa-box-open"></i> Manage Boxes
+            </a>
+            <a href="{{ url_for('manage_applications') }}" class="dropdown-item {% if is_manageApplication %}is_active{% endif %}">
+              <i class="fa fa-address-card"></i> Manage Applications
+            </a>
+            <a href="{{ url_for('manageNews') }}" class="dropdown-item {% if is_news %}is_active{% endif %}">
+              <i class="fas fa-newspaper"></i><span>Manage news</span>
+            </a>
+          </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if session.type == 'National_Manager' %}
+    <div class="container">
+      <div class="dropdown">
+          <a class="btn btn-secondary dropdown-toggle border-0 test" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-users"></i>National Manager
+          </a>
+          <ul class="dropdown-menu border-0" aria-labelledby="dropdownMenuButton">
+            <a href="{{ url_for('manageSettings') }}" class="{% if is_manageSettings %}is_active{% endif %}">
+              <i class="fas fa-tools"></i> <span>Admin Actions</span>
+            </a>
+            <a href="{{ url_for('manageGiftcard') }}" class="{% if manageGiftcard %}is_active{% endif %}">
+              <i class="fab fa-cc-diners-club"></i> <span>Giftcards</span>
+            </a>
+            <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
+              <i class="fa fa-tags"></i> Manage Account Credit
+            </a>
+          </ul>
+      </div>
+    </div>
     {% endif %}
 
     <div class="d-flex flex-column align-items-center mt-auto mb-4">

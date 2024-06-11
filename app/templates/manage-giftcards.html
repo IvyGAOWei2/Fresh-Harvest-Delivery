@@ -14,16 +14,16 @@
 
 {% block content %}
 <style>
-    .vesitable-item:hover {
+    #manage-giftcards .vesitable-item:hover {
         transform: scale(1.05);
         transition: transform 0.3s ease;
     }
-    .btn:hover {
+    #manage-giftcards .btn:hover {
         transform: scale(1.1);
         transition: transform 0.3s ease;
     }
 
-    .overlay {
+    #manage-giftcards .overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -39,7 +39,7 @@
 
 
 
-<section class="main-content">
+<section id="manage-giftcards" class="main-content">
     <h1 class="text-center">Manage Giftcards</h1>
 
     <!-- Start -->
@@ -160,85 +160,84 @@ document.getElementById('customerName').addEventListener('input', function () {
 
 // carousel for gift card
 (function ($) {
-    $(".giftcard-carousel").owlCarousel({
+    $("#manage-giftcards .giftcard-carousel").owlCarousel({
         autoplay: true,
         smartSpeed: 1500,
         center: false,
         dots: true,
         loop: true,
         margin: 25,
-        nav : true,
-        navText : [
+        nav: true,
+        navText: [
             '<i class="fas fa-arrow-left"></i>',
             '<i class="fas fa-arrow-right"></i>'
         ],
         responsiveClass: true,
         responsive: {
-            0:{
-                items:1
+            0: {
+                items: 1
             },
-            576:{
-                items:1
+            576: {
+                items: 1
             },
-            768:{
-                items:2
+            768: {
+                items: 2
             },
-            992:{
-                items:3
+            992: {
+                items: 3
             },
-            1200:{
-                items:4
+            1200: {
+                items: 4
             }
         }
     });
 
     // Hover effect for zoom
-    $('.vesitable-item').hover(
-        function() {
+    $('#manage-giftcards .vesitable-item').hover(
+        function () {
             $(this).css('transform', 'scale(1.05)');
             $(this).css('transition', 'transform 0.3s ease');
         },
-        function() {
+        function () {
             $(this).css('transform', 'scale(1)');
             $(this).css('transition', 'transform 0.3s ease');
         }
     );
 
-     // Hover effect for button zoom
-    $('.btn').hover(
-            function() {
-                $(this).css('transform', 'scale(1.1)');
-                $(this).css('transition', 'transform 0.3s ease');
-            },
-            function() {
-                $(this).css('transform', 'scale(1)');
-                $(this).css('transition', 'transform 0.3s ease');
-            }
-        );
-    
+    // Hover effect for button zoom
+    $('#manage-giftcards .btn').hover(
+        function () {
+            $(this).css('transform', 'scale(1.1)');
+            $(this).css('transition', 'transform 0.3s ease');
+        },
+        function () {
+            $(this).css('transform', 'scale(1)');
+            $(this).css('transition', 'transform 0.3s ease');
+        }
+    );
+
     // Modal Video
     $(document).ready(function () {
         var $videoSrc;
-        $('.btn-play').click(function () {
+        $('#manage-giftcards .btn-play').click(function () {
             $videoSrc = $(this).data("src");
         });
-        // console.log($videoSrc);
 
-        $('#videoModal').on('shown.bs.modal', function (e) {
+        $('#videoModal').on('shown.bs.modal', function () {
             $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");
-        })
+        });
 
-        $('#videoModal').on('hide.bs.modal', function (e) {
+        $('#videoModal').on('hide.bs.modal', function () {
             $("#video").attr('src', $videoSrc);
-        })
+        });
     });
 
     // Modal content loading
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Convert the giftcards data to JSON and store it in a variable
-        var giftcards = {{ giftcards | tojson | safe }};
+        var giftcards = JSON.parse('{{ giftcards | tojson | safe }}');
 
-        $('.view-more-btn').click(function() {
+        $('#manage-giftcards .view-more-btn').click(function () {
             var productId = $(this).data('product-id');
             var card = giftcards.find(card => card.product_id == productId);
 
@@ -248,8 +247,8 @@ document.getElementById('customerName').addEventListener('input', function () {
             }
         });
     });
-
 })(jQuery);
+
 
 
 
