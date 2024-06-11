@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const productId = form.getAttribute('data-product-id');
         // console.log(productId);
 
-        // 定义需要验证的字段ID前缀
+        // Define id to be validated
         const fieldIds = [
             `updateProductName${productId}`,
             `updateCategory${productId}`,
@@ -395,7 +395,7 @@ document.addEventListener("DOMContentLoaded", function() {
             `updateStock${productId}`
         ];
 
-        // 遍历每个字段ID，并添加事件监听器
+        // Iterate each field id add event
         fieldIds.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field) {

@@ -149,25 +149,25 @@
                               <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body">
-                                <form id="updateUnitForm{{ unit.unit_id }}" class="needs-validation" novalidate>
+                                <form id="updateUnitForm{{ unit.unit_id }}" class="update-unit-form"  data-unit-id="{{unit.unit_id}}" novalidate>
                                     <input type="text" class="form-control d-none" name="unit_id" value="{{ unit.unit_id }}"/>  
 
                                     <!-- unit name -->
                                     <div class="mb-3">
-                                        <label for="updateUnitName" class="form-label">Unit Name</label>
-                                        <input type="text" minlength="1" maxlength="50" id="updateUnitName" name="unit_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ unit.unit_name }}" required>
+                                        <label for="updateUnitName{{ unit.unit_id }}" class="form-label">Unit Name</label>
+                                        <input type="text" minlength="1" maxlength="50" id="updateUnitName{{ unit.unit_id }}" name="unit_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ unit.unit_name }}" required>
                                         <div class="invalid-feedback">Please enter a valid Unit name, only letters and spaces.</div>
                                     </div>
                                     <!-- unit standard -->
                                     <div class="mb-3">
-                                        <label for="updateUnitStd" class="form-label">Unit Standard</label>
-                                        <input type="text" minlength="1" maxlength="5" id="updateUnitStd" name="unit_std" pattern="^[a-zA-Z0-9\\s]+$" class="form-control" value="{{ unit.unit_std }}" required>
+                                        <label for="updateUnitStd{{ unit.unit_id }}" class="form-label">Unit Standard</label>
+                                        <input type="text" minlength="1" maxlength="5" id="updateUnitStd{{ unit.unit_id }}" name="unit_std" pattern="^[a-zA-Z0-9\\s]+$" class="form-control" value="{{ unit.unit_std }}" required>
                                         <div class="invalid-feedback">Please enter a valid Unit standard, only letters numbers or spaces.</div>
                                     </div>
                                     <!-- unit min -->
                                     <div class="mb-3">
-                                        <label for="updateUnitMin" class="form-label">Unit Minimum</label>
-                                        <input type="text" minlength="1" maxlength="5" id="updateUnitMin" name="unit_min" pattern="^[a-zA-Z0-9\\s]+$" class="form-control" value="{{ unit.unit_min }}" required>
+                                        <label for="updateUnitMin{{ unit.unit_id }}" class="form-label">Unit Minimum</label>
+                                        <input type="text" minlength="1" maxlength="5" id="updateUnitMin{{ unit.unit_id }}" name="unit_min" pattern="^[a-zA-Z0-9\\s]+$" class="form-control" value="{{ unit.unit_min }}" required>
                                         <div class="invalid-feedback">Please enter a valid Unit Minimum, only letters numbers or spaces.</div>
                                     </div>
 
@@ -281,13 +281,13 @@
                               <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body">
-                                <form id="updateCategoryForm{{ category.category_id }}" class="update-category-form" novalidate>
+                                <form id="updateCategoryForm{{ category.category_id }}" class="update-category-form" data-category-id="{{category.category_id}}" novalidate>
                                     <input type="text" class="form-control d-none" name="category_id" value="{{ category.category_id }}"/>  
 
                                     <!-- category name -->
                                     <div class="mb-3">
-                                        <label for="updateCategoryName" class="form-label">Category Name</label>
-                                        <input type="text" minlength="1" maxlength="50" id="updateCategoryName" name="category_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ category.category_name }}" required>
+                                        <label for="updateCategoryName{{ category.category_id }}" class="form-label">Category Name</label>
+                                        <input type="text" minlength="1" maxlength="50" id="updateCategoryName{{ category.category_id }}" name="category_name" pattern="^[a-zA-Z\s]+$" class="form-control" value="{{ category.category_name }}" required>
                                         <div class="invalid-feedback">Please enter a valid Category name, only letters and spaces.</div>
                                     </div>
                                     <button type="submit" class="btn btn-secondary category-update" data-category-id="{{ category.category_id }}">Update</button>
@@ -344,19 +344,62 @@
 
 <script>
     // Validation
-    document.getElementById('updateUnitName').addEventListener('input', function () {
-        InputValidate('updateUnitName');
-    });
-    document.getElementById('updateUnitStd').addEventListener('input', function () {
-        InputValidate('updateUnitStd');
-    });
-    document.getElementById('updateUnitMin').addEventListener('input', function () {
-        InputValidate('updateUnitMin');
-    });
-    document.getElementById('updateCategoryName').addEventListener('input', function () {
-        InputValidate('updateCategoryName');
-    });
+// update updateCategoryName
 
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.update-category-form').forEach(form => {
+        const categoryId = form.getAttribute('data-category-id');
+        // console.log(categoryId);
+
+        // Define id to be validated
+        const fieldIds = [
+            `updateCategoryName${categoryId}`,
+        ];
+
+        // Iterate each field id add event
+        fieldIds.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', function () {
+                    InputValidate(fieldId);
+                });
+            } else {
+                console.warn(`Element with ID ${fieldId} not found`);
+            }
+        });
+    });
+});
+
+
+
+
+
+// update unit
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.update-unit-form').forEach(form => {
+        const unitId = form.getAttribute('data-unit-id');
+        // console.log(unitId);
+
+        // Define id to be validated
+        const fieldIds = [
+            `updateUnitName${unitId}`,
+            `updateUnitStd${unitId}`,
+            `updateUnitMin${unitId}`
+        ];
+
+        // Iterate each field id add event
+        fieldIds.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', function () {
+                    InputValidate(fieldId);
+                });
+            } else {
+                console.warn(`Element with ID ${fieldId} not found`);
+            }
+        });
+    });
+});
 
     //  Add validation
     document.getElementById('addUnitName').addEventListener('input', function () {

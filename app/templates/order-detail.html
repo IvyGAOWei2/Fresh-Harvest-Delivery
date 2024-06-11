@@ -77,7 +77,6 @@
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">{{product.subtotal}}</p>
                                     </td>
                                     <td>
-                                    <!-- product.status 应为order item对应的status -->
                                     {% if order.status == 'Pending' %}
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">N/A</p>
                                     {% elif order.status in ['Cancelled', 'Refunded'] %}
@@ -152,10 +151,10 @@
                                                 <p class="mb-0 mt-4" style="font-size: 1.25rem;"> Awaiting Shipment</p> 
                                             </td>
                                         {% endif %}
-                                        <td colspan="5" >
+                                        <td colspan="row" >
                                             <p class="mb-0 mt-4" style="font-size: 1.25rem;"> ${{ giftcard.balance }}</p> 
                                         </td>
-                                        <td colspan="5" >
+                                        <td colspan="row" >
                                             <p class="mb-0 mt-4" style="font-size: 1.25rem;"> {{ 'Yes' if giftcard.is_active else 'No' }}</p> 
                                         </td>
                                     </tr>
