@@ -25,9 +25,9 @@ def discountedProducts(is_full=None):
     """
 
     if is_full:
-        sql += " ORDER BY d.start_date DESC"
+        sql += f"ORDER BY d.start_date DESC"
     else:
-        sql += " ORDER BY RAND() LIMIT 4;"
+        sql += f"ORDER BY RAND() LIMIT 4;"
     
     return fetchAll(sql, None, True)
 
