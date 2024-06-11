@@ -217,70 +217,56 @@
  {% endif %}
 
  <script>
-// Search by title functionality
+
 document.addEventListener('DOMContentLoaded', function () {
 
-        const searchKeywordInput = document.getElementById('searchKeyword');
-        const pointsTableBody = document.getElementById('pointsTableBody');
+const searchKeywordInput = document.getElementById('searchKeyword');
+const depotFilter = document.getElementById('depotFilter');
+const pointsTableBody = document.getElementById('pointsTableBody');
 
-        searchKeywordInput.addEventListener('input', function () {
-            const keyword = searchKeywordInput.value.toLowerCase();
-            const rows = pointsTableBody.getElementsByTagName('tr');
-            let hasVisibleRows = false;
+function filterRows() {
+    const keyword = searchKeywordInput.value.toLowerCase();
+    const selectedDepotId = depotFilter ? depotFilter.value : '';
+    const rows = pointsTableBody.getElementsByTagName('tr');
+    let hasVisibleRows = false;
 
-            Array.from(rows).forEach(row => {
-            const lastNameCell = row.getElementsByTagName('td')[1]; // 姓在第二个单元格
-            const firstNameCell = row.getElementsByTagName('td')[2]; // 名在第三个单元格
-            const lastNameText = lastNameCell.textContent.toLowerCase();
-            const firstNameText = firstNameCell.textContent.toLowerCase();
+    Array.from(rows).forEach(row => {
+        const lastNameCell = row.getElementsByTagName('td')[1]; // 姓在第二个单元格
+        const firstNameCell = row.getElementsByTagName('td')[2]; // 名在第三个单元格
+        const lastNameText = lastNameCell.textContent.toLowerCase();
+        const firstNameText = firstNameCell.textContent.toLowerCase();
+        const depotId = row.getAttribute('data-depot-id');
 
-            // 将关键字按空格拆分为数组，分别匹配姓和名
-            const keywords = keyword.split(' ');
-            let match = false;
+        // 将关键字按空格拆分为数组，分别匹配姓和名
+        const keywords = keyword.split(' ');
+        let match = false;
 
-            if (keywords.length > 1) {
-                const [firstKeyword, secondKeyword] = keywords;
-                match = (lastNameText.includes(firstKeyword) && firstNameText.includes(secondKeyword)) ||
-                        (lastNameText.includes(secondKeyword) && firstNameText.includes(firstKeyword));
-            } else {
-                match = lastNameText.includes(keyword) || firstNameText.includes(keyword);
-            }
+        if (keywords.length > 1) {
+            const [firstKeyword, secondKeyword] = keywords;
+            match = (lastNameText.includes(firstKeyword) && firstNameText.includes(secondKeyword)) ||
+                    (lastNameText.includes(secondKeyword) && firstNameText.includes(firstKeyword));
+        } else {
+            match = lastNameText.includes(keyword) || firstNameText.includes(keyword);
+        }
 
-            if (match) {
-                row.style.display = '';
-                hasVisibleRows = true;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        document.getElementById('noMessage').style.display = hasVisibleRows ? 'none' : '';
-        });
+        if ((selectedDepotId === '' || selectedDepotId === depotId) && match) {
+            row.style.display = '';
+            hasVisibleRows = true;
+        } else {
+            row.style.display = 'none';
+        }
     });
 
-        const depotFilter = document.getElementById('depotFilter');
-        if (depotFilter) {
-            depotFilter.addEventListener('change', function () {
-                const selectedDepotId = depotFilter.value;
-                const rows = pointsTableBody.getElementsByTagName('tr');
-                let hasVisibleRows = false;
-
-                Array.from(rows).forEach(row => {
-                    const depotId = row.getAttribute('data-depot-id');
-
-                    if (selectedDepotId === '' || selectedDepotId === depotId) {
-                        row.style.display = '';
-                        hasVisibleRows = true;
-                    } else {
-                        row.style.display = 'none';
-                    }
-            
-
-                document.getElementById('noDiscountsMessage').style.display = hasVisibleRows ? 'none' : '';
-                
-            });
-    });
+    document.getElementById('noMessage').style.display = hasVisibleRows ? 'none' : '';
 }
+
+searchKeywordInput.addEventListener('input', filterRows);
+
+if (depotFilter) {
+    depotFilter.addEventListener('change', filterRows);
+}
+});
+
 </script>
 
 {% endblock %}
