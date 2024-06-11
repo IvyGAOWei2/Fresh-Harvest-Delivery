@@ -75,7 +75,11 @@
                         <tr>
                             <td>{{order.order_id}}</td>
                             <td>{{order.order_date}}</td>
-                            <td>{{order.delivery_date}}</td>
+                            {% if order.delivery_date %}
+                                <td>{{order.delivery_date}}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
                             <td>{{order.total + order.shipping_fee}}</td>
                             <td>{{order.status}}</td>
                             <td>
