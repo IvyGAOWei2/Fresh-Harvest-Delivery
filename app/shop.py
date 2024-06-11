@@ -121,9 +121,9 @@ def shopDetail(product_id):
         #     FROM BoxItems BI
         #     JOIN Boxes B ON BI.box_id = B.box_id
         #     JOIN Products P ON BI.product_id = P.product_id
-            JOIN Packages PKG ON B.package_id = PKG.package_id
+        #     JOIN Packages PKG ON B.package_id = PKG.package_id
         #     WHERE B.product_id = %s
-            AND PKG.end_date >= CURDATE()
+        #     AND PKG.end_date >= CURDATE()
         # """
         # boxitems = fetchAll(boxitems_query, (product_id,), True)
 

@@ -22,7 +22,7 @@ app.category_list = fetchAll("""SELECT * FROM Category;""", None, True)
 app.unit_list = fetchAll("""SELECT * FROM Unit;""", None, True)
 app.depot_list = fetchAll("""SELECT * FROM Depots WHERE location != 'NZ';""", None, True)
 app.giftcard_list = [item[0] for item in fetchAll("SELECT product_id FROM Products WHERE category_id = 6")]
-app.send_email = True
+app.send_email = False
 app.hashing = Hashing(app)
 
 
