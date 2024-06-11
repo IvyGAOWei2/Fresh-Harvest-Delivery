@@ -52,3 +52,4 @@ from app import manage_system_settings
 from app import manage_giftcards
 from app import manage_application
 from app import manage_boxes
+from app import manage_points
