@@ -21,7 +21,7 @@ def manage_applications():
             """
             applications = fetchAll(sql_applications)
 
-            sql_depots = "SELECT depot_id, location FROM Depots"
+            sql_depots = "SELECT depot_id, location FROM Depots  WHERE location != 'NZ'"
             depots = fetchAll(sql_depots)
         else:
             depot_id = session['depot_id']
@@ -153,7 +153,7 @@ def viewReviewRequests():
             """
             requests = fetchAll(sql_requests)
 
-            sql_depots = "SELECT depot_id, location FROM Depots"
+            sql_depots = "SELECT depot_id, location FROM Depots  WHERE location != 'NZ'"
             depots = fetchAll(sql_depots)
         else:
             depot_id = session['depot_id']
