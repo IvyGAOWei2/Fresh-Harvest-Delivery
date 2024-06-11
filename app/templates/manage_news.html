@@ -94,18 +94,18 @@
     <div class="d-flex align-items-center mb-3">
       <div class="col-xl-3">
           <div class="input-group">
-              <input type="search" id="searchKeyword" class="form-control p-2" placeholder="keywords" aria-describedby="search-icon-1">
+              <input type="search" id="searchKeyword" class="form-control p-2" placeholder="Search for subtitle." aria-describedby="search-icon-1">
               <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
           </div>
       </div>
       {% if type == 'National_Manager' %}
       <div class="ms-3">
-          <select id="depotFilter" class="form-select">
-              <option value="">All Depots</option>
-              {% for depot in depots %}
-              <option value="{{ depot[0] }}">{{ depot[1] }}</option>
-              {% endfor %}
-          </select>
+        <select id="depotFilter" class="form-select">
+          <option value="">All Depots</option>
+          {% for depot in depotList %}
+          <option value="{{depot.depot_id}}">{{depot.location}}</option>
+          {% endfor %}
+      </select>
       </div>
       {% endif %}
   </div>
@@ -120,10 +120,10 @@
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="newsTableBody">
             {% for newz in news %}
-            <tr>
-              <th scope="row">{{newz.news_id}}</th>
+            <tr data-depot-id="{{newz.depot_id}}">
+              <td scope="row">{{newz.news_id}}</td>
               <td>{{newz.title}}</td>
               <td>{{newz.subtitle}}</td>
               <td>{{newz.date}}</td>
@@ -138,6 +138,9 @@
               </td>
             </tr>
             {% endfor %}
+            <tr id="noMessages" style="display: none;">
+              <td colspan="8" class="text-center">No found.</td>
+            </tr>
           </tbody>
       </table>
   </div>
@@ -410,6 +413,7 @@
         })
     });
   </script>
+
   <script>
     function previewImage(event, news_id) {
         var reader = new FileReader();
@@ -420,6 +424,7 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 </script>
+
 <script>
   function previewCoverImage(event) {
       var reader = new FileReader();
@@ -429,5 +434,50 @@
       };
       reader.readAsDataURL(event.target.files[0]);
   }
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchKeywordInput = document.getElementById('searchKeyword');
+    const depotFilter = document.getElementById('depotFilter');
+    const newsTableBody = document.getElementById('newsTableBody');
+    const noMessages = document.getElementById('noMessages');
+
+    // 过滤函数，结合关键字搜索和仓库过滤
+    function filterRows() {
+        const keyword = searchKeywordInput.value.toLowerCase();
+        const selectedDepotId = depotFilter ? depotFilter.value : '';
+        const rows = newsTableBody.getElementsByTagName('tr');
+        let hasVisibleRows = false;
+
+        Array.from(rows).forEach(row => {
+            if (row.id === 'noMessages') return; // 忽略noMessages行
+
+            const titleCell = row.getElementsByTagName('td')[2]; // Title 在第三个单元格
+            const titleText = titleCell.textContent.toLowerCase();
+            const depotId = row.getAttribute('data-depot-id');
+
+            // 检查是否匹配关键字和仓库ID
+            const matchesKeyword = titleText.includes(keyword);
+            const matchesDepot = selectedDepotId === '' || selectedDepotId === depotId;
+
+            if (matchesKeyword && matchesDepot) {
+                row.style.display = '';
+                hasVisibleRows = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        console.log(`Has visible rows: ${hasVisibleRows}`);
+        noMessages.style.display = hasVisibleRows ? 'none' : '';
+    }
+
+    // 绑定事件监听器
+    searchKeywordInput.addEventListener('input', filterRows);
+    if (depotFilter) {
+        depotFilter.addEventListener('change', filterRows);
+    }
+});
 </script>
 {% endblock %}
