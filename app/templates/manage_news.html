@@ -28,12 +28,14 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" name="title" id="post_title" placeholder="Enter Title" required>
-                </div>
+                    <input type="text" maxlength="80" class="form-control" name="title" id="post_title" placeholder="Enter Title" required>
+                    <div class="invalid-feedback">Please input a valid title, must not exceed 80 characters.</div>
+                  </div>
                 <div class="mb-3">
                     <label for="subtitle" class="form-label">Subtitle</label>
-                    <input type="text" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
-                </div>
+                    <input type="text" maxlength="80" class="form-control" name="subtitle" id="post_subtitle" placeholder="Enter Subtitle" required>
+                    <div class="invalid-feedback">Please input a valid title, must not exceed 80 characters.</div>
+                  </div>
                 <div class="mb-3">
                     <label for="date" class="form-label">Post date</label>
                     <input type="date" class="form-control" name="date" id="post_date" required>
@@ -66,6 +68,7 @@
                     <img src="{{ url_for('static', filename='images/user_default_image.png') }}" class="card-img-top" id="imageCoverPreview" alt="Cover Image">
                   </label>
                   <input class="form-control" type="file" name="image" id="post_img" style="display: none;" accept="image/*" onchange="previewCoverImage(event)" required>
+                  <div class="invalid-feedback">Please select an image.</div>
                 </div>
               </div>
             </div>
@@ -88,6 +91,24 @@
     <div class="card-header">
       <h2>News History</h2>
     </div>
+    <div class="d-flex align-items-center mb-3">
+      <div class="col-xl-3">
+          <div class="input-group">
+              <input type="search" id="searchKeyword" class="form-control p-2" placeholder="Search for subtitle." aria-describedby="search-icon-1">
+              <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+          </div>
+      </div>
+      {% if type == 'National_Manager' %}
+      <div class="ms-3">
+        <select id="depotFilter" class="form-select">
+          <option value="">All Depots</option>
+          {% for depot in depotList %}
+          <option value="{{depot.depot_id}}">{{depot.location}}</option>
+          {% endfor %}
+      </select>
+      </div>
+      {% endif %}
+  </div>
       <table class="table">
           <thead>
             <tr>
@@ -99,10 +120,10 @@
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="newsTableBody">
             {% for newz in news %}
-            <tr>
-              <th scope="row">{{newz.news_id}}</th>
+            <tr data-depot-id="{{newz.depot_id}}">
+              <td scope="row">{{newz.news_id}}</td>
               <td>{{newz.title}}</td>
               <td>{{newz.subtitle}}</td>
               <td>{{newz.date}}</td>
@@ -117,6 +138,9 @@
               </td>
             </tr>
             {% endfor %}
+            <tr id="noMessages" style="display: none;">
+              <td colspan="8" class="text-center">No found.</td>
+            </tr>
           </tbody>
       </table>
   </div>
@@ -146,13 +170,13 @@
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="form3Example3c">Title <sup>*</sup></label>
-          <input type="text" maxlength="50" class="form-control" id="update_title" name="title" value="{{newz.title}}" pattern="^[a-zA-Z]+$" required/>     
-          <div class="invalid-feedback">Please input a title.</div> 
+          <input type="text" maxlength="80" class="form-control" id="update_title" name="title" value="{{newz.title}}" required/>     
+          <div class="invalid-feedback">Please input a title,not exceed 80 characters.</div> 
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label">Subtitle</label>
-          <input type="text" class="form-control" value="{{newz.subtitle}}" id="subtitle" name="subtitle" minlength="1" maxlength="35" pattern="^[a-zA-Z]+$" required>
-          <div class="invalid-feedback">Please input a subtitle.</div>
+          <input type="text" class="form-control" value="{{newz.subtitle}}" id="subtitle" name="subtitle" minlength="1" maxlength="80" required>
+          <div class="invalid-feedback">Please input a subtitle, not exceed 80 characters.</div>
         </div>
         <div class="col-md-6 mb-3">
           <label class="form-label" for="post_date">Post date<sup>*</sup></label>
@@ -178,8 +202,8 @@
 
         <div>
           <label class="form-label">Content</label>
-          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="35" rows="6" pattern="^[a-zA-Z]+$" required>{{newz.content}}</textarea>
-          <div class="invalid-feedback">Please input content.</div>
+          <textarea type="text" class="form-control" value="" id="update_content" name="content" minlength="1" maxlength="500" rows="6" pattern="^[a-zA-Z]+$" required>{{newz.content}}</textarea>
+          <div class="invalid-feedback">Please input content, not exceed 500 characters..</div>
         </div>
         <p></p>
       <div class="col text-center">
@@ -242,7 +266,31 @@
 {% endblock %}
 
 {% block script %}
+
+<!-- {% include "components/elements/InputValidate.html" %} -->
   <script>
+
+    // document.getElementById('post_img').addEventListener('input', function() {	
+    // InputValidate('post_img');	
+    // });	
+      
+    // document.getElementById('post_subtitle').addEventListener('input', function() {	
+    // InputValidate('post_subtitle}}');	
+    // });	
+      
+    // document.getElementById('post_title').addEventListener('input', function() {	
+    // InputValidate('post_title');	
+    // });	
+      
+    // document.getElementById('update_title').addEventListener('input', function() {	
+    // InputValidate('update_title');	
+    // });	
+      
+    // document.getElementById('subtitle').addEventListener('input', function() {	
+    // InputValidate('subtitle}}');	
+    // });	
+
+
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('updateNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
       document.getElementById('addNewsSuccessModal').addEventListener('hidden.bs.modal', () => location.reload());
@@ -365,6 +413,7 @@
         })
     });
   </script>
+
   <script>
     function previewImage(event, news_id) {
         var reader = new FileReader();
@@ -375,6 +424,7 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 </script>
+
 <script>
   function previewCoverImage(event) {
       var reader = new FileReader();
@@ -384,5 +434,50 @@
       };
       reader.readAsDataURL(event.target.files[0]);
   }
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchKeywordInput = document.getElementById('searchKeyword');
+    const depotFilter = document.getElementById('depotFilter');
+    const newsTableBody = document.getElementById('newsTableBody');
+    const noMessages = document.getElementById('noMessages');
+
+    // 过滤函数，结合关键字搜索和仓库过滤
+    function filterRows() {
+        const keyword = searchKeywordInput.value.toLowerCase();
+        const selectedDepotId = depotFilter ? depotFilter.value : '';
+        const rows = newsTableBody.getElementsByTagName('tr');
+        let hasVisibleRows = false;
+
+        Array.from(rows).forEach(row => {
+            if (row.id === 'noMessages') return; // 忽略noMessages行
+
+            const titleCell = row.getElementsByTagName('td')[2]; // Title 在第三个单元格
+            const titleText = titleCell.textContent.toLowerCase();
+            const depotId = row.getAttribute('data-depot-id');
+
+            // 检查是否匹配关键字和仓库ID
+            const matchesKeyword = titleText.includes(keyword);
+            const matchesDepot = selectedDepotId === '' || selectedDepotId === depotId;
+
+            if (matchesKeyword && matchesDepot) {
+                row.style.display = '';
+                hasVisibleRows = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        console.log(`Has visible rows: ${hasVisibleRows}`);
+        noMessages.style.display = hasVisibleRows ? 'none' : '';
+    }
+
+    // 绑定事件监听器
+    searchKeywordInput.addEventListener('input', filterRows);
+    if (depotFilter) {
+        depotFilter.addEventListener('change', filterRows);
+    }
+});
 </script>
 {% endblock %}

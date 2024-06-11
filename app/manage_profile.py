@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, session
+from flask import jsonify, render_template, request, session
 import os
 
 # User-defined function
@@ -26,12 +26,14 @@ def saveImage(img):
     # Return the name of the saved image
     return 'upload/' + image_name
 
+
 @app.route("/admin/profiles")
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfiles():
     type = session['type']
-    print(type,88888888)
+    
     profile_type = request.args.get('profile_type')
+    
     if profile_type == "Consumer":
         result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
             JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
@@ -44,58 +46,15 @@ def adminProfiles():
                 JOIN Users ON Employees.user_id = Users.user_id \
                 WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
 
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type)
+                
+    invoice = fetchAll("SELECT * from Invoices;",None ,True)
 
-
-@app.route('/admin/profile/search',methods = ["GET","POST"])
-@roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
-def profileSearch():
-    type = session['type']
-    depot_id = request.form.get('depot_id')
-    searchBy = request.form.get('searchBy')
-    profile_type = request.form.get('name_type')
-    print(profile_type,depot_id,898989898898)
-    
-    # if click manage consumer in the sidebar
-    if profile_type == "Consumer":
-        if depot_id == 'all' or depot_id == 6:
-            print(222111111111111)
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',),True)
-        else:
-            print(111111111111111)
-            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%', depot_id,),True)
-    # if click manage employee in the sidebar
-    else:
-        if session.get('type') in ['Local_Manager']:
-            if depot_id == 'all' or depot_id ==  6:
-                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
-            else:
-                print(89898989898)
-                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
-        else:
-            if depot_id == 'all' or depot_id ==  6:
-                print(787878787878787)
-                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                    JOIN Users ON Employees.user_id = Users.user_id \
-                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',) ,True)
-            else:
-                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                    JOIN Users ON Employees.user_id = Users.user_id \
-                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and (given_name LIKE %s OR family_name LIKE %s OR CONCAT(given_name, ' ', family_name) LIKE %s) and Users.depot_id = %s and Users.is_deleted = FALSE;""",('%' + searchBy + '%','%' + searchBy + '%','%' + searchBy + '%',depot_id,) ,True)
-    
-    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list,type=type)
+    return render_template('admin_profile_list.html', member_list=result, profile_type=profile_type, depotList=app.depot_list, type=type,invoice=invoice)
 
 
 @app.route("/admin/profile/update", methods = ["POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfileUpdate():
-    # need password futcion
-
-
     if request.form.get('profile_type') == 'Consumer':
         table_name = "Consumer"
         verified_data = validateConsumerProfile({key: value for key, value in dict(request.form).items() if value})
@@ -121,7 +80,7 @@ def adminProfileUpdate():
             updates.append(f"{key} = %s")
             params.append(value)
         params.append(user_id)
-
+        print(updates,params,21212121212121)
         update_successful = updateSQL("UPDATE " + table_name + " SET " + ", ".join(updates) + " WHERE user_id = %s", tuple(params))
         # if depot_id changed, update Users
         depot_id = verified_data['depot_id'] 
@@ -156,7 +115,6 @@ def adminProfileUpdate():
 @roleRequired(['Local_Manager', 'National_Manager'])
 def adminProfileDel():
     data = request.get_json()
-    print(data)
     update_successful = updateSQL("UPDATE Users SET is_deleted = TRUE WHERE user_id = %s;", (data['user_id'],))
 
     if update_successful:
@@ -184,9 +142,32 @@ def adminProfileAdd():
             elif employee_type == "Local_Manager":
                 user_id = insertSQL("INSERT INTO Users (email, password_hash, depot_id, type) VALUES(%s,%s,%s,%s);", (new_account.email, hashed, new_account.depot_id, 'Local_Manager'))
 
+            image = request.files['image']
+            if image.filename:
+                image_name = saveImage(image)
             insertSQL("INSERT INTO Employees (user_id, given_name, family_name, address, phone, hire_date, depot_id, image) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);", \
-            (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.hire_date, new_account.depot_id, 'user_default_image.png'))
+            (user_id, new_account.given_name, new_account.family_name, new_account.address, new_account.phone, new_account.hire_date, new_account.depot_id,image_name))
         except:
             return {"status": False}, 500
         else:
             return {"status": True}, 200
+        
+
+@app.route("/admin/invoice",methods = ["POST"])
+@roleRequired(['Local_Manager', 'National_Manager'])
+def adminInvoice():
+    invoice_id = request.form.get("invoice_id")
+    is_paid = request.form.get("is_paid")
+   
+    if is_paid == "0":
+        success = updateSQL("update Invoices set is_paid=1 where invoice_id=%s;",(invoice_id,))
+        success = 1
+    elif is_paid == "1":
+        success = updateSQL("update Invoices set is_paid=0 where invoice_id=%s;",(invoice_id,))
+        success = 1
+
+    if success:
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'fail'})
+    
