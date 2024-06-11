@@ -248,8 +248,8 @@
                 <form id="reviewAccountLimitForm">
                     <div class="mb-3">
                         <label for="newAccountLimit" class="form-label">New Account Limit</label>
-                        <input type="number" class="form-control" id="newAccountLimit" name="newAccountLimit" required>
-                        <div class="invalid-feedback">Please provide a valid account limit.</div>
+                        <input type="number" class="form-control" id="newAccountLimit" name="newAccountLimit" min="0" required>
+                        <div class="invalid-feedback">Please provide a valid account limit (non-negative number).</div>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -326,31 +326,39 @@
 
 <script>
     document.getElementById('reviewAccountLimitForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    var newAccountLimit = document.getElementById('newAccountLimit').value;
+        event.preventDefault();
+        var newAccountLimit = document.getElementById('newAccountLimit').value;
 
-    fetch('/profile/submitReviewRequest', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ user_id: "{{ profile.user_id }}", newAccountLimit: newAccountLimit })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status) {
-            const successModal = new bootstrap.Modal(document.getElementById('addSuccessModal'));
-            successModal.show();
+        fetch('/profile/submitReviewRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: "{{ profile.user_id }}", newAccountLimit: newAccountLimit })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status) {
+                const successModal = new bootstrap.Modal(document.getElementById('addSuccessModal'));
+                successModal.show();
 
-            successModal._element.addEventListener('hidden.bs.modal', function () {
-                location.reload();
-            });
-        } else {
-            alert('Failed to submit review request.');
+                successModal._element.addEventListener('hidden.bs.modal', function () {
+                    location.reload();
+                });
+            } else {
+                alert('Failed to submit review request.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Prevent negative numbers in the input
+    document.getElementById('newAccountLimit').addEventListener('input', function () {
+        if (this.value < 0) {
+            this.value = 0;
         }
-    })
-    .catch(error => console.error('Error:', error));
-});
+    });
+
     document.getElementById('profileImage').addEventListener('click', function () {
         document.getElementById('profilePicture').click();
     });
@@ -365,6 +373,7 @@
             reader.readAsDataURL(file);
         }
     });
+    
     // Show/Hide Password
     document.getElementById('showOldPassword').addEventListener('click', function () {
         togglePasswordVisibility('oldPassword');
@@ -388,29 +397,7 @@
             buttonIcon.classList.add('fa-eye');
         }
     }
-    // Review Account Limit Modal
-    document.getElementById('reviewAccountLimitForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        var newAccountLimit = document.getElementById('newAccountLimit').value;
 
-        fetch('/profile/updateAccountLimit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_id: "{{ profile.user_id }}", newAccountLimit: newAccountLimit })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status) {
-                document.getElementById('accountLimit').value = newAccountLimit;
-                new bootstrap.Modal(document.getElementById('reviewAccountLimitModal')).hide();
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
     (function () {
         'use strict';
         var inputs = [
@@ -488,6 +475,7 @@
         }
     })();
 </script>
+
 <script>
     let user_id = "{{ profile.user_id }}"
     let newUpdateProfileData = {};

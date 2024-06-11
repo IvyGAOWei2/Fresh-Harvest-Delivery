@@ -64,7 +64,7 @@ def manageDiscount():
         ]
 
         # Fetch depots
-        sql_depots = "SELECT depot_id, location FROM Depots"
+        sql_depots = "SELECT depot_id, location FROM Depots  WHERE location != 'NZ'"
         depots = fetchAll(sql_depots)
 
         return render_template('discounts.html', discountList=formatted_discount_list, depots=depots, user_role=user_role, now=now.strftime('%d/%m/%Y'))

@@ -43,8 +43,11 @@ def ordinaryProducts(category=None, page_offset=None):
         JOIN Category c ON p.category_id = c.category_id 
         JOIN Unit u ON p.unit_id = u.unit_id 
         JOIN ProductImages pi ON p.product_id = pi.product_id 
+        LEFT JOIN Boxes b ON p.product_id = b.product_id
+        LEFT JOIN Packages pkg ON b.package_id = pkg.package_id
         WHERE p.is_active = TRUE 
         AND pi.is_deleted = FALSE 
+        AND (pkg.end_date IS NULL OR pkg.end_date >= CURDATE())
     """
     if category:
         sql += f"AND c.category_name = '{category}'"
@@ -52,7 +55,6 @@ def ordinaryProducts(category=None, page_offset=None):
     sql += " ORDER BY p.product_id ASC LIMIT 9 OFFSET " + page_offset
 
     return fetchAll(sql, None, True)
-
 def categoriesByCount():
     return fetchAll("SELECT c.category_name, COUNT(p.product_id) AS item_count FROM Category c LEFT JOIN Products p ON c.category_id = p.category_id GROUP BY c.category_name;", None, True)
 
@@ -74,8 +76,11 @@ def shop():
         JOIN Category c ON p.category_id = c.category_id 
         JOIN Unit u ON p.unit_id = u.unit_id 
         JOIN ProductImages pi ON p.product_id = pi.product_id
+        LEFT JOIN Boxes b ON p.product_id = b.product_id
+        LEFT JOIN Packages pkg ON b.package_id = pkg.package_id
         WHERE p.is_active = TRUE
         AND pi.is_deleted = FALSE
+        AND (pkg.end_date IS NULL OR pkg.end_date >= CURDATE())
     """
     if category:
         sql_total_products += f" AND c.category_name = '{category}'"
@@ -110,13 +115,15 @@ def shopDetail(product_id):
         discounted_price = round(product['price'] * (1 - product['discount_rate'] / 100), 2) if 'discount_rate' in product and product['discount_rate'] else None
         product['discounted_price'] = discounted_price
 
-        # Fetch box items
+        # Fetch box items only for active packages
         boxitems_query = """
             SELECT B.box_type, BI.quantity, P.name AS product_name
             FROM BoxItems BI
             JOIN Boxes B ON BI.box_id = B.box_id
             JOIN Products P ON BI.product_id = P.product_id
+            JOIN Packages PKG ON B.package_id = PKG.package_id
             WHERE B.product_id = %s
+            AND PKG.end_date >= CURDATE()
         """
         boxitems = fetchAll(boxitems_query, (product_id,), True)
 
