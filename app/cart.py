@@ -57,6 +57,11 @@ def checkout():
         shipping_fee = 0 if total_price > app.shipping else app.shipping
         update_successful = updateSQL("UPDATE Orders SET total = %s, shipping_fee = %s WHERE order_id = %s;", \
             (total_price, shipping_fee, order_id))
+        
+        if order['paymentform']['paymentMethod'] == 'Account':
+            account_available =  fetchOne("SELECT account_available FROM Consumer WHERE user_id = %s;", (session['id'],))
+            new_account_available = account_available[0] - total_price - shipping_fee
+            updateSQL("UPDATE Consumer SET account_available = %s WHERE user_id = %s;", (new_account_available, session['id']))
 
         if update_successful:
             if order['finalTotal']['pointsUsed'] > 0:

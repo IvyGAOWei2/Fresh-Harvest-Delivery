@@ -48,6 +48,18 @@ def orderDetail(order_id):
 def orderDel():
     data = request.get_json()
 
+    update_successful = updateSQL("UPDATE GiftCards SET order_id = NULL WHERE order_id = %s;", (data['order_id'],))
+    update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
+
+    # restore business account_available
+    is_business = fetchOne('SELECT payment_method,total,shipping_fee FROM Orders WHERE order_id = %s', (data['order_id'],), True)
+
+    if is_business['payment_method'] == 'Account':
+        account_available =  fetchOne("SELECT account_available FROM Consumer WHERE user_id = %s;", (session['id'],))
+        new_account_available = account_available[0] + is_business['total'] + is_business['shipping_fee']
+        updateSQL("UPDATE Consumer SET account_available = %s WHERE user_id = %s;", (new_account_available, session['id']))
+
+    # restore points
     isPointsRedeem = fetchOne('SELECT point_type, point_variation FROM ConsumerPoints WHERE order_id = %s', (data['order_id'],), True)
     if isPointsRedeem:
         point_variation = abs(isPointsRedeem['point_variation'])
@@ -57,9 +69,6 @@ def orderDel():
         insertSQL("INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date) \
                 VALUES(%s,%s,%s,%s,%s,%s);", (session['id'], data['order_id'], 'Order Cancel', point_variation, new_points, toDay()))
         updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, session['id']))
-
-    update_successful = updateSQL("UPDATE GiftCards SET order_id = NULL WHERE order_id = %s;", (data['order_id'],))
-    update_successful = updateSQL("UPDATE Orders SET status = 'Cancelled' WHERE order_id = %s;", (data['order_id'],))
 
     if update_successful:
         order = emailOrder(data['order_id'])

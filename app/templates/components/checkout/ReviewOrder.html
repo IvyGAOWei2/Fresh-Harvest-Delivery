@@ -15,7 +15,7 @@
         </label>
         {% else %}
         <label class="payment-option" id="credit-balance-option">
-          <input type="radio" name="paymentMethod" value="Credit Balance" checked>
+          <input type="radio" name="paymentMethod" value="Account" checked>
           <i class="fa-solid fa-circle-dollar"></i>
           <span>Credit Balance</span>
       </label>
@@ -49,6 +49,9 @@
       <div style="display: flex; justify-content: center;align-items: center;">
         <p>Your Credit Balance: <span id="credit-balance" name="account_available">$ {{checkoutProfile.account_available}}</span></p>
       </div>
+    </div>
+    <div class="form-group d-none">
+      <input type="text" name="payment_info" class="form-control" value="account_holder" >
     </div>
     {% endif %}
 
