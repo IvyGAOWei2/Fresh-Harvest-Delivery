@@ -6,6 +6,8 @@ from configparser import RawConfigParser
 config, auth = RawConfigParser(), RawConfigParser()
 config.read('emailMethod/config.ini')
 auth.read('emailMethod/auth.ini')
+# config.read('/home/COMP639S1GroupAZ/COMP639S1_Group_AZ/emailMethod/config.ini')
+# auth.read('/home/COMP639S1GroupAZ/COMP639S1_Group_AZ/emailMethod/auth.ini')
 
 def sendFhdContact(name, email, type, message):
     htmlData = fhdContactHTML(name, email, type, message)
