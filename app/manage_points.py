@@ -20,8 +20,8 @@ def managePoints():
             FROM Consumer u JOIN LatestPoints lp ON u.user_id = lp.user_id
             JOIN ConsumerPoints p ON p.point_id = lp.latest_point_id
             JOIN Depots on Depots.depot_id = u.depot_id;""", val=None, withDescription=False)
-        
-    return render_template('manage_points.html', type=type, points_list=points_list)
+    
+    return render_template('manage_points.html', type=type, points_list=points_list, depots=app.depot_list)
 
 
 @app.route("/manage/points/details", methods=['POST'])
@@ -42,7 +42,7 @@ def managePointsDetails():
     
     user_details = fetchAll("SELECT * FROM ConsumerPoints WHERE user_id = %s", (user_id,), withDescription=False)
     
-    return render_template('manage_points.html', type=type, user_details=user_details,show_modal=True, points_list=points_list)
+    return render_template('manage_points.html', type=type, user_details=user_details,show_modal=True, points_list=points_list,depots=app.depot_list)
     
    
 @app.route("/manage/points/update", methods=['POST'])

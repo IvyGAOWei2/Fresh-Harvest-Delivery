@@ -36,7 +36,7 @@
                     <select id="depotFilter" class="form-select">
                         <option value="">All Depots</option>
                         {% for depot in depots %}
-                        <option value="{{ depot[0] }}">{{ depot[1] }}</option>
+                        <option value="{{depot.depot_id}}">{{depot.location}}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -54,10 +54,10 @@
                 <th class="text-secondary-emphasis" scope="col">Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="pointsTableBody">
                 {% for point in points_list %}
-                <tr>
-                <th scope="row">{{point[5]}}</th>
+                <tr data-depot-id="{{point[2]}}">
+                <td>{{point[5]}}</td>
                 <td>{{point[0]}}</td>
                 <td>{{point[1]}}</td>
                 <td>{{point[3]}}</td>
@@ -95,6 +95,9 @@
                 </td>
                 </tr>
                 {% endfor %}  
+                <tr id="noMessage" style="display: none;">
+                    <td colspan="8" class="text-center">No found.</td>
+                </tr>
             </tbody>
           
             </table>
@@ -212,6 +215,73 @@
     });
     </script>
  {% endif %}
+
+ <script>
+// Search by title functionality
+document.addEventListener('DOMContentLoaded', function () {
+
+        const searchKeywordInput = document.getElementById('searchKeyword');
+        const pointsTableBody = document.getElementById('pointsTableBody');
+
+        searchKeywordInput.addEventListener('input', function () {
+            const keyword = searchKeywordInput.value.toLowerCase();
+            const rows = pointsTableBody.getElementsByTagName('tr');
+            let hasVisibleRows = false;
+
+            Array.from(rows).forEach(row => {
+            const lastNameCell = row.getElementsByTagName('td')[1]; // 姓在第二个单元格
+            const firstNameCell = row.getElementsByTagName('td')[2]; // 名在第三个单元格
+            const lastNameText = lastNameCell.textContent.toLowerCase();
+            const firstNameText = firstNameCell.textContent.toLowerCase();
+
+            // 将关键字按空格拆分为数组，分别匹配姓和名
+            const keywords = keyword.split(' ');
+            let match = false;
+
+            if (keywords.length > 1) {
+                const [firstKeyword, secondKeyword] = keywords;
+                match = (lastNameText.includes(firstKeyword) && firstNameText.includes(secondKeyword)) ||
+                        (lastNameText.includes(secondKeyword) && firstNameText.includes(firstKeyword));
+            } else {
+                match = lastNameText.includes(keyword) || firstNameText.includes(keyword);
+            }
+
+            if (match) {
+                row.style.display = '';
+                hasVisibleRows = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        document.getElementById('noMessage').style.display = hasVisibleRows ? 'none' : '';
+        });
+    });
+
+        const depotFilter = document.getElementById('depotFilter');
+        if (depotFilter) {
+            depotFilter.addEventListener('change', function () {
+                const selectedDepotId = depotFilter.value;
+                const rows = pointsTableBody.getElementsByTagName('tr');
+                let hasVisibleRows = false;
+
+                Array.from(rows).forEach(row => {
+                    const depotId = row.getAttribute('data-depot-id');
+
+                    if (selectedDepotId === '' || selectedDepotId === depotId) {
+                        row.style.display = '';
+                        hasVisibleRows = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+            
+
+                document.getElementById('noDiscountsMessage').style.display = hasVisibleRows ? 'none' : '';
+                
+            });
+    });
+}
+</script>
 
 {% endblock %}
 
