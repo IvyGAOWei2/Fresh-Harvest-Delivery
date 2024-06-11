@@ -109,16 +109,18 @@ def shopDetail(product_id):
     if product:
         discounted_price = round(product['price'] * (1 - product['discount_rate'] / 100), 2) if 'discount_rate' in product and product['discount_rate'] else None
         product['discounted_price'] = discounted_price
-
-        # Fetch box items
-        # boxitems_query = """
-        #     SELECT B.box_type, BI.quantity, P.name AS product_name
-        #     FROM BoxItems BI
-        #     JOIN Boxes B ON BI.box_id = B.box_id
-        #     JOIN Products P ON BI.product_id = P.product_id
-        #     WHERE B.product_id = %s
-        # """
-        # boxitems = fetchAll(boxitems_query, (product_id,), True)
+        
+        # Fetch box items only for active packages
+        boxitems_query = """
+            SELECT B.box_type, BI.quantity, P.name AS product_name
+            FROM BoxItems BI
+            JOIN Boxes B ON BI.box_id = B.box_id
+            JOIN Products P ON BI.product_id = P.product_id
+            JOIN Packages PKG ON B.package_id = PKG.package_id
+            WHERE B.product_id = %s
+            AND PKG.end_date >= CURDATE()
+        """
+        boxitems = fetchAll(boxitems_query, (product_id,), True)
 
         categories = categoriesByCount()
         discounted_products = discountedProducts()
@@ -140,12 +142,9 @@ def shopDetail(product_id):
 
         is_reviewed = fetchOne("SELECT review_id FROM Reviews WHERE user_id = %s AND depot_id = %s AND product_id = %s;", (session['id'], depot_id, product_id)) if 'id' in session else False
 
-        # return render_template('shop-detail.html', product=product, categories=categories, depotList=app.depot_list, \
-        #     categoryList=app.category_list, reviews=reviews, fakeReview=fake_review, is_reviewed=is_reviewed, \
-        #     discounted_items=discounted_products, boxitems=boxitems, relatedProducts=related_products)
         return render_template('shop-detail.html', product=product, categories=categories, depotList=app.depot_list, \
             categoryList=app.category_list, reviews=reviews, fakeReview=fake_review, is_reviewed=is_reviewed, \
-            discounted_items=discounted_products, relatedProducts=related_products)
+            discounted_items=discounted_products, boxitems=boxitems, relatedProducts=related_products)
     else:
         return render_template('404.html')
 
