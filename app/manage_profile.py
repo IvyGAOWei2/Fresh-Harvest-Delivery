@@ -31,21 +31,34 @@ def saveImage(img):
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfiles():
     type = session['type']
+
+    sessionDepot = session['depot_id']
+    selected_depot = None
+
+    if request.method == "POST" and type == 'National_Manager':
+        depot_id = request.form['depot_id']
+        selected_depot = int(depot_id)
+        print(selected_depot)
+    elif sessionDepot == 6:
+        depot_id = 1
+    else:
+        depot_id = sessionDepot
     
     profile_type = request.args.get('profile_type')
     
     if profile_type == "Consumer":
-        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
+        sql = """SELECT Users.email, Consumer.* FROM Consumer \
+            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and Users.depot_id = %s AND Users.is_deleted = FALSE;"""
     else:
         if session.get('type') in ['Local_Manager']:
-            result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
+            sql = """SELECT Users.email, Users.type, Employees.* FROM Employees \
+                JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and Users.depot_id = %s AND Users.is_deleted = FALSE;"""
         else:
-            result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
+            sql = """SELECT Users.email,Users.type, Employees.* FROM Employees \
                 JOIN Users ON Employees.user_id = Users.user_id \
-                WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
-
+                WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and Users.depot_id = %s AND Users.is_deleted = FALSE;"""
+            
+    result = fetchAll(sql, (depot_id,), True)
                 
     invoice = fetchAll("SELECT * from Invoices;",None ,True)
 
