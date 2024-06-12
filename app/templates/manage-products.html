@@ -22,6 +22,11 @@
     color: black;
 }
 
+.custom-select-text {
+    color: black !important;
+}
+
+
 </style>
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
@@ -40,19 +45,35 @@
             <!-- sorting -->
             <div class="d-flex align-items-center ms-4">
                 <div class="me-3">
-                    <label for="categorySelect" class="form-label mb-0 me-1 " style="color: black">Category: </label>
+                    <label for="categorySelect" class="form-label mb-0 me-1" style="color: black">Category:</label>
                     <select id="categorySelect" name="category_name" class="border-0 form-select-sm bg-light border-0 me-3">
-                        <option value="all">All</option>
-                        <option value="Fruit">Fruit</option>
-                        <option value="Vegetable">Vegetable</option>
-                        <option value="Herb">Herb</option>
-                        <option value="Salad">Salad</option>
-                        <option value="Egg">Egg</option>
-                        <option value="Honey">Honey</option>
-                        <option value="GiftCard">GiftCard</option>
+                        {% for category in categoryList %}
+                        <option value="{{ category.category_name }}" {% if category.category_id == 1 %}selected{% endif %}>
+                            {{ category.category_name }}
+                        </option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
+            
+            <!-- depot select -->
+            {% if session.type == 'National_Manager' %}
+            <div class="d-flex align-items-center ms-4">
+                <form method="POST" action="/product/list" class="d-flex align-items-center" style="color: black">
+                    <label for="depotSelect" class="form-label mb-0 me-2" >Depot:</label>
+                    <select class="form-control  custom-select-text form-select-sm bg-light me-2" name="depot_id" id="depotSelect" required>
+                        {% for depot in depotList[:5] %}
+                        <option value="{{ depot.depot_id }}" {% if depot.location == 'Christchurch' %}selected{% endif %}>
+                            {{ depot.location }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            {% endif %}
+
+
 
             <!-- Button trigger modal to add product-->
             <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addProductModal">Add New
@@ -67,6 +88,7 @@
                         <th>Category</th>
                         <th>Price</th>
                         <th>Stock</th>
+                        <th>Depot</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -78,6 +100,7 @@
                         <td class="align-middle">{{categoryList[product.category_id -1].category_name}}</td>
                         <td class="align-middle">{{ product.price}}</td>
                         <td class="align-middle">{{ product.stock }}</td>
+                        <td class="align-middle">{{ product.location }}</td>
                         <td>
                             <a class="btn" role="button" data-bs-toggle="offcanvas"
                                 data-bs-target="#updateproduct{{ product.product_id }}">
@@ -224,13 +247,18 @@
                             <label for="addCategory" class="form-label">Category</label>
                             <select class="form-control" id="addCategory" name="category_id" required>
                                 <option selected value="">Please select the category</option>
-                                <option value="1">Fruit</option>
+                                <!-- <option value="1">Fruit</option>
                                 <option value="2">Vegetable</option>
                                 <option value="3">Herb</option>
                                 <option value="4">Egg</option>
                                 <option value="5">Honey</option>
                                 <option value="6">GiftCard</option>
-                                <option value="7">Salad</option>
+                                <option value="7">Salad</option> -->
+                                {% for category in categoryList %}
+                                <option value="{{ category.category_id }}">
+                                    {{ category.category_name }}
+                                </option>
+                                {% endfor %}
                             </select>
                             <div class="invalid-feedback">Please select one category from the list.
                             </div>
@@ -241,14 +269,11 @@
                             <label for="addUnit" class="form-label">Unit</label>
                             <select class="form-control" id="addUnit" name="unit_id" required>
                                 <option selected value="">Please select the unit</option>
-                                <option value="1">Bunch</option>
-                                <option value="2">Weight</option>
-                                <option value="3">Each</option>
-                                <option value="4">Half-size</option>
-                                <option value="5">Punnet</option>
-                                <option value="6">Tray</option>
-                                <option value="7">kg</option>
-                                <option value="8">g</option>
+                                {% for unit in unitList %}
+                                <option value="{{ unit.unit_id }}">
+                                    {{ unit.unit_name }}
+                                </option>
+                                {% endfor %}
                             </select>
                             <div class="invalid-feedback">Please select one unit from the list.</div>
                         </div>
@@ -477,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 matches = false;
             }
 
-            if (selectedCategory !== 'all' && productCategory !== selectedCategory) {
+            if (selectedCategory && productCategory !== selectedCategory) {
                 matches = false;
             }
 
@@ -494,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const noResultsRow = document.createElement('tr');
             noResultsRow.id = 'noResultsRow';
             const noResultsCell = document.createElement('td');
-            noResultsCell.colSpan = 5;
+            noResultsCell.colSpan = 6;
             noResultsCell.className = 'text-center';
             noResultsCell.textContent = 'No matching products found';
             noResultsRow.appendChild(noResultsCell);
@@ -504,6 +529,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchKeywordInput.addEventListener('input', filterRows);
     categorySelect.addEventListener('change', filterRows);
+    // Trigger the filter function on page load to apply the default category filter
+    filterRows();
 });
 
 
