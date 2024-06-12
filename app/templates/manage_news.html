@@ -127,7 +127,7 @@
               <td scope="row">{{newz.news_id}}</td>
               <td>{{newz.title}}</td>
               <td>{{newz.subtitle}}</td>
-              <td>{{newz.date}}</td>
+              <td class="news-date">{{newz.date}}</td>
               <td>{{depotList[newz.depot_id -1].location}}</td>
               <td>
               <a class="btn" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateNews{{newz.news_id}}" data-news-id="{{newz.news_id}}" data-bs-toggle="tooltip" title="Update news">
@@ -540,6 +540,31 @@
             errorMessage.style.display = 'none';
             postDateInput.classList.remove('is-invalid');
         }
+    });
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有日期单元格
+    const dateCells = document.querySelectorAll('.news-date');
+
+    // 循环遍历每个日期单元格
+    dateCells.forEach(function(cell) {
+        // 获取单元格中的日期值
+        const dateValue = cell.textContent.trim();
+
+        // 如果日期值为空，不执行任何操作
+        if (!dateValue) return;
+
+        // 将日期字符串解析为日期对象
+        const dateObj = new Date(dateValue);
+
+        // 将日期格式化为“日-月-年”的格式
+        const formattedDate = `${dateObj.getDate()}-${dateObj.getMonth() + 1}-${dateObj.getFullYear()}`;
+
+        // 更新单元格中的日期值为格式化后的值
+        cell.textContent = formattedDate;
     });
 });
 </script>
