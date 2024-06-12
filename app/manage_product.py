@@ -32,8 +32,12 @@ def saveImage(img):
 def manageProduct():
     role = session['type']
     sessionDepot = session['depot_id']
+    selected_depot = None
+
     if request.method == "POST" and role == 'National_Manager':
         depot_id = request.form['depot_id']
+        selected_depot = int(depot_id)
+        print(selected_depot)
     elif sessionDepot == 6:
         depot_id = 1
     else:
@@ -66,7 +70,7 @@ def manageProduct():
         AND p.is_active = True;
     """
     product_list = fetchAll(sql_products, (depot_id,), True)
-    return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list)
+    return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list, selected_depot=selected_depot)
 
 
 @app.route("/product/add",methods = ["POST"])

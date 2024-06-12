@@ -35,10 +35,9 @@
         <div class="d-flex  align-items-center mb-3">
             <!-- search -->
             <div class="col-xl-3">
-                <div class="input-group">
-                    <input type="search" id="searchKeyword" class="form-control p-2" placeholder="keywords"
-                        aria-describedby="search-icon-1">
-                    <button id="searchKeywordButton" class="input-group-text p-3"><i class="fa fa-search"></i></button>
+                <div class="input-group input-group-sm">
+                    <input type="search" id="searchKeyword" class="form-control" placeholder="keywords" aria-describedby="search-icon-1">
+                    <button id="searchKeywordButton" class="input-group-text" style="padding: .5rem 1rem;"><i class="fa fa-search"></i></button>
                 </div>
             </div>
 
@@ -59,18 +58,28 @@
             <!-- depot select -->
             {% if session.type == 'National_Manager' %}
             <div class="d-flex align-items-center ms-4">
-                <form method="POST" action="/product/list" class="d-flex align-items-center" style="color: black">
+                <form id="depotForm" method="POST" action="/product/list" class="d-flex align-items-center" style="color: black">
                     <label for="depotSelect" class="form-label mb-0 me-2" >Depot:</label>
                     <select class="form-control  custom-select-text form-select-sm bg-light me-2" name="depot_id" id="depotSelect" required>
-                        {% for depot in depotList[:5] %}
-                        <option value="{{ depot.depot_id }}" {% if depot.location == 'Christchurch' %}selected{% endif %}>
-                            {{ depot.location }}
-                        </option>
+                        {% for depot in depotList %}
+                            {% if selected_depot %}
+                                <option value="{{ depot.depot_id }}" {% if depot.depot_id == selected_depot %}selected{% endif %}>
+                                    {{ depot.location }}
+                                </option>
+                            {% else %}
+                                <option value="{{ depot.depot_id }}" {% if depot.location == 'Christchurch' %}selected{% endif %}>
+                                    {{ depot.location }}
+                                </option>
+                            {% endif %}
                         {% endfor %}
                     </select>
-                    <button type="submit" class="btn btn-primary">Search</button>
                 </form>
             </div>
+            <script>
+                document.getElementById('depotSelect').addEventListener('change', function() {
+                    document.getElementById('depotForm').submit();
+                });
+                </script>
             {% endif %}
 
 
@@ -203,26 +212,6 @@
             </table>
         </div>
     </div>
-
-    <!-- pagination -->
-    <nav aria-label="manageProduct">
-        <ul class="pagination d-flex justify-content-center mt-5">
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">4</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 
     <!-- Add Product Modal -->
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
