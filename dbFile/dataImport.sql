@@ -1343,7 +1343,7 @@ INSERT INTO OrderItems (order_id, product_id, quantity, subtotal, is_refunded) V
 (5, 268, 1, 9.05, 0),
 (6, 100, 1, 25.00, 0),
 (6, 101, 1, 50.00, 0),
-(6, 102, 1, 75.00, 0),
+(6, 103, 1, 100.00, 0),
 (7, 2, 40, 39.90, 0),
 (7, 101, 2, 100.00, 0);
 
@@ -1407,7 +1407,7 @@ INSERT INTO GiftCards (product_id, order_id, code, balance, is_active) VALUES
 (101, NULL, 'UB1O6V2X', '50', 0),
 (101, NULL, 'AS4D7F0H', '50', 0),
 (101, NULL, 'BM9T2G5J', '50', 0),
-(102, 6, 'ZK8P3H6R', '75', 1),
+(102, NULL, 'ZK8P3H6R', '75', 1),
 (102, NULL, 'XS7N4F9L', '75', 0),
 (102, NULL, 'QW6M1T8E', '75', 0),
 (102, NULL, 'HD5K2J7G', '75', 0),
@@ -1427,7 +1427,7 @@ INSERT INTO GiftCards (product_id, order_id, code, balance, is_active) VALUES
 (102, NULL, 'GR7N2M9T', '75', 0),
 (102, NULL, 'QJ6H1R5V', '75', 0),
 (102, NULL, 'EK5T8W3M', '75', 0),
-(103, NULL, 'EG4U9W2R', '100', 0),
+(103, 6, 'EG4U9W2R', '100', 0),
 (103, NULL, 'LZ6P1H8T', '100', 0),
 (103, NULL, 'BD7Z2M9X', '100', 0),
 (103, NULL, 'QF5S8J3N', '100', 0),
@@ -1457,9 +1457,9 @@ VALUES
 (1,2,NULL,'Order Purchase',71.96,82.41,'2024-05-29',1),
 (1,6,NULL,'Order Purchase',149.00,231.41,'2024-06-12',1),
 (1,NULL,3,'Gift Card',250.00,481.41,'2024-06-12',1),
-(1,NULL,59,'Gift Card',750.00,1231.41,'2024-06-12',1),
-(1,NULL,30,'Gift Card',500.00,1731.41,'2024-06-12',1),
-(1,7,NULL,'Points Redeem',-1000.00,731.41,'2024-06-12',1);
+(1,NULL,79,'Gift Card',1000.00,1481.41,'2024-06-12',1),
+(1,NULL,30,'Gift Card',500.00,1981.41,'2024-06-12',1),
+(1,7,NULL,'Points Redeem',-1000.00,981.41,'2024-06-12',1);
 
 
 -- Invoices table
@@ -1498,3 +1498,5 @@ INSERT INTO Packages (title,start_date,end_date,depot_id) VALUES ('Week1 Box','2
 -- Application
 INSERT INTO BusinessApplications (user_id,business_name,contact_name,email,phone,address,city,postcode,documentation,status,application_date,approved_by) VALUES 
 (1,'Cafe','Joe','joe@gmail.com','0273690111','25 hudsen dr','christchurch','8025','e063dfa8-4a7c-426d-bb2f-6364ca2b4063.jpg','Pending','2024-06-12 11:14:09',NULL);
+
+UPDATE Consumer SET points = 731.41 WHERE user_id = 1;
