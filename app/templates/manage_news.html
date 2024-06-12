@@ -39,6 +39,7 @@
                 <div class="mb-3">
                     <label for="date" class="form-label">Post date</label>
                     <input type="date" class="form-control" name="date" id="post_date" required>
+                    <div class="invalid-feedback">Please select today's date or a future date.</div>
                 </div>
 
                 <div class="mb-3">
@@ -126,7 +127,7 @@
               <td scope="row">{{newz.news_id}}</td>
               <td>{{newz.title}}</td>
               <td>{{newz.subtitle}}</td>
-              <td>{{newz.date}}</td>
+              <td class="news-date">{{newz.date}}</td>
               <td>{{depotList[newz.depot_id -1].location}}</td>
               <td>
               <a class="btn" role="button" data-bs-toggle="offcanvas" data-bs-target="#updateNews{{newz.news_id}}" data-news-id="{{newz.news_id}}" data-bs-toggle="tooltip" title="Update news">
@@ -181,6 +182,7 @@
         <div class="col-md-6 mb-3">
           <label class="form-label" for="post_date">Post date<sup>*</sup></label>
           <input type="date" class="form-control" id="update_date" name="date" value="{{newz.date}}" required>
+          <div class="invalid-feedback">Please select today's date or a future date.</div>
         </div>
 
         <div class="col-md-6 mb-3">
@@ -332,6 +334,8 @@
           .catch(error => console.error('Error:', error));
         });
       })
+
+
       document.querySelectorAll('.news-update').forEach(function (update) {
         const news_id = update.getAttribute('data-news-id')
         const updateNewsForm = document.getElementById('updateNewsForm' + news_id);
@@ -478,6 +482,90 @@
     if (depotFilter) {
         depotFilter.addEventListener('change', filterRows);
     }
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const postDateInput = document.getElementById('post_date');
+    const errorMessage = postDateInput.nextElementSibling;
+
+    // 获取当前日期
+    const today = new Date().toISOString().split('T')[0];
+
+    // 设置日期输入框的最小值为当前日期
+    postDateInput.setAttribute('min', today);
+
+    // 当日期输入框的值改变时触发事件
+    postDateInput.addEventListener('change', function() {
+        // 获取输入框选择的日期
+        const selectedDate = postDateInput.value;
+
+        // 检查选择的日期是否在今天之前
+        if (selectedDate < today) {
+            // 如果选择的日期在今天之前，显示错误信息
+            errorMessage.style.display = 'block';
+            postDateInput.classList.add('is-invalid');
+        } else {
+            // 如果选择的日期在今天之后，隐藏错误信息
+            errorMessage.style.display = 'none';
+            postDateInput.classList.remove('is-invalid');
+        }
+    });
+});
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const postDateInput = document.getElementById('update_date');
+    const errorMessage = postDateInput.nextElementSibling;
+
+    // 获取当前日期
+    const today = new Date().toISOString().split('T')[0];
+
+    // 设置日期输入框的最小值为当前日期
+    postDateInput.setAttribute('min', today);
+
+    // 当日期输入框的值改变时触发事件
+    postDateInput.addEventListener('change', function() {
+        // 获取输入框选择的日期
+        const selectedDate = postDateInput.value;
+
+        // 检查选择的日期是否在今天之前
+        if (selectedDate < today) {
+            // 如果选择的日期在今天之前，显示错误信息
+            errorMessage.style.display = 'block';
+            postDateInput.classList.add('is-invalid');
+        } else {
+            // 如果选择的日期在今天之后，隐藏错误信息
+            errorMessage.style.display = 'none';
+            postDateInput.classList.remove('is-invalid');
+        }
+    });
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有日期单元格
+    const dateCells = document.querySelectorAll('.news-date');
+
+    // 循环遍历每个日期单元格
+    dateCells.forEach(function(cell) {
+        // 获取单元格中的日期值
+        const dateValue = cell.textContent.trim();
+
+        // 如果日期值为空，不执行任何操作
+        if (!dateValue) return;
+
+        // 将日期字符串解析为日期对象
+        const dateObj = new Date(dateValue);
+
+        // 将日期格式化为“日-月-年”的格式
+        const formattedDate = `${dateObj.getDate()}-${dateObj.getMonth() + 1}-${dateObj.getFullYear()}`;
+
+        // 更新单元格中的日期值为格式化后的值
+        cell.textContent = formattedDate;
+    });
 });
 </script>
 {% endblock %}
