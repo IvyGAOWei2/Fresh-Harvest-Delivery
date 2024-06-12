@@ -600,7 +600,7 @@ INSERT INTO Products (name,description,price,stock,category_id,unit_id,depot_id)
 ('Gift Card $100','Fresh Harvest Delivery gift cards are the perfect choice for gifts, usable for purchasing fresh fruits, vegetables, eggs, and honey. They are easy to buy and use, can be sent via email or printed out, allowing your friends and family to enjoy a healthy and delicious food experience effortlessly!',100,20,6,3,5);
 
 -- ProductImages table
---depot 1
+-- depot 1
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (1, 'Kiwifruit Green Fruit.png', TRUE, FALSE),
 (2, 'Bananas.png', TRUE, FALSE),
@@ -707,7 +707,7 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (103, "GiftCard100.jpg", TRUE, FALSE);
 
 -- ProductImages table
---depot 2
+-- depot 2
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (104, "Kiwifruit Green Fruit.png", TRUE, FALSE),
 (105, "Bananas.png", TRUE, FALSE),
@@ -814,7 +814,7 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (206, "GiftCard100.jpg", TRUE, FALSE);
 
 -- ProductImages table
---depot 3
+-- depot 3
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (207, "Kiwifruit Green Fruit.png", TRUE, FALSE),
 (208, "Bananas.png", TRUE, FALSE),
@@ -921,7 +921,7 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (309, "GiftCard100.jpg", TRUE, FALSE);
 
 -- ProductImages table
---depot 4
+-- depot 4
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (310, "Kiwifruit Green Fruit.png", TRUE, FALSE),
 (311, "Bananas.png", TRUE, FALSE),
@@ -1028,7 +1028,7 @@ INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (412, "GiftCard100.jpg", TRUE, FALSE);
 
 -- ProductImages table
---depot 5
+-- depot 5
 INSERT INTO ProductImages (product_id, image, is_primary, is_deleted) VALUES
 (413, "Kiwifruit Green Fruit.png", TRUE, FALSE),
 (414, "Bananas.png", TRUE, FALSE),

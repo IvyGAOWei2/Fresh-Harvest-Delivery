@@ -6,7 +6,7 @@ from dbFile.config import fetchAll, fetchOne, insertSQL, updateSQL
 from common import fakeReview, roleRequired
 
 
-def discountedProducts(is_full=None):
+def discountedProducts(depot_id, is_full=None):
     sql = """
         SELECT
             p.product_id, p.name, p.description, p.price, pi.image, p.discount_price, p.depot_id, u.unit_name
@@ -22,6 +22,7 @@ def discountedProducts(is_full=None):
             Unit u ON p.unit_id = u.unit_id
         WHERE 
             d.status = 1 AND p.is_active = TRUE AND p.discount_end_date >= CURDATE()
+        AND p.depot_id = %s
     """
 
     if is_full:
@@ -29,9 +30,9 @@ def discountedProducts(is_full=None):
     else:
         sql += f"ORDER BY RAND() LIMIT 4;"
     
-    return fetchAll(sql, None, True)
+    return fetchAll(sql, (depot_id,), True)
 
-def ordinaryProducts(category=None, page_offset=None):
+def ordinaryProducts(depot_id, category=None, page_offset=None):
     sql = """
         SELECT p.product_id, p.name, p.description, p.price, p.stock, 
         CASE 
@@ -44,17 +45,18 @@ def ordinaryProducts(category=None, page_offset=None):
         JOIN Unit u ON p.unit_id = u.unit_id 
         JOIN ProductImages pi ON p.product_id = pi.product_id 
         WHERE p.is_active = TRUE 
-        AND pi.is_deleted = FALSE 
+        AND pi.is_deleted = FALSE
+        AND p.depot_id = %s
     """
     if category:
         sql += f"AND c.category_name = '{category}'"
 
     sql += " ORDER BY p.product_id ASC LIMIT 9 OFFSET " + page_offset
 
-    return fetchAll(sql, None, True)
+    return fetchAll(sql, (depot_id,), True)
 
-def categoriesByCount():
-    return fetchAll("SELECT c.category_name, COUNT(p.product_id) AS item_count FROM Category c LEFT JOIN Products p ON c.category_id = p.category_id GROUP BY c.category_name;", None, True)
+def categoriesByCount(depot_id):
+    return fetchAll("SELECT c.category_name, COUNT(p.product_id) AS item_count FROM Category c LEFT JOIN Products p ON c.category_id = p.category_id AND p.depot_id = %s GROUP BY c.category_name;", (depot_id,), True)
 
 @app.route("/shop")
 def shop():
@@ -76,16 +78,17 @@ def shop():
         JOIN ProductImages pi ON p.product_id = pi.product_id
         WHERE p.is_active = TRUE
         AND pi.is_deleted = FALSE
+        AND p.depot_id = %s
     """
     if category:
         sql_total_products += f" AND c.category_name = '{category}'"
 
-    total_products = fetchOne(sql_total_products, ())
+    total_products = fetchOne(sql_total_products, (session['depot_id'],))
     total_pages = ceil(total_products[0] / 9)
 
-    products = ordinaryProducts(category, str(page_offset))
+    products = ordinaryProducts(session['depot_id'], category, str(page_offset))
 
-    return render_template('shop.html', category=category, categories=categoriesByCount(), products=products, current_page=current_page, total_pages=total_pages, discounted_items=discountedProducts())
+    return render_template('shop.html', category=category, categories=categoriesByCount(session['depot_id']), products=products, current_page=current_page, total_pages=total_pages, discounted_items=discountedProducts(session['depot_id']))
 
 
 @app.route('/product/detail/<int:product_id>')
@@ -122,13 +125,13 @@ def shopDetail(product_id):
         """
         boxitems = fetchAll(boxitems_query, (product_id,), True)
 
-        categories = categoriesByCount()
-        discounted_products = discountedProducts()
+        categories = categoriesByCount(session['depot_id'])
+        discounted_products = discountedProducts(session['depot_id'])
 
         for dp in discounted_products:
             dp['discounted_price'] = round(dp['price'] * (1 - dp['discount_rate'] / 100), 2) if 'discount_rate' in dp and dp['discount_rate'] else None
 
-        related_products = ordinaryProducts(app.category_list[product['category_id'] - 1]['category_name'], '0')
+        related_products = ordinaryProducts(session['depot_id'], app.category_list[product['category_id'] - 1]['category_name'], '0')
 
         depot_id = session.get('depot_id', 1 if 'depot_id' not in session or session['depot_id'] == 6 else session['depot_id'])
 
@@ -170,5 +173,5 @@ def productReview():
 
 @app.route("/product/discounted")
 def productDiscounted():
-    all_discounted = discountedProducts(True)
-    return render_template('shop.html', allDiscounted=all_discounted, category=None, categories=categoriesByCount(), total_pages=1, current_page=1)
+    all_discounted = discountedProducts(session['depot_id'], True)
+    return render_template('shop.html', allDiscounted=all_discounted, category=None, categories=categoriesByCount(session['depot_id']), total_pages=1, current_page=1)
