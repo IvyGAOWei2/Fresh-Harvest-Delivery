@@ -54,23 +54,23 @@
                         <div class="carousel-inner" role="listbox">
                             <div class="carousel-item active rounded">
                                 <img src="{{ url_for('static', filename='images/slide5.jpg') }}" class="img-fluid w-100 h-100 bg-secondary rounded" alt="1st slide">
-                                <a href="#" class="btn px-4 py-2 text-white rounded">Fruites</a>
+                                <a href="{{ url_for('shop', category='Fruit') }}" class="btn px-4 py-2 text-white rounded">Fruites</a>
                             </div>
                             <div class="carousel-item rounded">
                                 <img src="{{ url_for('static', filename='images/slide3.jpg') }}" class="img-fluid w-100 h-100 rounded" alt="2nd slide">
-                                <a href="#" class="btn px-4 py-2 text-white rounded">Vesitables</a>
+                                <a href="{{ url_for('shop', category='Vegetable') }}" class="btn px-4 py-2 text-white rounded">Vesitables</a>
                             </div>
                             <div class="carousel-item rounded">
                                 <img src="{{ url_for('static', filename='images/slide7.jpg') }}" class="img-fluid w-100 h-100 rounded" alt="3rd slide">
-                                <a href="#" class="btn px-4 py-2 text-white rounded">Fruites</a>
+                                <a href="{{ url_for('shop', category='Fruit') }}" class="btn px-4 py-2 text-white rounded">Fruites</a>
                             </div>
                             <div class="carousel-item rounded">
                                 <img src="{{ url_for('static', filename='images/slide4.jpg') }}" class="img-fluid w-100 h-100 rounded" alt="4th slide">
-                                <a href="#" class="btn px-4 py-2 text-white rounded">Vesitables</a>
+                                <a href="{{ url_for('shop', category='Vegetable') }}" class="btn px-4 py-2 text-white rounded">Vesitables</a>
                             </div>
                             <div class="carousel-item rounded">
                                 <img src="{{ url_for('static', filename='images/slide6.jpg') }}" class="img-fluid w-100 h-100 rounded" alt="5th slide">
-                                <a href="#" class="btn px-4 py-2 text-white rounded">Honey</a>
+                                <a href="{{ url_for('shop', category='Honey') }}" class="btn px-4 py-2 text-white rounded">Honey</a>
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">

@@ -133,10 +133,13 @@ def updateOrderStatus():
         current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (target_order['user_id'],))
         variation = target_order['total']
         new_points = current_points[0] + variation
-
+    
         insertSQL("INSERT INTO ConsumerPoints (user_id, order_id, point_type, point_variation, point_balance, point_date) \
             VALUES(%s,%s,%s,%s,%s,%s);", (target_order['user_id'], data['order_id'], 'Order Purchase', variation, new_points, target_order['order_date']))
         updateSQL("UPDATE Consumer SET points = %s WHERE user_id = %s;", (new_points, target_order['user_id']))
+
+    if data['status'] == 'Delivered':
+        updateSQL("UPDATE Orders SET delivery_date = %s WHERE order_id = %s;", (toDay(), data['order_id']))
 
     update_successful = updateSQL("UPDATE Orders SET status = %s WHERE order_id = %s", (data['status'], data['order_id']))
 
