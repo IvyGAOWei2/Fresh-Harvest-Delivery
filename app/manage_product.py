@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request
+from flask import render_template, request,session
 from dbFile.config import fetchAll, updateSQL
 import os
 
@@ -27,9 +27,19 @@ def saveImage(img):
     return 'upload/' + image_name
 
 
-@app.route("/product/list", methods = ["GET"])
+@app.route("/product/list", methods=["GET", "POST"])
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manageProduct():
+    role = session['type']
+    sessionDepot = session['depot_id']
+    if request.method == "POST" and role == 'National_Manager':
+        depot_id = request.form['depot_id']
+    elif sessionDepot == 6:
+        depot_id = 1
+    else:
+        depot_id = sessionDepot
+
+    # print(f"Role: {role}, Depot ID: {depot_id}") 
     sql_products = """
         SELECT 
             p.product_id,
@@ -40,20 +50,22 @@ def manageProduct():
             p.category_id,
             p.unit_id,
             p.depot_id,
+            d.location,
             PI.image AS image
         FROM 
             Products p
-        INNER JOIN 
+        JOIN 
             Category c ON p.category_id = c.category_id
-        INNER JOIN 
+        JOIN 
             Unit u ON p.unit_id = u.unit_id
-        INNER JOIN 
+        JOIN 
             Depots d ON p.depot_id = d.depot_id
-        INNER JOIN 
+        JOIN 
             ProductImages PI ON p.product_id = PI.product_id
+        WHERE p.depot_id = %s
         AND p.is_active = True;
     """
-    product_list = fetchAll(sql_products, None, True)
+    product_list = fetchAll(sql_products, (depot_id,), True)
     return render_template('manage-products.html', productList = product_list, categoryList=app.category_list, unitList=app.unit_list, depotList=app.depot_list)
 
 

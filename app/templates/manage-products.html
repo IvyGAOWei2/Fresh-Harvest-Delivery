@@ -22,6 +22,11 @@
     color: black;
 }
 
+.custom-select-text {
+    color: black !important;
+}
+
+
 </style>
 <section class="main-content">
     <h1 class="text-center">Product Management</h1>
@@ -51,8 +56,28 @@
                         <option value="Honey">Honey</option>
                         <option value="GiftCard">GiftCard</option>
                     </select>
+
+
                 </div>
             </div>
+            <!-- depot select -->
+            {% if session.type == 'National_Manager' %}
+            <div class="d-flex align-items-center ms-4">
+                <form method="POST" action="/product/list" class="d-flex align-items-center" style="color: black">
+                    <label for="depotSelect" class="form-label mb-0 me-2" >Depot:</label>
+                    <select class="form-control  custom-select-text form-select-sm bg-light me-2" name="depot_id" id="depotSelect" required>
+                        {% for depot in depotList[:5] %}
+                        <option value="{{ depot.depot_id }}" {% if depot.location == 'Christchurch' %}selected{% endif %}>
+                            {{ depot.location }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            {% endif %}
+
+
 
             <!-- Button trigger modal to add product-->
             <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addProductModal">Add New
@@ -67,6 +92,7 @@
                         <th>Category</th>
                         <th>Price</th>
                         <th>Stock</th>
+                        <th>Depot</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -78,6 +104,7 @@
                         <td class="align-middle">{{categoryList[product.category_id -1].category_name}}</td>
                         <td class="align-middle">{{ product.price}}</td>
                         <td class="align-middle">{{ product.stock }}</td>
+                        <td class="align-middle">{{ product.location }}</td>
                         <td>
                             <a class="btn" role="button" data-bs-toggle="offcanvas"
                                 data-bs-target="#updateproduct{{ product.product_id }}">
@@ -494,7 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const noResultsRow = document.createElement('tr');
             noResultsRow.id = 'noResultsRow';
             const noResultsCell = document.createElement('td');
-            noResultsCell.colSpan = 5;
+            noResultsCell.colSpan = 6;
             noResultsCell.className = 'text-center';
             noResultsCell.textContent = 'No matching products found';
             noResultsRow.appendChild(noResultsCell);
