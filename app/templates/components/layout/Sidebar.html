@@ -53,6 +53,9 @@
             <a href="{{ url_for('manage_applications') }}" class="dropdown-item {% if is_manageApplication %}is_active{% endif %}">
               <i class="fa fa-address-card"></i> Manage Applications
             </a>
+            <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
+              <i class="fa fa-tags"></i> Manage AccountCredit
+            </a>
             <a href="{{ url_for('manageNews') }}" class="dropdown-item {% if is_news %}is_active{% endif %}">
               <i class="fas fa-newspaper"></i><span>Manage news</span>
             </a>
@@ -73,9 +76,6 @@
             </a>
             <a href="{{ url_for('manageGiftcard') }}" class="{% if manageGiftcard %}is_active{% endif %}">
               <i class="fab fa-cc-diners-club"></i> <span>Giftcards</span>
-            </a>
-            <a href="{{ url_for('viewReviewRequests') }}" class="{% if is_manageBusinessAccount %}is_active{% endif %}">
-              <i class="fa fa-tags"></i> Manage Account Credit
             </a>
           </ul>
       </div>

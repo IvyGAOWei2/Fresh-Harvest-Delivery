@@ -42,7 +42,7 @@ def manageWeeklyBoxes():
             for package in packages
         ]
 
-        sql_depots = "SELECT depot_id, location FROM Depots"
+        sql_depots = "SELECT depot_id, location FROM Depots WHERE location != 'NZ'"
         depots = fetchAll(sql_depots)
         
         return render_template('boxes.html', user_role=user_role, packageList=formatted_packages, depots=depots)
@@ -177,7 +177,8 @@ def togglePackage(package_id):
         return jsonify({'status': True, 'new_status': new_status})
     except Exception as err:
         print(f"Error: {err}")
-        return jsonify({'status': False, 'message': f'Database error occurred: {err}'}), 500
+        return jsonify({'status': False, 'message': 'Database error occurred: {err}'}), 500
+
 @app.route('/employee/box-products/<int:package_id>')
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def manage_box_products(package_id):
@@ -219,7 +220,14 @@ def manage_box_products(package_id):
                 boxes[box_type]['box_id'] = box_id
                 boxes[box_type]['product_id'] = product_id
 
-                fixed_image_url = 'app/static/images/upload/promotion.jpg'
+                # Assign fixed images based on box type
+                if box_type == 'Small':
+                    fixed_image_url = 'box1.jpg'
+                elif box_type == 'Medium':
+                    fixed_image_url = 'box2.jpg'
+                else:
+                    fixed_image_url = 'box3.jpg'
+
                 sql_insert_image = "INSERT INTO ProductImages (product_id, image, is_primary) VALUES (%s, %s, TRUE)"
                 insertSQL(sql_insert_image, (product_id, fixed_image_url))
 
@@ -260,7 +268,7 @@ def update_box_price():
         """
         updateSQL(sql_update_price, (price, box_id))
 
-        sync_boxes_to_products()  
+        sync_boxes_to_products()   
 
         return jsonify({'status': True})
     except Exception as err:
@@ -285,7 +293,7 @@ def update_box_quantity():
         """
         updateSQL(sql_update_quantity, (quantity, box_id))
 
-        sync_boxes_to_products() 
+        sync_boxes_to_products()  
 
         return jsonify({'status': True})
     except Exception as err:
@@ -324,7 +332,7 @@ def add_box_product():
                 large_quantity = quantity + 2
                 insertSQL(sql_insert_box_item, (box[0], product_id, large_quantity))
 
-        sync_boxes_to_products()  
+        sync_boxes_to_products()   
 
         return jsonify({'status': True})
     except Exception as err:
@@ -358,7 +366,7 @@ def update_box_product():
             """
             updateSQL(sql_update_product, (quantity, box_id, product_id))
 
-        sync_boxes_to_products()  # 同步Products表中的数据
+        sync_boxes_to_products()   
 
         return jsonify({'status': True})
     except Exception as err:

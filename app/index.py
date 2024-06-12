@@ -43,9 +43,12 @@ def index():
     tablist4 = fetchAll(sql,(app.category_list[3]['category_id'], depot_id),True)
     combined_list = tablist1 + tablist2 + tablist3 + tablist4
 
+    best_seller = fetchAll("SELECT p.name, p.price,p.product_id, pi.image FROM Products p \
+        INNER JOIN ProductImages pi ON p.product_id = pi.product_id \
+        WHERE category_id = 1 AND p.depot_id = %s ORDER BY RAND() LIMIT 6;", (depot_id,), True)
 
     return render_template('index.html', discount=discount, news=news, shipping=app.shipping, \
-        categoryList=app.category_list,unitList=app.unit_list, reviews=fakeReview(),
+        categoryList=app.category_list,unitList=app.unit_list, reviews=fakeReview(), best_seller=best_seller,
         tablist1=tablist1,tablist2=tablist2,tablist3=tablist3,tablist4=tablist4, combined_list=combined_list)
 
 @app.route("/404")

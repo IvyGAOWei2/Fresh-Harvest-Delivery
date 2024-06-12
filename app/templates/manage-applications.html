@@ -224,7 +224,7 @@
                     if (data.status) {
                         const successModal = new bootstrap.Modal(document.getElementById('updateProfileSuccessModal'));
                         successModal.show();
-                        successModal.addEventListener('hidden.bs.modal', function () {
+                        $('#updateProfileSuccessModal').one('hidden.bs.modal', function () {
                             location.reload();
                         });
                     } else {
