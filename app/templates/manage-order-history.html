@@ -166,14 +166,14 @@
                                     {% if order.status == 'Pending' %}
                                     <ul class="dropdown-menu payment_status">
                                         <li><a class="dropdown-item" data-value="Cancelled" href="#">Cancelled</a></li>
-                                        <li><a class="dropdown-item" data-value="Comfirmed" href="#">Comfirmed</a></li>
+                                        <li><a class="dropdown-item" data-value="Confirmed" href="#">Confirmed</a></li>
                                         <li><a class="dropdown-item" data-value="Shipped" href="#">Shipped</a></li>
                                         <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>
                                         <li><a class="dropdown-item" data-value="Refunded" href="#">Refunded</a></li>
                                     </ul>                     
                                     {% elif order.status == 'Cancelled' %}
                                         <ul class="dropdown-menu payment_status"></ul>
-                                    {% elif order.status == 'Comfirmed' %}
+                                    {% elif order.status == 'Confirmed' %}
                                         <ul class="dropdown-menu payment_status">                       
                                             <li><a class="dropdown-item" data-value="Shipped" href="#">Shipped</a></li>
                                             <li><a class="dropdown-item" data-value="Delivered" href="#">Delivered</a></li>

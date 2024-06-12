@@ -35,7 +35,7 @@ def index():
             AND p.depot_id = %s 
         ORDER BY 
             RAND() 
-        LIMIT 2;
+        LIMIT 3;
     """
     tablist1 = fetchAll(sql,(app.category_list[0]['category_id'], depot_id),True)
     tablist2 = fetchAll(sql,(app.category_list[1]['category_id'], depot_id),True)

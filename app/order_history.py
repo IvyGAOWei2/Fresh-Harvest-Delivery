@@ -17,15 +17,9 @@ def orderHistory():
 @app.route("/order/detail/<int:order_id>")
 @roleRequired(['Consumer','Staff', 'Local_Manager', 'National_Manager'])
 def orderDetail(order_id):
-    order_sql = """
-        SELECT Orders.*, 
-        CONCAT(Consumer.given_name, ' ', Consumer.family_name) AS full_name 
-        FROM Orders 
-        JOIN Consumer ON Orders.user_id = Consumer.user_id 
-        WHERE Orders.order_id = %s
-"""
-    order = fetchOne(order_sql, (order_id,),True)
-    # print(order)
+    order = fetchOne('SELECT o.*, cp.point_variation FROM Orders o LEFT JOIN ConsumerPoints cp ON \
+        o.order_id = cp.order_id AND cp.point_type = "Points Redeem" WHERE o.order_id = %s;', (order_id,),True)
+
     exclusion_list = ",".join(str(pid) for pid in app.giftcard_list)
 
     products = fetchAll("SELECT o.*, p.name, p.price, pi.image FROM OrderItems o JOIN Products p \
@@ -42,6 +36,7 @@ def orderDetail(order_id):
     else:
         giftcards = fetchAll('SELECT gc.*, pi.image FROM GiftCards gc JOIN ProductImages pi ON \
             gc.product_id = pi.product_id WHERE gc.order_id = %s;', (order_id,),True)
+
 
     if session['type'] == 'Consumer':
         return render_template('order-detail.html', orderProducts=products, Giftcards=giftcards,order=order, shipping=app.shipping)
@@ -133,7 +128,7 @@ def updateOrderStatus():
     data = request.get_json()
     order = emailOrder(data['order_id'])
 
-    if data['status'] == 'Comfirmed':
+    if data['status'] == 'Confirmed':
         target_order = fetchOne('SELECT total, user_id, order_date FROM Orders WHERE order_id = %s', (data['order_id'],), True)
         current_points = fetchOne('SELECT points FROM Consumer WHERE user_id = %s', (target_order['user_id'],))
         variation = target_order['total']

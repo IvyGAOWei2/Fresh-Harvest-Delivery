@@ -18,42 +18,42 @@
         <form id="applyBusinessAccountForm" class="mx-auto needs-validation" style="max-width: 600px;" novalidate method="POST" action="{{ url_for('apply_business_account') }}" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="businessName" class="form-label">Business Name<sup>*</sup></label>
-                <input type="text" class="form-control" id="businessName" name="business_name" required>
+                <input type="text" value="ABC Ltd" class="form-control" id="businessName" name="business_name" required>
                 <div class="invalid-feedback">Please provide a valid business name.</div>
             </div>
             <div class="mb-3">
                 <label for="contactName" class="form-label">Contact Name<sup>*</sup></label>
-                <input type="text" class="form-control" id="contactName" name="contact_name" required>
+                <input type="text"  value="Shawn" class="form-control" id="contactName" name="contact_name" required>
                 <div class="invalid-feedback">Please provide a valid contact name.</div>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email<sup>*</sup></label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email"  value="shawn@gmail.com" class="form-control" id="email" name="email" required>
                 <div class="invalid-feedback">Please provide a valid email address.</div>
             </div>
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone<sup>*</sup></label>
-                <input type="tel" class="form-control" id="phone" name="phone" required>
+                <input type="tel" value="0221234567" class="form-control" id="phone" name="phone" required>
                 <div class="invalid-feedback">Please provide a valid phone number.</div>
             </div>
             <div class="mb-3">
                 <label for="address" class="form-label">Address<sup>*</sup></label>
-                <input type="text" class="form-control" id="address" name="address" required>
+                <input type="text" value="233 Main St, Christchurch" class="form-control" id="address" name="address" required>
                 <div class="invalid-feedback">Please provide a valid address.</div>
             </div>
             <div class="mb-3">
-                <label for="city" class="form-label">City<sup>*</sup></label>
-                <input type="text" class="form-control" id="city" name="city" required>
+                <label for="city"  class="form-label">City<sup>*</sup></label>
+                <input type="text" value="Christchurch" class="form-control" id="city" name="city" required>
                 <div class="invalid-feedback">Please provide a valid city.</div>
             </div>
             <div class="mb-3">
                 <label for="postcode" class="form-label">Postal Code<sup>*</sup></label>
-                <input type="text" class="form-control" id="postcode" name="postcode" required>
+                <input type="text" value="8042" class="form-control" id="postcode" name="postcode" required>
                 <div class="invalid-feedback">Please provide a valid postal code.</div>
             </div>
             <div class="mb-3">
                 <label for="documentation" class="form-label">Documentation<sup>*</sup></label>
-                <input type="file" class="form-control" id="documentation" name="documentation" required>
+                <input type="file" class="form-control" id="documentation" name="documentation">
                 <div class="invalid-feedback">Please provide valid documentation.</div>
             </div>
             <div class="text-center">
