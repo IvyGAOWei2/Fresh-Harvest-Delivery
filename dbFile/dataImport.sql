@@ -1500,7 +1500,7 @@ INSERT INTO BusinessApplications (user_id,business_name,contact_name,email,phone
 (1,'Cafe','Joe','joe@gmail.com','0273690111','25 hudsen dr','christchurch','8025','e063dfa8-4a7c-426d-bb2f-6364ca2b4063.jpg','Pending','2024-06-12 11:14:09',NULL);
 
 UPDATE Consumer SET points = 981.41 WHERE user_id = 1;
-UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 1;
-UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 2;
-UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 31;
-UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 56;
+UPDATE Products SET discount_end_date = '2024-06-16',discount_price = 3.2 WHERE product_id = 1;
+UPDATE Products SET discount_end_date = '2024-06-16',discount_price = 3.19 WHERE product_id = 2;
+UPDATE Products SET discount_end_date = '2024-06-16',discount_price = 2.39 WHERE product_id = 31;
+UPDATE Products SET discount_end_date = '2024-06-16',discount_price = 1.99 WHERE product_id = 56;
