@@ -31,20 +31,33 @@ def saveImage(img):
 @roleRequired(['Staff', 'Local_Manager', 'National_Manager'])
 def adminProfiles():
     type = session['type']
-    
+    depot_id = session['depot_id']
     profile_type = request.args.get('profile_type')
     
-    if profile_type == "Consumer":
-        result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
-            JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
-    else:
-        if session.get('type') in ['Local_Manager']:
-            result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
-                JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
+    if depot_id == 6:
+        if profile_type == "Consumer":
+            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' AND Users.is_deleted = FALSE;",None ,True)
         else:
-            result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
-                JOIN Users ON Employees.user_id = Users.user_id \
-                WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
+            if session.get('type') in ['Local_Manager']:
+                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
+                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' AND Users.is_deleted = FALSE;""",None ,True)
+            else:
+                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
+                    JOIN Users ON Employees.user_id = Users.user_id \
+                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') AND Users.is_deleted = FALSE;""",None ,True)
+    else:
+        if profile_type == "Consumer":
+            result = fetchAll("SELECT Users.email, Consumer.* FROM Consumer \
+                JOIN Users on Consumer.user_id=Users.user_id WHERE Users.type='Consumer' and Users.depot_id=%s AND Users.is_deleted = FALSE;",(depot_id,) ,True)
+        else:
+            if session.get('type') in ['Local_Manager']:
+                result = fetchAll("""SELECT Users.email, Users.type, Employees.* FROM Employees \
+                    JOIN Users on Employees.user_id=Users.user_id WHERE Users.type='Staff' and Users.depot_id=%s AND Users.is_deleted = FALSE;""",(depot_id,) ,True)
+            else:
+                result = fetchAll("""SELECT Users.email,Users.type, Employees.* FROM Employees \
+                    JOIN Users ON Employees.user_id = Users.user_id \
+                    WHERE (Users.type = 'Staff' OR Users.type = 'Local_Manager') and Users.depot_id=%s AND Users.is_deleted = FALSE;""",(depot_id,) ,True)
 
                 
     invoice = fetchAll("SELECT * from Invoices;",None ,True)
