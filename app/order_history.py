@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request, session,jsonify
-import requests
+
 # User-defined function
 from dbFile.config import fetchAll, updateSQL, fetchOne, insertSQL
 from common import roleRequired, emailOrder, toDay
@@ -132,15 +132,6 @@ def staffRefund():
 def updateOrderStatus():
     data = request.get_json()
     order = emailOrder(data['order_id'])
-
-
-    # url = "https://api.hcconsulting.co.nz/citycentral/contact"
-    # data = {'key1': 'value1','key2': 'value2'}
-    # headers = {'Content-Type': 'application/json'}
-    # response = requests.post(url, json=data, headers=headers)
-
-    # print(response)
-    # return {"status": False}, 500
 
     if data['status'] == 'Comfirmed':
         target_order = fetchOne('SELECT total, user_id, order_date FROM Orders WHERE order_id = %s', (data['order_id'],), True)
