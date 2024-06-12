@@ -175,5 +175,6 @@ def productReview():
 
 @app.route("/product/discounted")
 def productDiscounted():
-    all_discounted = discountedProducts(session['depot_id'], True)
-    return render_template('shop.html', allDiscounted=all_discounted, category=None, categories=categoriesByCount(session['depot_id']), total_pages=1, current_page=1)
+    depot_id = 1 if 'depot_id' not in session or session['depot_id'] == 6 else session['depot_id']
+    all_discounted = discountedProducts(depot_id, True)
+    return render_template('shop.html', allDiscounted=all_discounted, category=None, categories=categoriesByCount(depot_id), total_pages=1, current_page=1)

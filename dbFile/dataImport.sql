@@ -1499,4 +1499,8 @@ INSERT INTO Packages (title,start_date,end_date,depot_id) VALUES ('Week1 Box','2
 INSERT INTO BusinessApplications (user_id,business_name,contact_name,email,phone,address,city,postcode,documentation,status,application_date,approved_by) VALUES 
 (1,'Cafe','Joe','joe@gmail.com','0273690111','25 hudsen dr','christchurch','8025','e063dfa8-4a7c-426d-bb2f-6364ca2b4063.jpg','Pending','2024-06-12 11:14:09',NULL);
 
-UPDATE Consumer SET points = 731.41 WHERE user_id = 1;
+UPDATE Consumer SET points = 981.41 WHERE user_id = 1;
+UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 1;
+UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 2;
+UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 31;
+UPDATE Products SET discount_end_date = '2024-06-16' WHERE product_id = 56;
