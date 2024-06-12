@@ -63,6 +63,8 @@ def shop():
     page = request.args.get('page')
     category = request.args.get('category')
 
+    depot_id = 1 if 'depot_id' not in session or session['depot_id'] == 6 else session['depot_id']
+
     if page:
         page_offset = (int(page) - 1) * 9
         current_page = int(page)
@@ -83,16 +85,18 @@ def shop():
     if category:
         sql_total_products += f" AND c.category_name = '{category}'"
 
-    total_products = fetchOne(sql_total_products, (session['depot_id'],))
+    total_products = fetchOne(sql_total_products, (depot_id,))
     total_pages = ceil(total_products[0] / 9)
 
-    products = ordinaryProducts(session['depot_id'], category, str(page_offset))
+    products = ordinaryProducts(depot_id, category, str(page_offset))
 
-    return render_template('shop.html', category=category, categories=categoriesByCount(session['depot_id']), products=products, current_page=current_page, total_pages=total_pages, discounted_items=discountedProducts(session['depot_id']))
+    return render_template('shop.html', category=category, categories=categoriesByCount(depot_id), products=products, current_page=current_page, total_pages=total_pages, discounted_items=discountedProducts(depot_id))
 
 
 @app.route('/product/detail/<int:product_id>')
 def shopDetail(product_id):
+    depot_id = 1 if 'depot_id' not in session or session['depot_id'] == 6 else session['depot_id']
+
     sql_product = """
         SELECT p.product_id, p.name, p.description, p.price, p.stock, p.depot_id, p.category_id, 
         CASE 
@@ -125,15 +129,13 @@ def shopDetail(product_id):
         """
         boxitems = fetchAll(boxitems_query, (product_id,), True)
 
-        categories = categoriesByCount(session['depot_id'])
-        discounted_products = discountedProducts(session['depot_id'])
+        categories = categoriesByCount(depot_id)
+        discounted_products = discountedProducts(depot_id)
 
         for dp in discounted_products:
             dp['discounted_price'] = round(dp['price'] * (1 - dp['discount_rate'] / 100), 2) if 'discount_rate' in dp and dp['discount_rate'] else None
 
-        related_products = ordinaryProducts(session['depot_id'], app.category_list[product['category_id'] - 1]['category_name'], '0')
-
-        depot_id = session.get('depot_id', 1 if 'depot_id' not in session or session['depot_id'] == 6 else session['depot_id'])
+        related_products = ordinaryProducts(depot_id, app.category_list[product['category_id'] - 1]['category_name'], '0')
 
         reviews = fetchAll("SELECT R.rating, DATE_FORMAT(R.review_date, '%b %d, %Y') AS review_date, R.review_text, C.given_name, C.image FROM Reviews R \
             JOIN Consumer C ON R.user_id = C.user_id WHERE R.depot_id = %s AND R.product_id = %s;", \
