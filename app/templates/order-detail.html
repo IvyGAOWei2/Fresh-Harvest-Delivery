@@ -61,7 +61,9 @@
                                 <tbody>
                                     <th scope="row">
                                         <div class="d-flex align-items-center">
+                                            <a href="{{ url_for('shopDetail', product_id = product.product_id) }}">
                                             <img src="{{ url_for('static', filename='images/product/' + product.image) }}" class="img-fluid me-3 rounded-circle" style="max-width:6rem" alt="{{ product.product_name }}">
+                                            </a>
                                         </div>
                                     </th>
                                     <td>
