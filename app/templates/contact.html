@@ -34,13 +34,13 @@
                         loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>                    </div>
                     <div class="col-lg-7">
                         <form id="contactForm" action="/contact" method="POST" class="needs-validation" novalidate>
-                            <input id="contactName" type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" name="name" pattern="^[a-zA-Z\s]+$" required>
-                            <input id="contactEmail" type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
+                            <input value="John" id="contactName" type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" name="name" pattern="^[a-zA-Z\s]+$" required>
+                            <input value="jane.smith@example.com" id="contactEmail" type="email" class="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required>
                             <select class="w-100 form-control border-0 py-3 mb-4" name="type" >
                                 <option value="General Request" selected>General Inquiry</option>
                                 <option value="Refund Request">Refund</option>
                             </select>
-                            <textarea id="contactMsg" class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message" name="msg" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required></textarea>
+                            <textarea id="contactMsg" class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message" name="msg" pattern="^[a-zA-Z0-9,.!?;:\s']+$" required>I need a refund.</textarea>
                             <button class="w-100 btn border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
                         </form>
                     </div>
