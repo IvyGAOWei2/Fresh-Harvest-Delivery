@@ -81,7 +81,9 @@
                                     <td>
                                     {% if order.status == 'Pending' %}
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">N/A</p>
-                                    {% elif order.status in ['Cancelled', 'Refunded'] %}
+                                    {% elif order.status in ['Cancelled'] %}
+                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
+                                    {% elif order.status in ['Refunded'] %}
                                         {% if product.is_refunded %}
                                             <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
                                         {% else %}
