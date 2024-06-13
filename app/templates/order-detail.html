@@ -82,7 +82,11 @@
                                     {% if order.status == 'Pending' %}
                                         <p class="mb-0 mt-4" style="font-size: 1.25rem;">N/A</p>
                                     {% elif order.status in ['Cancelled', 'Refunded'] %}
-                                        <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
+                                        {% if product.is_refunded %}
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">Yes</p>
+                                        {% else %}
+                                            <p class="mb-0 mt-4" style="font-size: 1.25rem;">No</p>
+                                        {% endif %}
                                     {% else %}
                                     <div class="d-flex mt-4">
                                         <a href="{{ url_for('contact') + '#contactUs' }}" class="btn" role="button" data-bs-toggle="refund" title="Contact Us">
