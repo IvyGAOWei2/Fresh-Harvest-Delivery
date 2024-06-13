@@ -137,9 +137,9 @@
                         <tr>
                             <td>{{order.order_id}}</td>
                             <td>{{order.full_name}}</td>
-                            <td>{{order.order_date}}</td>
+                            <td class="order-date">{{order.order_date}}</td>
                             {% if order.delivery_date %}
-                                <td>{{order.delivery_date}}</td>
+                                <td class="order-date">{{order.delivery_date}}</td>
                             {% else %}
                                 <td></td>
                             {% endif %}
@@ -447,6 +447,22 @@ function filterRows() {
 
 // filter info after click button
 searchButton.addEventListener('click',filterRows);
+
+// date formatte
+document.addEventListener('DOMContentLoaded', function() {
+    const dateCells = document.querySelectorAll('.order-date');
+    dateCells.forEach(function(cell) {
+        const dateValue = cell.textContent.trim();
+        if (!dateValue) return;
+        const dateObj = new Date(dateValue);
+        const formattedDate = `${dateObj.getDate()}-${dateObj.getMonth() + 1}-${dateObj.getFullYear()}`;
+        cell.textContent = formattedDate;
+    });
+});
+
+
+
+
 </script>
 
 {% endblock %}
