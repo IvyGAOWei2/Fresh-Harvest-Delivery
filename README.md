@@ -2,18 +2,49 @@
 
 # FreshHarvestDelivery Guide
 
-## Website demo
+An online shopping platform for fresh produce, built with Flask & MySQL (Backend) and HTML/CSS/JS (Frontend). Developed within an Agile team.
 
-[Under construction](https://github.com/LUMasterOfAppliedComputing2024S1/COMP639S1_Group_AZ)
+## ⚙️ Features
 
-## Project Milestone
-Sprint1 published on 15/05/2024
-Sprint2 published on 25/05/2024
+- Customer & Admin login
+- Product management (CRUD)
+- Cart & order history
+- Gift card support
+- Admin dashboard
+
+---
+
+## 📸 Project Demo – User Interface Walkthrough
+
+The following demo videos showcase the core features of the **FreshHarvestDelivery** platform, including both customer and admin workflows.
+
+🛒 Customer View:
+
+🧑‍💼 Admin View:
+
+### 🎯 Features Demonstrated
+
+**Customer Workflow**
+
+- Browse products and view details
+- Add to cart and adjust quantities
+- Complete checkout and view order history
+
+**Admin Workflow**
+
+- Admin login and dashboard
+- Add/edit/delete product information
+- Manage orders and customer data
+- Gift card creation and redemption
+
+---
 
 ## Initialize project
-*(Only needs to be run once)*
+
+_(Only needs to be run once)_
 
 ### Mac or Linux
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -21,6 +52,7 @@ pip3 install -r requirements.txt
 ```
 
 ### Windows
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
@@ -28,12 +60,15 @@ pip3 install -r requirements.txt
 ```
 
 ## Run Project
+
 ### Mac or Linux
+
 ```bash
 ./run.sh
 ```
 
 ### Windows
+
 ```bash
 run.cmd
 ```
@@ -41,16 +76,19 @@ run.cmd
 ## Database Connection
 
 ### Local Database File
+
 The db file for the database is located at `dbFile/freshHarvestDelivery.sql`
 
 ### Configuration File
+
 The configuration file for the database connection is located at `dbFile/config_example`, please copy this file and rename it to `dbFile/config.cnf`, then configure with your own
 
 ### Database Load
+
 run freshHarvestDelivery.sql then dataImport.sql
 
-
 ### Configuration Example
+
 ```ini
 [client]
 user = your_username
