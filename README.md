@@ -20,11 +20,11 @@ The following demo videos showcase the core features of the **FreshHarvestDelive
 
 🛒 Customer View:
 
-<video src="https://github.com/IvyGAOWei2/Fresh-Harvest-Delivery/issues/1#issue-3124162379" controls></video>
+<video src="https://github.com/user-attachments/assets/208cc549-771e-40c7-9d68-966c27e0d3fa" controls width="720"></video>
 
 🧑‍💼 Admin View:
 
-<video src="https://github.com/IvyGAOWei2/Fresh-Harvest-Delivery/issues/2#issue-3124173268" controls></video>
+<video src="https://github.com/user-attachments/assets/0dc4e4f2-a8d4-4416-be48-d519a3efcd55" controls width="720"></video>
 
 ### 🎯 Features Demonstrated
 
